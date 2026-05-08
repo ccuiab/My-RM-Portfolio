@@ -405,6 +405,7 @@ body {
   max-height: 90vh;
   border-radius: 8px;
   cursor: default;
+  transition: opacity 0.3s ease;
 }
 
 .modal-close {

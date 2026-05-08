@@ -85,14 +85,14 @@
       <div class="project-body">
         <div class="project-gallery" data-gallery="eng">
           <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
-            <img src="全明星.jpg" class="show" alt="全明星">
-            <img src="工程全明星.jpg" alt="工程全明星">
-            <img src="机械臂.jpg" alt="机械臂">
+            <img src="eng-allstar.webp" class="show" alt="全明星" loading="eager" decoding="async" width="649" height="1153">
+            <img src="eng-mvp.webp" alt="工程全明星" loading="lazy" decoding="async" width="844" height="532">
+            <img src="eng-arm.webp" alt="机械臂" loading="lazy" decoding="async" width="463" height="618">
           </div>
           <div class="gallery-thumbs">
-            <img src="全明星.jpg" class="active" onclick="galleryJump(this, 0)">
-            <img src="工程全明星.jpg" onclick="galleryJump(this, 1)">
-            <img src="机械臂.jpg" onclick="galleryJump(this, 2)">
+            <img src="eng-allstar.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="649" height="1153">
+            <img src="eng-mvp.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="844" height="532">
+            <img src="eng-arm.webp" onclick="galleryJump(this, 2)" loading="lazy" decoding="async" width="463" height="618">
           </div>
         </div>
         <div class="project-desc">
@@ -149,12 +149,9 @@
         <div class="project-subtitle">人机交互 <span class="sep">·</span> 六轴联动 <span class="sep">·</span> 低成本高精度</div>
       </div>
       <div class="project-body">
-        <div class="project-gallery" data-gallery="ctrl">
-          <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
-            <img src="自定义控制器.png" class="show" alt="自定义控制器">
-          </div>
-          <div class="gallery-thumbs">
-            <img src="自定义控制器.png" class="active" onclick="galleryJump(this, 0)">
+        <div class="project-gallery single">
+          <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+            <img src="controller.webp" class="show" alt="自定义控制器 — 高精度遥操作终端" loading="lazy" decoding="async" width="249" height="384">
           </div>
         </div>
         <div class="project-desc">
@@ -190,12 +187,9 @@
         <div class="project-subtitle">双极摩擦轮 <span class="sep">·</span> 自适应悬挂底盘 <span class="sep">·</span> 全向移动</div>
       </div>
       <div class="project-body">
-        <div class="project-gallery" data-gallery="hero">
-          <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
-            <img src="英雄机器人.jpg" class="show" alt="英雄机器人">
-          </div>
-          <div class="gallery-thumbs">
-            <img src="英雄机器人.jpg" class="active" onclick="galleryJump(this, 0)">
+        <div class="project-gallery single">
+          <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+            <img src="hero-bot.webp" class="show" alt="英雄机器人 — 2024赛季双极摩擦轮发射系统" loading="lazy" decoding="async" width="491" height="436">
           </div>
         </div>
         <div class="project-desc">
@@ -237,12 +231,9 @@
         <div class="project-subtitle">穿戴式动力辅助 <span class="sep">·</span> DH 参数建模 <span class="sep">·</span> IMU 跟随控制</div>
       </div>
       <div class="project-body">
-        <div class="project-gallery" data-gallery="exo">
-          <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
-            <img src="外骨骼.jpg" alt="外骨骼">
-          </div>
-          <div class="gallery-thumbs">
-            <img src="外骨骼.jpg" class="active" onclick="galleryJump(this, 0)">
+        <div class="project-gallery single">
+          <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+            <img src="exo-suit.webp" class="show" alt="四轴手臂外骨骼 — 穿戴式动力辅助原型机" loading="lazy" decoding="async" width="410" height="242">
           </div>
         </div>
         <div class="project-desc">
@@ -286,12 +277,12 @@
       <div class="project-body">
         <div class="project-gallery" data-gallery="arm">
           <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
-            <img src="机械臂L3.jpg" class="show" alt="机械臂L3">
-            <img src="机械臂L4.jpg" alt="机械臂L4">
+            <img src="arm-l3.webp" class="show" alt="机械臂L3" loading="lazy" decoding="async" width="730" height="490">
+            <img src="arm-l4.webp" alt="机械臂L4" loading="lazy" decoding="async" width="744" height="543">
           </div>
           <div class="gallery-thumbs">
-            <img src="机械臂L3.jpg" class="active" onclick="galleryJump(this, 0)">
-            <img src="机械臂L4.jpg" onclick="galleryJump(this, 1)">
+            <img src="arm-l3.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="730" height="490">
+            <img src="arm-l4.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="744" height="543">
           </div>
         </div>
         <div class="project-desc">
@@ -333,12 +324,9 @@
         <div class="project-subtitle">高性能二次开发 <span class="sep">·</span> 真空度 -85kPa <span class="sep">·</span> 流量 40L/min</div>
       </div>
       <div class="project-body">
-        <div class="project-gallery" data-gallery="pump">
-          <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
-            <img src="气泵.jpg" class="show" alt="气泵">
-          </div>
-          <div class="gallery-thumbs">
-            <img src="气泵.jpg" class="active" onclick="galleryJump(this, 0)">
+        <div class="project-gallery single">
+          <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+            <img src="air-pump.webp" class="show" alt="改装气泵 — 3508直流无刷电机驱动" loading="lazy" decoding="async" width="350" height="261">
           </div>
         </div>
         <div class="project-desc">
@@ -364,12 +352,12 @@
       <div class="project-body">
         <div class="project-gallery" data-gallery="wheel">
           <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
-            <img src="工程舵轮组.jpg" class="show" alt="工程舵轮组">
-            <img src="英雄舵轮组.jpg" alt="英雄舵轮组">
+            <img src="eng-wheel.webp" class="show" alt="工程舵轮组" loading="lazy" decoding="async" width="260" height="220">
+            <img src="hero-wheel.webp" alt="英雄舵轮组" loading="lazy" decoding="async" width="339" height="344">
           </div>
           <div class="gallery-thumbs">
-            <img src="工程舵轮组.jpg" class="active" onclick="galleryJump(this, 0)">
-            <img src="英雄舵轮组.jpg" onclick="galleryJump(this, 1)">
+            <img src="eng-wheel.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="260" height="220">
+            <img src="hero-wheel.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="339" height="344">
           </div>
         </div>
         <div class="project-desc">
@@ -401,12 +389,12 @@
       <div class="project-body">
         <div class="project-gallery" data-gallery="feeder">
           <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
-            <img src="大弹丸测供弹.jpg" class="show" alt="大弹丸测供弹">
-            <img src="小弹丸中心供弹.jpg" alt="小弹丸中心供弹">
+            <img src="feeder-large.webp" class="show" alt="大弹丸测供弹" loading="lazy" decoding="async" width="158" height="143">
+            <img src="feeder-small.webp" alt="小弹丸中心供弹" loading="lazy" decoding="async" width="331" height="286">
           </div>
           <div class="gallery-thumbs">
-            <img src="大弹丸测供弹.jpg" class="active" onclick="galleryJump(this, 0)">
-            <img src="小弹丸中心供弹.jpg" onclick="galleryJump(this, 1)">
+            <img src="feeder-large.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="158" height="143">
+            <img src="feeder-small.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="331" height="286">
           </div>
         </div>
         <div class="project-desc">

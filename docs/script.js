@@ -1,10 +1,7 @@
 // ===== All project images for background slideshow =====
 (function() {
   const allImages = [
-    '全明星.jpg', '工程全明星.jpg', '机械臂.jpg', '自定义控制器.png',
-    '英雄机器人.jpg', '外骨骼.jpg', '机械臂L3.jpg', '机械臂L4.jpg',
-    '气泵.jpg', '工程舵轮组.jpg', '英雄舵轮组.jpg',
-    '大弹丸测供弹.jpg', '小弹丸中心供弹.jpg'
+    'eng-allstar.webp', 'eng-mvp.webp', 'eng-arm.webp', 'hero-bot.webp', 'exo-suit.webp'
   ];
 
   const container = document.getElementById('bgSlideshow');
@@ -81,12 +78,16 @@ document.querySelectorAll('.project-gallery').forEach(function(g) {
 
 // ===== Modal =====
 function openModal(src) {
-  document.getElementById('modal-img').src = src;
+  var modalImg = document.getElementById('modal-img');
+  modalImg.style.opacity = '0';
+  modalImg.onload = function() { modalImg.style.opacity = '1'; };
+  modalImg.src = src;
   document.getElementById('modal').classList.add('show');
 }
 
 function closeModal() {
   document.getElementById('modal').classList.remove('show');
+  document.getElementById('modal-img').style.opacity = '0';
 }
 
 document.addEventListener('keydown', function(e) {
