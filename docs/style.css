@@ -1,14 +1,14 @@
 :root {
-  --sidebar-bg: #0a1a2f;
-  --sidebar-text: #8fa3bf;
+  --sidebar-bg: #0f2e52;
+  --sidebar-text: #a0b8d8;
   --sidebar-active: #ffffff;
-  --accent: #c9a227;
-  --accent2: #a88a2a;
-  --accent3: #d4b43a;
-  --accent4: #8f7720;
-  --card-bg: rgba(235,240,248,0.78);
-  --block-bg: rgba(220,230,245,0.55);
-  --tag-bg: rgba(201,162,39,0.12);
+  --accent: #e0b83d;
+  --accent2: #c9a02a;
+  --accent3: #f0d04a;
+  --accent4: #b09028;
+  --card-bg: rgba(240,245,252,0.85);
+  --block-bg: rgba(230,240,250,0.65);
+  --tag-bg: rgba(224,184,61,0.14);
   --shadow: 0 2px 12px rgba(0,0,0,0.08);
   --shadow-hover: 0 8px 30px rgba(0,0,0,0.15);
   --radius: 12px;
@@ -25,7 +25,7 @@ body {
   line-height: 1.7;
   height: 100%;
   overflow: hidden;
-  background: #0a1a2f;
+  background: #0c2340;
 }
 
 /* ===== Background Slideshow ===== */
@@ -42,7 +42,7 @@ body {
   background-position: center;
   opacity: 0;
   transition: opacity 1.5s ease-in-out;
-  filter: blur(1px) brightness(0.85) saturate(0.9);
+  filter: blur(1px) brightness(0.92) saturate(0.95);
 }
 
 .bg-slideshow .bg-img.show { opacity: 0.3; }
@@ -51,7 +51,7 @@ body {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(10,25,50,0.18);
+  background: rgba(10,25,50,0.10);
   pointer-events: none;
 }
 
@@ -129,7 +129,7 @@ body {
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 3px;
-  color: #4a6a8a;
+  color: #5a7a9a;
   margin-bottom: 10px;
   padding-left: 4px;
 }
@@ -151,7 +151,7 @@ body {
 
 .nav-list a.active {
   color: var(--sidebar-active);
-  background: rgba(201,162,39,0.15);
+  background: rgba(224,184,61,0.22);
   font-weight: 600;
 }
 
@@ -281,7 +281,7 @@ body {
   overflow: hidden;
   cursor: pointer;
   margin-bottom: 10px;
-  background: #eef2f7;
+  background: #f2f6fb;
   position: relative;
 }
 
@@ -315,7 +315,7 @@ body {
   border: 2px solid transparent;
   transition: border-color 0.2s;
   flex-shrink: 0;
-  background: #eef2f7;
+  background: #f2f6fb;
 }
 
 .gallery-thumbs img.active { border-color: var(--accent); }
@@ -326,7 +326,7 @@ body {
 .project-desc .highlight {
   font-size: 15px;
   font-weight: 600;
-  color: #7a5d10;
+  color: #8f6f15;
   margin-bottom: 14px;
   padding: 10px 14px;
   background: rgba(201,162,39,0.10);
