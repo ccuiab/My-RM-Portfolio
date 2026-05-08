@@ -16,12 +16,13 @@
 ```
 MyCV/
 ├── README.md           ← 本文件
+├── 崔楮焓CV.7z        ← 压缩备份
 ├── docs/               ← GitHub Pages 源
 │   ├── index.html      ← 主页入口
 │   ├── style.css       ← 样式
 │   ├── script.js       ← 交互逻辑
 │   ├── CUIChuhanCV.md  ← Markdown 源文件
-│   └── *.jpg / *.png   ← 14 张项目图片
+│   └── *.webp          ← 13 张项目图片（WebP 格式）
 └── .gitignore          ← 忽略 *.7z 压缩包
 ```
 
