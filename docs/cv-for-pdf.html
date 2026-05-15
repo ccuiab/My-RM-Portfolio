@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>崔楮焓 — Curriculum Vitae</title>
+<style>
+:root {
+  --blue: #0a1a2f;
+  --gold: #c9a227;
+  --gold-dark: #8f7720;
+  --text: #2c2c2c;
+  --muted: #555;
+  --line: #ddd;
+  --bg: #fff;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.55;
+  color: var(--text);
+  background: var(--bg);
+}
+
+/* A4 页面容器 */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  padding: 18mm 20mm;
+}
+
+/* 头部 */
+.header {
+  border-bottom: 2px solid var(--blue);
+  padding-bottom: 12px;
+  margin-bottom: 14px;
+}
+
+.name {
+  font-size: 26pt;
+  font-weight: 700;
+  color: var(--blue);
+  letter-spacing: 2px;
+}
+
+.title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 6px;
+}
+
+.role {
+  font-size: 11pt;
+  color: var(--gold-dark);
+  font-weight: 600;
+}
+
+.contact-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 10px;
+  font-size: 9.5pt;
+  color: var(--muted);
+}
+
+.contact-bar span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.contact-bar a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+/* 分栏布局 */
+.two-col {
+  display: flex;
+  gap: 22px;
+}
+
+.left {
+  flex: 1 1 68%;
+}
+
+.right {
+  flex: 1 1 32%;
+}
+
+/* 区块标题 */
+.section-title {
+  font-size: 11.5pt;
+  font-weight: 700;
+  color: var(--blue);
+  border-left: 4px solid var(--gold);
+  padding-left: 8px;
+  margin: 14px 0 8px;
+}
+
+.section-title:first-child {
+  margin-top: 0;
+}
+
+/* 简介 */
+.summary {
+  font-size: 10pt;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+
+.summary strong {
+  color: var(--blue);
+}
+
+/* 项目卡片 */
+.project {
+  margin-bottom: 12px;
+  page-break-inside: avoid;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.project-name {
+  font-size: 10.5pt;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.project-meta {
+  font-size: 9pt;
+  color: var(--gold-dark);
+  font-weight: 600;
+}
+
+.project-body {
+  margin-top: 4px;
+  padding-left: 10px;
+  border-left: 2px solid var(--line);
+}
+
+.project-body ul {
+  margin: 4px 0;
+  padding-left: 16px;
+}
+
+.project-body li {
+  margin-bottom: 3px;
+  font-size: 9.5pt;
+}
+
+.highlight {
+  font-size: 9.5pt;
+  color: var(--gold-dark);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.subsection {
+  font-size: 9.5pt;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 6px;
+}
+
+.tags {
+  margin-top: 4px;
+}
+
+.tag {
+  display: inline-block;
+  font-size: 8.5pt;
+  color: var(--muted);
+  background: #f5f5f5;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-right: 4px;
+}
+
+.links {
+  font-size: 9pt;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+.links a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+/* 右侧栏 */
+.side-block {
+  margin-bottom: 14px;
+}
+
+.side-title {
+  font-size: 10.5pt;
+  font-weight: 700;
+  color: var(--blue);
+  border-bottom: 1.5px solid var(--gold);
+  padding-bottom: 3px;
+  margin-bottom: 6px;
+}
+
+.side-list {
+  list-style: none;
+  padding: 0;
+}
+
+.side-list li {
+  font-size: 9.5pt;
+  margin-bottom: 5px;
+  padding-left: 10px;
+  position: relative;
+}
+
+.side-list li::before {
+  content: "•";
+  color: var(--gold);
+  position: absolute;
+  left: 0;
+}
+
+.contact-list {
+  list-style: none;
+  padding: 0;
+}
+
+.contact-list li {
+  font-size: 9.5pt;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.contact-list .label {
+  font-weight: 600;
+  color: var(--blue);
+  min-width: 52px;
+  flex-shrink: 0;
+}
+
+.contact-list .val {
+  color: var(--text);
+}
+
+.contact-list a {
+  color: var(--text);
+  text-decoration: none;
+}
+
+.award-item {
+  margin-bottom: 8px;
+}
+
+.award-title {
+  font-weight: 700;
+  font-size: 9.5pt;
+  color: var(--blue);
+}
+
+.award-desc {
+  font-size: 9pt;
+  color: var(--muted);
+}
+
+/* 打印优化 */
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width: 100%; padding: 0; margin: 0; }
+}
+
+@page {
+  size: A4;
+  margin: 15mm 18mm;
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="name">崔楮焓</div>
+    <div class="title-row">
+      <div class="role">HKUST CPEG 大三 · ENTERPRIZE 战队机械组组长 · 工程全明星</div>
+    </div>
+    <div class="contact-bar">
+      <span>&#9993; <a href="mailto:ccuiab@connect.ust.hk">ccuiab@connect.ust.hk</a></span>
+      <span>&#128222; <a href="tel:+86">+86 136 9365 7088</a></span>
+      <span>&#128172; 微信: </span>
+      <span>&#128187; <a href="https://github.com/ccuiab" target="_blank">github.com/ccuiab</a></span>
+      <span>&#127760; <a href="https://ccuiab.github.io/myweb/" target="_blank">ccuiab.github.io/myweb</a></span>
+    </div>
+  </header>
+
+  <div class="two-col">
+    <!-- Left Column -->
+    <div class="left">
+
+      <div class="section-title">个人简介</div>
+      <p class="summary">
+        香港科技大学电子与计算机工程专业 (CPEG) 2023–2027 在读。拥有 3 年 RoboMaster 参赛经历，现任 HKUST ENTERPRIZE 战队<strong>机械组组长</strong>，获 2025 赛季<strong>工程全明星</strong>称号，创造 4 级矿石 <strong>5.8s</strong> 最短兑换纪录。擅长机械设计与制造、系统集成及嵌入式开发。
+      </p>
+
+      <div class="section-title">项目经历</div>
+
+      <!-- Project 1 -->
+      <div class="project">
+        <div class="project-header">
+          <span class="project-name">RoboMaster 2025 工程机器人</span>
+          <span class="project-meta">机械组组长 · 工程全明星</span>
+        </div>
+        <div class="project-body">
+          <div class="highlight">实现 5.8s 破纪录采矿速度，入选 2025 赛季全明星阵容</div>
+          <div class="subsection">高性能六轴机械臂系统</div>
+          <ul>
+            <li>末端有效负载逾 <strong>30kg</strong>，同级别领先作业半径与空间通达度</li>
+            <li>半年高强度实战中<strong>零重大结构损伤</strong>，模块化设计支持快速迭代</li>
+            <li>高刚性臂体 + 精密传动补偿，确保重复定位精度满足精细作业需求</li>
+          </ul>
+          <div class="subsection">全向驱动底盘</div>
+          <ul>
+            <li>电动车橡胶轮，兼顾极高地面抓地力与减震性能</li>
+            <li>自研气缸悬挂舵轮结构，大幅提升机械臂底座稳定性</li>
+          </ul>
+          <div class="subsection">气动系统</div>
+          <ul>
+            <li>自主改装高流量气泵，流量精准可调</li>
+            <li>电机电流/位置反馈实现吸附状态<strong>实时监测</strong></li>
+          </ul>
+          <div class="tags">
+            <span class="tag">机械设计</span><span class="tag">系统集成</span><span class="tag">高精度</span><span class="tag">高稳定性</span>
+          </div>
+          <div class="links">
+            演示: <a href="https://www.bilibili.com/video/BV1Y482zjERP/">bilibili.com/video/BV1Y482zjERP</a> |
+            开源: <a href="https://bbs.robomaster.com/article/803685">bbs.robomaster.com/article/803685</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 2 -->
+      <div class="project">
+        <div class="project-header">
+          <span class="project-name">自定义控制器（高精度遥操作）</span>
+          <span class="project-meta">人机交互 · 六轴联动</span>
+        </div>
+        <div class="project-body">
+          <div class="highlight">作为核心输入终端，与工程机器人深度耦合，支撑创纪录作业效率</div>
+          <ul>
+            <li>与主机械臂高度同构的六轴联动结构，实现 1:2 直觉映射</li>
+            <li>手部抓握轻量化设计，长时操作舒适精准</li>
+            <li>大量 3D 打印 + 简易 3 轴 CNC 加工，显著降低成本</li>
+            <li>桌面级尺寸，低运动惯量，提供丝滑操控反馈</li>
+          </ul>
+          <div class="tags">
+            <span class="tag">机械设计</span><span class="tag">低成本</span><span class="tag">人机交互</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 3 -->
+      <div class="project">
+        <div class="project-header">
+          <span class="project-name">RoboMaster 2024 英雄机器人</span>
+          <span class="project-meta">双极摩擦轮 · 自适应悬挂</span>
+        </div>
+        <div class="project-body">
+          <ul>
+            <li>双极对冲摩擦轮机构，10m 散布 &lt; <strong>25×25cm</strong>，初速波动 <strong>±0.1m/s</strong></li>
+            <li>防卡死拨弹结构，支持 <strong>2Hz</strong> 恒定频率稳定供弹</li>
+            <li>自适应麦克纳姆轮悬挂底盘，通过 <strong>30cm 垂直跌落</strong>冲击测试</li>
+          </ul>
+          <div class="tags">
+            <span class="tag">机械设计</span><span class="tag">高精度</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Project 4 -->
+      <div class="project">
+        <div class="project-header">
+          <span class="project-name">四轴手臂外骨骼（课程设计）</span>
+          <span class="project-meta">穿戴式辅助 · IMU 控制</span>
+        </div>
+        <div class="project-body">
+          <ul>
+            <li>基于 DH 参数法建立 4 自由度外骨骼运动学模型，仿真验证工作空间覆盖率</li>
+            <li>跟随模式：IMU 预测手臂移动方向并跟随</li>
+            <li>助力模式：闭环控制电机保持动作，提供辅助力</li>
+          </ul>
+          <div class="tags">
+            <span class="tag">机械设计</span><span class="tag">嵌入式开发</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-title">重要研发方案</div>
+
+      <div class="project">
+        <div class="project-header">
+          <span class="project-name">六轴机械臂结构</span>
+          <span class="project-meta">末端执行器 · 多场耦合传输</span>
+        </div>
+        <div class="project-body">
+          <ul>
+            <li>自主研发集主动轮与气动吸盘于一体的"轮手"一体化末端</li>
+            <li>电滑环 + 中空旋转气动接头嵌套，解决 J4 关节无限旋转绕线</li>
+            <li>万向轴传动 + 电机后置 L4，压缩末端体积适配矿槽尺寸</li>
+            <li>J5/J6 等速同步轮 + 齿轮组 + 锥齿轮，J5 近乎零背隙</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="project-header">
+          <span class="project-name">改装气泵</span>
+          <span class="project-meta">-85kPa · 40L/min</span>
+        </div>
+        <div class="project-body">
+          <ul>
+            <li>3508 直流无刷电机替换原低端电机，维持 <strong>-85kPa</strong> 真空度同时实现 <strong>40L/min</strong> 大流量</li>
+            <li>电机电流反馈实时感知吸附状态，以极低成本实现类气压计检测</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="project-header">
+          <span class="project-name">多种舵轮模组</span>
+          <span class="project-meta">悬挂 · 轻量化</span>
+        </div>
+        <div class="project-body">
+          <ul>
+            <li>工程舵轮：宽大橡胶胎 + MGN7 滑块气弹簧悬挂，高负载高平稳</li>
+            <li>英雄舵轮：3508 电机 + 齿轮传动 + 光电门校准，轻型聚氨酯轮，小型化</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="project">
+        <div class="project-header">
+          <span class="project-name">两种供弹系统</span>
+          <span class="project-meta">2Hz · 25Hz+</span>
+        </div>
+        <div class="project-body">
+          <ul>
+            <li>大弹丸侧供弹：类高尔夫球弹丸稳定 <strong>2Hz</strong> 供弹不卡顿</li>
+            <li>小弹丸中心供弹：17mm 弹丸 <strong>25Hz 以上</strong>高效供弹，小巧轻便</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column -->
+    <div class="right">
+
+      <div class="side-block">
+        <div class="side-title">联系方式</div>
+        <ul class="contact-list">
+          <li><span class="label">邮箱</span><span class="val"><a href="mailto:ccuiab@connect.ust.hk">ccuiab@connect.ust.hk</a></span></li>
+          <li><span class="label">电话</span><span class="val"><a href="tel:+86">+86 136 9365 7088</a></span></li>
+          <li><span class="label">微信</span><span class="val"></span></li>
+          <li><span class="label">GitHub</span><span class="val"><a href="https://github.com/ccuiab" target="_blank">github.com/ccuiab</a></span></li>
+          <li><span class="label">主页</span><span class="val"><a href="https://ccuiab.github.io/myweb/" target="_blank">ccuiab.github.io/myweb</a></span></li>
+        </ul>
+      </div>
+
+      <div class="side-block">
+        <div class="side-title">教育背景</div>
+        <ul class="side-list">
+          <li><strong>香港科技大学</strong><br>电子与计算机工程 (CPEG)<br>2023 – 2027 (本科在读)</li>
+        </ul>
+      </div>
+
+      <div class="side-block">
+        <div class="side-title">荣誉奖项</div>
+        <div class="award-item">
+          <div class="award-title">工程全明星</div>
+          <div class="award-desc">RoboMaster 2025 赛季全明星阵容</div>
+        </div>
+        <div class="award-item">
+          <div class="award-title">5.8s 纪录</div>
+          <div class="award-desc">4 级矿石最短兑换时长</div>
+        </div>
+      </div>
+
+      <div class="side-block">
+        <div class="side-title">技能专长</div>
+        <ul class="side-list">
+          <li><strong>机械设计</strong><br>SOLIDWORKS 复杂机构设计、AutoCAD、Fusion 360</li>
+          <li><strong>制造工艺</strong><br>3D 打印、CNC 加工、气动系统、高精度装配</li>
+          <li><strong>嵌入式开发</strong><br>STM32、C/C++</li>
+          <li><strong>软件开发</strong><br>Python、MATLAB 脚本与数据处理</li>
+        </ul>
+      </div>
+
+      <div class="side-block">
+        <div class="side-title">语言能力</div>
+        <ul class="side-list">
+          <li>中文（母语）</li>
+          <li>英语（流利，学术与工程环境）</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
