@@ -1,6 +1,6 @@
-# 崔楮焓 — Personal Portfolio
+# My-RM-Portfolio
 
-香港科技大学 CPEG 大三学生个人主页，展示 RoboMaster 参赛经历与机械设计项目。
+香港科技大学 CPEG 大三学生 RoboMaster 机械作品集展示网站。
 
 ## 功能特性
 
@@ -14,7 +14,7 @@
 ## 文件结构
 
 ```
-MyCV/
+My-RM-Portfolio/
 ├── README.md           ← 本文件
 ├── 崔楮焓CV.7z        ← 压缩备份
 ├── docs/               ← GitHub Pages 源
@@ -36,7 +36,11 @@ MyCV/
 
 ## 线上地址
 
-**https://ccuiab.github.io/myweb/**
+**https://ccuiab.github.io/My-RM-Portfolio/**
+
+## 仓库地址
+
+**https://github.com/ccuiab/My-RM-Portfolio**
 
 ## 本地运行
 

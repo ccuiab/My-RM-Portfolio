@@ -1,19 +1,19 @@
-# MyCV 项目文档
+# My-RM-Portfolio 项目文档
 
-个人主页项目，位于 `D:\MyCV`，部署到 GitHub Pages (`ccuiab/myweb`)。
+RoboMaster 机械作品集展示网站项目，位于 `D:\My-RM-Portfolio`，部署到 GitHub Pages (`ccuiab/My-RM-Portfolio`)。
 
 ## 项目信息
 
 - **作者**：崔楮焓 / ccuiab
 - **身份**：HKUST CPEG 大三，ENTERPRIZE 战队机械组组长，工程全明星
-- **用途**：展示 RoboMaster 参赛经历与机械设计项目
-- **线上地址**：https://ccuiab.github.io/myweb/
-- **仓库**：https://github.com/ccuiab/myweb.git，分支 `main`
+- **用途**：RoboMaster 机械作品集展示网站
+- **线上地址**：https://ccuiab.github.io/My-RM-Portfolio/
+- **仓库**：https://github.com/ccuiab/My-RM-Portfolio.git，分支 `main`
 
 ## 文件结构
 
 ```
-MyCV/
+My-RM-Portfolio/
 ├── docs/                  ← GitHub Pages 源
 │   ├── index.html         ← 主页入口
 │   ├── style.css          ← 样式
