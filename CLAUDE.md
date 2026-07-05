@@ -9,8 +9,6 @@
 - **用途**：展示 RoboMaster 参赛经历与机械设计项目
 - **线上地址**：https://ccuiab.github.io/myweb/
 - **仓库**：https://github.com/ccuiab/myweb.git，分支 `main`
-- **电话**：+86 
-- **微信**：
 
 ## 文件结构
 
