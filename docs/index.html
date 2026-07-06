@@ -30,11 +30,8 @@
       <li><a href="#proj-controller" class="sub">自定义控制器</a></li>
       <li><a href="#proj-hero" class="sub">英雄机器人 2024</a></li>
       <li><a href="#proj-exo" class="sub">四轴外骨骼</a></li>
-      <li><a href="#research">重要研发方案</a></li>
-      <li><a href="#rd-arm" class="sub">六轴机械臂</a></li>
-      <li><a href="#rd-pump" class="sub">改装气泵</a></li>
-      <li><a href="#rd-wheel" class="sub">多种舵轮</a></li>
-      <li><a href="#rd-feeder" class="sub">供弹系统</a></li>
+      <li><a href="#research" class="sub">2024-2025 技术预研</a></li>
+      <li><a href="#awards">荣誉与奖项</a></li>
     </ul>
   </div>
 </nav>
@@ -47,24 +44,36 @@
     <div class="section-divider"></div>
     <div class="hero-card">
       <div class="intro">
-        <p>&#127891; <strong>香港科技大学电子与计算机工程专业 (CPEG), 2023-2027</strong></p>
-        <p style="margin-top:4px;">&#129302; <strong>3 年 RoboMaster 参赛经历 (香港科技大学 ENTERPRIZE 战队)</strong> — 2025 赛季<strong>机械组组长</strong>，获<strong>工程全明星</strong>称号，创 4 级矿石 <strong>5.8s</strong> 最短兑换纪录。</p>
+        <p>&#127891; <strong>香港科技大学 CPEG 本科，AI / Robotics 辅修，2023-2027</strong></p>
+        <p style="margin-top:4px;">&#129302; <strong>HKUST ENTERPRIZE 机械组长</strong>，主导 RM2025 工程机器人结构设计；2025 赛季<strong>工程全明星</strong>，4 级矿石 <strong>5.8s</strong> 赛场兑换 WR。</p>
       </div>
       <div class="skill-grid">
         <div class="skill-block">
-          <h4><span class="dot"></span>机械设计与制造</h4>
+          <h4><span class="dot"></span>结构设计</h4>
           <ul>
-            <li>SOLIDWORKS 复杂机构综合设计与结构优化</li>
-            <li>AutoCAD、Fusion 360</li>
-            <li>3D 打印、CNC 加工、气动系统</li>
-            <li>两年高精度装配经验</li>
+            <li>SolidWorks 建模、装配设计、工程图、BOM 与装配图</li>
+            <li>模块化、快拆、维修友好结构与复杂机构空间布局</li>
           </ul>
         </div>
         <div class="skill-block">
-          <h4><span class="dot"></span>嵌入式与软件开发</h4>
+          <h4><span class="dot"></span>制造装配</h4>
           <ul>
-            <li>Python、MATLAB 脚本与数据处理</li>
-            <li>STM32、C/C++ 嵌入式开发</li>
+            <li>CNC / 3D 打印结构件设计、加工沟通与装配调试</li>
+            <li>公差修正、赛前质量验证、场间维修和设备维护</li>
+          </ul>
+        </div>
+        <div class="skill-block">
+          <h4><span class="dot"></span>机电与工艺</h4>
+          <ul>
+            <li>气动系统、电机选型、轴承、齿轮、链条、同步带传动</li>
+            <li>常用材料、钣金/板材组合、结构强度与冲击可靠性取舍</li>
+          </ul>
+        </div>
+        <div class="skill-block">
+          <h4><span class="dot"></span>仿真与联调</h4>
+          <ul>
+            <li>基础强度仿真、负载/冲击测试和样机问题闭环</li>
+            <li>Python / MATLAB / C++ 数据处理与调试，可与电控、视觉、算法对齐联调风险</li>
           </ul>
         </div>
       </div>
@@ -76,161 +85,259 @@
     <h2 class="section-title">&#9881; 个人项目</h2>
     <div class="section-divider"></div>
 
-    <!-- 1.1 工程机器人 -->
-    <div class="project-card" id="proj-engineering">
-      <div class="project-header">
-        <h3><span class="icon">&#129302;</span>RoboMaster 2025 工程机器人</h3>
-        <div class="project-subtitle">机械组组长 <span class="sep">·</span> 工程全明星 <span class="sep">·</span> 5.8s 破纪录采矿速度</div>
-      </div>
-      <div class="project-body">
-        <div class="project-gallery" data-gallery="eng">
-          <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
-            <img src="eng-allstar.webp" class="show" alt="全明星" loading="eager" decoding="async" width="649" height="1153">
-            <img src="eng-mvp.webp" alt="工程全明星" loading="lazy" decoding="async" width="844" height="532">
-            <img src="eng-arm.webp" alt="机械臂" loading="lazy" decoding="async" width="463" height="618">
+    <!-- System Group: Engineering 2025 -->
+    <div class="system-group">
+      <div class="system-group-title">2025 RM 工程机器人</div>
+
+      <!-- Engineering Robot Main -->
+      <div class="project-card system-main" id="proj-engineering">
+        <div class="project-header">
+          <h3><span class="icon">&#9881;</span>RoboMaster 2025 工程机器人</h3>
+          <div class="project-subtitle">长臂展六轴臂 <span class="sep">·</span> 高稳定底盘 <span class="sep">·</span> 快速兑矿链路</div>
+        </div>
+        <div class="project-body">
+          <div class="project-gallery-stack">
+            <div class="project-gallery" data-gallery="eng-awards">
+              <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
+                <img src="eng-allstar.webp" class="show" alt="全明星" loading="eager" decoding="async" width="649" height="1153">
+                <img src="eng-mvp.webp" alt="工程全明星" loading="lazy" decoding="async" width="844" height="532">
+              </div>
+              <div class="gallery-thumbs">
+                <img src="eng-allstar.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="649" height="1153">
+                <img src="eng-mvp.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="844" height="532">
+              </div>
+            </div>
+            <div class="project-gallery" data-gallery="eng-photos">
+              <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
+                <img src="eng-photo1.jpg" class="show" alt="工程机器人实物图 1" loading="lazy" decoding="async" width="1216" height="812">
+                <img src="eng-phtot2.jpg" alt="工程机器人实物图 2" loading="lazy" decoding="async" width="1620" height="1080">
+              </div>
+              <div class="gallery-thumbs">
+                <img src="eng-photo1.jpg" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="1216" height="812">
+                <img src="eng-phtot2.jpg" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="1620" height="1080">
+              </div>
+            </div>
           </div>
-          <div class="gallery-thumbs">
-            <img src="eng-allstar.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="649" height="1153">
-            <img src="eng-mvp.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="844" height="532">
-            <img src="eng-arm.webp" onclick="galleryJump(this, 2)" loading="lazy" decoding="async" width="463" height="618">
+          <div class="project-desc">
+            <div class="highlight">&#127942; 实现 5.8s 的破纪录采矿速度，入选 2025 赛季全明星阵容。</div>
+
+            <div class="detail-block c1">
+              <h5>&#128736; 整机架构与工作空间</h5>
+              <ul>
+                <li>独立主导轮式六轴机械臂工程机器人结构设计，围绕取矿、兑矿、上台阶、偷矿、救援等多任务确定 PUMA 构型、连杆参数与整车布局</li>
+                <li>整车 38 kg，初始尺寸 590×590×540 mm，最大工作空间 1400×1400×1200 mm</li>
+                <li>将机械臂工作空间、图传视野、UWB 布局和操作链路作为整机架构约束，降低碰撞风险与联调难度</li>
+              </ul>
+            </div>
+
+            <div class="detail-block c2">
+              <h5>&#129521; 六轴机械臂与 Wrist 末端</h5>
+              <ul>
+                <li>L2 上臂 380 mm，L3+L4 前臂 420 mm，兼顾长臂展、兑矿自由度与末端刚度</li>
+                <li>J4 采用电滑环 + 中空旋转气动接头嵌套，实现末端电/气一体 360° 旋转传输</li>
+                <li>Wrist 末端集成吸盘、驱动轮、J5/J6 两轴传动与稳定气路，支撑快速取兑矿动作</li>
+              </ul>
+            </div>
+
+            <div class="detail-block c3">
+              <h5>&#128664; 高稳定舵轮底盘</h5>
+              <ul>
+                <li>采用 5 寸实心轮、3508 减速箱、MGN7 滑轨与气弹簧舵下悬挂，提升抓地、脱困与兑矿时底盘稳定性</li>
+                <li>悬挂结构削弱重机械臂高速动作对底盘姿态的扰动，支持边移动底盘边操作机械臂</li>
+                <li>配合高流量 3508 改装真空泵与吸附状态反馈，提高矿石抓取稳定性</li>
+              </ul>
+            </div>
+
+            <div class="detail-block c4">
+              <h5>&#128295; 赛场可靠性与维护</h5>
+              <ul>
+                <li>云台-底盘、云台-机械臂、机械臂整体和单个舵轮组均按快拆维修设计，便于场间排障</li>
+                <li>半年高强度调试与实战中零重大结构损伤，支撑 5.8s 四级矿兑换 WR 与工程全明星入选</li>
+              </ul>
+            </div>
+
+            <div class="tags">
+              <span class="tag">机械设计</span><span class="tag">系统集成</span><span class="tag">高精度</span><span class="tag">高稳定性</span>
+            </div>
+            <div class="project-links">
+              <a href="https://www.bilibili.com/video/BV1Y482zjERP/?spm_id_from=333.788.videopod.sections&vd_source=a3191892d8abed85f77e649dae496839" target="_blank">&#9654; 演示视频 (Bilibili)</a>
+              <a href="https://bbs.robomaster.com/article/803685?source=8" target="_blank">&#128214; 机械开源链接</a>
+            </div>
           </div>
         </div>
-        <div class="project-desc">
-          <div class="highlight">&#127942; 实现 5.8s 破纪录采矿速度，入选 2025 赛季全明星阵容</div>
+      </div>
 
-          <div class="detail-block c1">
-            <h5>&#128736; 高性能六轴机械臂系统</h5>
-            <ul>
-              <li><strong>尺度：</strong>整机质量 <strong>38 kg</strong>（含裁判系统），尺寸 <strong>590×590×540 mm</strong>，最大工作空间 <strong>1400×1400×1200 mm</strong></li>
-              <li><strong>臂型：</strong>L2 上臂 <strong>380 mm</strong>，L3+L4 前臂 <strong>420 mm</strong>，兼顾大臂展与末端刚度</li>
-              <li><strong>周期与成本：</strong>3 个月从 0 到赛场，整机成本 <strong>8k–12k RMB</strong></li>
-              <li><strong>鲁棒性：</strong>半年高强度实战中<strong>零重大结构损伤</strong>，模块化设计支持快速迭代</li>
-              <li><strong>精度：</strong>高刚性臂体 + 精密传动补偿，确保重复定位精度</li>
+      <!-- Subsystems -->
+      <div class="subsystem-area">
+        <div class="subsystem-label">关键子系统 / 模块</div>
+        <div class="subsystem-grid">
+          <div class="subsystem-card" id="rd-arm">
+            <div class="subsystem-gallery" data-gallery="arm">
+              <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
+                <img src="eng-arm.webp" class="show" alt="机械臂" loading="lazy" decoding="async" width="463" height="618">
+                <img src="arm-l3.webp" alt="机械臂L3" loading="lazy" decoding="async" width="730" height="490">
+                <img src="arm-l4.webp" alt="机械臂L4" loading="lazy" decoding="async" width="744" height="543">
+              </div>
+              <div class="gallery-thumbs">
+                <img src="eng-arm.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="463" height="618">
+                <img src="arm-l3.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="730" height="490">
+                <img src="arm-l4.webp" onclick="galleryJump(this, 2)" loading="lazy" decoding="async" width="744" height="543">
+              </div>
+            </div>
+            <div class="subsystem-header">六轴机械臂末端结构</div>
+            <ul class="subsystem-list">
+              <li>Wrist 末端集成 HB80 风琴吸盘、驱动轮、J5/J6 两轴传动与稳定气路</li>
+              <li>J4 采用电滑环 + 中空旋转气动接头嵌套，实现末端电/气 360° 旋转传输</li>
+              <li>万向轴传动 + 电机后置 L4，压缩末端体积，适配矿槽内取矿空间</li>
+              <li>J5/J6 等速同步轮、齿轮组与锥齿轮组合传动，保证末端姿态控制精度</li>
             </ul>
           </div>
 
-          <div class="detail-block c2">
-            <h5>&#128664; 全向驱动底盘</h5>
-            <ul>
-              <li>电动车橡胶轮，兼顾极高地面抓地力与减震性能</li>
-              <li>自研气缸悬挂舵轮结构，大幅提升机械臂底座稳定性</li>
+          <div class="subsystem-card" id="rd-pump">
+            <div class="subsystem-gallery single">
+              <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+                <img src="air-pump.webp" class="show" alt="改装气泵" loading="lazy" decoding="async" width="350" height="261">
+              </div>
+            </div>
+            <div class="subsystem-header">3508 改装气泵</div>
+            <ul class="subsystem-list">
+              <li>将原有有刷气泵改为 3508 无刷电机驱动，避免供电冲击并提升流量上限</li>
+              <li>维持 <strong>-85 kPa</strong> 真空度，5000 rpm 下流量超过 <strong>40 L/min</strong></li>
+              <li>整泵 <strong>&lt;300 g</strong>，为机械臂末端保留更多质量和惯量余量</li>
+              <li>通过电机电流反馈判断吸附状态，配合吸盘实现稳定取矿与掉矿风险监测</li>
             </ul>
           </div>
 
-          <div class="detail-block c3">
-            <h5>&#128168; 气动系统</h5>
-            <ul>
-              <li>自主改装高流量气泵，流量精准可调</li>
-              <li>电机电流/位置反馈实现吸附状态<strong>实时监测</strong></li>
+          <div class="subsystem-card" id="rd-eng-wheel">
+            <div class="subsystem-gallery single">
+              <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+                <img src="eng-wheel.webp" class="show" alt="工程舵轮组" loading="lazy" decoding="async" width="260" height="220">
+              </div>
+            </div>
+            <div class="subsystem-header">工程舵轮模组</div>
+            <ul class="subsystem-list">
+              <li>5 寸实心橡胶轮提供高抓地力和耐磨性，支撑赛场脱困与快速返回补给</li>
+              <li>3508 自制减速箱 + MGN7 滑轨 + 气弹簧舵下悬挂，兼顾高载荷与小陀螺稳定性</li>
+              <li>兑矿时可边移动底盘边操作机械臂，提升四级矿兑换节奏</li>
+              <li>单个舵轮组按快拆维护设计，便于场间排障和模块更换</li>
             </ul>
           </div>
+        </div>
+      </div>
 
-          <div class="detail-block c4">
-            <h5>&#128736; 综合机构与工业设计</h5>
-            <ul>
-              <li>综合运用齿轮、连杆、链条及同步带等多种传动</li>
-              <li>工业级管线管理，多自由度下走线安全与视觉美感</li>
-            </ul>
+      <!-- Controller Companion -->
+      <div class="controller-companion" id="proj-controller">
+        <div class="companion-label">配套遥操作终端</div>
+        <div class="project-card system-main">
+          <div class="project-header">
+            <h3><span class="icon">&#127918;</span>自定义控制器</h3>
+            <div class="project-subtitle">操作手习惯适配 <span class="sep">·</span> 六轴同构映射 <span class="sep">·</span> 快速兑矿链路</div>
           </div>
+          <div class="project-body">
+            <div class="project-gallery single">
+              <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+                <img src="controller.webp" class="show" alt="自定义控制器 — 高精度遥操作终端" loading="lazy" decoding="async" width="249" height="384">
+              </div>
+            </div>
+            <div class="project-desc">
+              <div class="highlight">&#127919; 作为工程机器人的核心输入终端，根据操作手习惯和手臂数据调整连杆布局，支撑赛场 5.8s 兑换流程。</div>
 
-          <div class="tags">
-            <span class="tag">机械设计</span><span class="tag">系统集成</span><span class="tag">高精度</span><span class="tag">高稳定性</span>
-          </div>
-          <div class="project-links">
-            <a href="https://www.bilibili.com/video/BV1Y482zjERP/?spm_id_from=333.788.videopod.sections&vd_source=a3191892d8abed85f77e649dae496839" target="_blank">&#9654; 演示视频 (Bilibili)</a>
-            <a href="https://bbs.robomaster.com/article/803685?source=8" target="_blank">&#128214; 机械开源链接</a>
+              <div class="detail-block c1">
+                <h5>&#128075; 操作手习惯适配</h5>
+                <ul>
+                  <li>控制器拓扑与主机械臂近似同构，降低操作者到机器人动作的空间映射成本</li>
+                  <li>根据操作手手臂数据调整 L2 位置，使操作姿态更自然、长时操作更稳定</li>
+                  <li>四级矿兑换时可单手不换姿势完成左右肘位切换，减少高压比赛中的动作重置</li>
+                </ul>
+              </div>
+
+              <div class="detail-block c2">
+                <h5>&#9889; 快速响应结构方案</h5>
+                <ul>
+                  <li>桌面级尺寸、低运动惯量，提升手部动作到机械臂响应的跟随感</li>
+                  <li>关键受力件使用 CNC，外壳和辅助结构采用 3D 打印，便于围绕操作反馈快速迭代</li>
+                  <li>与图传视野、Wrist 末端和兑矿动作链路共同优化，而不是单独作为外设存在</li>
+                </ul>
+              </div>
+
+              <div class="tags">
+                <span class="tag">机械设计</span><span class="tag">人机交互</span><span class="tag">遥操作</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 1.2 自定义控制器 -->
-    <div class="project-card" id="proj-controller">
-      <div class="project-header">
-        <h3><span class="icon">&#127918;</span>自定义控制器（高精度遥操作）</h3>
-        <div class="project-subtitle">人机交互 <span class="sep">·</span> 六轴联动 <span class="sep">·</span> 低成本高精度</div>
-      </div>
-      <div class="project-body">
-        <div class="project-gallery single">
-          <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
-            <img src="controller.webp" class="show" alt="自定义控制器 — 高精度遥操作终端" loading="lazy" decoding="async" width="249" height="384">
+    <!-- System Group: Hero 2024 -->
+    <div class="system-group">
+      <div class="system-group-title">RM 2024 英雄机器人系统</div>
+
+      <div class="system-main-cards single-main">
+        <div class="project-card system-main" id="proj-hero">
+          <div class="project-header">
+            <h3><span class="icon">&#129302;</span>RoboMaster 2024 英雄机器人</h3>
+            <div class="project-subtitle">双极摩擦轮 <span class="sep">·</span> 自适应悬挂底盘 <span class="sep">·</span> 全向移动</div>
+          </div>
+          <div class="project-body">
+            <div class="project-gallery single">
+              <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+                <img src="hero-bot.webp" class="show" alt="英雄机器人 — 2024赛季双极摩擦轮发射系统" loading="lazy" decoding="async" width="491" height="436">
+              </div>
+            </div>
+            <div class="project-desc">
+              <div class="highlight">&#127919; 围绕大弹丸精准发射、稳定供弹与全向机动越障设计；10m 散布 &lt;25×25cm，初速波动 ±0.1 m/s，2Hz 稳定供弹，通过 30cm 垂直跌落冲击测试。</div>
+
+              <div class="detail-block c1">
+                <h5>&#127919; 高一致性双极摩擦轮发射系统</h5>
+                <ul>
+                  <li>10m 散布 &lt; <strong>25×25cm</strong>，初速波动 <strong>±0.1m/s</strong></li>
+                  <li>双极对冲摩擦轮机构，实现极窄散布</li>
+                </ul>
+              </div>
+
+              <div class="detail-block c2">
+                <h5>&#127939; 自适应麦克纳姆轮悬挂底盘</h5>
+                <ul>
+                  <li>全维度灵巧位移与快速转场</li>
+                  <li>通过 <strong>30cm 垂直跌落</strong>高强度冲击测试</li>
+                </ul>
+              </div>
+
+              <div class="tags">
+                <span class="tag">机械设计</span><span class="tag">高精度</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="project-desc">
-          <div class="highlight">&#127919; 作为核心输入终端，与工程机器人深度耦合，支撑创纪录作业效率</div>
-
-          <div class="detail-block c1">
-            <h5>&#128075; 人机交互与人体工学</h5>
-            <ul>
-              <li>与主机械臂高度同构的六轴联动结构，实现 1:2 直觉映射</li>
-              <li>手部抓握轻量化设计，长时操作舒适精准</li>
-            </ul>
-          </div>
-
-          <div class="detail-block c2">
-            <h5>&#128176; 高性价比结构方案</h5>
-            <ul>
-              <li>大量 3D 打印 + 简易 3 轴 CNC 加工，显著降低成本</li>
-              <li>桌面级尺寸，低运动惯量，提供丝滑操控反馈</li>
-            </ul>
-          </div>
-
-          <div class="tags">
-            <span class="tag">机械设计</span><span class="tag">低成本</span><span class="tag">人机交互</span>
-          </div>
-        </div>
       </div>
-    </div>
 
-    <!-- 2. 英雄机器人 -->
-    <div class="project-card" id="proj-hero">
-      <div class="project-header">
-        <h3><span class="icon">&#129302;</span>RoboMaster 2024 英雄机器人</h3>
-        <div class="project-subtitle">双极摩擦轮 <span class="sep">·</span> 自适应悬挂底盘 <span class="sep">·</span> 全向移动</div>
-      </div>
-      <div class="project-body">
-        <div class="project-gallery single">
-          <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
-            <img src="hero-bot.webp" class="show" alt="英雄机器人 — 2024赛季双极摩擦轮发射系统" loading="lazy" decoding="async" width="491" height="436">
-          </div>
-        </div>
-        <div class="project-desc">
-          <div class="detail-block c1">
-            <h5>&#127919; 高一致性双极摩擦轮发射系统</h5>
-            <ul>
-              <li>10m 散布 &lt; <strong>25×25cm</strong>，初速波动 <strong>±0.1m/s</strong></li>
-              <li>双极对冲摩擦轮机构，实现极窄散布</li>
+      <!-- Subsystems -->
+      <div class="subsystem-area">
+        <div class="subsystem-label">关键子系统 / 模块</div>
+        <div class="subsystem-grid one-col">
+          <div class="subsystem-card" id="rd-feeder">
+            <div class="subsystem-gallery single">
+              <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+                <img src="feeder-large.webp" class="show" alt="大弹丸测供弹" loading="lazy" decoding="async" width="158" height="143">
+              </div>
+            </div>
+            <div class="subsystem-header">大弹丸侧供弹系统</div>
+            <ul class="subsystem-list">
+              <li>用于 2024 英雄机器人，面向类高尔夫球大弹丸连续供弹</li>
+              <li>基于队内既有侧供弹方案进行优化和微调，优先保证可靠性与风险收敛</li>
+              <li>针对弹丸尺寸公差优化防卡滞结构，支持 <strong>2Hz</strong> 稳定供弹</li>
             </ul>
-          </div>
-
-          <div class="detail-block c2">
-            <h5>&#128255; 高可靠性连续供弹机构</h5>
-            <ul>
-              <li>防卡死拨弹结构，支持 <strong>2Hz</strong> 恒定频率稳定供弹</li>
-              <li>弹丸尺寸公差容错，显著降低卡死率</li>
-            </ul>
-          </div>
-
-          <div class="detail-block c3">
-            <h5>&#127939; 自适应麦克纳姆轮悬挂底盘</h5>
-            <ul>
-              <li>全维度灵巧位移与快速转场</li>
-              <li>通过 <strong>30cm 垂直跌落</strong>高强度冲击测试</li>
-            </ul>
-          </div>
-
-          <div class="tags">
-            <span class="tag">机械设计</span><span class="tag">高精度</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- 3. 外骨骼 -->
+    <!-- Exoskeleton -->
     <div class="project-card" id="proj-exo">
       <div class="project-header">
         <h3><span class="icon">&#129470;</span>四轴手臂外骨骼（课设）</h3>
-        <div class="project-subtitle">穿戴式动力辅助 <span class="sep">·</span> DH 参数建模 <span class="sep">·</span> IMU 跟随控制</div>
+        <div class="project-subtitle">穿戴式助力结构 <span class="sep">·</span> DH 运动学建模 <span class="sep">·</span> IMU 跟随验证</div>
       </div>
       <div class="project-body">
         <div class="project-gallery single">
@@ -239,21 +346,21 @@
           </div>
         </div>
         <div class="project-desc">
-          <div class="highlight">&#129504; 面向人机协同作业场景的穿戴式动力辅助设备，4 自由度轻量化外骨骼原型机</div>
+          <div class="highlight">&#129504; 面向上肢助力与人机协同场景，完成 4 自由度轻量化外骨骼原型设计，并通过运动学建模与基础控制验证可行性。</div>
 
           <div class="detail-block c1">
-            <h5>&#128300; 运动学建模</h5>
+            <h5>&#128300; 人体运动匹配与建模</h5>
             <ul>
-              <li>基于 DH 参数法建立外骨骼运动学模型</li>
-              <li>仿真环境下验证工作空间覆盖率</li>
+              <li>依据大臂、肘部主要运动自由度布置关节轴线，减少人机运动干涉</li>
+              <li>基于 DH 参数法建立运动学模型，并在仿真中验证工作空间覆盖率</li>
             </ul>
           </div>
 
           <div class="detail-block c2">
-            <h5>&#127939; 算法控制</h5>
+            <h5>&#127939; 跟随与助力控制</h5>
             <ul>
-              <li><strong>跟随模式：</strong>IMU 预测手臂移动方向并跟随</li>
-              <li><strong>助力模式：</strong>闭环控制电机保持动作，提供辅助力</li>
+              <li>通过手背 IMU 预测手臂运动方向，驱动外骨骼完成跟随动作</li>
+              <li>闭环控制电机保持动作姿态，在助力模式下提供辅助力输出</li>
             </ul>
           </div>
 
@@ -265,159 +372,59 @@
     </div>
   </section>
 
-  <!-- ===== 重要研发方案 ===== -->
+  <!-- ===== 2024-2025 赛季技术预研与模块开发 ===== -->
   <section class="section" id="research">
-    <h2 class="section-title">&#128218; 重要研发方案</h2>
+    <h2 class="section-title">&#128218; 2024-2025 赛季技术预研与模块开发</h2>
     <div class="section-divider"></div>
 
-    <!-- 1. 六轴机械臂 -->
-    <div class="project-card" id="rd-arm">
-      <div class="project-header">
-        <h3><span class="icon">&#129521;</span>六轴机械臂结构</h3>
-        <div class="project-subtitle">末端执行器核心设计 <span class="sep">·</span> 多场耦合传输 <span class="sep">·</span> 高精度传动</div>
-      </div>
-      <div class="project-body">
-        <div class="project-gallery" data-gallery="arm">
+    <div class="research-grid">
+      <div class="research-card">
+        <div class="research-step">01</div>
+        <h4>&#128736; 舵轮模组预研</h4>
+        <div class="subsystem-gallery" data-gallery="pre-wheel">
           <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
-            <img src="arm-l3.webp" class="show" alt="机械臂L3" loading="lazy" decoding="async" width="730" height="490">
-            <img src="arm-l4.webp" alt="机械臂L4" loading="lazy" decoding="async" width="744" height="543">
-          </div>
-          <div class="gallery-thumbs">
-            <img src="arm-l3.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="730" height="490">
-            <img src="arm-l4.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="744" height="543">
-          </div>
-        </div>
-        <div class="project-desc">
-          <div class="detail-block c1">
-            <h5>&#127744; "轮手"一体化末端</h5>
-            <ul>
-              <li>集主动轮与气动吸盘于一体，抓取与移动功能自由切换</li>
-            </ul>
-          </div>
-
-          <div class="detail-block c2">
-            <h5>&#128268; 多场耦合传输设计</h5>
-            <ul>
-              <li>电滑环 + 中空旋转气动接头嵌套，解决 J4 关节无限旋转绕线</li>
-            </ul>
-          </div>
-
-          <div class="detail-block c3">
-            <h5>&#128207; 空间极简化布局</h5>
-            <ul>
-              <li>万向轴传动 + 电机后置 L4，压缩末端体积适配矿槽尺寸</li>
-            </ul>
-          </div>
-
-          <div class="detail-block c4">
-            <h5>&#127919; 高精度传动集成</h5>
-            <ul>
-              <li>J5/J6 等速同步轮 + 齿轮组 + 锥齿轮，J5 近乎零背隙</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 2. 改装气泵 -->
-    <div class="project-card" id="rd-pump">
-      <div class="project-header">
-        <h3><span class="icon">&#128168;</span>改装气泵</h3>
-        <div class="project-subtitle">高性能二次开发 <span class="sep">·</span> 真空度 -85kPa <span class="sep">·</span> 流量 40L/min</div>
-      </div>
-      <div class="project-body">
-        <div class="project-gallery single">
-          <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
-            <img src="air-pump.webp" class="show" alt="改装气泵 — 3508直流无刷电机驱动" loading="lazy" decoding="async" width="350" height="261">
-          </div>
-        </div>
-        <div class="project-desc">
-          <div class="highlight">&#9889; 将低端气泵电机改装为 3508 直流无刷电机驱动，维持 <strong>-85kPa</strong> 高真空度的同时实现 <strong>40L/min</strong> 大流量输出</div>
-
-          <div class="detail-block c1">
-            <h5>&#128295; 改装方案</h5>
-            <ul>
-              <li>3508 直流无刷电机替换原低端电机，大幅提升性能</li>
-              <li>整机重量 <strong>&lt;300 g</strong>，吸盘拉脱力 <strong>250 N</strong></li>
-              <li>电机电流反馈实时感知吸盘吸附状态，以极低成本实现类气压计检测</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 3. 多种舵轮 -->
-    <div class="project-card" id="rd-wheel">
-      <div class="project-header">
-        <h3><span class="icon">&#128736;</span>多种舵轮模组</h3>
-        <div class="project-subtitle">高负载悬挂 <span class="sep">·</span> 小型化轻量化 <span class="sep">·</span> 全向机动</div>
-      </div>
-      <div class="project-body">
-        <div class="project-gallery" data-gallery="wheel">
-          <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
-            <img src="eng-wheel.webp" class="show" alt="工程舵轮组" loading="lazy" decoding="async" width="260" height="220">
-            <img src="hero-wheel.webp" alt="英雄舵轮组" loading="lazy" decoding="async" width="339" height="344">
+            <img src="eng-wheel.webp" class="show" alt="高负载工程舵轮方案" loading="lazy" decoding="async" width="260" height="220">
+            <img src="hero-wheel.webp" alt="2025 英雄轻量化舵轮预研" loading="lazy" decoding="async" width="339" height="344">
           </div>
           <div class="gallery-thumbs">
             <img src="eng-wheel.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="260" height="220">
             <img src="hero-wheel.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="339" height="344">
           </div>
         </div>
-        <div class="project-desc">
-          <div class="detail-block c1">
-            <h5>&#128170; 高负载、高平稳度、高机动性</h5>
-            <ul>
-              <li>宽大橡胶胎 + 高抓地力 + 减震能力</li>
-              <li>四个 MGN7 滑块与气弹簧组成舵下悬挂，承受高负载</li>
-            </ul>
-          </div>
+        <ul>
+          <li>高负载方案：宽橡胶胎 + 舵下气弹簧悬挂，提升抓地、减震与底盘稳定性</li>
+          <li>2025 英雄预研轻量化方案：3508 电机本体 + 齿轮传动 + 光电门校准 + 聚氨酯轮 + 舵上悬挂</li>
+          <li>围绕不同兵种空间和载荷需求，分别验证高负载稳定性与小型化结构可行性</li>
+        </ul>
+      </div>
 
-          <div class="detail-block c2">
-            <h5>&#129388; 小型化、轻量化</h5>
-            <ul>
-              <li>3508 电机本体 + 齿轮传动 + 光电门位置校准</li>
-              <li>轻型聚氨酯轮，舵上悬挂进一步减少体积</li>
-            </ul>
+      <div class="research-card">
+        <div class="research-step">02</div>
+        <h4>&#127922; 供弹系统预研</h4>
+        <div class="subsystem-gallery single">
+          <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+            <img src="feeder-small.webp" class="show" alt="小弹丸中心供弹预研" loading="lazy" decoding="async" width="331" height="286">
           </div>
         </div>
+        <ul>
+          <li>完成小弹丸中心供弹初版预研：多层预制、整流罩、防剪切优先</li>
+          <li>指导学弟优化小弹丸侧供弹：弹频由 <strong>20 Hz</strong> 提升至接近 <strong>30 Hz</strong></li>
+          <li>结合大弹丸侧供弹经验，优先处理弹丸整流、防卡滞和高速供弹一致性问题</li>
+        </ul>
       </div>
     </div>
+  </section>
 
-    <!-- 4. 供弹系统 -->
-    <div class="project-card" id="rd-feeder">
-      <div class="project-header">
-        <h3><span class="icon">&#127922;</span>两种供弹系统</h3>
-        <div class="project-subtitle">大弹丸侧供弹 2Hz <span class="sep">·</span> 小弹丸中心供弹 25Hz+</div>
-      </div>
-      <div class="project-body">
-        <div class="project-gallery" data-gallery="feeder">
-          <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
-            <img src="feeder-large.webp" class="show" alt="大弹丸测供弹" loading="lazy" decoding="async" width="158" height="143">
-            <img src="feeder-small.webp" alt="小弹丸中心供弹" loading="lazy" decoding="async" width="331" height="286">
-          </div>
-          <div class="gallery-thumbs">
-            <img src="feeder-large.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="158" height="143">
-            <img src="feeder-small.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="331" height="286">
-          </div>
-        </div>
-        <div class="project-desc">
-          <div class="detail-block c1">
-            <h5>&#128640; 大弹丸侧供弹</h5>
-            <ul>
-              <li>用于 2024 英雄机器人，多轮结构优化</li>
-              <li>类高尔夫球弹丸稳定 <strong>2Hz</strong> 供弹不卡顿</li>
-            </ul>
-          </div>
-
-          <div class="detail-block c2">
-            <h5>&#128163; 小弹丸中心供弹</h5>
-            <ul>
-              <li>用于步兵、哨兵、无人机，结构小巧轻便</li>
-              <li>17mm 弹丸 <strong>~30 Hz</strong>（从 20 Hz 优化）高效供弹</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+  <!-- ===== 荣誉与奖项 ===== -->
+  <section class="section" id="awards">
+    <h2 class="section-title">&#127891; 荣誉与奖项</h2>
+    <div class="section-divider"></div>
+    <div class="honors-card">
+      <h4><span class="dot"></span>奖学金与学业荣誉</h4>
+      <ul class="honors-list">
+        <li><strong>奖学金：</strong>HKSAR Government Scholarship Fund – Talent Development Scholarship, 2024 & 2025</li>
+        <li><strong>学业荣誉：</strong>HKUST SENG Dean's List, Fall 2023</li>
+      </ul>
     </div>
   </section>
 

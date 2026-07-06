@@ -70,8 +70,8 @@ function restartGalleryTimer(gallery, fromIndex) {
   galleryTimers[id] = setInterval(function() { autoAdvanceGallery(gallery); }, 3500);
 }
 
-// Init all galleries
-document.querySelectorAll('.project-gallery').forEach(function(g) {
+// Init all galleries (project + subsystem)
+document.querySelectorAll('.project-gallery, .subsystem-gallery').forEach(function(g) {
   var imgs = g.querySelectorAll('.gallery-main img');
   if (imgs.length > 1) restartGalleryTimer(g, 0);
 });
@@ -105,8 +105,9 @@ document.querySelectorAll('.section').forEach(function(s) { observer.observe(s);
 
 // ===== Scroll spy =====
 var sectionIds = [
-  'about','projects','proj-engineering','proj-controller','proj-hero','proj-exo',
-  'research','rd-arm','rd-pump','rd-wheel','rd-feeder'
+  'about', 'projects',
+  'proj-engineering', 'proj-controller', 'proj-hero', 'proj-exo',
+  'research', 'awards'
 ];
 var navLinks = document.querySelectorAll('.nav-list a');
 
