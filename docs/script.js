@@ -1,7 +1,9 @@
 // ===== All project images for background slideshow =====
 (function() {
   const allImages = [
-    'eng-allstar.webp', 'eng-mvp.webp', 'eng-arm.webp', 'hero-bot.webp', 'exo-suit.webp'
+    'eng-allstar.webp', 'eng-mvp.webp', 'eng-photo1.jpg', 'eng-phtot2.jpg',
+    'eng-arm.webp', 'hero-bot.webp', 'hero-launcher-2024.png',
+    'launcher-dual-4.png', 'launcher-dual-6.png', 'exo-suit.webp'
   ];
 
   const container = document.getElementById('bgSlideshow');
@@ -103,6 +105,19 @@ var observer = new IntersectionObserver(function(entries) {
 
 document.querySelectorAll('.section').forEach(function(s) { observer.observe(s); });
 
+function revealVisibleSections() {
+  var mainRect = mainEl.getBoundingClientRect();
+  document.querySelectorAll('.section').forEach(function(section) {
+    var rect = section.getBoundingClientRect();
+    var isNearViewport = rect.top < mainRect.bottom + 160 && rect.bottom > mainRect.top - 160;
+    if (isNearViewport) section.classList.add('visible');
+  });
+}
+
+requestAnimationFrame(revealVisibleSections);
+window.addEventListener('load', revealVisibleSections);
+window.addEventListener('resize', revealVisibleSections);
+
 // ===== Scroll spy =====
 var sectionIds = [
   'about', 'projects',
@@ -112,6 +127,7 @@ var sectionIds = [
 var navLinks = document.querySelectorAll('.nav-list a');
 
 mainEl.addEventListener('scroll', function() {
+  revealVisibleSections();
   var scrollTop = mainEl.scrollTop + 80;
   var current = 'about';
 

@@ -377,6 +377,40 @@
     <h2 class="section-title">&#128218; 2024-2025 赛季技术预研与模块开发</h2>
     <div class="section-divider"></div>
 
+    <div class="launcher-module">
+      <div class="launcher-header">
+        <h4>&#128640; 发射机构预研迭代</h4>
+        <p>从 RM2024 英雄单级发射，到双级四摩擦轮样机，再到双级六摩擦轮方向。</p>
+      </div>
+      <div class="launcher-evolution">
+        <div class="launcher-item">
+          <div class="launcher-img" onclick="openModal('hero-launcher-2024.png')">
+            <img src="hero-launcher-2024.png" alt="RM2024 英雄发机" loading="lazy" decoding="async" width="491" height="436">
+          </div>
+          <div class="launcher-caption">RM2024 英雄发机</div>
+        </div>
+        <div class="launcher-arrow">&#10132;</div>
+        <div class="launcher-item">
+          <div class="launcher-img" onclick="openModal('launcher-dual-4.png')">
+            <img src="launcher-dual-4.png" alt="双级四摩擦轮样机" loading="lazy" decoding="async" width="491" height="436">
+          </div>
+          <div class="launcher-caption">双级四摩擦轮样机</div>
+        </div>
+        <div class="launcher-arrow">&#10132;</div>
+        <div class="launcher-item">
+          <div class="launcher-img" onclick="openModal('launcher-dual-6.png')">
+            <img src="launcher-dual-6.png" alt="双级六摩擦轮方向" loading="lazy" decoding="async" width="491" height="436">
+          </div>
+          <div class="launcher-caption">双级六摩擦轮方向</div>
+        </div>
+      </div>
+      <ul class="launcher-notes">
+        <li>基于 RM2024 英雄发射经验继续预研多级加速方案</li>
+        <li>双级四摩擦轮样机暴露左右散布较大问题，三摩擦轮尝试验证了初射角稳定但弹速一致性不足</li>
+        <li>后续将双级六摩擦轮列为主要研发方向，用于兼顾弹速一致性和散布控制</li>
+      </ul>
+    </div>
+
     <div class="research-grid">
       <div class="research-card">
         <div class="research-step">01</div>
@@ -392,24 +426,29 @@
           </div>
         </div>
         <ul>
-          <li>高负载方案：宽橡胶胎 + 舵下气弹簧悬挂，提升抓地、减震与底盘稳定性</li>
-          <li>2025 英雄预研轻量化方案：3508 电机本体 + 齿轮传动 + 光电门校准 + 聚氨酯轮 + 舵上悬挂</li>
-          <li>围绕不同兵种空间和载荷需求，分别验证高负载稳定性与小型化结构可行性</li>
+          <li>高负载方案采用宽橡胶胎与舵下气弹簧悬挂，面向工程机器人抓地、减震和底盘姿态稳定</li>
+          <li>2025 英雄预研方案采用 3508 电机本体、齿轮传动、光电门校准、聚氨酯轮和舵上悬挂，压缩结构高度</li>
+          <li>围绕不同兵种的空间、载荷和机动需求，分别验证高负载稳定性与轻量化小型化可行性</li>
         </ul>
       </div>
 
       <div class="research-card">
         <div class="research-step">02</div>
         <h4>&#127922; 供弹系统预研</h4>
-        <div class="subsystem-gallery single">
-          <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
-            <img src="feeder-small.webp" class="show" alt="小弹丸中心供弹预研" loading="lazy" decoding="async" width="331" height="286">
+        <div class="subsystem-gallery" data-gallery="pre-feeder">
+          <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
+            <img src="feeder-large.webp" class="show" alt="大弹丸侧供弹" loading="lazy" decoding="async" width="158" height="143">
+            <img src="feeder-small.webp" alt="小弹丸中心供弹预研" loading="lazy" decoding="async" width="331" height="286">
+          </div>
+          <div class="gallery-thumbs">
+            <img src="feeder-large.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="158" height="143">
+            <img src="feeder-small.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="331" height="286">
           </div>
         </div>
         <ul>
-          <li>完成小弹丸中心供弹初版预研：多层预制、整流罩、防剪切优先</li>
-          <li>指导学弟优化小弹丸侧供弹：弹频由 <strong>20 Hz</strong> 提升至接近 <strong>30 Hz</strong></li>
-          <li>结合大弹丸侧供弹经验，优先处理弹丸整流、防卡滞和高速供弹一致性问题</li>
+          <li>大弹丸侧供弹用于 RM2024 英雄机器人，围绕类高尔夫球弹丸的连续供弹与防卡滞做可靠性优化</li>
+          <li>小弹丸中心供弹完成初版预研，采用多层预制、整流罩和防剪切优先的设计思路</li>
+          <li>指导学弟优化小弹丸侧供弹，将弹频由 <strong>20 Hz</strong> 提升至接近 <strong>30 Hz</strong></li>
         </ul>
       </div>
     </div>
