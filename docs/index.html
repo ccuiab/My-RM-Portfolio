@@ -299,7 +299,7 @@
               <div class="detail-block c2">
                 <h5>&#127939; 自适应麦克纳姆轮悬挂底盘</h5>
                 <ul>
-                  <li>提升轮组接地、落地缓冲和整车姿态稳定性，支撑全向机动与快速转场</li>
+                  <li>四轮联动分摊麦克纳姆轮接地压力，提升复杂地形下的全向机动与姿态稳定性</li>
                   <li>通过 <strong>30cm 垂直跌落</strong>冲击测试，验证底盘抗冲击能力</li>
                 </ul>
               </div>
@@ -315,7 +315,7 @@
       <!-- Subsystems -->
       <div class="subsystem-area">
         <div class="subsystem-label">关键子系统 / 模块</div>
-        <div class="subsystem-grid one-col">
+        <div class="subsystem-grid two-col">
           <div class="subsystem-card" id="rd-feeder">
             <div class="subsystem-gallery single">
               <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
@@ -327,6 +327,19 @@
               <li>用于 RM2024 英雄机器人，面向类高尔夫球大弹丸连续供弹</li>
               <li>基于队内既有侧供弹方案优化，优先收敛可靠性和卡滞风险</li>
               <li>针对弹丸尺寸公差优化防卡滞结构，支持 <strong>2Hz</strong> 稳定供弹</li>
+            </ul>
+          </div>
+          <div class="subsystem-card" id="rd-hero-chassis">
+            <div class="subsystem-gallery single">
+              <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+                <img src="hero-chassis-adaptive.webp" class="show" alt="RM2024 英雄机器人自适应悬挂底盘" loading="lazy" decoding="async" width="1185" height="836">
+              </div>
+            </div>
+            <div class="subsystem-header">自适应悬挂底盘</div>
+            <ul class="subsystem-list">
+              <li>围绕麦克纳姆轮全向移动设计四轮联动悬挂，使起伏路面下各轮接地压力更均衡</li>
+              <li>采用较大轮距与预紧压簧，抑制大弹丸发射后坐力引起的整车晃动</li>
+              <li>实测支持飞坡、15cm 正向下台阶和 8cm 侧向下台阶等高冲击场景</li>
             </ul>
           </div>
         </div>
