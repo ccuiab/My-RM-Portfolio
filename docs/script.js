@@ -96,27 +96,32 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') closeModal();
 });
 
-// ===== Fade-in on scroll =====
+// ===== Fade-in on scroll (viewport-based: works for desktop .main scroll AND mobile window scroll) =====
 var observer = new IntersectionObserver(function(entries) {
   entries.forEach(function(entry) {
     if (entry.isIntersecting) entry.target.classList.add('visible');
   });
-}, { threshold: 0.08, root: mainEl });
+}, { threshold: 0.08 });
 
 document.querySelectorAll('.section').forEach(function(s) { observer.observe(s); });
 
 function revealVisibleSections() {
-  var mainRect = mainEl.getBoundingClientRect();
+  var vh = window.innerHeight;
   document.querySelectorAll('.section').forEach(function(section) {
     var rect = section.getBoundingClientRect();
-    var isNearViewport = rect.top < mainRect.bottom + 160 && rect.bottom > mainRect.top - 160;
-    if (isNearViewport) section.classList.add('visible');
+    if (rect.top < vh + 160 && rect.bottom > -160) section.classList.add('visible');
   });
 }
 
 requestAnimationFrame(revealVisibleSections);
 window.addEventListener('load', revealVisibleSections);
 window.addEventListener('resize', revealVisibleSections);
+
+// ===== Adaptive scroll container =====
+// Desktop: .main is the fixed scroll container. Mobile (<=800px): .main is static, window scrolls.
+function isMobileLayout() { return window.innerWidth <= 800; }
+function getScroller() { return isMobileLayout() ? window : mainEl; }
+function getScrollTop() { return isMobileLayout() ? window.scrollY : mainEl.scrollTop; }
 
 // ===== Scroll spy =====
 var sectionIds = [
@@ -126,27 +131,22 @@ var sectionIds = [
 ];
 var navLinks = document.querySelectorAll('.nav-list a');
 
-mainEl.addEventListener('scroll', function() {
+function onScroll() {
   revealVisibleSections();
-  var scrollTop = mainEl.scrollTop + 80;
   var current = 'about';
 
   for (var i = 0; i < sectionIds.length; i++) {
     var el = document.getElementById(sectionIds[i]);
-    if (el) {
-      // Get element position relative to the scroll container
-      var rect = el.getBoundingClientRect();
-      var mainRect = mainEl.getBoundingClientRect();
-      var elTop = rect.top - mainRect.top + mainEl.scrollTop;
-      if (elTop <= scrollTop + 60) current = sectionIds[i];
-    }
+    if (el && el.getBoundingClientRect().top <= 140) current = sectionIds[i];
   }
 
   navLinks.forEach(function(a) {
-    a.classList.remove('active');
-    if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+    a.classList.toggle('active', a.getAttribute('href') === '#' + current);
   });
-});
+}
+
+mainEl.addEventListener('scroll', onScroll);
+window.addEventListener('scroll', onScroll);
 
 // ===== Smooth scroll for nav clicks =====
 document.querySelectorAll('.nav-list a').forEach(function(a) {
@@ -156,11 +156,26 @@ document.querySelectorAll('.nav-list a').forEach(function(a) {
     var target = document.getElementById(id);
     if (!target) return;
 
-    // Calculate position relative to main scroll container
-    var targetRect = target.getBoundingClientRect();
-    var mainRect = mainEl.getBoundingClientRect();
-    var scrollTo = targetRect.top - mainRect.top + mainEl.scrollTop - 20;
-
-    mainEl.scrollTo({ top: scrollTo, behavior: 'smooth' });
+    if (isMobileLayout()) {
+      var top = target.getBoundingClientRect().top + window.scrollY - 70;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+      closeMenu();
+    } else {
+      var mainRect = mainEl.getBoundingClientRect();
+      var scrollTo = target.getBoundingClientRect().top - mainRect.top + mainEl.scrollTop - 20;
+      mainEl.scrollTo({ top: scrollTo, behavior: 'smooth' });
+    }
   });
 });
+
+// ===== Mobile hamburger menu =====
+var sidebar = document.querySelector('.sidebar');
+var menuToggle = document.getElementById('menuToggle');
+
+function closeMenu() { if (sidebar) sidebar.classList.remove('nav-open'); }
+
+if (menuToggle) {
+  menuToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('nav-open');
+  });
+}

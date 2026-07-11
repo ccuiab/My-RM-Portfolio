@@ -64,6 +64,12 @@ My-RM-Portfolio/
 - 全部转换为 WebP，体积从 ~785KB 降至 ~451KB（-42%）
 - 文件名英文化，避免 URL 中文编码问题
 
+### P4：移动端适配
+- 修复导航失效 bug：滚动逻辑原绑定 `.main`，但窄屏真正滚动的是 `window`；新增 `getScroller()` 自适应，scroll spy / 平滑滚动 / fade-in observer 全部按视口切换目标
+- 窄屏（≤800px）侧边栏收为 sticky 顶部精简条 + 汉堡菜单（`#menuToggle`），点目录项自动收起
+- 画廊 `gallery-main` 由固定高改为 `aspect-ratio: 4/3`，减少小图留白
+- 补 801–1100px 中间断点（子系统双列、侧栏收窄）
+
 | 旧文件名 | 新文件名 |
 |----------|----------|
 | 全明星.jpg | eng-allstar.webp |
