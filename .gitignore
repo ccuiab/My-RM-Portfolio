@@ -1,3 +1,6 @@
 *.7z
 .venv/
 tmp/
+.superpowers/
+plans/
+specs/

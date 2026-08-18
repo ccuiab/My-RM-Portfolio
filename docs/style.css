@@ -819,3 +819,24 @@ body {
   .launcher-img { height: 180px; }
 }
 
+/* ===== English page: Latin typography tuning ===== */
+html[lang="en"] .skill-block ul,
+html[lang="en"] .honors-list          { line-height: 1.75; }
+html[lang="en"] .project-desc,
+html[lang="en"] .research-card ul,
+html[lang="en"] .launcher-notes       { line-height: 1.7; }
+html[lang="en"] .detail-block ul li,
+html[lang="en"] .subsystem-list       { line-height: 1.65; }
+
+html[lang="en"] .sidebar-header .name { letter-spacing: 1px; }
+
+html[lang="en"] .section-title,
+html[lang="en"] .project-header h3,
+html[lang="en"] .project-subtitle,
+html[lang="en"] .detail-block h5,
+html[lang="en"] .subsystem-header,
+html[lang="en"] .launcher-caption     { text-wrap: balance; }
+
+html[lang="en"] .subsystem-list,
+html[lang="en"] .detail-block ul li   { hyphens: auto; }
+
