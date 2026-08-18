@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CUI Chuhan — Portfolio</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="bg-slideshow" id="bgSlideshow"></div>
+
+<nav class="sidebar">
+  <button class="menu-toggle" id="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  <div class="sidebar-header">
+    <div class="name">CUI Chuhan</div>
+    <div class="subtitle">HKUST · CPEG 2023-2027<br>Mechanical Engineering & Robotics</div>
+    <div class="badge">ENTERPRIZE</div>
+    <div class="contact">
+      <a href="https://github.com/ccuiab" target="_blank"><span class="icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" style="vertical-align:middle"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></span>github.com/ccuiab</a>
+      <a href="mailto:ccuiab@connect.ust.hk"><span class="icon">&#9993;</span>ccuiab@connect.ust.hk</a>
+      <a href="index.html"><span class="icon">&#127760;</span>中文</a>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Contents</div>
+    <ul class="nav-list">
+      <li><a href="#about" class="active">Profile</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#proj-engineering" class="sub">2025 Engineer Robot</a></li>
+      <li><a href="#proj-controller" class="sub">Custom Controller</a></li>
+      <li><a href="#proj-hero" class="sub">2024 Hero Robot</a></li>
+      <li><a href="#proj-exo" class="sub">4-DOF Exoskeleton</a></li>
+      <li><a href="#research" class="sub">Pre-Research</a></li>
+      <li><a href="#awards">Honours &amp; Awards</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="main" id="main">
+
+  <!-- ===== Profile ===== -->
+  <section class="section" id="about">
+    <h2 class="section-title">&#128100; Profile</h2>
+    <div class="section-divider"></div>
+    <div class="hero-card">
+      <div class="intro">
+        <p>&#127891; <strong>BEng in Computer Engineering (CPEG), HKUST — minor in AI / Robotics, 2023–2027</strong></p>
+        <p style="margin-top:4px;">&#129302; <strong>Mechanical Lead, HKUST ENTERPRIZE</strong> — led the structural design of the RM2025 Engineer robot. Named an <strong>Engineer All-Star</strong> for the 2025 season, with a <strong>5.8&nbsp;s</strong> level-4 ore exchange WR set on the competition field.</p>
+      </div>
+      <div class="skill-grid">
+        <div class="skill-block">
+          <h4><span class="dot"></span>Structural Design</h4>
+          <ul>
+            <li>SolidWorks modelling, assembly design, drawings, BOMs and assembly documentation</li>
+            <li>Modular, quick-release, maintenance-friendly structures and the spatial layout of complex mechanisms</li>
+          </ul>
+        </div>
+        <div class="skill-block">
+          <h4><span class="dot"></span>Manufacturing &amp; Assembly</h4>
+          <ul>
+            <li>Designing parts for CNC and 3D printing, briefing machinists, and debugging assemblies on the bench</li>
+            <li>Tolerance correction, pre-match quality checks, between-match repairs and equipment upkeep</li>
+          </ul>
+        </div>
+        <div class="skill-block">
+          <h4><span class="dot"></span>Mechatronics &amp; Process</h4>
+          <ul>
+            <li>Pneumatic systems, motor selection, bearings, gears, chain and timing-belt drives</li>
+            <li>Common materials, sheet-metal and plate construction, and the trade-off between structural strength and impact reliability</li>
+          </ul>
+        </div>
+        <div class="skill-block">
+          <h4><span class="dot"></span>Simulation &amp; Integration</h4>
+          <ul>
+            <li>Basic strength simulation, load and impact testing, and closing the loop on prototype faults</li>
+            <li>Python / MATLAB / C++ for data processing and debugging, aligning integration risk with the electronics, vision and algorithms teams</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Projects ===== -->
+  <section class="section" id="projects">
+    <h2 class="section-title">&#9881; Projects</h2>
+    <div class="section-divider"></div>
+
+    <!-- System Group: Engineering 2025 -->
+    <div class="system-group">
+      <div class="system-group-title">RM 2025 Engineer Robot</div>
+
+      <!-- Engineering Robot Main -->
+      <div class="project-card system-main" id="proj-engineering">
+        <div class="project-header">
+          <h3><span class="icon">&#9881;</span>RoboMaster 2025 Engineer Robot</h3>
+          <div class="project-subtitle">Long-reach 6-DOF arm <span class="sep">·</span> High-stability chassis <span class="sep">·</span> Fast exchange loop</div>
+        </div>
+        <div class="project-body">
+          <div class="project-gallery-stack">
+            <div class="project-gallery" data-gallery="eng-awards">
+              <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
+                <img src="eng-allstar.webp" class="show" alt="All-Star" loading="eager" decoding="async" width="649" height="1153">
+                <img src="eng-mvp.webp" alt="Engineer All-Star" loading="lazy" decoding="async" width="844" height="532">
+              </div>
+              <div class="gallery-thumbs">
+                <img src="eng-allstar.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="649" height="1153">
+                <img src="eng-mvp.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="844" height="532">
+              </div>
+            </div>
+            <div class="project-gallery" data-gallery="eng-photos">
+              <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
+                <img src="eng-photo1.jpg" class="show" alt="Engineer robot, competition build 1" loading="lazy" decoding="async" width="1216" height="812">
+                <img src="eng-phtot2.jpg" alt="Engineer robot, competition build 2" loading="lazy" decoding="async" width="1620" height="1080">
+              </div>
+              <div class="gallery-thumbs">
+                <img src="eng-photo1.jpg" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="1216" height="812">
+                <img src="eng-phtot2.jpg" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="1620" height="1080">
+              </div>
+            </div>
+          </div>
+          <div class="project-desc">
+            <div class="highlight">&#127942; Set a <strong>5.8&nbsp;s</strong> level-4 ore exchange WR on the competition field and was named a RoboMaster Engineer All-Star for the 2025 season.</div>
+
+            <div class="detail-block c1">
+              <h5>&#128736; Whole-Robot Architecture &amp; Workspace</h5>
+              <ul>
+                <li>Owned the structural design of this wheeled six-axis Engineer robot — the manipulator platform that retrieves and exchanges ore — settling the PUMA configuration, link parameters and vehicle layout around retrieval, exchange, step climbing, stealing opposing ore and rescue duties</li>
+                <li>38&nbsp;kg all-up, folding to 590×590×540&nbsp;mm and reaching a 1400×1400×1200&nbsp;mm workspace fully extended</li>
+                <li>Treated arm workspace, FPV sight lines, UWB placement and the operator control loop as whole-robot constraints, which cut both collision risk and integration effort</li>
+              </ul>
+            </div>
+
+            <div class="detail-block c2">
+              <h5>&#129521; Six-Axis Arm &amp; Wrist</h5>
+              <ul>
+                <li>A 380&nbsp;mm L2 upper arm and 420&nbsp;mm L3+L4 forearm balance reach and exchange dexterity against wrist stiffness</li>
+                <li>A nested electrical slip ring and hollow rotary union at J4 carry both power and air through unlimited rotation, so the wrist never fights a cable loop</li>
+                <li>The wrist packages the suction cup, drive wheel, the J5/J6 drivetrain and a stable air path into one assembly that supports fast pick-and-exchange motions</li>
+              </ul>
+            </div>
+
+            <div class="detail-block c3">
+              <h5>&#128664; High-Stability Swerve Chassis</h5>
+              <ul>
+                <li>Five-inch solid tyres, a custom 3508 gearbox, MGN7 rails and gas-spring under-module suspension together give the chassis grip, the ability to break free of obstacles, and a steady platform during an exchange</li>
+                <li>The suspension absorbs the disturbance a heavy arm throws into the chassis at speed, so the driver can keep moving while operating the arm</li>
+                <li>A high-flow 3508-converted vacuum pump with suction-state feedback makes ore pickup more repeatable</li>
+              </ul>
+            </div>
+
+            <div class="detail-block c4">
+              <h5>&#128295; Field Reliability &amp; Maintenance</h5>
+              <ul>
+                <li>Gimbal-to-chassis, gimbal-to-arm, the arm as a unit and each individual swerve module all detach quickly, which is what makes between-match troubleshooting possible</li>
+                <li>Six months of hard testing and competition with zero major structural failures — the foundation under the 5.8&nbsp;s level-4 ore exchange WR and the Engineer All-Star selection</li>
+              </ul>
+            </div>
+
+            <div class="tags">
+              <span class="tag">Mechanical Design</span><span class="tag">System Integration</span><span class="tag">Precision</span><span class="tag">Reliability</span>
+            </div>
+            <div class="project-links">
+              <a href="https://www.bilibili.com/video/BV1Y482zjERP/?spm_id_from=333.788.videopod.sections&vd_source=a3191892d8abed85f77e649dae496839" target="_blank">&#9654; Demo Video (Bilibili)</a>
+              <a href="https://bbs.robomaster.com/article/803685?source=8" target="_blank">&#128214; Open-Source Mechanical Release</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subsystems -->
+      <div class="subsystem-area">
+        <div class="subsystem-label">Key Subsystems / Modules</div>
+        <div class="subsystem-grid">
+          <div class="subsystem-card" id="rd-arm">
+            <div class="subsystem-gallery" data-gallery="arm">
+              <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
+                <img src="eng-arm.webp" class="show" alt="Six-axis arm" loading="lazy" decoding="async" width="463" height="618">
+                <img src="arm-l3.webp" alt="Arm L3" loading="lazy" decoding="async" width="730" height="490">
+                <img src="arm-l4.webp" alt="Arm L4" loading="lazy" decoding="async" width="744" height="543">
+              </div>
+              <div class="gallery-thumbs">
+                <img src="eng-arm.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="463" height="618">
+                <img src="arm-l3.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="730" height="490">
+                <img src="arm-l4.webp" onclick="galleryJump(this, 2)" loading="lazy" decoding="async" width="744" height="543">
+              </div>
+            </div>
+            <div class="subsystem-header">Six-Axis Arm Wrist Assembly</div>
+            <ul class="subsystem-list">
+              <li>The wrist packages an HB80 bellows suction cup, a drive wheel, the J5/J6 drivetrain and a stable air path</li>
+              <li>A nested electrical slip ring and hollow rotary union at J4 pass power and air through unlimited rotation</li>
+              <li>A U-joint driveshaft with the motor moved back onto L4 shrinks the wrist enough to work inside an ore slot</li>
+              <li>Constant-velocity timing pulleys, gear sets and bevel gears drive J5/J6, holding wrist orientation accurate</li>
+            </ul>
+          </div>
+
+          <div class="subsystem-card" id="rd-pump">
+            <div class="subsystem-gallery single">
+              <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+                <img src="air-pump.webp" class="show" alt="Converted vacuum pump" loading="lazy" decoding="async" width="350" height="261">
+              </div>
+            </div>
+            <div class="subsystem-header">3508-Converted Vacuum Pump</div>
+            <ul class="subsystem-list">
+              <li>Replacing the original brushed pump with a 3508 brushless motor removed the supply-current spike and raised the flow ceiling</li>
+              <li>Holds <strong>&#8722;85&nbsp;kPa</strong> of vacuum and exceeds <strong>40&nbsp;L/min</strong> at 5000&nbsp;rpm</li>
+              <li>The complete pump weighs <strong>&lt;300&nbsp;g</strong>, leaving more mass and inertia budget at the end of the arm</li>
+              <li>Motor current feedback reads the suction state, giving reliable pickup and early warning of a dropped ore</li>
+            </ul>
+          </div>
+
+          <div class="subsystem-card" id="rd-eng-wheel">
+            <div class="subsystem-gallery single">
+              <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+                <img src="eng-wheel.webp" class="show" alt="Engineer swerve module" loading="lazy" decoding="async" width="260" height="220">
+              </div>
+            </div>
+            <div class="subsystem-header">Engineer Swerve Module</div>
+            <ul class="subsystem-list">
+              <li>Five-inch solid rubber tyres deliver the grip and wear life needed to break free on the field and return to supply quickly</li>
+              <li>A custom 3508 gearbox, MGN7 rails and gas-spring under-module suspension carry high load without losing spin-mode stability</li>
+              <li>The driver can reposition the chassis while operating the arm, which tightens the level-4 exchange rhythm</li>
+              <li>Each module detaches on its own for between-match troubleshooting and swaps</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controller Companion -->
+      <div class="controller-companion" id="proj-controller">
+        <div class="companion-label">Companion Teleoperation Terminal</div>
+        <div class="project-card system-main">
+          <div class="project-header">
+            <h3><span class="icon">&#127918;</span>Custom Controller</h3>
+            <div class="project-subtitle">Fitted to the operator <span class="sep">·</span> Isomorphic 6-axis mapping <span class="sep">·</span> Fast exchange loop</div>
+          </div>
+          <div class="project-body">
+            <div class="project-gallery single">
+              <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+                <img src="controller.webp" class="show" alt="Custom controller — precision teleoperation terminal" loading="lazy" decoding="async" width="249" height="384">
+              </div>
+            </div>
+            <div class="project-desc">
+              <div class="highlight">&#127919; The Engineer robot's primary input device, with its linkage laid out around the operator's habits and arm measurements to support the 5.8&nbsp;s exchange routine.</div>
+
+              <div class="detail-block c1">
+                <h5>&#128075; Fitted to the Operator</h5>
+                <ul>
+                  <li>The controller's topology mirrors the main arm closely enough that the operator stops translating hand motion into robot pose</li>
+                  <li>L2 was positioned from the operator's own arm measurements, giving a more natural posture and steadier control over a long match</li>
+                  <li>During a level-4 exchange the operator switches elbow side one-handed without resetting posture, removing a costly motion under pressure</li>
+                </ul>
+              </div>
+
+              <div class="detail-block c2">
+                <h5>&#9889; Structure for Fast Response</h5>
+                <ul>
+                  <li>Desk-scale and low in moving inertia, so the arm tracks the operator's hand closely</li>
+                  <li>CNC for the load-bearing parts, 3D printing for the shell and brackets, which made iterating on operator feedback quick</li>
+                  <li>Tuned alongside FPV framing, the wrist and the exchange routine as one continuous operator loop</li>
+                </ul>
+              </div>
+
+              <div class="tags">
+                <span class="tag">Mechanical Design</span><span class="tag">Human-Machine Interaction</span><span class="tag">Teleoperation</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- System Group: Hero 2024 -->
+    <div class="system-group">
+      <div class="system-group-title">RM 2024 Hero Robot System</div>
+
+      <div class="system-main-cards single-main">
+        <div class="project-card system-main" id="proj-hero">
+          <div class="project-header">
+            <h3><span class="icon">&#129302;</span>RoboMaster 2024 Hero Robot</h3>
+            <div class="project-subtitle">Double-supported friction wheels <span class="sep">·</span> 42&nbsp;mm side feed <span class="sep">·</span> Adaptive suspension</div>
+          </div>
+          <div class="project-body">
+            <div class="project-gallery single">
+              <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+                <img src="hero-bot.webp" class="show" alt="Hero robot — 2024 season double-supported friction-wheel launcher" loading="lazy" decoding="async" width="491" height="436">
+              </div>
+            </div>
+            <div class="project-desc">
+              <div class="highlight">&#127919; Sole mechanical designer of the RM2024 Hero robot — gimbal, launcher, 42&nbsp;mm side feed and adaptive suspension — filling a gap in the team's robot lineup.</div>
+
+              <div class="detail-block c1">
+                <h5>&#127919; Consistency-Focused Launcher on Double-Supported Shafts</h5>
+                <ul>
+                  <li>Shifted from ballistic and pitch-angle modelling to closing the loop on prototype faults, iterating the structure against friction-wheel vibration, speed droop and projectiles leaving before matching wheel speed</li>
+                  <li>Moving the friction wheels onto double-supported shafts — bearings at both ends rather than a single overhung mount — and adding a pre-acceleration wheel pair brought 10&nbsp;m dispersion under <strong>25×25&nbsp;cm</strong> with muzzle velocity holding to roughly <strong>&#177;0.1&nbsp;m/s</strong></li>
+                </ul>
+              </div>
+
+              <div class="detail-block c2">
+                <h5>&#127939; Adaptive Mecanum Suspension Chassis</h5>
+                <ul>
+                  <li>Four-wheel linked suspension shares contact pressure across the Mecanum wheels, improving omnidirectional mobility and attitude stability over rough terrain</li>
+                  <li>Passed a <strong>30&nbsp;cm vertical drop</strong> impact test, confirming the chassis can take a hit</li>
+                </ul>
+              </div>
+
+              <div class="tags">
+                <span class="tag">Mechanical Design</span><span class="tag">Precision</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subsystems -->
+      <div class="subsystem-area">
+        <div class="subsystem-label">Key Subsystems / Modules</div>
+        <div class="subsystem-grid two-col">
+          <div class="subsystem-card" id="rd-feeder">
+            <div class="subsystem-gallery single">
+              <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+                <img src="feeder-large.webp" class="show" alt="42&nbsp;mm side-feed ammunition system" loading="lazy" decoding="async" width="158" height="143">
+              </div>
+            </div>
+            <div class="subsystem-header">42&nbsp;mm Side-Feed Ammunition System</div>
+            <ul class="subsystem-list">
+              <li>Built for the RM2024 Hero robot to feed golf-ball-sized 42&nbsp;mm projectiles continuously</li>
+              <li>Refined from the team's existing side-feed design, prioritising reliability and jam risk over novelty</li>
+              <li>Anti-jam geometry tuned around projectile size tolerance sustains a steady <strong>2&nbsp;Hz</strong> feed</li>
+            </ul>
+          </div>
+          <div class="subsystem-card" id="rd-hero-chassis">
+            <div class="subsystem-gallery single">
+              <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+                <img src="hero-chassis-adaptive.webp" class="show" alt="RM2024 Hero robot adaptive suspension chassis" loading="lazy" decoding="async" width="1185" height="836">
+              </div>
+            </div>
+            <div class="subsystem-header">Adaptive Suspension Chassis</div>
+            <ul class="subsystem-list">
+              <li>Four-wheel linked suspension built around Mecanum omnidirectional travel evens out contact pressure on uneven ground</li>
+              <li>A wide track and preloaded compression springs damp the body roll that follows a 42&nbsp;mm shot</li>
+              <li>Tested through ramp jumps, 15&nbsp;cm forward step descents and 8&nbsp;cm lateral step descents</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exoskeleton -->
+    <div class="project-card" id="proj-exo">
+      <div class="project-header">
+        <h3><span class="icon">&#129470;</span>4-DOF Arm Exoskeleton (Course Project)</h3>
+        <div class="project-subtitle">Wearable power assist <span class="sep">·</span> DH kinematic modelling <span class="sep">·</span> IMU tracking</div>
+      </div>
+      <div class="project-body">
+        <div class="project-gallery single">
+          <div class="gallery-main" onclick="openModal(this.querySelector('img').src)">
+            <img src="exo-suit.webp" class="show" alt="4-DOF arm exoskeleton — wearable power-assist prototype" loading="lazy" decoding="async" width="410" height="242">
+          </div>
+        </div>
+        <div class="project-desc">
+          <div class="highlight">&#129504; A 4-DOF lightweight exoskeleton prototype for upper-limb assistance and human-robot collaboration, validated through kinematic modelling and basic closed-loop control.</div>
+
+          <div class="detail-block c1">
+            <h5>&#128300; Matching Human Motion</h5>
+            <ul>
+              <li>Joint axes placed along the dominant degrees of freedom of the upper arm and elbow to minimise interference with the wearer</li>
+              <li>Built the kinematic model from Denavit–Hartenberg (DH) parameters and verified workspace coverage in simulation</li>
+            </ul>
+          </div>
+
+          <div class="detail-block c2">
+            <h5>&#127939; Tracking &amp; Assist Control</h5>
+            <ul>
+              <li>An IMU on the back of the hand predicts the intended direction of motion and drives the exoskeleton to follow</li>
+              <li>Closed-loop motor control holds the pose and supplies assistive force in assist mode</li>
+            </ul>
+          </div>
+
+          <div class="tags">
+            <span class="tag">Mechanical Design</span><span class="tag">Embedded Development</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 2024-2025 Technical Pre-Research & Module Development ===== -->
+  <section class="section" id="research">
+    <h2 class="section-title">&#128218; 2024-2025 Technical Pre-Research &amp; Module Development</h2>
+    <div class="section-divider"></div>
+
+    <div class="launcher-module">
+      <div class="launcher-header">
+        <h4>&#128640; Launcher Pre-Research Iterations</h4>
+        <p>From the single-stage RM2024 Hero launcher, through a dual-stage four-wheel prototype, to a dual-stage six-wheel direction.</p>
+      </div>
+      <div class="launcher-evolution">
+        <div class="launcher-item">
+          <div class="launcher-img" onclick="openModal('hero-launcher-2024.png')">
+            <img src="hero-launcher-2024.png" alt="RM2024 Hero launcher" loading="lazy" decoding="async" width="491" height="436">
+          </div>
+          <div class="launcher-caption">RM2024 Hero Launcher</div>
+        </div>
+        <div class="launcher-arrow">&#10132;</div>
+        <div class="launcher-item">
+          <div class="launcher-img" onclick="openModal('launcher-dual-4.png')">
+            <img src="launcher-dual-4.png" alt="Dual-stage four-wheel prototype" loading="lazy" decoding="async" width="491" height="436">
+          </div>
+          <div class="launcher-caption">Dual-Stage, Four Wheels</div>
+        </div>
+        <div class="launcher-arrow">&#10132;</div>
+        <div class="launcher-item">
+          <div class="launcher-img" onclick="openModal('launcher-dual-6.png')">
+            <img src="launcher-dual-6.png" alt="Dual-stage six-wheel direction" loading="lazy" decoding="async" width="491" height="436">
+          </div>
+          <div class="launcher-caption">Dual-Stage, Six Wheels</div>
+        </div>
+      </div>
+      <ul class="launcher-notes">
+        <li>Continued multi-stage acceleration research on the back of the RM2024 Hero launcher experience</li>
+        <li>The dual-stage four-wheel prototype showed wide left-right dispersion; a three-wheel attempt stabilised launch angle but could not hold muzzle velocity consistent</li>
+        <li>Dual-stage six-wheel became the main development direction, aiming to hold both velocity consistency and dispersion</li>
+      </ul>
+    </div>
+
+    <div class="research-grid">
+      <div class="research-card">
+        <div class="research-step">01</div>
+        <h4>&#128736; Swerve Module Pre-Research</h4>
+        <div class="subsystem-gallery" data-gallery="pre-wheel">
+          <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
+            <img src="eng-wheel.webp" class="show" alt="High-load Engineer swerve module" loading="lazy" decoding="async" width="260" height="220">
+            <img src="hero-wheel.webp" alt="2025 Hero lightweight swerve pre-research" loading="lazy" decoding="async" width="339" height="344">
+          </div>
+          <div class="gallery-thumbs">
+            <img src="eng-wheel.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="260" height="220">
+            <img src="hero-wheel.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="339" height="344">
+          </div>
+        </div>
+        <ul>
+          <li>The high-load design uses wide rubber tyres and gas-spring under-module suspension to meet the Engineer's needs for grip, damping and a steady chassis attitude</li>
+          <li>The 2025 Hero study uses the 3508 motor body, gear drive, a photoelectric homing sensor, polyurethane wheels and over-module suspension to compress overall height</li>
+          <li>The two branches test high-load stability and lightweight miniaturisation separately, against the space, load and mobility demands of different robot classes</li>
+        </ul>
+      </div>
+
+      <div class="research-card">
+        <div class="research-step">02</div>
+        <h4>&#127922; Ammunition System Pre-Research</h4>
+        <div class="subsystem-gallery" data-gallery="pre-feeder">
+          <div class="gallery-main" onclick="openModal(currentGalleryImg(this.parentElement))">
+            <img src="feeder-large.webp" class="show" alt="42&nbsp;mm side-feed system" loading="lazy" decoding="async" width="158" height="143">
+            <img src="feeder-small.webp" alt="17&nbsp;mm centre-feed pre-research" loading="lazy" decoding="async" width="331" height="286">
+          </div>
+          <div class="gallery-thumbs">
+            <img src="feeder-large.webp" class="active" onclick="galleryJump(this, 0)" loading="lazy" decoding="async" width="158" height="143">
+            <img src="feeder-small.webp" onclick="galleryJump(this, 1)" loading="lazy" decoding="async" width="331" height="286">
+          </div>
+        </div>
+        <ul>
+          <li>The 42&nbsp;mm side feed serves the RM2024 Hero robot, optimised for continuous feeding of golf-ball-sized projectiles without jamming</li>
+          <li>A first-pass 17&nbsp;mm centre feed explores multi-layer staging, a fairing, and shear protection as the leading design priority</li>
+          <li>Mentored a junior member in optimising the 17&nbsp;mm side feed, raising feed rate from <strong>20&nbsp;Hz</strong> to close to <strong>30&nbsp;Hz</strong></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Honours & Awards ===== -->
+  <section class="section" id="awards">
+    <h2 class="section-title">&#127891; Honours &amp; Awards</h2>
+    <div class="section-divider"></div>
+    <div class="honors-card">
+      <h4><span class="dot"></span>Scholarships &amp; Academic Honours</h4>
+      <ul class="honors-list">
+        <li><strong>Scholarship:</strong> HKSAR Government Scholarship Fund – Talent Development Scholarship, 2024 &amp; 2025</li>
+        <li><strong>Academic Honour:</strong> HKUST SENG Dean's List, Fall 2023</li>
+      </ul>
+    </div>
+  </section>
+
+</main>
+
+<div class="modal" id="modal" onclick="closeModal()">
+  <span class="modal-close">&times;</span>
+  <img id="modal-img" src="" alt="">
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
