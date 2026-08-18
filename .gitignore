@@ -2,3 +2,5 @@
 .venv/
 tmp/
 .superpowers/
+plans/
+specs/
