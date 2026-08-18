@@ -2,8 +2,8 @@
 (function() {
   const allImages = [
     'eng-allstar.webp', 'eng-mvp.webp', 'eng-photo1.jpg', 'eng-phtot2.jpg',
-    'eng-arm.webp', 'hero-bot.webp', 'hero-chassis-adaptive.webp', 'hero-launcher-2024.png',
-    'launcher-dual-4.png', 'launcher-dual-6.png', 'exo-suit.webp'
+    'eng-arm.webp', 'eng-arm-overview.png', 'hero-bot.webp', 'hero-chassis-adaptive.webp',
+    'hero-launcher-2024.png', 'launcher-dual-4.png', 'launcher-dual-6.png', 'exo-suit.webp'
   ];
 
   const container = document.getElementById('bgSlideshow');
