@@ -1,0 +1,89 @@
+---
+import { Image } from 'astro:assets';
+import { honours, exo, person, record } from '../data/content';
+import { t, type Lang } from '../data/i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+---
+<section class="wrap split">
+  <div class="honours" aria-labelledby="honours-title">
+    <h2 id="honours-title" class="display heading">{lang === 'zh' ? '荣誉' : 'Honours'}</h2>
+    <ul>
+      {honours.map((h) => (
+        <li><span class="num year">{h.year}</span><span>{t(h.title, lang)}</span></li>
+      ))}
+    </ul>
+    <figure class="poster">
+      <Image src={record.allstar.src} alt={t(record.allstar.alt, lang)} widths={[400, 649]} sizes="(max-width: 900px) 60vw, 260px" />
+    </figure>
+  </div>
+
+  <article class="exo panel" aria-labelledby="exo-title">
+    <div class="exo-pic"><Image src={exo.pic.src} alt={t(exo.pic.alt, lang)} widths={[410]} /></div>
+    <div class="exo-body">
+      <span class="kind">{t(exo.kind, lang)}</span>
+      <h2 id="exo-title" class="display exo-title">{t(exo.title, lang)}</h2>
+      <p class="lede">{t(exo.lede, lang)}</p>
+      <ul>
+        {exo.bullets.map((b) => <li>{t(b, lang)}</li>)}
+      </ul>
+    </div>
+  </article>
+</section>
+
+<section class="wrap about" aria-labelledby="about-title">
+  <h2 id="about-title" class="display heading">{lang === 'zh' ? '关于我' : 'About'}</h2>
+  <p>{t(person.edu, lang)}</p>
+  <p>{t(person.team, lang)}</p>
+  <p class="contact">
+    <a href={`mailto:${person.email}`}>{person.email}</a>
+    <a href={person.github} rel="noopener">github.com/ccuiab</a>
+  </p>
+</section>
+
+<style>
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 3rem;
+    padding-top: 7rem;
+    align-items: start;
+  }
+  .heading { font-size: var(--t-3xl); margin-bottom: 1.6rem; }
+  .honours ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .honours li {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .year { color: var(--amber); font-size: var(--t-sm); padding-top: 0.15rem; }
+  .poster { margin: 1.8rem 0 0; width: 220px; }
+  .poster :global(img) { border: 1px solid var(--rule); }
+
+  .exo { display: grid; }
+  .exo-pic { background: #04070c; }
+  .exo-pic :global(img) { width: 100%; aspect-ratio: 410 / 242; object-fit: cover; }
+  .exo-body { display: grid; gap: 0.8rem; padding: 1.6rem 1.8rem 2rem; }
+  .kind { font-size: var(--t-xs); color: var(--ink-3); }
+  .exo-title { font-size: var(--t-xl); }
+  .lede { color: var(--ink-2); font-size: var(--t-sm); }
+  .exo ul { margin: 0; padding-left: 1.1rem; color: var(--ink-2); font-size: var(--t-sm); }
+  .exo li { margin-bottom: 0.4rem; }
+  .exo li::marker { color: var(--amber); }
+
+  .about { padding-top: 7rem; display: grid; gap: 0.7rem; }
+  .about p { color: var(--ink-2); font-size: var(--t-lg); }
+  .contact { display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; margin-top: 0.8rem; }
+  .contact a { color: var(--amber); text-underline-offset: 4px; }
+
+  @media (max-width: 900px) {
+    .split { grid-template-columns: 1fr; }
+  }
+</style>

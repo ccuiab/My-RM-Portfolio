@@ -1,0 +1,135 @@
+---
+// Home: the three project sheets, laid out as drawing-sheet title blocks.
+import { Image } from 'astro:assets';
+import { engineer, hero, research } from '../data/content';
+import { t, href, ui, type Lang } from '../data/i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+
+const sheets = [
+  { p: engineer, no: engineer.robotNo, figure: '5.8 s', figureLabel: { zh: '四级矿兑换，全场第一', en: 'Level-4 exchange, ranked first' } },
+  { p: hero, no: hero.robotNo, figure: '±0.1 m/s', figureLabel: { zh: '初速波动', en: 'Muzzle velocity spread' } },
+  { p: research, no: null, figure: '25 Hz+', figureLabel: { zh: '小弹丸中心供弹，已上车', en: '17 mm centre feed, on robots' } },
+];
+---
+<section class="index wrap" aria-labelledby="index-title">
+  <h2 id="index-title" class="display heading">{lang === 'zh' ? '项目图纸' : 'Project sheets'}</h2>
+
+  <ol class="sheets">
+    {sheets.map(({ p, no, figure, figureLabel }, i) => (
+      <li class:list={['sheet', { lead: i === 0 }]}>
+        <a class="sheet-link panel" href={href(lang, p.slug)}>
+          <div class:list={['pic', { light: p.cover.light }]}>
+            <Image src={p.cover.src} alt={t(p.cover.alt, lang)} widths={[640, 1100]} sizes={i === 0 ? '(max-width: 900px) 100vw, 60vw' : '(max-width: 900px) 100vw, 40vw'} />
+            {no && <span class="robot-no num" aria-hidden="true">{no}</span>}
+          </div>
+          <div class="block">
+            <span class="dwg num">{p.drawing}</span>
+            <h3 class="display name">{t(p.title, lang)}</h3>
+            <p class="lede">{t(p.lede, lang)}</p>
+            <div class="figure">
+              <span class="num fig">{figure}</span>
+              <span class="fig-label">{t(figureLabel, lang)}</span>
+            </div>
+            <span class="go">{t(ui.openProject, lang)}</span>
+          </div>
+        </a>
+      </li>
+    ))}
+  </ol>
+</section>
+
+<style>
+  .index { padding-top: 6rem; }
+  .heading { font-size: var(--t-3xl); margin-bottom: 2.5rem; }
+  .sheets {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+  .sheet.lead { grid-column: 1 / -1; }
+  .sheet-link {
+    display: grid;
+    height: 100%;
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.25s ease;
+  }
+  .sheet-link:hover { transform: translateY(-3px); }
+  .sheet-link:hover .go { color: var(--amber); }
+  .lead .sheet-link { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+
+  .pic {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    background: #04070c;
+  }
+  .lead .pic { aspect-ratio: auto; min-height: 420px; }
+  .pic :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .pic.light { background: var(--plate); }
+  .pic.light :global(img) { object-fit: contain; padding: 6%; }
+  .robot-no {
+    position: absolute;
+    right: 1rem;
+    bottom: 0.4rem;
+    font-family: var(--f-latin);
+    font-weight: 700;
+    font-size: 6rem;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(242, 181, 58, 0.8);
+  }
+  .pic.light .robot-no { -webkit-text-stroke-color: rgba(7, 13, 23, 0.55); }
+
+  .block {
+    display: grid;
+    align-content: start;
+    gap: 0.9rem;
+    padding: 1.6rem 1.8rem 1.8rem;
+    border-top: 1px solid var(--rule);
+  }
+  .lead .block { border-top: 0; border-left: 1px solid var(--rule); padding: 2.4rem; }
+  .dwg {
+    font-size: var(--t-xs);
+    color: var(--ink-3);
+    letter-spacing: 0.08em;
+  }
+  .name { font-size: var(--t-xl); }
+  .lead .name { font-size: var(--t-2xl); }
+  .lede { color: var(--ink-2); font-size: var(--t-sm); }
+  .figure {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--rule);
+  }
+  .fig { font-size: var(--t-xl); color: var(--amber); }
+  .lead .fig { font-size: var(--t-3xl); }
+  .fig-label { font-size: var(--t-sm); color: var(--ink-2); }
+  .go {
+    font-size: var(--t-sm);
+    color: var(--ink-2);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: color 0.2s;
+  }
+
+  @media (max-width: 900px) {
+    .sheets { grid-template-columns: 1fr; }
+    .lead .sheet-link { grid-template-columns: 1fr; }
+    .lead .pic { min-height: 0; aspect-ratio: 16 / 10; }
+    .lead .block { border-left: 0; border-top: 1px solid var(--rule); padding: 1.6rem 1.8rem 1.8rem; }
+  }
+</style>
