@@ -111,6 +111,7 @@ const lines_: { id: string; mark: string; title: T; stages: Stage[]; lede?: T; a
   }
   .pic.light { background: var(--plate); }
   .pic :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; padding: 6%; }
+  .pic.light :global(img) { mix-blend-mode: multiply; }
   .pic:hover { border-color: var(--amber); }
   .pic.empty {
     display: grid;

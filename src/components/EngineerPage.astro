@@ -4,11 +4,12 @@ import ProjectHeader from './ProjectHeader.astro';
 import Record from './Record.astro';
 import Chapter from './Chapter.astro';
 import ArmUnfold from './ArmUnfold.astro';
+import Loop from './Loop.astro';
 import Lightbox from './Lightbox.astro';
 import NextSheet from './NextSheet.astro';
 import { engineer, hero } from '../data/content';
 import { t, type Lang } from '../data/i18n';
-import lines from '../assets/gen/eng-phtot2-lines.webp';
+import lines from '../assets/gen/eng-reach-lines.webp';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -33,6 +34,17 @@ const p = engineer;
   {p.chapters.map((c) => (
     <Chapter lang={lang} chapter={c}>
       {c.scene === 'arm-unfold' && <ArmUnfold lang={lang} slot="wide" />}
+    {c.id === 'arm' && (
+      <Loop
+        lang={lang}
+        slot="wide"
+        src="video/arm-feature.mp4"
+        poster="video/arm-feature.jpg"
+        label={{ zh: '机械臂实车动作', en: 'The arm in motion on the real robot' }}
+        credit={{ zh: '画面：RoboMaster 机甲大师官方技术短片', en: 'Footage: official RoboMaster feature' }}
+        href="https://www.bilibili.com/video/BV1Y482zjERP/"
+      />
+    )}
     </Chapter>
   ))}
 

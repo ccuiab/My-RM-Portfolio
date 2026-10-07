@@ -1,0 +1,43 @@
+---
+// Silent looping clip that only plays while on screen. Reduced motion shows the poster.
+import { t, type Lang, type T } from '../data/i18n';
+
+interface Props { lang: Lang; src: string; poster: string; label: T; credit: T; href: string }
+const { lang, src, poster, label, credit, href } = Astro.props;
+const base = import.meta.env.BASE_URL;
+---
+<figure class="loop panel">
+  <video data-loop src={base + src} poster={base + poster} muted playsinline loop preload="none" aria-label={t(label, lang)}></video>
+  <figcaption>
+    <span>{t(label, lang)}</span>
+    <a href={href} rel="noopener">{t(credit, lang)}</a>
+  </figcaption>
+</figure>
+
+<script>
+  import { reducedMotion } from '../scripts/smooth';
+  document.querySelectorAll<HTMLVideoElement>('video[data-loop]').forEach((v) => {
+    if (reducedMotion) return;
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) { v.preload = 'auto'; v.play().catch(() => {}); }
+      else v.pause();
+    }, { threshold: 0.3 }).observe(v);
+  });
+</script>
+
+<style>
+  .loop { margin: 0; background: #000; }
+  .loop video { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+  figcaption {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 0.9rem;
+    font-size: var(--t-xs);
+    color: var(--ink-2);
+    background: var(--panel);
+    border-top: 1px solid var(--rule);
+  }
+  figcaption a { color: var(--ink-3); }
+  figcaption a:hover { color: var(--amber); }
+</style>

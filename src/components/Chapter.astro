@@ -125,7 +125,7 @@ const pics = c.pics ?? [];
     background: var(--amber);
   }
 
-  .wide { margin-top: 2.5rem; }
+  .wide { margin-top: 2.5rem; display: grid; gap: 1.5rem; }
 
   .pics {
     list-style: none;
@@ -135,7 +135,7 @@ const pics = c.pics ?? [];
     gap: 1rem;
     grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
   }
-  .pics.n1 { --cols: 1; max-width: 760px; margin-left: auto; }
+  .pics.n1 { --cols: 1; max-width: 560px; margin-left: auto; }
   .pics.n2 { --cols: 2; }
   .pics.n3 { --cols: 3; }
   .pics.n4 { --cols: 4; }
@@ -156,7 +156,7 @@ const pics = c.pics ?? [];
     aspect-ratio: 4 / 3;
     object-fit: cover;
   }
-  .pic.light :global(img) { object-fit: contain; padding: 6%; }
+  .pic.light :global(img) { object-fit: contain; padding: 6%; mix-blend-mode: multiply; }
   .cap {
     padding: 0.6rem 0.8rem;
     font-size: var(--t-xs);
