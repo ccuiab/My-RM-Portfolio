@@ -1,0 +1,174 @@
+---
+// One technical chapter of a project page. The detail-view letter (A, B, C…) works
+// like a section callout on a drawing sheet.
+import { Image } from 'astro:assets';
+import { t, ui, type Lang } from '../data/i18n';
+import type { Chapter } from '../data/content';
+
+interface Props { lang: Lang; chapter: Chapter }
+const { lang, chapter: c } = Astro.props;
+const pics = c.pics ?? [];
+---
+<section class="ch" id={c.id} aria-labelledby={`${c.id}-title`}>
+  <div class="wrap ch-grid">
+    <div class="ch-head">
+      <span class="mark" aria-hidden="true">{c.mark}</span>
+      <h2 id={`${c.id}-title`} class="display ch-title">{t(c.title, lang)}</h2>
+    </div>
+
+    <div class="ch-body">
+      {c.lede && <p class="ch-lede">{t(c.lede, lang)}</p>}
+
+      {c.specs && (
+        <dl class="specs">
+          {c.specs.map((s) => (
+            <div>
+              <dt>{t(s.label, lang)}{s.note && <span class="note"> {t(s.note, lang)}</span>}</dt>
+              <dd><span class="num">{s.value}</span>{s.unit && <span class="num unit">{s.unit}</span>}</dd>
+            </div>
+          ))}
+        </dl>
+      )}
+
+      {c.bullets && (
+        <ul class="bullets">
+          {c.bullets.map((b) => <li>{t(b, lang)}</li>)}
+        </ul>
+      )}
+
+      <slot />
+    </div>
+  </div>
+
+  {pics.length > 0 && (
+    <div class="wrap">
+      <ul class:list={['pics', `n${Math.min(pics.length, 4)}`]}>
+        {pics.map((p, i) => (
+          <li>
+            <button class:list={['pic', { light: p.light }]} type="button" data-zoom={p.src.src} data-alt={t(p.alt, lang)} aria-label={`${t(ui.enlarge, lang)}: ${t(p.alt, lang)}`}>
+              <Image src={p.src} alt={t(p.alt, lang)} widths={[480, 900]} sizes="(max-width: 900px) 100vw, 40vw" />
+              <span class="cap"><span class="num">{c.mark}{i + 1}</span> {t(p.alt, lang)}</span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+</section>
+
+<style>
+  .ch { padding-top: 6.5rem; scroll-margin-top: 60px; }
+  .ch-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: clamp(1.5rem, 5vw, 4rem);
+  }
+  .ch-head {
+    position: sticky;
+    top: 90px;
+    align-self: start;
+    display: grid;
+    gap: 0.8rem;
+  }
+  .mark {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border: 1.5px solid var(--amber);
+    border-radius: 50%;
+    font-family: var(--f-latin);
+    font-weight: 700;
+    font-size: var(--t-lg);
+    color: var(--amber);
+  }
+  .ch-title { font-size: var(--t-2xl); }
+  .ch-body { display: grid; gap: 1.4rem; }
+  .ch-lede { font-size: var(--t-lg); line-height: 1.6; }
+
+  .specs {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .specs div { padding: 0.9rem 2rem 0.9rem 0; margin-right: 2rem; border-right: 1px solid var(--rule); }
+  .specs div:last-child { border-right: 0; }
+  .specs dt { font-size: var(--t-xs); color: var(--ink-3); }
+  .note { color: var(--ink-3); }
+  .specs dd { margin: 0.25rem 0 0; font-size: var(--t-2xl); line-height: 1; color: var(--amber); }
+  .unit { font-size: 0.5em; color: var(--ink-2); margin-left: 0.25em; }
+
+  .bullets {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 0.9rem;
+    color: var(--ink-2);
+  }
+  .bullets li {
+    position: relative;
+    padding-left: 1.4rem;
+    max-width: 68ch;
+  }
+  .bullets li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.72em;
+    width: 0.7rem;
+    height: 1px;
+    background: var(--amber);
+  }
+
+  .pics {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
+  }
+  .pics.n1 { --cols: 1; max-width: 760px; margin-left: auto; }
+  .pics.n2 { --cols: 2; }
+  .pics.n3 { --cols: 3; }
+  .pics.n4 { --cols: 4; }
+  .pic {
+    display: grid;
+    width: 100%;
+    padding: 0;
+    border: 1px solid var(--rule);
+    background: #04070c;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: zoom-in;
+  }
+  .pic.light { background: var(--plate); }
+  .pic :global(img) {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+  }
+  .pic.light :global(img) { object-fit: contain; padding: 6%; }
+  .cap {
+    padding: 0.6rem 0.8rem;
+    font-size: var(--t-xs);
+    color: var(--ink-2);
+    background: var(--panel);
+    border-top: 1px solid var(--rule);
+  }
+  .cap .num { color: var(--amber); }
+  .pic:hover { border-color: var(--amber); }
+
+  @media (max-width: 900px) {
+    .ch-grid { grid-template-columns: 1fr; }
+    .ch-head { position: static; }
+    .pics.n3, .pics.n4 { --cols: 2; }
+  }
+  @media (max-width: 560px) {
+    .pics { --cols: 1 !important; }
+  }
+</style>

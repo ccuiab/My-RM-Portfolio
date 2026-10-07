@@ -1,0 +1,183 @@
+---
+// Scroll-driven arm unfold, pinned while the visitor scrolls through it.
+// With public/models/arm.glb: the real arm (Three.js) unfolds from its CAD folded pose to
+// a forward reach while the scan turns it from amber outline into solid metal.
+// Without it, or before it loads: a side-view kinematic sketch at true link proportions.
+import { existsSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import type { Lang } from '../data/i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const hasModel = existsSync(fileURLToPath(new URL('../../public/models/arm.glb', import.meta.url)));
+const L = lang === 'zh'
+  ? { folded: '收折', extended: '展开', height: '腕心高度', reach: '腕心前伸', env: '整车最大展开', note: '读数为腕心相对肩关节轴的实时位置，来自真实 CAD 模型的关节运动。整车最大展开尺寸计入云台旋转与底盘。' }
+  : { folded: 'Folded', extended: 'Extended', height: 'Wrist height', reach: 'Wrist reach', env: 'Whole-robot max envelope', note: 'Readouts track the wrist centre against the shoulder axis, driven by the joints of the real CAD model. The whole-robot envelope adds gimbal rotation and the chassis.' };
+---
+<div class="unfold" data-unfold data-model={hasModel ? '1' : ''} data-labels={`${L.folded}|${L.extended}`}>
+  <div class="pin">
+    <div class="view panel">
+      <svg class="sketch" viewBox="-200 -880 1200 820" role="img" aria-label={lang === 'zh' ? '机械臂从收折到展开' : 'The arm going from folded to extended'}>
+        <defs>
+          <pattern id="arm-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M40 0H0V40" fill="none" stroke="var(--rule)" stroke-width="1" />
+          </pattern>
+        </defs>
+        <rect x="-200" y="-880" width="1200" height="820" fill="url(#arm-grid)" />
+        <g class="sk">
+          <line x1="-200" y1="-100" x2="1000" y2="-100" stroke="var(--ink-3)" stroke-width="2" />
+          <line class="l2" stroke="var(--ink)" stroke-width="30" stroke-linecap="round" />
+          <line class="l34" stroke="var(--ink-2)" stroke-width="22" stroke-linecap="round" />
+          <circle class="j-sh" r="20" fill="var(--ground)" stroke="var(--amber)" stroke-width="4" />
+          <circle class="j-el" r="16" fill="var(--ground)" stroke="var(--amber)" stroke-width="4" />
+          <circle class="j-wr" r="14" fill="var(--amber)" />
+        </g>
+      </svg>
+      <canvas class="three" aria-hidden="true"></canvas>
+      <svg class="marks" aria-hidden="true">
+        <line class="m-l2" /><line class="m-l34" />
+        <circle class="m-sh" r="5" /><circle class="m-el" r="5" /><circle class="m-wr" r="5" />
+        <text class="m-t2">L2 380</text><text class="m-t34">L3+L4 420</text>
+      </svg>
+      <span class="state latin" data-state>{L.folded}</span>
+    </div>
+
+    <dl class="readout">
+      <div><dt>{L.reach}</dt><dd><span class="num" data-r>0</span><span class="num u">mm</span></dd></div>
+      <div><dt>{L.height}</dt><dd><span class="num" data-h>0</span><span class="num u">mm</span></dd></div>
+      <div><dt>{L.env}</dt><dd><span class="num">1400 × 1400 × 1200</span><span class="num u">mm</span></dd></div>
+    </dl>
+    <p class="note">{L.note}</p>
+  </div>
+</div>
+
+<script>
+  import { gsap, ScrollTrigger, reducedMotion } from '../scripts/smooth';
+
+  type Pt = { x: number; y: number };
+  type Frame = { shoulder: Pt; elbow: Pt; wrist: Pt; reachMm: number; heightMm: number };
+
+  document.querySelectorAll<HTMLElement>('[data-unfold]').forEach((root) => {
+    const $ = <E extends Element>(s: string) => root.querySelector<E>(s)!;
+    const [folded, extended] = (root.dataset.labels || '|').split('|');
+    const hOut = $<HTMLElement>('[data-h]'), rOut = $<HTMLElement>('[data-r]'), stOut = $<HTMLElement>('[data-state]');
+    const attr = (el: Element, a: Record<string, number>) => { for (const k in a) el.setAttribute(k, a[k].toFixed(1)); };
+    const ease = gsap.parseEase('power2.inOut');
+
+    const readouts = (f: Frame, p: number) => {
+      rOut.textContent = `${Math.max(0, Math.round(f.reachMm))}`;
+      hOut.textContent = `${Math.round(f.heightMm)}`;
+      stOut.textContent = p > 0.97 ? extended : folded;
+      root.classList.toggle('extended', p > 0.97);
+    };
+
+    /* ---- 2D sketch (fallback and pre-load state) ---- */
+    const L2 = 380, L34 = 420, SH = { x: 0, y: -420 };
+    const rad = (d: number) => (d * Math.PI) / 180;
+    const sketch = (p: number) => {
+      const e_ = ease(p);
+      const sh = gsap.utils.interpolate(112, 32, e_);
+      const a2 = sh + gsap.utils.interpolate(-150, -20, e_);
+      const el = { x: SH.x + L2 * Math.cos(rad(sh)), y: SH.y - L2 * Math.sin(rad(sh)) };
+      const wr = { x: el.x + L34 * Math.cos(rad(a2)), y: el.y - L34 * Math.sin(rad(a2)) };
+      attr($('.l2'), { x1: SH.x, y1: SH.y, x2: el.x, y2: el.y });
+      attr($('.l34'), { x1: el.x, y1: el.y, x2: wr.x, y2: wr.y });
+      attr($('.j-sh'), { cx: SH.x, cy: SH.y });
+      attr($('.j-el'), { cx: el.x, cy: el.y });
+      attr($('.j-wr'), { cx: wr.x, cy: wr.y });
+      readouts({ shoulder: SH, elbow: el, wrist: wr, reachMm: wr.x - SH.x, heightMm: SH.y - wr.y }, p);
+    };
+
+    /* ---- pinned scroll scene; `draw` is swapped for the 3D version once it loads ---- */
+    let draw = sketch;
+    let progress = reducedMotion ? 1 : 0;
+    draw(progress);
+    if (!reducedMotion) {
+      ScrollTrigger.create({
+        trigger: root,
+        start: 'top top+=76',
+        end: '+=150%',
+        pin: $('.pin'),
+        scrub: 0.6,
+        onUpdate: (st) => { progress = st.progress; draw(progress); },
+      });
+    }
+    if (!root.dataset.model) return;
+
+    const start = () => import('../scripts/arm-scene').then(async ({ loadArmScene }) => {
+      const arm = await loadArmScene($<HTMLCanvasElement>('canvas.three'), import.meta.env.BASE_URL);
+      const lerp = gsap.utils.interpolate;
+      draw = (p: number) => {
+        const e_ = ease(p);
+        // CAD export pose is the folded pose; the end pose is a forward reach, wrist near level
+        arm.setPose({ J2: lerp(0, 110, e_), J3: lerp(0, -130, e_), J5: lerp(0, 40, e_) });
+        arm.setScan(Math.min(1, p * 2.4));
+        arm.setYaw(lerp(-20, 15, e_));
+        const f = arm.render();
+        attr($('.m-l2'), { x1: f.shoulder.x, y1: f.shoulder.y, x2: f.elbow.x, y2: f.elbow.y });
+        attr($('.m-l34'), { x1: f.elbow.x, y1: f.elbow.y, x2: f.wrist.x, y2: f.wrist.y });
+        attr($('.m-sh'), { cx: f.shoulder.x, cy: f.shoulder.y });
+        attr($('.m-el'), { cx: f.elbow.x, cy: f.elbow.y });
+        attr($('.m-wr'), { cx: f.wrist.x, cy: f.wrist.y });
+        attr($('.m-t2'), { x: (f.shoulder.x + f.elbow.x) / 2 + 14, y: (f.shoulder.y + f.elbow.y) / 2 - 8 });
+        attr($('.m-t34'), { x: (f.elbow.x + f.wrist.x) / 2 + 8, y: (f.elbow.y + f.wrist.y) / 2 - 14 });
+        readouts(f, p);
+      };
+      root.classList.add('has-3d');
+      draw(progress);
+    }).catch((err) => console.warn('arm scene unavailable, keeping the sketch', err));
+
+    // load when the section gets near, so the rest of the page stays light
+    const io = new IntersectionObserver(([en]) => {
+      if (en.isIntersecting) { io.disconnect(); start(); }
+    }, { rootMargin: '800px 0px' });
+    io.observe(root);
+  });
+</script>
+
+<style>
+  .unfold { margin-top: 0.5rem; }
+  .pin { display: grid; gap: 1rem; }
+  .view {
+    position: relative;
+    aspect-ratio: 3 / 2;
+    background: var(--ground);
+  }
+  .view > svg, .view > canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .three, .marks { opacity: 0; transition: opacity 0.6s; }
+  .has-3d .three, .has-3d .marks { opacity: 1; }
+  .has-3d .sk { opacity: 0; }
+  .sk { transition: opacity 0.4s; }
+
+  .marks { pointer-events: none; overflow: visible; }
+  .marks line { stroke: var(--amber); stroke-width: 1; stroke-dasharray: 3 5; }
+  .marks circle { fill: none; stroke: var(--amber); stroke-width: 1.5; }
+  .marks text { font-family: var(--f-mono); font-size: 12px; fill: var(--amber); }
+
+  .state {
+    position: absolute;
+    top: 1rem;
+    left: 1.2rem;
+    font-size: var(--t-sm);
+    letter-spacing: 0.06em;
+    color: var(--ink-2);
+    padding-left: 0.8rem;
+    border-left: 3px solid var(--ink-3);
+    transition: color 0.3s, border-color 0.3s;
+  }
+  .extended .state { color: var(--amber); border-color: var(--amber); }
+
+  .readout {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    justify-content: start;
+    gap: 0 2.5rem;
+    margin: 0;
+  }
+  .readout dt { font-size: var(--t-xs); color: var(--ink-3); }
+  .readout dd { margin: 0.15rem 0 0; font-size: var(--t-xl); line-height: 1.1; }
+  .readout [data-r], .readout [data-h] { display: inline-block; min-width: 3.2ch; color: var(--amber); }
+  .readout .u { font-size: var(--t-xs); color: var(--ink-2); margin-left: 0.3em; }
+  .note { font-size: var(--t-xs); color: var(--ink-3); }
+  @media (max-width: 760px) { .readout { grid-template-columns: repeat(2, auto); gap: 0.6rem 2rem; } }
+</style>

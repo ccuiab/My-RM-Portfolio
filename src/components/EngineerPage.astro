@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectHeader from './ProjectHeader.astro';
+import Record from './Record.astro';
+import Chapter from './Chapter.astro';
+import ArmUnfold from './ArmUnfold.astro';
+import Lightbox from './Lightbox.astro';
+import NextSheet from './NextSheet.astro';
+import { engineer, hero } from '../data/content';
+import { t, type Lang } from '../data/i18n';
+import lines from '../assets/gen/eng-phtot2-lines.webp';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const p = engineer;
+---
+<Base lang={lang} slug={p.slug} title={p.short} description={p.lede}>
+  <ProjectHeader
+    lang={lang}
+    drawing={p.drawing}
+    robotNo={p.robotNo}
+    title={p.title}
+    lede={p.lede}
+    cover={p.cover}
+    lines={lines}
+    titleBlock={p.titleBlock}
+    stats={p.stats}
+    statsSource={p.statsSource}
+  />
+
+  <Record lang={lang} compact />
+
+  {p.chapters.map((c) => (
+    <Chapter lang={lang} chapter={c}>
+      {c.scene === 'arm-unfold' && <ArmUnfold lang={lang} />}
+    </Chapter>
+  ))}
+
+  <section class="wrap links" aria-label={lang === 'zh' ? '相关链接' : 'Links'}>
+    <ul>
+      {p.links.map((l) => <li><a href={l.href} rel="noopener">{t(l.label, lang)}</a></li>)}
+    </ul>
+  </section>
+
+  <NextSheet lang={lang} slug={hero.slug} drawing={hero.drawing} title={hero.title} />
+  <Lightbox lang={lang} />
+</Base>
+
+<style>
+  .links { padding-top: 5rem; }
+  .links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; }
+  .links a { color: var(--amber); text-underline-offset: 4px; }
+</style>

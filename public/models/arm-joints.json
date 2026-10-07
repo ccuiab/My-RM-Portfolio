@@ -1,0 +1,2879 @@
+{
+  "schema_version": 1,
+  "units": {
+    "geometry": "metres",
+    "axis_point": "millimetres",
+    "angles": "degrees"
+  },
+  "coordinate_frame": "Original output/sw-probe/arm.glb global frame, right handed, +Y up. Same orientation and origin as SW arm assembly; web GLB preserves it.",
+  "blender_from_glb": [
+    [
+      1,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      -1
+    ],
+    [
+      0,
+      1,
+      0
+    ]
+  ],
+  "web_root": "link_base",
+  "web_root_translation_m": [
+    -0.04073284680717465,
+    -0.06643354142836239,
+    0.13176219393645355
+  ],
+  "web_rest_rotations": "All link node quaternions are identity at export pose. Set node.quaternion.setFromAxisAngle(new Vector3(...web_axis), qRadians). Do not rotate meshes or geometry separately.",
+  "joints": [
+    {
+      "name": "J1",
+      "description": "base yaw",
+      "parent_link": "link_base",
+      "child_link": "link_1",
+      "axis_point_mm": [
+        -40.73284680717465,
+        -66.43354142836239,
+        131.76219393645354
+      ],
+      "axis_direction": [
+        0,
+        1,
+        0
+      ],
+      "web_axis": [
+        0,
+        1,
+        0
+      ],
+      "type": "revolute",
+      "rest_angle_deg": 0,
+      "current_angle_deg": 0,
+      "angle_reference": "q = 0 is exactly the supplied arm.glb export pose; no encoder or homing zero is available",
+      "hardware_zero_deg": null,
+      "evidence": "gimbal root 同心17 bearing_RA6008 <-> J1_RA6008 inner ring; 同心19 and 重合18 arm-base attachment; source design pp5,10",
+      "confidence": "high for axis line and link split; encoder zero unavailable",
+      "limits_deg": null,
+      "physical_travel_deg": 360,
+      "limit_note": "One-turn hard stop confirmed in source report. Stop location relative to this export pose is not calibrated. URDF freezes this joint at q=0 until bounds are calibrated.",
+      "parent_link_node_names": [
+        "bearing_RA6008.2025.10.1-1"
+      ],
+      "child_link_node_names": [
+        "04C_30teeth_从动轮.2025.10.1-1",
+        "6mm_J1_8016后固定板-1",
+        "6mm_J1_限位块-1",
+        "8mm_J1_机械臂底座-1",
+        "J1_6706轴承内圈CNC.2025.10.1-1",
+        "J1_RA6008轴承内圈CNC.2025.10.1-1",
+        "J1_bearing61811外侧固定cnc-1",
+        "J1_lk8010固定cnc-1",
+        "MG8010E-i36-1"
+      ],
+      "child_source_node_indices": [
+        {
+          "asset": "arm",
+          "index": 117
+        },
+        {
+          "asset": "arm",
+          "index": 118
+        },
+        {
+          "asset": "arm",
+          "index": 120
+        },
+        {
+          "asset": "arm",
+          "index": 121
+        },
+        {
+          "asset": "arm",
+          "index": 123
+        },
+        {
+          "asset": "arm",
+          "index": 132
+        },
+        {
+          "asset": "gimbal",
+          "index": 4
+        },
+        {
+          "asset": "gimbal",
+          "index": 859
+        },
+        {
+          "asset": "gimbal",
+          "index": 860
+        }
+      ],
+      "mesh_uri": "../../public/models/arm/link_1.stl"
+    },
+    {
+      "name": "J2",
+      "description": "shoulder pitch",
+      "parent_link": "link_1",
+      "child_link": "link_2",
+      "axis_point_mm": [
+        -40.73284680717465,
+        -6.433540098243414,
+        131.7621878361168
+      ],
+      "axis_direction": [
+        1,
+        0,
+        0
+      ],
+      "web_axis": [
+        1,
+        0,
+        0
+      ],
+      "type": "revolute",
+      "rest_angle_deg": 0,
+      "current_angle_deg": 0,
+      "angle_reference": "q = 0 is exactly the supplied arm.glb export pose; no encoder or homing zero is available",
+      "hardware_zero_deg": null,
+      "evidence": "arm root 同心10/重合5 and L2/J1 output-shaft geometry; source design p12",
+      "confidence": "high for axis line and link split; encoder zero unavailable",
+      "limits_deg": null,
+      "limit_note": "Final competition machine has no independent mechanical stop (source report pp5,12). Unlimited wraparound is not established; cable limits and export-relative bounds are uncalibrated. URDF holds q=0 until configured.",
+      "cad_limit_mate": {
+        "name": "LimitAngle1",
+        "range_deg": [
+          0,
+          238
+        ],
+        "reported_current_deg": 56.14267702986713,
+        "mapped_q_bounds_deg": null,
+        "note": "Mate dimension reference differs from export-zero joint coordinate. Preserve raw value; no unverified sign/offset conversion."
+      },
+      "parent_link_node_names": [
+        "04C_30teeth_从动轮.2025.10.1-1",
+        "6mm_J1_8016后固定板-1",
+        "6mm_J1_限位块-1",
+        "8mm_J1_机械臂底座-1",
+        "J1_6706轴承内圈CNC.2025.10.1-1",
+        "J1_RA6008轴承内圈CNC.2025.10.1-1",
+        "J1_bearing61811外侧固定cnc-1",
+        "J1_lk8010固定cnc-1",
+        "MG8010E-i36-1"
+      ],
+      "child_link_node_names": [
+        "5mm_J3_lk8010固定背板-1",
+        "6mm_J3_限位块-1",
+        "J1_bearing61811外侧固定cnc-1",
+        "J1_lk8010输出轴1cnc_v2-1",
+        "J1_lk8010输出轴2cnc_v2-1",
+        "J3_lk8010固定1cnc-1",
+        "J3_lk8010固定2cnc-1",
+        "L2_J1轴连接加固cnc-1",
+        "L2_J3_铝通填充块-1",
+        "L2_主体30_60铝通-1",
+        "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-1",
+        "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-2",
+        "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-3",
+        "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-4",
+        "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-5",
+        "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-6",
+        "L2_铝通内嵌加固-1/3mm_L2_竖直加固板-1",
+        "L2_铝通内嵌加固-1/3mm_L2_竖直加固板-2",
+        "L2_限位块cnc-1",
+        "MG8010E-i36-2"
+      ],
+      "child_source_node_indices": [
+        {
+          "asset": "arm",
+          "index": 5
+        },
+        {
+          "asset": "arm",
+          "index": 7
+        },
+        {
+          "asset": "arm",
+          "index": 9
+        },
+        {
+          "asset": "arm",
+          "index": 11
+        },
+        {
+          "asset": "arm",
+          "index": 12
+        },
+        {
+          "asset": "arm",
+          "index": 13
+        },
+        {
+          "asset": "arm",
+          "index": 14
+        },
+        {
+          "asset": "arm",
+          "index": 15
+        },
+        {
+          "asset": "arm",
+          "index": 16
+        },
+        {
+          "asset": "arm",
+          "index": 17
+        },
+        {
+          "asset": "arm",
+          "index": 18
+        },
+        {
+          "asset": "arm",
+          "index": 20
+        },
+        {
+          "asset": "arm",
+          "index": 44
+        },
+        {
+          "asset": "arm",
+          "index": 45
+        },
+        {
+          "asset": "arm",
+          "index": 48
+        },
+        {
+          "asset": "arm",
+          "index": 49
+        },
+        {
+          "asset": "arm",
+          "index": 51
+        },
+        {
+          "asset": "arm",
+          "index": 103
+        },
+        {
+          "asset": "arm",
+          "index": 129
+        },
+        {
+          "asset": "arm",
+          "index": 134
+        }
+      ],
+      "mesh_uri": "../../public/models/arm/link_2.stl"
+    },
+    {
+      "name": "J3",
+      "description": "elbow pitch",
+      "parent_link": "link_2",
+      "child_link": "link_3",
+      "axis_point_mm": [
+        -40.73284680717465,
+        166.92544669464942,
+        -206.38964447910453
+      ],
+      "axis_direction": [
+        1,
+        0,
+        0
+      ],
+      "web_axis": [
+        1,
+        0,
+        0
+      ],
+      "type": "revolute",
+      "rest_angle_deg": 0,
+      "current_angle_deg": 0,
+      "angle_reference": "q = 0 is exactly the supplied arm.glb export pose; no encoder or homing zero is available",
+      "hardware_zero_deg": null,
+      "evidence": "arm root 同心11/重合6 and J3/L4 shaft; source design p12",
+      "confidence": "high for axis line and link split; encoder zero unavailable",
+      "limits_deg": null,
+      "limit_note": "Final competition machine has no independent mechanical stop (source report pp5,12). Unlimited wraparound is not established; cable limits and export-relative bounds are uncalibrated. URDF holds q=0 until configured.",
+      "cad_limit_mate": {
+        "name": "LimitAngle2",
+        "range_deg": [
+          0,
+          250
+        ],
+        "reported_current_deg": 2.1367432181024317,
+        "mapped_q_bounds_deg": null,
+        "note": "Second entity is arm assembly datum: this constrains forearm orientation relative to base (coupled J2/J3), not an independent elbow range."
+      },
+      "parent_link_node_names": [
+        "5mm_J3_lk8010固定背板-1",
+        "6mm_J3_限位块-1",
+        "J1_bearing61811外侧固定cnc-1",
+        "J1_lk8010输出轴1cnc_v2-1",
+        "J1_lk8010输出轴2cnc_v2-1",
+        "J3_lk8010固定1cnc-1",
+        "J3_lk8010固定2cnc-1",
+        "L2_J1轴连接加固cnc-1",
+        "L2_J3_铝通填充块-1",
+        "L2_主体30_60铝通-1",
+        "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-1",
+        "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-2",
+        "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-3",
+        "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-4",
+        "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-5",
+        "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-6",
+        "L2_铝通内嵌加固-1/3mm_L2_竖直加固板-1",
+        "L2_铝通内嵌加固-1/3mm_L2_竖直加固板-2",
+        "L2_限位块cnc-1",
+        "MG8010E-i36-2"
+      ],
+      "child_link_node_names": [
+        "2mm_L4_J5连接轴承压板.2025.10.1-1",
+        "3mm_L4_主动齿轮固定轴承板.2025.10.1-1",
+        "3mm_L4_基端上板.2025.10.1-1",
+        "3mm_L4_基端下板.2025.10.1-1",
+        "4mm_L4_lk4010固定前板.2025.10.1-1",
+        "4mm_L4_lk4010固定背板.2025.10.1-1",
+        "4mm_L4_lk4010输出轴cnc.2025.10.1-1",
+        "4mm_L4_lk4010输出轴轴承板.2025.10.1-1",
+        "8mm_L4_右侧主板.2025.10.1-1",
+        "8mm_L4_左侧主板.2025.10.1-1",
+        "ES712-MT0522-S12.step-1",
+        "J1_lk8010输出轴1cnc_v2-1",
+        "J1_lk8010输出轴2cnc_v2-1",
+        "L4_40mm中心板管夹.2025.10.1-1",
+        "L4_40mm中心板管夹.2025.10.1-2",
+        "L4_40mm中心板管夹块.2025.10.1-1",
+        "L4_40mm中心板管夹块.2025.10.1-2",
+        "L4_8mm传动轴2.2025.10.1-1",
+        "L4_J3传动轴.2025.10.1-1",
+        "L4_J5_连接板cnc.2025.10.1-1",
+        "L4_主动齿轮传动轴cnc.2025.10.1-1",
+        "L4_基端保护罩.2025.10.1-1",
+        "L4_导电滑环夹持件.2025.10.1-1",
+        "L4_限位块cnc.2025.10.1-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/M2X5-N.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-FC.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-MC.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/6707.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-BR ________.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-GW ________Pro.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PC ________.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PF __________.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-2",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-3",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________108__0.4.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________12__0.4.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-2",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-3",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-4",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-5",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-2",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-3",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-4",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-5",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-6",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/LM43N24A-J210C_1.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-BC.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-CA.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-10",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-11",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-12",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-13",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-14",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-15",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-16",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-17",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-18",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-19",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-2",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-20",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-21",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-22",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-23",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-24",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-25",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-26",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-27",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-28",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-3",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-4",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-5",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-6",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-7",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-8",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-9",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG8016-DMG  ______.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG8016-FMB ________.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG8016-MAG  ____.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/PCB_AllCATPart.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/_____C-EFL675ZZ.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/________40__0.4.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/________44__0.4.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-2",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-3",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-4",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-5",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-6",
+        "RoboMaster裁判系统相机图传模块（发送端）VT03.2025.10.1-1",
+        "spur_gear_m1_30Teeth.2025.10.1-2",
+        "~$3mm_L4_末端上板.2025.10.1-1",
+        "~$3mm_L4_末端下板.2025.10.1-1",
+        "滚针万向节.2025.10.1-1/滚针万向联轴器.2025.10.1-1",
+        "滚针万向节.2025.10.1-1/滚针万向联轴器.2025.10.1-2",
+        "滚针万向节.2025.10.1-1/精密十字轴.2025.10.1-1",
+        "滚针万向节.2025.10.1-2/滚针万向联轴器.2025.10.1-1",
+        "滚针万向节.2025.10.1-2/滚针万向联轴器.2025.10.1-2",
+        "滚针万向节.2025.10.1-2/精密十字轴.2025.10.1-1",
+        "联动限位用外螺纹轴承.2025.10.1-1"
+      ],
+      "child_source_node_indices": [
+        {
+          "asset": "arm",
+          "index": 99
+        },
+        {
+          "asset": "arm",
+          "index": 102
+        },
+        {
+          "asset": "arm",
+          "index": 181
+        },
+        {
+          "asset": "arm",
+          "index": 182
+        },
+        {
+          "asset": "arm",
+          "index": 183
+        },
+        {
+          "asset": "arm",
+          "index": 186
+        },
+        {
+          "asset": "arm",
+          "index": 187
+        },
+        {
+          "asset": "arm",
+          "index": 189
+        },
+        {
+          "asset": "arm",
+          "index": 190
+        },
+        {
+          "asset": "arm",
+          "index": 191
+        },
+        {
+          "asset": "arm",
+          "index": 192
+        },
+        {
+          "asset": "arm",
+          "index": 193
+        },
+        {
+          "asset": "arm",
+          "index": 194
+        },
+        {
+          "asset": "arm",
+          "index": 195
+        },
+        {
+          "asset": "arm",
+          "index": 196
+        },
+        {
+          "asset": "arm",
+          "index": 197
+        },
+        {
+          "asset": "arm",
+          "index": 198
+        },
+        {
+          "asset": "arm",
+          "index": 199
+        },
+        {
+          "asset": "arm",
+          "index": 200
+        },
+        {
+          "asset": "arm",
+          "index": 201
+        },
+        {
+          "asset": "arm",
+          "index": 202
+        },
+        {
+          "asset": "arm",
+          "index": 203
+        },
+        {
+          "asset": "arm",
+          "index": 204
+        },
+        {
+          "asset": "arm",
+          "index": 205
+        },
+        {
+          "asset": "arm",
+          "index": 206
+        },
+        {
+          "asset": "arm",
+          "index": 207
+        },
+        {
+          "asset": "arm",
+          "index": 208
+        },
+        {
+          "asset": "arm",
+          "index": 209
+        },
+        {
+          "asset": "arm",
+          "index": 210
+        },
+        {
+          "asset": "arm",
+          "index": 211
+        },
+        {
+          "asset": "arm",
+          "index": 212
+        },
+        {
+          "asset": "arm",
+          "index": 213
+        },
+        {
+          "asset": "arm",
+          "index": 214
+        },
+        {
+          "asset": "arm",
+          "index": 215
+        },
+        {
+          "asset": "arm",
+          "index": 216
+        },
+        {
+          "asset": "arm",
+          "index": 217
+        },
+        {
+          "asset": "arm",
+          "index": 218
+        },
+        {
+          "asset": "arm",
+          "index": 219
+        },
+        {
+          "asset": "arm",
+          "index": 220
+        },
+        {
+          "asset": "arm",
+          "index": 221
+        },
+        {
+          "asset": "arm",
+          "index": 222
+        },
+        {
+          "asset": "arm",
+          "index": 223
+        },
+        {
+          "asset": "arm",
+          "index": 224
+        },
+        {
+          "asset": "arm",
+          "index": 226
+        },
+        {
+          "asset": "arm",
+          "index": 227
+        },
+        {
+          "asset": "arm",
+          "index": 228
+        },
+        {
+          "asset": "arm",
+          "index": 229
+        },
+        {
+          "asset": "arm",
+          "index": 230
+        },
+        {
+          "asset": "arm",
+          "index": 231
+        },
+        {
+          "asset": "arm",
+          "index": 232
+        },
+        {
+          "asset": "arm",
+          "index": 233
+        },
+        {
+          "asset": "arm",
+          "index": 234
+        },
+        {
+          "asset": "arm",
+          "index": 235
+        },
+        {
+          "asset": "arm",
+          "index": 237
+        },
+        {
+          "asset": "arm",
+          "index": 238
+        },
+        {
+          "asset": "arm",
+          "index": 239
+        },
+        {
+          "asset": "arm",
+          "index": 240
+        },
+        {
+          "asset": "arm",
+          "index": 241
+        },
+        {
+          "asset": "arm",
+          "index": 242
+        },
+        {
+          "asset": "arm",
+          "index": 243
+        },
+        {
+          "asset": "arm",
+          "index": 244
+        },
+        {
+          "asset": "arm",
+          "index": 245
+        },
+        {
+          "asset": "arm",
+          "index": 246
+        },
+        {
+          "asset": "arm",
+          "index": 251
+        },
+        {
+          "asset": "arm",
+          "index": 254
+        },
+        {
+          "asset": "arm",
+          "index": 255
+        },
+        {
+          "asset": "arm",
+          "index": 256
+        },
+        {
+          "asset": "arm",
+          "index": 257
+        },
+        {
+          "asset": "arm",
+          "index": 258
+        },
+        {
+          "asset": "arm",
+          "index": 261
+        },
+        {
+          "asset": "arm",
+          "index": 262
+        },
+        {
+          "asset": "arm",
+          "index": 263
+        },
+        {
+          "asset": "arm",
+          "index": 265
+        },
+        {
+          "asset": "arm",
+          "index": 266
+        },
+        {
+          "asset": "arm",
+          "index": 268
+        },
+        {
+          "asset": "arm",
+          "index": 269
+        },
+        {
+          "asset": "arm",
+          "index": 270
+        },
+        {
+          "asset": "arm",
+          "index": 272
+        },
+        {
+          "asset": "arm",
+          "index": 273
+        },
+        {
+          "asset": "arm",
+          "index": 275
+        },
+        {
+          "asset": "arm",
+          "index": 276
+        },
+        {
+          "asset": "arm",
+          "index": 282
+        },
+        {
+          "asset": "arm",
+          "index": 293
+        },
+        {
+          "asset": "arm",
+          "index": 297
+        },
+        {
+          "asset": "arm",
+          "index": 298
+        },
+        {
+          "asset": "arm",
+          "index": 299
+        },
+        {
+          "asset": "arm",
+          "index": 300
+        },
+        {
+          "asset": "arm",
+          "index": 301
+        },
+        {
+          "asset": "arm",
+          "index": 305
+        },
+        {
+          "asset": "arm",
+          "index": 306
+        },
+        {
+          "asset": "arm",
+          "index": 307
+        },
+        {
+          "asset": "arm",
+          "index": 311
+        },
+        {
+          "asset": "arm",
+          "index": 322
+        },
+        {
+          "asset": "arm",
+          "index": 326
+        },
+        {
+          "asset": "arm",
+          "index": 327
+        },
+        {
+          "asset": "arm",
+          "index": 331
+        },
+        {
+          "asset": "arm",
+          "index": 344
+        },
+        {
+          "asset": "arm",
+          "index": 346
+        },
+        {
+          "asset": "arm",
+          "index": 347
+        },
+        {
+          "asset": "arm",
+          "index": 350
+        },
+        {
+          "asset": "arm",
+          "index": 351
+        },
+        {
+          "asset": "arm",
+          "index": 352
+        },
+        {
+          "asset": "arm",
+          "index": 353
+        }
+      ],
+      "mesh_uri": "../../public/models/arm/link_3.stl"
+    },
+    {
+      "name": "J4",
+      "description": "forearm roll",
+      "parent_link": "link_3",
+      "child_link": "link_4",
+      "axis_point_mm": [
+        -40.73284608002096,
+        81.16572583754363,
+        6.9729043433401365
+      ],
+      "axis_direction": [
+        -2.238690939268881e-16,
+        0.0556861780807675,
+        0.9984483209314127
+      ],
+      "web_axis": [
+        -2.238690939268881e-16,
+        0.0556861780807675,
+        0.9984483209314127
+      ],
+      "type": "continuous",
+      "rest_angle_deg": 0,
+      "current_angle_deg": 0,
+      "angle_reference": "q = 0 is exactly the supplied arm.glb export pose; no encoder or homing zero is available",
+      "hardware_zero_deg": null,
+      "evidence": "L4 同心112/114 + root 同心12; ES712 slip ring is support evidence, not an independent extra joint; source design pp13-14",
+      "confidence": "high for axis line and link split; encoder zero unavailable",
+      "limits_deg": null,
+      "datum_current_angle_deg": -0.3954070044323887,
+      "parent_link_node_names": [
+        "2mm_L4_J5连接轴承压板.2025.10.1-1",
+        "3mm_L4_主动齿轮固定轴承板.2025.10.1-1",
+        "3mm_L4_基端上板.2025.10.1-1",
+        "3mm_L4_基端下板.2025.10.1-1",
+        "4mm_L4_lk4010固定前板.2025.10.1-1",
+        "4mm_L4_lk4010固定背板.2025.10.1-1",
+        "4mm_L4_lk4010输出轴cnc.2025.10.1-1",
+        "4mm_L4_lk4010输出轴轴承板.2025.10.1-1",
+        "8mm_L4_右侧主板.2025.10.1-1",
+        "8mm_L4_左侧主板.2025.10.1-1",
+        "ES712-MT0522-S12.step-1",
+        "J1_lk8010输出轴1cnc_v2-1",
+        "J1_lk8010输出轴2cnc_v2-1",
+        "L4_40mm中心板管夹.2025.10.1-1",
+        "L4_40mm中心板管夹.2025.10.1-2",
+        "L4_40mm中心板管夹块.2025.10.1-1",
+        "L4_40mm中心板管夹块.2025.10.1-2",
+        "L4_8mm传动轴2.2025.10.1-1",
+        "L4_J3传动轴.2025.10.1-1",
+        "L4_J5_连接板cnc.2025.10.1-1",
+        "L4_主动齿轮传动轴cnc.2025.10.1-1",
+        "L4_基端保护罩.2025.10.1-1",
+        "L4_导电滑环夹持件.2025.10.1-1",
+        "L4_限位块cnc.2025.10.1-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/M2X5-N.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-FC.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-MC.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/6707.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-BR ________.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-GW ________Pro.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PC ________.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PF __________.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-2",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-3",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________108__0.4.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________12__0.4.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-2",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-3",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-4",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-5",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-2",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-3",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-4",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-5",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-6",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/LM43N24A-J210C_1.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-BC.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-CA.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-10",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-11",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-12",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-13",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-14",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-15",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-16",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-17",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-18",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-19",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-2",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-20",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-21",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-22",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-23",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-24",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-25",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-26",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-27",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-28",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-3",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-4",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-5",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-6",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-7",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-8",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-9",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG8016-DMG  ______.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG8016-FMB ________.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG8016-MAG  ____.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/PCB_AllCATPart.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/_____C-EFL675ZZ.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/________40__0.4.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/________44__0.4.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-1",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-2",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-3",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-4",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-5",
+        "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-6",
+        "RoboMaster裁判系统相机图传模块（发送端）VT03.2025.10.1-1",
+        "spur_gear_m1_30Teeth.2025.10.1-2",
+        "~$3mm_L4_末端上板.2025.10.1-1",
+        "~$3mm_L4_末端下板.2025.10.1-1",
+        "滚针万向节.2025.10.1-1/滚针万向联轴器.2025.10.1-1",
+        "滚针万向节.2025.10.1-1/滚针万向联轴器.2025.10.1-2",
+        "滚针万向节.2025.10.1-1/精密十字轴.2025.10.1-1",
+        "滚针万向节.2025.10.1-2/滚针万向联轴器.2025.10.1-1",
+        "滚针万向节.2025.10.1-2/滚针万向联轴器.2025.10.1-2",
+        "滚针万向节.2025.10.1-2/精密十字轴.2025.10.1-1",
+        "联动限位用外螺纹轴承.2025.10.1-1"
+      ],
+      "child_link_node_names": [
+        "2mm_J7_轴卡板-1",
+        "5M21T同步轮-1",
+        "5M_10_Synchronousbelt-1",
+        "5M_10_Synchronousbelt-10",
+        "5M_10_Synchronousbelt-11",
+        "5M_10_Synchronousbelt-12",
+        "5M_10_Synchronousbelt-13",
+        "5M_10_Synchronousbelt-14",
+        "5M_10_Synchronousbelt-15",
+        "5M_10_Synchronousbelt-16",
+        "5M_10_Synchronousbelt-17",
+        "5M_10_Synchronousbelt-18",
+        "5M_10_Synchronousbelt-19",
+        "5M_10_Synchronousbelt-2",
+        "5M_10_Synchronousbelt-20",
+        "5M_10_Synchronousbelt-21",
+        "5M_10_Synchronousbelt-22",
+        "5M_10_Synchronousbelt-23",
+        "5M_10_Synchronousbelt-24",
+        "5M_10_Synchronousbelt-25",
+        "5M_10_Synchronousbelt-26",
+        "5M_10_Synchronousbelt-27",
+        "5M_10_Synchronousbelt-28",
+        "5M_10_Synchronousbelt-29",
+        "5M_10_Synchronousbelt-3",
+        "5M_10_Synchronousbelt-30",
+        "5M_10_Synchronousbelt-31",
+        "5M_10_Synchronousbelt-32",
+        "5M_10_Synchronousbelt-33",
+        "5M_10_Synchronousbelt-34",
+        "5M_10_Synchronousbelt-35",
+        "5M_10_Synchronousbelt-36",
+        "5M_10_Synchronousbelt-37",
+        "5M_10_Synchronousbelt-38",
+        "5M_10_Synchronousbelt-39",
+        "5M_10_Synchronousbelt-4",
+        "5M_10_Synchronousbelt-40",
+        "5M_10_Synchronousbelt-41",
+        "5M_10_Synchronousbelt-42",
+        "5M_10_Synchronousbelt-43",
+        "5M_10_Synchronousbelt-44",
+        "5M_10_Synchronousbelt-45",
+        "5M_10_Synchronousbelt-46",
+        "5M_10_Synchronousbelt-47",
+        "5M_10_Synchronousbelt-48",
+        "5M_10_Synchronousbelt-49",
+        "5M_10_Synchronousbelt-5",
+        "5M_10_Synchronousbelt-50",
+        "5M_10_Synchronousbelt-51",
+        "5M_10_Synchronousbelt-52",
+        "5M_10_Synchronousbelt-53",
+        "5M_10_Synchronousbelt-54",
+        "5M_10_Synchronousbelt-55",
+        "5M_10_Synchronousbelt-56",
+        "5M_10_Synchronousbelt-57",
+        "5M_10_Synchronousbelt-58",
+        "5M_10_Synchronousbelt-59",
+        "5M_10_Synchronousbelt-6",
+        "5M_10_Synchronousbelt-60",
+        "5M_10_Synchronousbelt-61",
+        "5M_10_Synchronousbelt-62",
+        "5M_10_Synchronousbelt-63",
+        "5M_10_Synchronousbelt-64",
+        "5M_10_Synchronousbelt-65",
+        "5M_10_Synchronousbelt-66",
+        "5M_10_Synchronousbelt-67",
+        "5M_10_Synchronousbelt-68",
+        "5M_10_Synchronousbelt-69",
+        "5M_10_Synchronousbelt-7",
+        "5M_10_Synchronousbelt-70",
+        "5M_10_Synchronousbelt-71",
+        "5M_10_Synchronousbelt-72",
+        "5M_10_Synchronousbelt-73",
+        "5M_10_Synchronousbelt-74",
+        "5M_10_Synchronousbelt-75",
+        "5M_10_Synchronousbelt-76",
+        "5M_10_Synchronousbelt-77",
+        "5M_10_Synchronousbelt-78",
+        "5M_10_Synchronousbelt-79",
+        "5M_10_Synchronousbelt-8",
+        "5M_10_Synchronousbelt-9",
+        "6mm_J5_L6_Base-1",
+        "6mm_L6_侧板-1",
+        "6mm_L6涨紧块-1",
+        "6mm_L6涨紧块-2",
+        "J7_同步轮轴承内垫块-1",
+        "KSL06-M5-3",
+        "L4_J5连接轴cnc1.2025.10.1-1",
+        "L4_J5连接轴cnc2.2025.10.1-1",
+        "L6_4005baseCNC-1",
+        "L6_4010同步轮连接板cnc-1",
+        "L6_71mm六角轴-1",
+        "L6_8mm六角轴联轴器cnc-1",
+        "L6_8mm六角轴联轴器cnc-2",
+        "L6_齿轮传动轴-1",
+        "L6_齿轮对轴夹紧cnc-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/M2X5-N.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-FC.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-MC.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/6707.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-BR ________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-GW ________Pro.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PC ________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PF __________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________108__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________12__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-4",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-5",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-4",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-5",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-6",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/LM43N24A-J210C_1.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-BC.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-CA.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-10",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-11",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-12",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-13",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-14",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-15",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-16",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-17",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-18",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-19",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-20",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-21",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-22",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-23",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-24",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-25",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-26",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-27",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-28",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-4",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-5",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-6",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-7",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-8",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-9",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG8016-DMG  ______.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG8016-FMB ________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG8016-MAG  ____.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/PCB_AllCATPart.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/_____C-EFL675ZZ.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/________40__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/________44__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-4",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-5",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-6",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/M2X5-N.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-FC.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-MC.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/6707.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-BR ________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-GW ________Pro.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PC ________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PF __________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________108__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________12__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-4",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-5",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-4",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-5",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-6",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/LM43N24A-J210C_1.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-BC.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-CA.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-10",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-11",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-12",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-13",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-14",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-15",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-16",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-17",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-18",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-19",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-20",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-21",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-22",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-23",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-24",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-25",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-26",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-27",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-28",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-4",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-5",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-6",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-7",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-8",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-9",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG8016-DMG  ______.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG8016-FMB ________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG8016-MAG  ____.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/PCB_AllCATPart.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/_____C-EFL675ZZ.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/________40__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/________44__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-4",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-5",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-6",
+        "POC6-M5-1",
+        "m5D10_12_气管铝柱-1",
+        "spur_gear_m1.25_40Teeth_drive-1",
+        "spur_gear_m1.25_40Teeth_drive-2",
+        "spur_gear_m1_30Teeth2.2025.10.1-1",
+        "spur_gear_m1_38Teeth_drive-1",
+        "spur_gear_m1_38Teeth_driven-2"
+      ],
+      "child_source_node_indices": [
+        {
+          "asset": "arm",
+          "index": 271
+        },
+        {
+          "asset": "arm",
+          "index": 332
+        },
+        {
+          "asset": "arm",
+          "index": 348
+        },
+        {
+          "asset": "arm",
+          "index": 500
+        },
+        {
+          "asset": "arm",
+          "index": 502
+        },
+        {
+          "asset": "arm",
+          "index": 505
+        },
+        {
+          "asset": "arm",
+          "index": 506
+        },
+        {
+          "asset": "arm",
+          "index": 507
+        },
+        {
+          "asset": "arm",
+          "index": 512
+        },
+        {
+          "asset": "arm",
+          "index": 513
+        },
+        {
+          "asset": "arm",
+          "index": 515
+        },
+        {
+          "asset": "arm",
+          "index": 516
+        },
+        {
+          "asset": "arm",
+          "index": 517
+        },
+        {
+          "asset": "arm",
+          "index": 518
+        },
+        {
+          "asset": "arm",
+          "index": 519
+        },
+        {
+          "asset": "arm",
+          "index": 520
+        },
+        {
+          "asset": "arm",
+          "index": 521
+        },
+        {
+          "asset": "arm",
+          "index": 522
+        },
+        {
+          "asset": "arm",
+          "index": 523
+        },
+        {
+          "asset": "arm",
+          "index": 524
+        },
+        {
+          "asset": "arm",
+          "index": 525
+        },
+        {
+          "asset": "arm",
+          "index": 526
+        },
+        {
+          "asset": "arm",
+          "index": 527
+        },
+        {
+          "asset": "arm",
+          "index": 528
+        },
+        {
+          "asset": "arm",
+          "index": 529
+        },
+        {
+          "asset": "arm",
+          "index": 530
+        },
+        {
+          "asset": "arm",
+          "index": 531
+        },
+        {
+          "asset": "arm",
+          "index": 532
+        },
+        {
+          "asset": "arm",
+          "index": 533
+        },
+        {
+          "asset": "arm",
+          "index": 534
+        },
+        {
+          "asset": "arm",
+          "index": 535
+        },
+        {
+          "asset": "arm",
+          "index": 536
+        },
+        {
+          "asset": "arm",
+          "index": 537
+        },
+        {
+          "asset": "arm",
+          "index": 538
+        },
+        {
+          "asset": "arm",
+          "index": 539
+        },
+        {
+          "asset": "arm",
+          "index": 540
+        },
+        {
+          "asset": "arm",
+          "index": 541
+        },
+        {
+          "asset": "arm",
+          "index": 542
+        },
+        {
+          "asset": "arm",
+          "index": 543
+        },
+        {
+          "asset": "arm",
+          "index": 544
+        },
+        {
+          "asset": "arm",
+          "index": 545
+        },
+        {
+          "asset": "arm",
+          "index": 546
+        },
+        {
+          "asset": "arm",
+          "index": 547
+        },
+        {
+          "asset": "arm",
+          "index": 548
+        },
+        {
+          "asset": "arm",
+          "index": 549
+        },
+        {
+          "asset": "arm",
+          "index": 550
+        },
+        {
+          "asset": "arm",
+          "index": 552
+        },
+        {
+          "asset": "arm",
+          "index": 553
+        },
+        {
+          "asset": "arm",
+          "index": 554
+        },
+        {
+          "asset": "arm",
+          "index": 555
+        },
+        {
+          "asset": "arm",
+          "index": 556
+        },
+        {
+          "asset": "arm",
+          "index": 557
+        },
+        {
+          "asset": "arm",
+          "index": 558
+        },
+        {
+          "asset": "arm",
+          "index": 559
+        },
+        {
+          "asset": "arm",
+          "index": 560
+        },
+        {
+          "asset": "arm",
+          "index": 561
+        },
+        {
+          "asset": "arm",
+          "index": 563
+        },
+        {
+          "asset": "arm",
+          "index": 564
+        },
+        {
+          "asset": "arm",
+          "index": 565
+        },
+        {
+          "asset": "arm",
+          "index": 566
+        },
+        {
+          "asset": "arm",
+          "index": 567
+        },
+        {
+          "asset": "arm",
+          "index": 568
+        },
+        {
+          "asset": "arm",
+          "index": 569
+        },
+        {
+          "asset": "arm",
+          "index": 570
+        },
+        {
+          "asset": "arm",
+          "index": 571
+        },
+        {
+          "asset": "arm",
+          "index": 572
+        },
+        {
+          "asset": "arm",
+          "index": 577
+        },
+        {
+          "asset": "arm",
+          "index": 580
+        },
+        {
+          "asset": "arm",
+          "index": 581
+        },
+        {
+          "asset": "arm",
+          "index": 582
+        },
+        {
+          "asset": "arm",
+          "index": 583
+        },
+        {
+          "asset": "arm",
+          "index": 584
+        },
+        {
+          "asset": "arm",
+          "index": 587
+        },
+        {
+          "asset": "arm",
+          "index": 588
+        },
+        {
+          "asset": "arm",
+          "index": 589
+        },
+        {
+          "asset": "arm",
+          "index": 591
+        },
+        {
+          "asset": "arm",
+          "index": 596
+        },
+        {
+          "asset": "arm",
+          "index": 597
+        },
+        {
+          "asset": "arm",
+          "index": 599
+        },
+        {
+          "asset": "arm",
+          "index": 600
+        },
+        {
+          "asset": "arm",
+          "index": 601
+        },
+        {
+          "asset": "arm",
+          "index": 602
+        },
+        {
+          "asset": "arm",
+          "index": 603
+        },
+        {
+          "asset": "arm",
+          "index": 604
+        },
+        {
+          "asset": "arm",
+          "index": 605
+        },
+        {
+          "asset": "arm",
+          "index": 606
+        },
+        {
+          "asset": "arm",
+          "index": 607
+        },
+        {
+          "asset": "arm",
+          "index": 608
+        },
+        {
+          "asset": "arm",
+          "index": 609
+        },
+        {
+          "asset": "arm",
+          "index": 610
+        },
+        {
+          "asset": "arm",
+          "index": 611
+        },
+        {
+          "asset": "arm",
+          "index": 612
+        },
+        {
+          "asset": "arm",
+          "index": 613
+        },
+        {
+          "asset": "arm",
+          "index": 614
+        },
+        {
+          "asset": "arm",
+          "index": 615
+        },
+        {
+          "asset": "arm",
+          "index": 616
+        },
+        {
+          "asset": "arm",
+          "index": 617
+        },
+        {
+          "asset": "arm",
+          "index": 618
+        },
+        {
+          "asset": "arm",
+          "index": 619
+        },
+        {
+          "asset": "arm",
+          "index": 620
+        },
+        {
+          "asset": "arm",
+          "index": 621
+        },
+        {
+          "asset": "arm",
+          "index": 622
+        },
+        {
+          "asset": "arm",
+          "index": 623
+        },
+        {
+          "asset": "arm",
+          "index": 624
+        },
+        {
+          "asset": "arm",
+          "index": 625
+        },
+        {
+          "asset": "arm",
+          "index": 626
+        },
+        {
+          "asset": "arm",
+          "index": 627
+        },
+        {
+          "asset": "arm",
+          "index": 628
+        },
+        {
+          "asset": "arm",
+          "index": 629
+        },
+        {
+          "asset": "arm",
+          "index": 630
+        },
+        {
+          "asset": "arm",
+          "index": 631
+        },
+        {
+          "asset": "arm",
+          "index": 632
+        },
+        {
+          "asset": "arm",
+          "index": 633
+        },
+        {
+          "asset": "arm",
+          "index": 634
+        },
+        {
+          "asset": "arm",
+          "index": 636
+        },
+        {
+          "asset": "arm",
+          "index": 637
+        },
+        {
+          "asset": "arm",
+          "index": 638
+        },
+        {
+          "asset": "arm",
+          "index": 639
+        },
+        {
+          "asset": "arm",
+          "index": 640
+        },
+        {
+          "asset": "arm",
+          "index": 641
+        },
+        {
+          "asset": "arm",
+          "index": 642
+        },
+        {
+          "asset": "arm",
+          "index": 643
+        },
+        {
+          "asset": "arm",
+          "index": 644
+        },
+        {
+          "asset": "arm",
+          "index": 645
+        },
+        {
+          "asset": "arm",
+          "index": 647
+        },
+        {
+          "asset": "arm",
+          "index": 648
+        },
+        {
+          "asset": "arm",
+          "index": 649
+        },
+        {
+          "asset": "arm",
+          "index": 650
+        },
+        {
+          "asset": "arm",
+          "index": 651
+        },
+        {
+          "asset": "arm",
+          "index": 652
+        },
+        {
+          "asset": "arm",
+          "index": 653
+        },
+        {
+          "asset": "arm",
+          "index": 654
+        },
+        {
+          "asset": "arm",
+          "index": 655
+        },
+        {
+          "asset": "arm",
+          "index": 656
+        },
+        {
+          "asset": "arm",
+          "index": 661
+        },
+        {
+          "asset": "arm",
+          "index": 664
+        },
+        {
+          "asset": "arm",
+          "index": 665
+        },
+        {
+          "asset": "arm",
+          "index": 666
+        },
+        {
+          "asset": "arm",
+          "index": 667
+        },
+        {
+          "asset": "arm",
+          "index": 668
+        },
+        {
+          "asset": "arm",
+          "index": 671
+        },
+        {
+          "asset": "arm",
+          "index": 672
+        },
+        {
+          "asset": "arm",
+          "index": 673
+        },
+        {
+          "asset": "arm",
+          "index": 675
+        },
+        {
+          "asset": "arm",
+          "index": 683
+        },
+        {
+          "asset": "arm",
+          "index": 685
+        },
+        {
+          "asset": "arm",
+          "index": 689
+        },
+        {
+          "asset": "arm",
+          "index": 691
+        },
+        {
+          "asset": "arm",
+          "index": 693
+        },
+        {
+          "asset": "arm",
+          "index": 694
+        },
+        {
+          "asset": "arm",
+          "index": 695
+        },
+        {
+          "asset": "arm",
+          "index": 696
+        },
+        {
+          "asset": "arm",
+          "index": 697
+        },
+        {
+          "asset": "arm",
+          "index": 699
+        },
+        {
+          "asset": "arm",
+          "index": 701
+        },
+        {
+          "asset": "arm",
+          "index": 703
+        },
+        {
+          "asset": "arm",
+          "index": 704
+        },
+        {
+          "asset": "arm",
+          "index": 705
+        },
+        {
+          "asset": "arm",
+          "index": 706
+        },
+        {
+          "asset": "arm",
+          "index": 707
+        },
+        {
+          "asset": "arm",
+          "index": 708
+        },
+        {
+          "asset": "arm",
+          "index": 709
+        },
+        {
+          "asset": "arm",
+          "index": 710
+        },
+        {
+          "asset": "arm",
+          "index": 711
+        },
+        {
+          "asset": "arm",
+          "index": 712
+        },
+        {
+          "asset": "arm",
+          "index": 713
+        },
+        {
+          "asset": "arm",
+          "index": 714
+        },
+        {
+          "asset": "arm",
+          "index": 715
+        },
+        {
+          "asset": "arm",
+          "index": 716
+        },
+        {
+          "asset": "arm",
+          "index": 717
+        },
+        {
+          "asset": "arm",
+          "index": 718
+        },
+        {
+          "asset": "arm",
+          "index": 719
+        },
+        {
+          "asset": "arm",
+          "index": 720
+        },
+        {
+          "asset": "arm",
+          "index": 721
+        },
+        {
+          "asset": "arm",
+          "index": 722
+        },
+        {
+          "asset": "arm",
+          "index": 723
+        },
+        {
+          "asset": "arm",
+          "index": 724
+        },
+        {
+          "asset": "arm",
+          "index": 725
+        },
+        {
+          "asset": "arm",
+          "index": 726
+        },
+        {
+          "asset": "arm",
+          "index": 727
+        },
+        {
+          "asset": "arm",
+          "index": 728
+        },
+        {
+          "asset": "arm",
+          "index": 729
+        },
+        {
+          "asset": "arm",
+          "index": 730
+        },
+        {
+          "asset": "arm",
+          "index": 731
+        },
+        {
+          "asset": "arm",
+          "index": 732
+        },
+        {
+          "asset": "arm",
+          "index": 751
+        },
+        {
+          "asset": "arm",
+          "index": 762
+        },
+        {
+          "asset": "arm",
+          "index": 766
+        },
+        {
+          "asset": "arm",
+          "index": 767
+        },
+        {
+          "asset": "arm",
+          "index": 768
+        },
+        {
+          "asset": "arm",
+          "index": 770
+        },
+        {
+          "asset": "arm",
+          "index": 772
+        },
+        {
+          "asset": "arm",
+          "index": 774
+        },
+        {
+          "asset": "arm",
+          "index": 776
+        },
+        {
+          "asset": "arm",
+          "index": 779
+        },
+        {
+          "asset": "arm",
+          "index": 781
+        },
+        {
+          "asset": "arm",
+          "index": 782
+        },
+        {
+          "asset": "arm",
+          "index": 783
+        },
+        {
+          "asset": "arm",
+          "index": 784
+        },
+        {
+          "asset": "arm",
+          "index": 785
+        },
+        {
+          "asset": "arm",
+          "index": 786
+        },
+        {
+          "asset": "arm",
+          "index": 787
+        },
+        {
+          "asset": "arm",
+          "index": 788
+        },
+        {
+          "asset": "arm",
+          "index": 789
+        },
+        {
+          "asset": "arm",
+          "index": 790
+        },
+        {
+          "asset": "arm",
+          "index": 791
+        },
+        {
+          "asset": "arm",
+          "index": 792
+        },
+        {
+          "asset": "arm",
+          "index": 793
+        },
+        {
+          "asset": "arm",
+          "index": 794
+        },
+        {
+          "asset": "arm",
+          "index": 795
+        },
+        {
+          "asset": "arm",
+          "index": 796
+        },
+        {
+          "asset": "arm",
+          "index": 797
+        },
+        {
+          "asset": "arm",
+          "index": 798
+        },
+        {
+          "asset": "arm",
+          "index": 799
+        },
+        {
+          "asset": "arm",
+          "index": 800
+        },
+        {
+          "asset": "arm",
+          "index": 801
+        },
+        {
+          "asset": "arm",
+          "index": 802
+        },
+        {
+          "asset": "arm",
+          "index": 803
+        },
+        {
+          "asset": "arm",
+          "index": 804
+        },
+        {
+          "asset": "arm",
+          "index": 805
+        },
+        {
+          "asset": "arm",
+          "index": 806
+        },
+        {
+          "asset": "arm",
+          "index": 807
+        },
+        {
+          "asset": "arm",
+          "index": 808
+        },
+        {
+          "asset": "arm",
+          "index": 809
+        },
+        {
+          "asset": "arm",
+          "index": 810
+        },
+        {
+          "asset": "arm",
+          "index": 811
+        },
+        {
+          "asset": "arm",
+          "index": 812
+        },
+        {
+          "asset": "arm",
+          "index": 813
+        },
+        {
+          "asset": "arm",
+          "index": 814
+        },
+        {
+          "asset": "arm",
+          "index": 815
+        },
+        {
+          "asset": "arm",
+          "index": 816
+        },
+        {
+          "asset": "arm",
+          "index": 817
+        },
+        {
+          "asset": "arm",
+          "index": 818
+        },
+        {
+          "asset": "arm",
+          "index": 819
+        },
+        {
+          "asset": "arm",
+          "index": 820
+        },
+        {
+          "asset": "arm",
+          "index": 821
+        },
+        {
+          "asset": "arm",
+          "index": 822
+        },
+        {
+          "asset": "arm",
+          "index": 823
+        },
+        {
+          "asset": "arm",
+          "index": 824
+        }
+      ],
+      "mesh_uri": "../../public/models/arm/link_4.stl"
+    },
+    {
+      "name": "J5",
+      "description": "wrist pitch",
+      "parent_link": "link_4",
+      "child_link": "link_5",
+      "axis_point_mm": [
+        -40.732846080021005,
+        92.35864763177788,
+        207.66101685055406
+      ],
+      "axis_direction": [
+        0.9999761871304652,
+        -0.006890391042558452,
+        0.0003842958464633612
+      ],
+      "web_axis": [
+        0.9999761871304652,
+        -0.006890391042558452,
+        0.0003842958464633612
+      ],
+      "type": "revolute",
+      "rest_angle_deg": 0,
+      "current_angle_deg": 0,
+      "angle_reference": "q = 0 is exactly the supplied arm.glb export pose; no encoder or homing zero is available",
+      "hardware_zero_deg": null,
+      "evidence": "L6 同心18 (hidden legacy carrier), 同心36/89/90 (visible J7J8_差速器CNC), coaxial wheel bearings and Fig17 pp14-15",
+      "confidence": "high for axis line and link split; encoder zero unavailable",
+      "datum_current_angle_deg": 1.3716516466278321,
+      "limits_deg": [
+        -121.37165164662784,
+        118.62834835337216
+      ],
+      "limit_note": "Approximate unloaded ±120 deg relative to aligned forearm/tool axes, source report p5; geometric datum pitch of export is +1.371651647 deg. Not collision-certified.",
+      "parent_link_node_names": [
+        "2mm_J7_轴卡板-1",
+        "5M21T同步轮-1",
+        "5M_10_Synchronousbelt-1",
+        "5M_10_Synchronousbelt-10",
+        "5M_10_Synchronousbelt-11",
+        "5M_10_Synchronousbelt-12",
+        "5M_10_Synchronousbelt-13",
+        "5M_10_Synchronousbelt-14",
+        "5M_10_Synchronousbelt-15",
+        "5M_10_Synchronousbelt-16",
+        "5M_10_Synchronousbelt-17",
+        "5M_10_Synchronousbelt-18",
+        "5M_10_Synchronousbelt-19",
+        "5M_10_Synchronousbelt-2",
+        "5M_10_Synchronousbelt-20",
+        "5M_10_Synchronousbelt-21",
+        "5M_10_Synchronousbelt-22",
+        "5M_10_Synchronousbelt-23",
+        "5M_10_Synchronousbelt-24",
+        "5M_10_Synchronousbelt-25",
+        "5M_10_Synchronousbelt-26",
+        "5M_10_Synchronousbelt-27",
+        "5M_10_Synchronousbelt-28",
+        "5M_10_Synchronousbelt-29",
+        "5M_10_Synchronousbelt-3",
+        "5M_10_Synchronousbelt-30",
+        "5M_10_Synchronousbelt-31",
+        "5M_10_Synchronousbelt-32",
+        "5M_10_Synchronousbelt-33",
+        "5M_10_Synchronousbelt-34",
+        "5M_10_Synchronousbelt-35",
+        "5M_10_Synchronousbelt-36",
+        "5M_10_Synchronousbelt-37",
+        "5M_10_Synchronousbelt-38",
+        "5M_10_Synchronousbelt-39",
+        "5M_10_Synchronousbelt-4",
+        "5M_10_Synchronousbelt-40",
+        "5M_10_Synchronousbelt-41",
+        "5M_10_Synchronousbelt-42",
+        "5M_10_Synchronousbelt-43",
+        "5M_10_Synchronousbelt-44",
+        "5M_10_Synchronousbelt-45",
+        "5M_10_Synchronousbelt-46",
+        "5M_10_Synchronousbelt-47",
+        "5M_10_Synchronousbelt-48",
+        "5M_10_Synchronousbelt-49",
+        "5M_10_Synchronousbelt-5",
+        "5M_10_Synchronousbelt-50",
+        "5M_10_Synchronousbelt-51",
+        "5M_10_Synchronousbelt-52",
+        "5M_10_Synchronousbelt-53",
+        "5M_10_Synchronousbelt-54",
+        "5M_10_Synchronousbelt-55",
+        "5M_10_Synchronousbelt-56",
+        "5M_10_Synchronousbelt-57",
+        "5M_10_Synchronousbelt-58",
+        "5M_10_Synchronousbelt-59",
+        "5M_10_Synchronousbelt-6",
+        "5M_10_Synchronousbelt-60",
+        "5M_10_Synchronousbelt-61",
+        "5M_10_Synchronousbelt-62",
+        "5M_10_Synchronousbelt-63",
+        "5M_10_Synchronousbelt-64",
+        "5M_10_Synchronousbelt-65",
+        "5M_10_Synchronousbelt-66",
+        "5M_10_Synchronousbelt-67",
+        "5M_10_Synchronousbelt-68",
+        "5M_10_Synchronousbelt-69",
+        "5M_10_Synchronousbelt-7",
+        "5M_10_Synchronousbelt-70",
+        "5M_10_Synchronousbelt-71",
+        "5M_10_Synchronousbelt-72",
+        "5M_10_Synchronousbelt-73",
+        "5M_10_Synchronousbelt-74",
+        "5M_10_Synchronousbelt-75",
+        "5M_10_Synchronousbelt-76",
+        "5M_10_Synchronousbelt-77",
+        "5M_10_Synchronousbelt-78",
+        "5M_10_Synchronousbelt-79",
+        "5M_10_Synchronousbelt-8",
+        "5M_10_Synchronousbelt-9",
+        "6mm_J5_L6_Base-1",
+        "6mm_L6_侧板-1",
+        "6mm_L6涨紧块-1",
+        "6mm_L6涨紧块-2",
+        "J7_同步轮轴承内垫块-1",
+        "KSL06-M5-3",
+        "L4_J5连接轴cnc1.2025.10.1-1",
+        "L4_J5连接轴cnc2.2025.10.1-1",
+        "L6_4005baseCNC-1",
+        "L6_4010同步轮连接板cnc-1",
+        "L6_71mm六角轴-1",
+        "L6_8mm六角轴联轴器cnc-1",
+        "L6_8mm六角轴联轴器cnc-2",
+        "L6_齿轮传动轴-1",
+        "L6_齿轮对轴夹紧cnc-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/M2X5-N.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-FC.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-MC.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/6707.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-BR ________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-GW ________Pro.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PC ________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PF __________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________108__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________12__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-4",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-5",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-4",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-5",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-6",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/LM43N24A-J210C_1.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-BC.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-CA.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-10",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-11",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-12",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-13",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-14",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-15",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-16",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-17",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-18",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-19",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-20",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-21",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-22",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-23",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-24",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-25",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-26",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-27",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-28",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-4",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-5",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-6",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-7",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-8",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-9",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG8016-DMG  ______.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG8016-FMB ________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG8016-MAG  ____.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/PCB_AllCATPart.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/_____C-EFL675ZZ.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/________40__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/________44__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-4",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-5",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-6",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/M2X5-N.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-FC.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-MC.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/6707.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-BR ________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-GW ________Pro.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PC ________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PF __________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________108__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________12__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-4",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-5",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-4",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-5",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-6",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/LM43N24A-J210C_1.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-BC.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-CA.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-10",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-11",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-12",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-13",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-14",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-15",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-16",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-17",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-18",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-19",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-20",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-21",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-22",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-23",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-24",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-25",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-26",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-27",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-28",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-4",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-5",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-6",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-7",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-8",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-9",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG8016-DMG  ______.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG8016-FMB ________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG8016-MAG  ____.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/PCB_AllCATPart.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/_____C-EFL675ZZ.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/________40__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/________44__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-4",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-5",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-6",
+        "POC6-M5-1",
+        "m5D10_12_气管铝柱-1",
+        "spur_gear_m1.25_40Teeth_drive-1",
+        "spur_gear_m1.25_40Teeth_drive-2",
+        "spur_gear_m1_30Teeth2.2025.10.1-1",
+        "spur_gear_m1_38Teeth_drive-1",
+        "spur_gear_m1_38Teeth_driven-2"
+      ],
+      "child_link_node_names": [
+        "5M21T同步轮带螺纹-1",
+        "J7J8_差速器CNC-1",
+        "KSL06-M5-1"
+      ],
+      "child_source_node_indices": [
+        {
+          "asset": "arm",
+          "index": 680
+        },
+        {
+          "asset": "arm",
+          "index": 688
+        },
+        {
+          "asset": "arm",
+          "index": 778
+        }
+      ],
+      "mesh_uri": "../../public/models/arm/link_5.stl"
+    },
+    {
+      "name": "J6",
+      "description": "tool roll",
+      "parent_link": "link_5",
+      "child_link": "link_6",
+      "axis_point_mm": [
+        -40.732846080021005,
+        92.35864763177788,
+        207.66101685055406
+      ],
+      "axis_direction": [
+        -0.0001651954156961082,
+        0.031770383288938886,
+        0.999495180306613
+      ],
+      "web_axis": [
+        -0.0001651954156961082,
+        0.031770383288938886,
+        0.999495180306613
+      ],
+      "type": "continuous",
+      "rest_angle_deg": 0,
+      "current_angle_deg": 0,
+      "angle_reference": "q = 0 is exactly the supplied arm.glb export pose; no encoder or homing zero is available",
+      "hardware_zero_deg": null,
+      "evidence": "L6 同心19/22/59/61: bevel driven gear, J8 shaft and suction cup; source design Fig17 p15",
+      "confidence": "high for axis line and link split; encoder zero unavailable",
+      "limits_deg": null,
+      "parent_link_node_names": [
+        "5M21T同步轮带螺纹-1",
+        "J7J8_差速器CNC-1",
+        "KSL06-M5-1"
+      ],
+      "child_link_node_names": [
+        "J8_末端轴cnc-1",
+        "ZP-80HB吸盘-1",
+        "bevel_gear_m2.5_24Teeth_driven-1",
+        "吸盘保护cnc-1"
+      ],
+      "child_source_node_indices": [
+        {
+          "asset": "arm",
+          "index": 592
+        },
+        {
+          "asset": "arm",
+          "index": 679
+        },
+        {
+          "asset": "arm",
+          "index": 757
+        },
+        {
+          "asset": "arm",
+          "index": 763
+        }
+      ],
+      "mesh_uri": "../../public/models/arm/link_6.stl"
+    },
+    {
+      "name": "J7",
+      "description": "paired drive wheels",
+      "parent_link": "link_4",
+      "child_link": "link_wheel",
+      "axis_point_mm": [
+        -40.732846080021005,
+        92.35864763177788,
+        207.66101685055406
+      ],
+      "axis_direction": [
+        0.9999761871304652,
+        -0.006890391042558452,
+        0.0003842958464633612
+      ],
+      "web_axis": [
+        0.9999761871304652,
+        -0.006890391042558452,
+        0.0003842958464633612
+      ],
+      "type": "continuous",
+      "rest_angle_deg": 0,
+      "current_angle_deg": 0,
+      "angle_reference": "q = 0 is exactly the supplied arm.glb export pose; no encoder or homing zero is available",
+      "hardware_zero_deg": null,
+      "evidence": "L6 同心11/39/55 and Fig17 p15: two coaxial wheels, rigid shafts and driving bevel gear",
+      "confidence": "high for axis line and link split; encoder zero unavailable",
+      "limits_deg": null,
+      "parent_link_node_names": [
+        "2mm_J7_轴卡板-1",
+        "5M21T同步轮-1",
+        "5M_10_Synchronousbelt-1",
+        "5M_10_Synchronousbelt-10",
+        "5M_10_Synchronousbelt-11",
+        "5M_10_Synchronousbelt-12",
+        "5M_10_Synchronousbelt-13",
+        "5M_10_Synchronousbelt-14",
+        "5M_10_Synchronousbelt-15",
+        "5M_10_Synchronousbelt-16",
+        "5M_10_Synchronousbelt-17",
+        "5M_10_Synchronousbelt-18",
+        "5M_10_Synchronousbelt-19",
+        "5M_10_Synchronousbelt-2",
+        "5M_10_Synchronousbelt-20",
+        "5M_10_Synchronousbelt-21",
+        "5M_10_Synchronousbelt-22",
+        "5M_10_Synchronousbelt-23",
+        "5M_10_Synchronousbelt-24",
+        "5M_10_Synchronousbelt-25",
+        "5M_10_Synchronousbelt-26",
+        "5M_10_Synchronousbelt-27",
+        "5M_10_Synchronousbelt-28",
+        "5M_10_Synchronousbelt-29",
+        "5M_10_Synchronousbelt-3",
+        "5M_10_Synchronousbelt-30",
+        "5M_10_Synchronousbelt-31",
+        "5M_10_Synchronousbelt-32",
+        "5M_10_Synchronousbelt-33",
+        "5M_10_Synchronousbelt-34",
+        "5M_10_Synchronousbelt-35",
+        "5M_10_Synchronousbelt-36",
+        "5M_10_Synchronousbelt-37",
+        "5M_10_Synchronousbelt-38",
+        "5M_10_Synchronousbelt-39",
+        "5M_10_Synchronousbelt-4",
+        "5M_10_Synchronousbelt-40",
+        "5M_10_Synchronousbelt-41",
+        "5M_10_Synchronousbelt-42",
+        "5M_10_Synchronousbelt-43",
+        "5M_10_Synchronousbelt-44",
+        "5M_10_Synchronousbelt-45",
+        "5M_10_Synchronousbelt-46",
+        "5M_10_Synchronousbelt-47",
+        "5M_10_Synchronousbelt-48",
+        "5M_10_Synchronousbelt-49",
+        "5M_10_Synchronousbelt-5",
+        "5M_10_Synchronousbelt-50",
+        "5M_10_Synchronousbelt-51",
+        "5M_10_Synchronousbelt-52",
+        "5M_10_Synchronousbelt-53",
+        "5M_10_Synchronousbelt-54",
+        "5M_10_Synchronousbelt-55",
+        "5M_10_Synchronousbelt-56",
+        "5M_10_Synchronousbelt-57",
+        "5M_10_Synchronousbelt-58",
+        "5M_10_Synchronousbelt-59",
+        "5M_10_Synchronousbelt-6",
+        "5M_10_Synchronousbelt-60",
+        "5M_10_Synchronousbelt-61",
+        "5M_10_Synchronousbelt-62",
+        "5M_10_Synchronousbelt-63",
+        "5M_10_Synchronousbelt-64",
+        "5M_10_Synchronousbelt-65",
+        "5M_10_Synchronousbelt-66",
+        "5M_10_Synchronousbelt-67",
+        "5M_10_Synchronousbelt-68",
+        "5M_10_Synchronousbelt-69",
+        "5M_10_Synchronousbelt-7",
+        "5M_10_Synchronousbelt-70",
+        "5M_10_Synchronousbelt-71",
+        "5M_10_Synchronousbelt-72",
+        "5M_10_Synchronousbelt-73",
+        "5M_10_Synchronousbelt-74",
+        "5M_10_Synchronousbelt-75",
+        "5M_10_Synchronousbelt-76",
+        "5M_10_Synchronousbelt-77",
+        "5M_10_Synchronousbelt-78",
+        "5M_10_Synchronousbelt-79",
+        "5M_10_Synchronousbelt-8",
+        "5M_10_Synchronousbelt-9",
+        "6mm_J5_L6_Base-1",
+        "6mm_L6_侧板-1",
+        "6mm_L6涨紧块-1",
+        "6mm_L6涨紧块-2",
+        "J7_同步轮轴承内垫块-1",
+        "KSL06-M5-3",
+        "L4_J5连接轴cnc1.2025.10.1-1",
+        "L4_J5连接轴cnc2.2025.10.1-1",
+        "L6_4005baseCNC-1",
+        "L6_4010同步轮连接板cnc-1",
+        "L6_71mm六角轴-1",
+        "L6_8mm六角轴联轴器cnc-1",
+        "L6_8mm六角轴联轴器cnc-2",
+        "L6_齿轮传动轴-1",
+        "L6_齿轮对轴夹紧cnc-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/M2X5-N.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-FC.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-MC.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/6707.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-BR ________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-GW ________Pro.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PC ________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PF __________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________108__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________12__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-4",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-5",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-4",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-5",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-6",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/LM43N24A-J210C_1.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-BC.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-CA.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-10",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-11",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-12",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-13",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-14",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-15",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-16",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-17",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-18",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-19",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-20",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-21",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-22",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-23",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-24",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-25",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-26",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-27",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-28",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-4",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-5",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-6",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-7",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-8",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-9",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG8016-DMG  ______.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG8016-FMB ________.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/MG8016-MAG  ____.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/PCB_AllCATPart.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/_____C-EFL675ZZ.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/________40__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/________44__0.4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-1",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-2",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-3",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-4",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-5",
+        "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-6",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/M2X5-N.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-FC.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-MC.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/6707.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-BR ________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-GW ________Pro.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PC ________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PF __________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________108__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________12__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-4",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-5",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-4",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-5",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-6",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/LM43N24A-J210C_1.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-BC.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-CA.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-10",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-11",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-12",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-13",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-14",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-15",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-16",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-17",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-18",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-19",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-20",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-21",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-22",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-23",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-24",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-25",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-26",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-27",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-28",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-4",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-5",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-6",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-7",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-8",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-9",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG8016-DMG  ______.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG8016-FMB ________.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/MG8016-MAG  ____.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/PCB_AllCATPart.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/_____C-EFL675ZZ.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/________40__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/________44__0.4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-1",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-2",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-3",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-4",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-5",
+        "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-6",
+        "POC6-M5-1",
+        "m5D10_12_气管铝柱-1",
+        "spur_gear_m1.25_40Teeth_drive-1",
+        "spur_gear_m1.25_40Teeth_drive-2",
+        "spur_gear_m1_30Teeth2.2025.10.1-1",
+        "spur_gear_m1_38Teeth_drive-1",
+        "spur_gear_m1_38Teeth_driven-2"
+      ],
+      "child_link_node_names": [
+        "J7_从动包胶轮轴cnc-1",
+        "J7锥齿轮侧轴cnc-1",
+        "J7锥齿轮同轴cnc-1",
+        "bevel_gear_m2.5_24Teeth_drive2-1",
+        "spur_gear_m1.25_40Teeth_driven-1",
+        "spur_gear_m1.25_40Teeth_driven2-1",
+        "直径80聚氨酯轮-1",
+        "直径80聚氨酯轮带轴承板-1"
+      ],
+      "child_source_node_indices": [
+        {
+          "asset": "arm",
+          "index": 508
+        },
+        {
+          "asset": "arm",
+          "index": 593
+        },
+        {
+          "asset": "arm",
+          "index": 677
+        },
+        {
+          "asset": "arm",
+          "index": 678
+        },
+        {
+          "asset": "arm",
+          "index": 682
+        },
+        {
+          "asset": "arm",
+          "index": 684
+        },
+        {
+          "asset": "arm",
+          "index": 759
+        },
+        {
+          "asset": "arm",
+          "index": 761
+        }
+      ],
+      "mesh_uri": "../../public/models/arm/link_wheel.stl"
+    }
+  ],
+  "omitted_auxiliary_assemblies": [
+    "图传uwb模块.2025.10.1",
+    "limitation.2025.10.1"
+  ],
+  "wheel_coupling": {
+    "independent_dof": false,
+    "parent": "link_4",
+    "relation": "q6 = -(q7 - q5), equivalently q7 = q5 - q6 (export-zero increments, radians)",
+    "ratio_magnitude": 1,
+    "sign_status": "Geometric inference for chosen +X wheel and outward tool axes from external bevel mesh on +X/+tool quadrant; not validated against powered hardware",
+    "evidence": "Equal 24-tooth bevel gears; source design pp14-15: J5 independent, J6 and wheels driven in series",
+    "urdf_note": "No single-joint URDF mimic can express a sum of J5 and J6. Wheel is exported as a continuous visual branch; application must apply this relation or omit wheel animation."
+  },
+  "caveats": [
+    "Output joint coordinates are not motor coordinates: J4 universal shaft is not constant velocity, J6/wheel is coupled.",
+    "UWB/limiter chain is omitted from interactive arm because it is a separate coupled mechanism; retained statically in engineer.glb.",
+    "Tiny fasteners, bearing internals and motor internals may be simplified/omitted; single CAD motor part remains with its housing."
+  ]
+}

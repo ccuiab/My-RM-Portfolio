@@ -1,0 +1,31 @@
+---
+import { t, href, type Lang, type T } from '../data/i18n';
+interface Props { lang: Lang; slug: string; drawing: string; title: T }
+const { lang, slug, drawing, title } = Astro.props;
+---
+<nav class="wrap next" aria-label={lang === 'zh' ? '下一张图纸' : 'Next sheet'}>
+  <a href={href(lang, slug)}>
+    <span class="k">{lang === 'zh' ? '下一张图纸' : 'Next sheet'}</span>
+    <span class="num dwg">{drawing}</span>
+    <span class="display ttl">{t(title, lang)}</span>
+  </a>
+</nav>
+
+<style>
+  .next { padding-top: 7rem; }
+  .next a {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+    gap: 0.3rem 1.5rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--amber);
+    border-bottom: 1px solid var(--rule);
+    color: inherit;
+    text-decoration: none;
+  }
+  .k { grid-column: 1 / -1; font-size: var(--t-xs); color: var(--ink-3); }
+  .dwg { color: var(--amber); }
+  .ttl { font-size: var(--t-2xl); transition: color 0.2s; }
+  .next a:hover .ttl { color: var(--amber); }
+</style>
