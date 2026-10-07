@@ -77,8 +77,13 @@ const sheets = [
     height: 100%;
     object-fit: cover;
   }
-  .pic.light { background: var(--plate); }
-  .pic.light :global(img) { object-fit: contain; padding: 6%; mix-blend-mode: multiply; }
+  .pic.light {
+    background:
+      linear-gradient(var(--plate-line) 1px, transparent 1px) 0 0 / 100% 32px,
+      linear-gradient(90deg, var(--plate-line) 1px, transparent 1px) 0 0 / 32px 100%,
+      var(--plate);
+  }
+  .pic.light :global(img) { object-fit: contain; padding: 4% 6%; mix-blend-mode: multiply; }
   .robot-no {
     position: absolute;
     right: 1rem;

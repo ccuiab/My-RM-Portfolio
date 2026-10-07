@@ -5,6 +5,7 @@ import Record from './Record.astro';
 import Chapter from './Chapter.astro';
 import ArmUnfold from './ArmUnfold.astro';
 import Loop from './Loop.astro';
+import WristExplode from './WristExplode.astro';
 import Lightbox from './Lightbox.astro';
 import NextSheet from './NextSheet.astro';
 import { engineer, hero } from '../data/content';
@@ -34,6 +35,7 @@ const p = engineer;
   {p.chapters.map((c) => (
     <Chapter lang={lang} chapter={c}>
       {c.scene === 'arm-unfold' && <ArmUnfold lang={lang} slot="wide" />}
+    {c.id === 'arm' && <WristExplode lang={lang} slot="wide" />}
     {c.id === 'arm' && (
       <Loop
         lang={lang}

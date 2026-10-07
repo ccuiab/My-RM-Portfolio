@@ -1,0 +1,264 @@
+{
+  "schema_version": 1,
+  "units": "metres",
+  "up_axis": "+Y",
+  "orientation": "same axes as arm.glb; translated to J5/J6 intersection",
+  "source_origin_in_arm_glb_m": [
+    -0.04073284566402435,
+    0.09235865622758865,
+    0.20766101777553558
+  ],
+  "groups": [
+    {
+      "key": "air_fittings",
+      "label_zh": "腕部旋转气接头",
+      "label_en": "Wrist rotary air fittings",
+      "explode_dir": [
+        -0.9999762177467346,
+        0.006890001706779003,
+        -0.0003840001008938998
+      ],
+      "explode_dist_m": 0.15,
+      "order": 0,
+      "callout_anchor": [
+        -0.06977695226669312,
+        0.00020411470904946327,
+        0.003964009694755077
+      ]
+    },
+    {
+      "key": "cup",
+      "label_zh": "HB80 吸盘与 J8 轴",
+      "label_en": "HB80 bellows cup and J8 shaft",
+      "explode_dir": [
+        -0.0001650000485824421,
+        0.0317700058221817,
+        0.999495267868042
+      ],
+      "explode_dist_m": 0.15,
+      "order": 0,
+      "callout_anchor": [
+        0.006991760339587927,
+        -0.00787424948066473,
+        0.0432678759098053
+      ]
+    },
+    {
+      "key": "slip_ring",
+      "label_zh": "导电滑环 ES712",
+      "label_en": "ES712 slip ring",
+      "explode_dir": [
+        0,
+        -0.055686019361019135,
+        -0.998448371887207
+      ],
+      "explode_dist_m": 0.1,
+      "order": 0,
+      "callout_anchor": [
+        -0.0092314463108778,
+        -0.019014431163668633,
+        -0.23410438001155853
+      ]
+    },
+    {
+      "key": "wheel_left",
+      "label_zh": "左驱动轮与齿轮组",
+      "label_en": "Left drive wheel and gear train",
+      "explode_dir": [
+        -0.9999762177467346,
+        0.006890001706779003,
+        -0.0003840001008938998
+      ],
+      "explode_dist_m": 0.13,
+      "order": 1,
+      "callout_anchor": [
+        -0.05731438845396042,
+        0.027318723499774933,
+        0.0031731054186820984
+      ]
+    },
+    {
+      "key": "wheel_right",
+      "label_zh": "右驱动轮与齿轮组",
+      "label_en": "Right drive wheel and gear train",
+      "explode_dir": [
+        0.9999762177467346,
+        -0.006890001706779003,
+        0.0003840001008938998
+      ],
+      "explode_dist_m": 0.15,
+      "order": 1,
+      "callout_anchor": [
+        0.06548777222633362,
+        -0.0004498399794101715,
+        0.02757502906024456
+      ]
+    },
+    {
+      "key": "l6_frame_left",
+      "label_zh": "L6 左侧板",
+      "label_en": "L6 left frame plate",
+      "explode_dir": [
+        -0.9999762177467346,
+        0.006890001706779003,
+        -0.0003840001008938998
+      ],
+      "explode_dist_m": 0.105,
+      "order": 2,
+      "callout_anchor": [
+        -0.04133041203022003,
+        0.023562073707580566,
+        -0.022046377882361412
+      ]
+    },
+    {
+      "key": "l6_frame_right",
+      "label_zh": "L6 右侧板与横板",
+      "label_en": "L6 right plate and cross plates",
+      "explode_dir": [
+        0.9999762177467346,
+        -0.006890001706779003,
+        0.0003840001008938998
+      ],
+      "explode_dist_m": 0.1,
+      "order": 2,
+      "callout_anchor": [
+        -0.03903096169233322,
+        0.03377872332930565,
+        -0.1534430831670761
+      ]
+    },
+    {
+      "key": "j5_belt",
+      "label_zh": "J5 等速同步带",
+      "label_en": "J5 1:1 timing-belt drive",
+      "explode_dir": [
+        -0.9999762177467346,
+        0.006890001706779003,
+        -0.0003840001008938998
+      ],
+      "explode_dist_m": 0.07,
+      "order": 3,
+      "callout_anchor": [
+        -0.03604226931929588,
+        0.017985792830586433,
+        -0.0024869691114872694
+      ]
+    },
+    {
+      "key": "l4_drive",
+      "label_zh": "L4 万向轴传动",
+      "label_en": "L4 universal-joint drive",
+      "explode_dir": [
+        -1,
+        0,
+        0
+      ],
+      "explode_dist_m": 0.12,
+      "order": 3,
+      "callout_anchor": [
+        0.04025629162788391,
+        0.03265310451388359,
+        -0.35414552688598633
+      ]
+    },
+    {
+      "key": "bevel_carrier",
+      "label_zh": "J6 锥齿轮传动",
+      "label_en": "J6 bevel-gear transmission",
+      "explode_dir": [
+        -0.0001650000485824421,
+        0.0317700058221817,
+        0.999495267868042
+      ],
+      "explode_dist_m": 0.07,
+      "order": 5,
+      "callout_anchor": [
+        -0.026445746421813965,
+        0.007330009248107672,
+        -0.011911715380847454
+      ]
+    },
+    {
+      "key": "j4_output",
+      "label_zh": "J4 中空输出轴",
+      "label_en": "J4 hollow output shaft",
+      "explode_dir": [
+        0,
+        -0.055686019361019135,
+        -0.998448371887207
+      ],
+      "explode_dist_m": 0.055,
+      "order": 8,
+      "callout_anchor": [
+        0.012666970491409302,
+        0.025786815211176872,
+        -0.20208251476287842
+      ]
+    },
+    {
+      "key": "wrist_motors",
+      "label_zh": "后置电机与传动轴",
+      "label_en": "Rear motors and drive shaft",
+      "explode_dir": [
+        0,
+        1,
+        0
+      ],
+      "explode_dist_m": 0.09,
+      "order": 8,
+      "callout_anchor": [
+        0.015553290024399757,
+        0.00013979028153698891,
+        -0.13552014529705048
+      ]
+    }
+  ],
+  "rest_bbox_m": {
+    "min": [
+      -0.08964022994041443,
+      -0.05248354747891426,
+      -0.3994366228580475
+    ],
+    "max": [
+      0.06767045706510544,
+      0.08620283007621765,
+      0.0717703327536583
+    ]
+  },
+  "exploded_bbox_m": {
+    "min": [
+      -0.23963667452335358,
+      -0.05317254737019539,
+      -0.3994366228580475
+    ],
+    "max": [
+      0.217666894197464,
+      0.11446180939674377,
+      0.22169461846351624
+    ]
+  },
+  "animation": {
+    "progress": "clamp((t - stagger_fraction * order) / (1 - stagger_fraction * max_order), 0, 1)",
+    "stagger_fraction": 0.065,
+    "max_order": 8,
+    "translation": "restTranslation + progress * explode_dir * explode_dist_m",
+    "t_range": [
+      0,
+      1
+    ]
+  },
+  "material_classes": [
+    "alu_black",
+    "alu_silver",
+    "carbon",
+    "print_black",
+    "rubber",
+    "accent_blue",
+    "misc"
+  ],
+  "source_limitations": [
+    "J4 standalone hollow rotary air union is described in the PDF but is not identifiable as a separate component in arm_tagged.glb. No substitute geometry was invented. The wrist KSL/POC fittings are labelled separately.",
+    "J7J8_差速器CNC is a bevel transmission carrier. The design notes specify independent J5 belt drive and a shared J6/wheel motor, not two independent differential inputs."
+  ]
+}

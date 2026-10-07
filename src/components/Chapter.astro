@@ -150,7 +150,12 @@ const pics = c.pics ?? [];
     text-align: left;
     cursor: zoom-in;
   }
-  .pic.light { background: var(--plate); }
+  .pic.light {
+    background:
+      linear-gradient(var(--plate-line) 1px, transparent 1px) 0 0 / 100% 32px,
+      linear-gradient(90deg, var(--plate-line) 1px, transparent 1px) 0 0 / 32px 100%,
+      var(--plate);
+  }
   .pic :global(img) {
     width: 100%;
     aspect-ratio: 4 / 3;
