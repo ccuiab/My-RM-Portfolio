@@ -15,8 +15,9 @@ export type ScanStage = {
   frame: (sphere: THREE.Sphere, dir: THREE.Vector3) => void;
   /** 0 = all wireframe, 1 = all solid; sweeps along world `axis` across `range` */
   setScan: (s: number) => void;
-  /** world z of the scan plane, for drawing a glow line */
   render: () => void;
+  /** called after the canvas resizes (the drawing buffer is cleared then) */
+  onResize: (cb: () => void) => void;
 };
 
 export async function loadScanStage(
@@ -25,7 +26,8 @@ export async function loadScanStage(
   file: string,
   scan: { axis: THREE.Vector3; range: [number, number] },
 ): Promise<ScanStage> {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+  // preserveDrawingBuffer keeps the last frame visible between scroll-driven redraws
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -88,6 +90,7 @@ export async function loadScanStage(
     camera.lookAt(sphere.center);
   };
 
+  let onResize: (() => void) | null = null;
   const resize = () => {
     const w = canvas.clientWidth, h = canvas.clientHeight;
     if (!w || !h) return;
@@ -95,6 +98,7 @@ export async function loadScanStage(
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
     applyFrame();
+    onResize?.();
   };
   new ResizeObserver(resize).observe(canvas);
   resize();
@@ -112,6 +116,9 @@ export async function loadScanStage(
     },
     render() {
       renderer.render(scene, camera);
+    },
+    onResize(cb) {
+      onResize = cb;
     },
   };
 }

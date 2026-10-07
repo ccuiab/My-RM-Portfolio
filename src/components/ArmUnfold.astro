@@ -4,13 +4,13 @@
 // a forward reach while the scan turns it from amber outline into solid metal.
 // Without it, or before it loads: a side-view kinematic sketch at true link proportions.
 import { existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import type { Lang } from '../data/i18n';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const hasModel = existsSync(fileURLToPath(new URL('../../public/models/arm.glb', import.meta.url)));
-const L = lang === 'zh'
+// builds run from the project root; import.meta.url points into the bundle, not src/
+const hasModel = existsSync(join(process.cwd(), 'public', 'models', 'arm.glb'));const L = lang === 'zh'
   ? { folded: '收折', extended: '展开', height: '腕心高度', reach: '腕心前伸', env: '整车最大展开', note: '读数为腕心相对肩关节轴的实时位置，来自真实 CAD 模型的关节运动。整车最大展开尺寸计入云台旋转与底盘。' }
   : { folded: 'Folded', extended: 'Extended', height: 'Wrist height', reach: 'Wrist reach', env: 'Whole-robot max envelope', note: 'Readouts track the wrist centre against the shoulder axis, driven by the joints of the real CAD model. The whole-robot envelope adds gimbal rotation and the chassis.' };
 ---
@@ -99,7 +99,8 @@ const L = lang === 'zh'
         end: '+=150%',
         pin: $('.pin'),
         scrub: 0.6,
-        onUpdate: (st) => { progress = st.progress; draw(progress); },
+        // hold the end pose for the last stretch so it reads as settled
+        onUpdate: (st) => { progress = Math.min(1, st.progress / 0.85); draw(progress); },
       });
     }
     if (!root.dataset.model) return;
@@ -123,6 +124,8 @@ const L = lang === 'zh'
         attr($('.m-t34'), { x: (f.elbow.x + f.wrist.x) / 2 + 8, y: (f.elbow.y + f.wrist.y) / 2 - 14 });
         readouts(f, p);
       };
+      // the drawing buffer clears on resize (including the pin's layout change): redraw
+      arm.onResize(() => draw(progress));
       root.classList.add('has-3d');
       draw(progress);
     }).catch((err) => console.warn('arm scene unavailable, keeping the sketch', err));
@@ -140,7 +143,8 @@ const L = lang === 'zh'
   .pin { display: grid; gap: 1rem; }
   .view {
     position: relative;
-    aspect-ratio: 3 / 2;
+    height: min(64vh, 58vw);
+    min-height: 320px;
     background: var(--ground);
   }
   .view > svg, .view > canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
@@ -152,7 +156,14 @@ const L = lang === 'zh'
   .marks { pointer-events: none; overflow: visible; }
   .marks line { stroke: var(--amber); stroke-width: 1; stroke-dasharray: 3 5; }
   .marks circle { fill: none; stroke: var(--amber); stroke-width: 1.5; }
-  .marks text { font-family: var(--f-mono); font-size: 12px; fill: var(--amber); }
+  .marks text {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    fill: var(--amber);
+    paint-order: stroke;
+    stroke: var(--ground);
+    stroke-width: 4px;
+  }
 
   .state {
     position: absolute;
@@ -171,12 +182,13 @@ const L = lang === 'zh'
     display: grid;
     grid-template-columns: repeat(3, auto);
     justify-content: start;
-    gap: 0 2.5rem;
+    gap: 0 3rem;
     margin: 0;
   }
+  .readout [data-r], .readout [data-h] { min-width: 4ch; text-align: right; }
   .readout dt { font-size: var(--t-xs); color: var(--ink-3); }
   .readout dd { margin: 0.15rem 0 0; font-size: var(--t-xl); line-height: 1.1; }
-  .readout [data-r], .readout [data-h] { display: inline-block; min-width: 3.2ch; color: var(--amber); }
+  .readout [data-r], .readout [data-h] { display: inline-block; color: var(--amber); }
   .readout .u { font-size: var(--t-xs); color: var(--ink-2); margin-left: 0.3em; }
   .note { font-size: var(--t-xs); color: var(--ink-3); }
   @media (max-width: 760px) { .readout { grid-template-columns: repeat(2, auto); gap: 0.6rem 2rem; } }

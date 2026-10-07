@@ -40,6 +40,8 @@ const pics = c.pics ?? [];
     </div>
   </div>
 
+  {Astro.slots.has('wide') && <div class="wrap wide"><slot name="wide" /></div>}
+
   {pics.length > 0 && (
     <div class="wrap">
       <ul class:list={['pics', `n${Math.min(pics.length, 4)}`]}>
@@ -122,6 +124,8 @@ const pics = c.pics ?? [];
     height: 1px;
     background: var(--amber);
   }
+
+  .wide { margin-top: 2.5rem; }
 
   .pics {
     list-style: none;

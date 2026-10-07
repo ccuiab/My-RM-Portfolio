@@ -2,7 +2,7 @@
 // The 5.8 s exchange: match footage loop with a HUD timer synced to the clip.
 // The clip is cut so the exchange starts at `data-t0` seconds into the file.
 import { existsSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { join } from 'node:path';
 import { Image } from 'astro:assets';
 import { record } from '../data/content';
 import { t, ui, type Lang } from '../data/i18n';
@@ -12,8 +12,8 @@ const { lang, compact = false } = Astro.props;
 
 const clip = 'video/exchange-58.mp4';
 const poster = 'video/exchange-58.jpg';
-const publicDir = fileURLToPath(new URL('../../public/', import.meta.url));
-const hasClip = existsSync(publicDir + clip);
+// builds run from the project root; import.meta.url points into the bundle, not src/
+const hasClip = existsSync(join(process.cwd(), 'public', clip));
 const base = import.meta.env.BASE_URL;
 // seconds into the clip where the exchange starts (set when the clip is cut)
 const T0 = 1.0;
