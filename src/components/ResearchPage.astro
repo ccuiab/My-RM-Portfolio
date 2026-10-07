@@ -109,7 +109,12 @@ const lines_: { id: string; mark: string; title: T; stages: Stage[]; lede?: T; a
     background: #04070c;
     cursor: zoom-in;
   }
-  .pic.light { background: var(--plate); }
+  .pic.light {
+    background:
+      linear-gradient(var(--plate-line) 1px, transparent 1px) 0 0 / 100% 32px,
+      linear-gradient(90deg, var(--plate-line) 1px, transparent 1px) 0 0 / 32px 100%,
+      var(--plate);
+  }
   .pic :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; padding: 6%; }
   .pic.light :global(img) { mix-blend-mode: multiply; }
   .pic:hover { border-color: var(--amber); }

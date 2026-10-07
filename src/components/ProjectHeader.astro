@@ -98,7 +98,12 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
     overflow: hidden;
     background: #04070c;
   }
-  .ph-pic.light { background: var(--plate); }
+  .ph-pic.light {
+    background:
+      linear-gradient(var(--plate-line) 1px, transparent 1px) 0 0 / 100% 40px,
+      linear-gradient(90deg, var(--plate-line) 1px, transparent 1px) 0 0 / 40px 100%,
+      var(--plate);
+  }
   .ph-pic :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .ph-pic.light :global(img) { object-fit: contain; padding: 5%; }
   .ph-pic.light :global(.ph-photo) { mix-blend-mode: multiply; }
