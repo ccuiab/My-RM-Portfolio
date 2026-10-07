@@ -194,7 +194,12 @@ const navItems = [
   }
 
   @media (max-width: 760px) {
-    .sig-latin, .nav { display: none; }
+    .sig-latin { display: none; }
+    .topbar-inner { gap: 0.8rem; }
+    .sig { margin-right: 0; }
+    .nav { flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav a { padding: 0.4rem 0.5rem; white-space: nowrap; font-size: var(--t-xs); }
     .footer-inner { grid-template-columns: 1fr; }
     .footer-links { justify-self: start; text-align: left; }
   }
