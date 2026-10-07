@@ -2,9 +2,11 @@
 import Base from '../layouts/Base.astro';
 import ProjectHeader from './ProjectHeader.astro';
 import Chapter from './Chapter.astro';
+import ModelTurntable from './ModelTurntable.astro';
 import Lightbox from './Lightbox.astro';
 import NextSheet from './NextSheet.astro';
 import { hero, research } from '../data/content';
+import heroChassis from '../assets/img/hero-chassis-adaptive.webp';
 import type { Lang } from '../data/i18n';
 import lines from '../assets/gen/hero-bot-lines.webp';
 
@@ -24,7 +26,20 @@ const p = hero;
     titleBlock={p.titleBlock}
     stats={p.stats}
   />
-  {p.chapters.map((c) => <Chapter lang={lang} chapter={c} />)}
+  {p.chapters.map((c) => (
+    <Chapter lang={lang} chapter={c}>
+      {c.id === 'chassis' && (
+        <ModelTurntable
+          lang={lang}
+          slot="wide"
+          file="hero.glb"
+          still={heroChassis}
+          alt={{ zh: 'RM2024 英雄机器人自适应悬挂底盘', en: 'RM2024 Hero adaptive suspension chassis' }}
+          caption={{ zh: '底盘、悬挂与供弹结构，来自 SolidWorks 总装模型。', en: 'Chassis, suspension and feed structure, from the SolidWorks assembly.' }}
+        />
+      )}
+    </Chapter>
+  ))}
   <NextSheet lang={lang} slug={research.slug} drawing={research.drawing} title={research.title} />
   <Lightbox lang={lang} />
 </Base>
