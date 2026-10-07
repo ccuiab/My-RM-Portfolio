@@ -10,7 +10,7 @@ const AMBER = { r: 242, g: 181, b: 58 };
 
 // blur suppresses texture noise; gain/cut set how many edges survive (tuned by eye)
 const jobs = [
-  { src: 'eng-phtot2.jpg', width: 1620, blur: 0.8, gain: 8, cut: 8 },
+  { src: 'eng-reach.webp', width: 1920, blur: 0.9, gain: 7, cut: 9 },
   { src: 'hero-bot.webp', width: 982, blur: 0.6, gain: 6, cut: 10 },
   { src: 'launcher-dual-6.png', width: 1200, blur: 0.6, gain: 6, cut: 10 },
 ];

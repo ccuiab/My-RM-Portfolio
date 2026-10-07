@@ -4,22 +4,17 @@
 import { Image } from 'astro:assets';
 import { person } from '../data/content';
 import { t, href, type Lang } from '../data/i18n';
-import lines from '../assets/gen/eng-phtot2-lines.webp';
+import lines from '../assets/gen/eng-reach-lines.webp';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 ---
 <section class="hero" data-hero aria-labelledby="hero-name">
   <div class="stage" aria-hidden="true">
-    <Image class="photo" src={person.heroPic.src} alt="" widths={[960, 1620]} sizes="100vw" loading="eager" fetchpriority="high" />
-    <Image class="lines" src={lines} alt="" widths={[960, 1620]} sizes="100vw" loading="eager" />
+    <Image class="photo" src={person.heroPic.src} alt="" widths={[960, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
+    <Image class="lines" src={lines} alt="" widths={[960, 1920]} sizes="100vw" loading="eager" />
     <div class="scan"></div>
     <div class="vignette"></div>
-  </div>
-
-  <div class="plate" aria-hidden="true">
-    <span class="plate-no num">2</span>
-    <span class="bar bar-l"></span><span class="bar bar-r"></span>
   </div>
 
   <div class="wrap copy">
@@ -105,7 +100,8 @@ const { lang } = Astro.props;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: 62% 40%;
+    /* the robot sits right of centre; keep it clear of the copy column */
+    object-position: 88% 50%;
   }
   .photo {
     clip-path: inset(0 calc(100% - var(--reveal)) 0 0);
@@ -130,43 +126,10 @@ const { lang } = Astro.props;
     position: absolute;
     inset: 0;
     background:
-      linear-gradient(90deg, rgba(7, 13, 23, 0.94) 0%, rgba(7, 13, 23, 0.72) 38%, rgba(7, 13, 23, 0.1) 70%),
-      linear-gradient(0deg, var(--ground) 0%, transparent 32%);
+      linear-gradient(90deg, rgba(7, 13, 23, 0.96) 0%, rgba(7, 13, 23, 0.82) 30%, rgba(7, 13, 23, 0.15) 58%, rgba(7, 13, 23, 0.25) 100%),
+      linear-gradient(0deg, var(--ground) 0%, transparent 30%),
+      linear-gradient(180deg, rgba(7, 13, 23, 0.7) 0%, transparent 18%);
   }
-
-  /* armour plate No. 2 with red/blue light bars, the RoboMaster robot ID */
-  .plate {
-    position: absolute;
-    right: var(--gutter);
-    top: 50%;
-    transform: translateY(-58%);
-    display: grid;
-    place-items: center;
-    width: clamp(160px, 20vw, 300px);
-    aspect-ratio: 1;
-    pointer-events: none;
-  }
-  .plate-no {
-    font-family: var(--f-latin);
-    font-weight: 700;
-    font-size: clamp(9rem, 22vw, 20rem);
-    line-height: 1;
-    color: transparent;
-    -webkit-text-stroke: 1.5px rgba(231, 238, 246, 0.35);
-  }
-  .bar {
-    position: absolute;
-    top: 18%;
-    bottom: 18%;
-    width: 7px;
-    background: var(--blue);
-    box-shadow: 0 0 18px 2px rgba(61, 139, 255, 0.7);
-    opacity: 0;
-    transition: opacity 0.4s ease 0.2s;
-  }
-  .bar-l { left: 0; }
-  .bar-r { right: 0; }
-  .hero.locked .bar { opacity: 1; }
 
   .copy {
     position: relative;
@@ -258,7 +221,6 @@ const { lang } = Astro.props;
   .cta-text { font-weight: 600; }
 
   @media (max-width: 760px) {
-    .plate { display: none; }
     .readout { flex-basis: 40%; }
     .vignette {
       background: linear-gradient(0deg, var(--ground) 8%, rgba(7, 13, 23, 0.75) 55%, rgba(7, 13, 23, 0.35) 100%);

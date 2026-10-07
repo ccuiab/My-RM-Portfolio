@@ -1,6 +1,7 @@
 import type { ImageMetadata } from 'astro';
 import type { T } from './i18n';
 
+import engReach from '../assets/img/eng-reach.webp';
 import engField from '../assets/img/eng-phtot2.jpg';
 import engField2 from '../assets/img/eng-photo1.jpg';
 import engStats from '../assets/img/eng-mvp.webp';
@@ -58,7 +59,7 @@ export const person = {
   },
   github: 'https://github.com/ccuiab',
   email: 'ccuiab@connect.ust.hk',
-  heroPic: { src: engField, alt: { zh: '赛场上的 2 号工程机器人', en: 'Engineer robot No. 2 on the competition field' } } as Pic,
+  heroPic: { src: engReach, alt: { zh: '2 号工程机器人，机械臂完全伸出', en: 'Engineer robot No. 2 with its arm fully extended' } } as Pic,
   readouts: [
     { value: '5.8', unit: 's', label: { zh: '四级矿兑换', en: 'Level-4 ore exchange' } },
     { value: '38', unit: 'kg', label: { zh: '整机质量', en: 'All-up mass' } },
@@ -100,7 +101,8 @@ export const engineer = {
     zh: '轮式末端六轴机械臂工程机器人。我独立主导整车结构设计，从 PUMA 构型、连杆参数到整车布局，3 个月从零到上赛场。',
     en: 'A six-axis arm Engineer robot with a wheeled end effector. I led the whole-robot structural design, from the PUMA configuration and link lengths to the vehicle layout, and took it from nothing to the competition field in three months.',
   },
-  cover: { src: engField, alt: { zh: '赛场上的工程机器人', en: 'The Engineer robot on the field' } } as Pic,
+  cover: { src: engReach, alt: { zh: '工程机器人，机械臂完全伸出', en: 'The Engineer robot with its arm fully extended' } } as Pic,
+  field: { src: engField, alt: { zh: '赛场上的工程机器人', en: 'The Engineer robot on the field' } } as Pic,
   cover2: { src: engField2, alt: { zh: '工程机器人在场地上移动', en: 'The Engineer robot driving across the field' } } as Pic,
   titleBlock: [
     { label: { zh: '赛季', en: 'Season' }, value: { zh: 'RMUC 2025', en: 'RMUC 2025' } },
