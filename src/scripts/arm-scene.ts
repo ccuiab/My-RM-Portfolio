@@ -27,6 +27,7 @@ export type ArmScene = {
   setScan: (s: number) => void;
   setYaw: (d: number) => void;
   render: () => Marks;
+  onResize: (cb: () => void) => void;
 };
 
 export async function loadArmScene(canvas: HTMLCanvasElement, base: string): Promise<ArmScene> {
@@ -53,8 +54,8 @@ export async function loadArmScene(canvas: HTMLCanvasElement, base: string): Pro
     }
   });
 
-  // side three-quarter view, framed on the reach envelope around the shoulder
-  stage.frame(new THREE.Sphere(new THREE.Vector3(0, 0.12, 0.28), 0.62), new THREE.Vector3(-1, 0.3, 0.5));
+  // side three-quarter view, framed on the swept envelope (folded at origin → reach ~0.7 m forward)
+  stage.frame(new THREE.Sphere(new THREE.Vector3(0, 0.1, 0.34), 0.44), new THREE.Vector3(-1, 0.28, 0.42));
 
   const q = new THREE.Quaternion();
   const v = new THREE.Vector3();
@@ -69,6 +70,7 @@ export async function loadArmScene(canvas: HTMLCanvasElement, base: string): Pro
       for (const j of joints) j.node.quaternion.copy(q.setFromAxisAngle(j.axis, deg(p[j.name as JointName] ?? 0)));
     },
     setScan: stage.setScan,
+    onResize: stage.onResize,
     setYaw(d) {
       turntable.rotation.y = deg(d);
     },

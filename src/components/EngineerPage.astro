@@ -32,7 +32,7 @@ const p = engineer;
 
   {p.chapters.map((c) => (
     <Chapter lang={lang} chapter={c}>
-      {c.scene === 'arm-unfold' && <ArmUnfold lang={lang} />}
+      {c.scene === 'arm-unfold' && <ArmUnfold lang={lang} slot="wide" />}
     </Chapter>
   ))}
 
