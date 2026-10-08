@@ -1,10 +1,9 @@
 ---
-// Home hero: the robot is drawn as amber edge lines, then a scan bar reveals the photo.
-// HUD readouts lock in as the scan passes them.
+// Desktop: real CAD feature edges resolve into PBR in one three-second scan.
+// Mobile, reduced-motion and WebGL fallback: a finished photograph.
 import { Image } from 'astro:assets';
 import { person, pageCopy } from '../data/content';
 import { t, href, type Lang } from '../data/i18n';
-import lines from '../assets/gen/eng-reach-lines.webp';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -12,8 +11,7 @@ const { lang } = Astro.props;
 <section class="hero" data-hero aria-labelledby="hero-name">
   <div class="stage" aria-hidden="true">
     <Image class="photo" src={person.heroPic.src} alt="" widths={[960, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
-    <Image class="lines" src={lines} alt="" widths={[960, 1920]} sizes="100vw" loading="eager" />
-    <div class="scan"></div>
+    <div class="model-stage"><canvas data-hero-canvas></canvas><div class="scan"></div></div>
     <div class="vignette"></div>
   </div>
 
@@ -43,37 +41,15 @@ const { lang } = Astro.props;
 </section>
 
 <script>
-  import { gsap, reducedMotion } from '../scripts/smooth';
-
   const root = document.querySelector<HTMLElement>('[data-hero]');
   if (root) {
-    const reveal = (p: number) => root.style.setProperty('--reveal', `${p}%`);
-    if (reducedMotion) {
-      reveal(100);
-      root.classList.add('locked');
-    } else {
-      const state = { p: 0 };
-      const tl = gsap.timeline({ delay: 0.25 });
-      tl.from(root.querySelectorAll('.lines'), { opacity: 0, duration: 0.6, ease: 'power1.out' })
-        .to(state, {
-          p: 100,
-          duration: 2.1,
-          ease: 'power2.inOut',
-          onUpdate: () => reveal(state.p),
-        })
-        .add(() => root.classList.add('locked'), '-=0.9');
-      // counters roll while the scan passes
-      root.querySelectorAll<HTMLElement>('.val').forEach((el, i) => {
-        const end = parseFloat(el.textContent || '0');
-        const decimals = (el.textContent || '').includes('.') ? 1 : 0;
-        const c = { v: 0 };
-        tl.to(c, {
-          v: end,
-          duration: 1.1,
-          ease: 'power3.out',
-          onUpdate: () => (el.textContent = c.v.toFixed(decimals)),
-        }, 1.0 + i * 0.18);
-      });
+    // Keep the finished image and facts until a fully decoded model can be rendered.
+    root.classList.add('locked');
+    if (window.matchMedia('(min-width: 900px) and (prefers-reduced-motion: no-preference)').matches) {
+      const canvas = root.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
+      if (canvas) import('../scripts/hero-scene').then(({ startHeroScene }) =>
+        startHeroScene(root, canvas, import.meta.env.BASE_URL),
+      ).catch(() => { root.classList.remove('has-3d'); root.classList.add('locked'); });
     }
   }
 </script>
@@ -103,25 +79,27 @@ const { lang } = Astro.props;
     /* the robot sits right of centre; keep it clear of the copy column */
     object-position: 88% 50%;
   }
-  .photo {
-    clip-path: inset(0 calc(100% - var(--reveal)) 0 0);
-    filter: saturate(0.85) contrast(1.05);
+  .photo { filter: saturate(0.85) contrast(1.05); }
+  .model-stage {
+    position: absolute;
+    left: 45%; right: 0; top: 9%; bottom: 4%;
+    opacity: 0;
   }
-  .lines {
-    clip-path: inset(0 0 0 var(--reveal));
-    opacity: 0.95;
+  .model-stage canvas { width: 100%; height: 100%; display: block; }
+  .hero.has-3d .model-stage { opacity: 1; }
+  .hero.has-3d .photo { opacity: 0; }
+  .hero.has-3d .vignette {
+    background: linear-gradient(0deg, var(--ground), transparent 16%);
   }
   .scan {
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: var(--reveal);
-    width: 2px;
+    left: 16%; right: 16%; top: var(--scan-y, 0%);
+    height: 1px;
     background: var(--amber);
-    box-shadow: 0 0 24px 4px rgba(242, 181, 58, 0.55);
-    opacity: 0;
+    box-shadow: 0 0 24px 3px rgba(242, 181, 58, 0.3);
+    pointer-events: none;
   }
-  .hero:not(.locked) .scan { opacity: 1; }
+  .hero.locked .scan { opacity: 0; }
   .vignette {
     position: absolute;
     inset: 0;
@@ -175,10 +153,10 @@ const { lang } = Astro.props;
     gap: 0;
     margin: 1.5rem 0 0;
     border-top: 1px solid var(--rule);
-    max-width: 760px;
+    max-width: 650px;
   }
   .readout {
-    flex: 1 1 180px;
+    flex: 1 1 140px;
     padding: 1rem 1.4rem 0.2rem 0;
     margin-right: 1.4rem;
     border-right: 1px solid var(--rule);
@@ -220,6 +198,18 @@ const { lang } = Astro.props;
   .badge { font-size: var(--t-xs); letter-spacing: 0.08em; opacity: 0.75; }
   .cta-text { font-weight: 600; }
 
+  @media (min-width: 900px) {
+    .copy { padding-right: 53%; }
+    .name-cjk { font-size: clamp(4.5rem, 8vw, 9rem); white-space: nowrap; }
+    .tagline { font-size: clamp(1.7rem, 2.5vw, 2.8rem); }
+    .readouts { flex-wrap: nowrap; }
+    .readout { min-width: 0; flex-basis: 0; margin-right: 0.8rem; padding-right: 0.8rem; }
+    .readout .val { font-size: clamp(2rem, 3.4vw, 4rem); }
+  }
+  @media (max-width: 899px) {
+    .hero.has-3d .photo { opacity: 1; }
+    .hero.has-3d .model-stage { display: none; }
+  }
   @media (max-width: 760px) {
     .readout { flex-basis: 40%; }
     .vignette {
