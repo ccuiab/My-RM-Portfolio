@@ -5,7 +5,7 @@ import Chapter from './Chapter.astro';
 import ModelTurntable from './ModelTurntable.astro';
 import Lightbox from './Lightbox.astro';
 import NextSheet from './NextSheet.astro';
-import { hero, research } from '../data/content';
+import { hero, research, pageCopy } from '../data/content';
 import heroChassis from '../assets/img/hero-chassis-adaptive.webp';
 import type { Lang } from '../data/i18n';
 import lines from '../assets/gen/hero-bot-lines.webp';
@@ -34,8 +34,8 @@ const p = hero;
           slot="wide"
           file="hero.glb"
           still={heroChassis}
-          alt={{ zh: 'RM2024 英雄机器人整车', en: 'RM2024 Hero robot, full assembly' }}
-          caption={{ zh: '整车总装：底盘、云台、发射与供弹，来自 SolidWorks 模型。', en: 'Full assembly: chassis, gimbal, launcher and feed, from the SolidWorks model.' }}
+          alt={pageCopy.heroModelAlt}
+          caption={pageCopy.heroModelCaption}
         />
       )}
     </Chapter>

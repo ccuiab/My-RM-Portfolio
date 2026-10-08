@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/Base.astro';
+import { pageCopy, ui } from '../data/content';
+import { t, href, type Lang } from '../data/i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+---
+<Base lang={lang} slug="404" title={pageCopy.notFoundTitle} description={pageCopy.notFoundBody}>
+  <section class="wrap missing">
+    <span class="num code">404</span>
+    <h1 class="display">{t(pageCopy.notFoundTitle, lang)}</h1>
+    <p>{t(pageCopy.notFoundBody, lang)}</p>
+    <p lang={lang === 'zh' ? 'en' : 'zh-CN'}>{t(pageCopy.notFoundBody, lang === 'zh' ? 'en' : 'zh')}</p>
+    <a href={href(lang)}>{t(ui.backHome, lang)}</a>
+  </section>
+</Base>
+<style>
+  .missing { padding-top: 10rem; display: grid; gap: 1.2rem; }
+  .code { color: var(--amber); font-size: var(--t-3xl); }
+  h1 { font-size: var(--t-3xl); }
+  p { color: var(--ink-2); }
+  a { color: var(--amber); justify-self: start; text-underline-offset: 4px; }
+</style>

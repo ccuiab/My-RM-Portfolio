@@ -6,17 +6,17 @@ import { join } from 'node:path';
 import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import { t, type Lang, type T } from '../data/i18n';
+import { sceneCopy } from '../data/content';
 
 interface Props { lang: Lang; file: string; still: ImageMetadata; alt: T; caption: T }
 const { lang, file, still, alt, caption } = Astro.props;
 const hasModel = existsSync(join(process.cwd(), 'public', 'models', file));
-const hint = lang === 'zh' ? '拖动旋转' : 'Drag to turn';
 ---
 <figure class="tt" data-tt data-file={hasModel ? file : ''}>
   <div class="view panel">
     <div class="still"><Image src={still} alt={t(alt, lang)} widths={[720, 1100]} sizes="(max-width: 900px) 100vw, 70vw" /></div>
     <canvas class="three" aria-hidden="true"></canvas>
-    <span class="hint">{hint}</span>
+    <span class="hint">{t(sceneCopy.modelTurntable.hint, lang)}</span>
   </div>
   <figcaption>{t(caption, lang)}</figcaption>
 </figure>

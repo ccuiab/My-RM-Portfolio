@@ -40,6 +40,91 @@ export type Chapter = {
 };
 export type TitleRow = { label: T; value: T };
 
+export const ui = {
+  siteTitle: { zh: '崔楮焓 · 机械作品集', en: 'Chuhan Cui · Mechanical Portfolio' },
+  skip: { zh: '跳到正文', en: 'Skip to content' },
+  switchLang: { zh: 'EN', en: '中文' },
+  switchLangLabel: { zh: 'Switch to English', en: '切换到中文' },
+  nav: {
+    home: { zh: '首页', en: 'Home' },
+    engineer: { zh: '工程 2025', en: 'Engineer 2025' },
+    hero: { zh: '英雄 2024', en: 'Hero 2024' },
+    research: { zh: '预研', en: 'R&D' },
+  },
+  backHome: { zh: '回到首页', en: 'Back to home' },
+  openProject: { zh: '看完整项目', en: 'Read the full project' },
+  watchSource: { zh: '看原视频', en: 'Watch the source video' },
+  openSource: { zh: '机械开源', en: 'Open-source CAD' },
+  enlarge: { zh: '放大查看', en: 'View larger' },
+  close: { zh: '关闭', en: 'Close' },
+  loading3d: { zh: '模型加载中', en: 'Loading model' },
+  footerNote: {
+    zh: '比赛画面来自 RoboMaster 机甲大师官方转播。网站代码与机械设计归作者所有。',
+    en: 'Match footage from the official RoboMaster broadcast. Site code and mechanical design by the author.',
+  },
+} satisfies Record<string, T | Record<string, T>>;
+
+/* ---------------------------------------------------------- page and scene copy */
+
+export const pageCopy = {
+  heroCta: { zh: '看工程机器人 2025', en: 'See the 2025 Engineer robot' },
+  heroModelAlt: { zh: 'RM2024 英雄机器人整车', en: 'RM2024 Hero robot, full assembly' },
+  heroModelCaption: { zh: '整车总装：底盘、云台、发射与供弹，来自 SolidWorks 模型。', en: 'Full assembly: chassis, gimbal, launcher and feed, from the SolidWorks model.' },
+  bomTitle: { zh: '能力清单', en: 'Bill of skills' },
+  bomHead: {
+    no: { zh: '序号', en: 'No.' }, item: { zh: '能力', en: 'Skill' },
+    spec: { zh: '规格', en: 'Specification' }, used: { zh: '用在哪', en: 'Used on' },
+  },
+  honoursTitle: { zh: '荣誉', en: 'Honours' },
+  aboutTitle: { zh: '关于我', en: 'About' },
+  nextSheet: { zh: '下一张图纸', en: 'Next sheet' },
+  drawing: { zh: '图号', en: 'Drawing' },
+  projectTitle: { zh: '项目图纸', en: 'Project sheets' },
+  projectFigures: [
+    { value: '5.8 s', label: { zh: '四级矿石最短兑换时长，第一', en: 'Fastest level-4 ore exchange, ranked first' } },
+    { value: '±0.1 m/s', label: { zh: '初速波动', en: 'Muzzle velocity spread' } },
+    { value: '>25 Hz', label: { zh: '小弹丸中心供弹，已上车', en: '17 mm centre feed, on robots' } },
+  ],
+  mainNav: { zh: '主导航', en: 'Main' },
+  githubLabel: { zh: 'github.com/ccuiab', en: 'github.com/ccuiab' },
+  notFoundTitle: { zh: '图纸未找到', en: 'Sheet not found' },
+  notFoundBody: { zh: '这个页面不存在，返回首页继续浏览项目图纸。', en: 'This page does not exist. Return home to browse the project sheets.' },
+};
+
+export const sceneCopy = {
+  homeDescription: {
+    zh: '崔楮焓的 RoboMaster 机械作品集：2025 工程机器人（5.8 s 四级矿石兑换，工程全明星）、2024 英雄机器人与技术预研。',
+    en: 'Chuhan Cui’s RoboMaster mechanical portfolio: the 2025 Engineer robot (5.8 s level-4 exchange, Engineer All-Star), the 2024 Hero robot and module R&D.',
+  },
+  engineer: {
+    relatedLinks: { zh: '相关链接', en: 'Links' },
+    armFeature: {
+      label: { zh: '机械臂实车动作', en: 'The arm in motion on the real robot' },
+      credit: { zh: '画面：RoboMaster 机甲大师官方技术短片', en: 'Footage: official RoboMaster feature' },
+    },
+  },
+  armUnfold: {
+    folded: { zh: '收折', en: 'Folded' },
+    extended: { zh: '展开', en: 'Extended' },
+    height: { zh: '腕心高度', en: 'Wrist height' },
+    reach: { zh: '腕心前伸', en: 'Wrist reach' },
+    envelope: { zh: '整车最大展开', en: 'Whole-robot max envelope' },
+    note: {
+      zh: '读数为腕心相对肩关节轴的实时位置，来自真实 CAD 模型的关节运动。整车最大展开尺寸计入云台旋转与底盘。',
+      en: 'Readouts track the wrist centre against the shoulder axis, driven by the joints of the real CAD model. The whole-robot envelope adds gimbal rotation and the chassis.',
+    },
+    sketchAlt: { zh: '机械臂从收折到展开', en: 'Arm unfolding from folded to extended' },
+  },
+  wristExplode: {
+    title: { zh: '腕部拆解', en: 'Wrist exploded view' },
+    hint: { zh: '向下滚动，腕部按装配顺序拆开', en: 'Scroll to take the wrist apart in assembly order' },
+    alt: { zh: 'L4 段与腕部结构 CAD 渲染', en: 'CAD render of the L4 segment and wrist' },
+  },
+  modelTurntable: {
+    hint: { zh: '拖动旋转', en: 'Drag to turn' },
+  },
+};
+
 /* ------------------------------------------------------------------ person */
 
 export const person = {
@@ -71,20 +156,29 @@ export const person = {
 
 export const record = {
   value: '5.8',
-  title: { zh: '四级矿石，5.8 秒兑换。', en: 'A level-4 ore, exchanged in 5.8 seconds.' },
+  title: { zh: '两颗矿石，5.8 秒。', en: 'Two ores. 5.8 seconds.' },
+  resultLabel: { zh: '四级兑换 · 官方成绩', en: 'Level 4 · Official result' },
+  matchLabel: { zh: '场次', en: 'Match' },
+  povLabel: { zh: '操作手视角 · 原速', en: 'Operator view · Real time' },
+  broadcastLabel: { zh: '官方转播 · WR NEW', en: 'Official broadcast · WR NEW' },
+  playLabel: { zh: '播放', en: 'Play' },
+  pauseLabel: { zh: '暂停', en: 'Pause' },
+  replayLabel: { zh: '重播', en: 'Replay' },
+  povSourceLabel: { zh: '操作手视角来源', en: 'Operator-view source' },
+  povSource: 'https://www.bilibili.com/video/BV1yk8gz8Eu2/?p=3&t=1975',
   lede: {
     zh: '这是 RMUC 2025 全场四级矿石的最短兑换时长。机械臂、腕部、底盘和控制器，每一处设计最后都落在这几秒里。',
     en: 'The fastest level-4 ore exchange of RMUC 2025. Every decision in the arm, wrist, chassis and controller ends up inside these few seconds.',
   },
   match: {
-    zh: 'RMUC 2025 复活赛第 30 场，对阵南昌大学 Passion',
-    en: 'RMUC 2025 repechage, match 30, against Nanchang University Passion',
+    zh: 'RMUC 2025 复活赛第 30 场 · 第三局，对阵南昌大学 Passion',
+    en: 'RMUC 2025 repechage, match 30 · Round 3, against Nanchang University Passion',
   },
   crew: [
     { label: { zh: '操作手', en: 'Operator' }, value: { zh: '黄樂軒', en: '黄樂軒' } },
     { label: { zh: '机械设计', en: 'Mechanical design' }, value: { zh: '崔楮焓', en: 'Chuhan Cui' } },
   ] as TitleRow[],
-  source: 'https://www.bilibili.com/video/BV1Py8vzNE74/',
+  source: 'https://www.bilibili.com/video/BV1Py8vzNE74/?t=1918',
   broadcast: { src: engStats, alt: { zh: '官方转播数据卡：四级矿石最短兑换时长 5.8 s，排名第一', en: 'Official broadcast stats card: fastest level-4 ore exchange 5.8 s, ranked first' } } as Pic,
   allstar: { src: engAllstar, alt: { zh: 'RoboMaster 2025 全明星海报：香港科技大学 ENTERPRIZE 工程机器人', en: 'RoboMaster 2025 All-Star poster: HKUST ENTERPRIZE Engineer robot' } } as Pic,
 };

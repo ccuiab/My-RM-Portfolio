@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import { honours, exo, person, record } from '../data/content';
+import { honours, exo, person, record, pageCopy } from '../data/content';
 import { t, type Lang } from '../data/i18n';
 
 interface Props { lang: Lang }
@@ -8,7 +8,7 @@ const { lang } = Astro.props;
 ---
 <section class="wrap split">
   <div class="honours" aria-labelledby="honours-title">
-    <h2 id="honours-title" class="display heading">{lang === 'zh' ? '荣誉' : 'Honours'}</h2>
+    <h2 id="honours-title" class="display heading">{t(pageCopy.honoursTitle, lang)}</h2>
     <ul>
       {honours.map((h) => (
         <li><span class="num year">{h.year}</span><span>{t(h.title, lang)}</span></li>
@@ -33,12 +33,12 @@ const { lang } = Astro.props;
 </section>
 
 <section class="wrap about" aria-labelledby="about-title">
-  <h2 id="about-title" class="display heading">{lang === 'zh' ? '关于我' : 'About'}</h2>
+  <h2 id="about-title" class="display heading">{t(pageCopy.aboutTitle, lang)}</h2>
   <p>{t(person.edu, lang)}</p>
   <p>{t(person.team, lang)}</p>
   <p class="contact">
     <a href={`mailto:${person.email}`}>{person.email}</a>
-    <a href={person.github} rel="noopener">github.com/ccuiab</a>
+    <a href={person.github} rel="noopener">{t(pageCopy.githubLabel, lang)}</a>
   </p>
 </section>
 

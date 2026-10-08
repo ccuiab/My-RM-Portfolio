@@ -1,6 +1,6 @@
 ---
-// The 5.8 s exchange: match footage loop with a HUD timer synced to the clip.
-// The clip is cut so the exchange starts at `data-t0` seconds into the file.
+// Continuous real-time operator footage, then the official WR result.
+// 5.8 s is the broadcast result, not a stopwatch inferred from camera cuts.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { Image } from 'astro:assets';
@@ -15,9 +15,6 @@ const poster = 'video/exchange-58.jpg';
 // builds run from the project root; import.meta.url points into the bundle, not src/
 const hasClip = existsSync(join(process.cwd(), 'public', clip));
 const base = import.meta.env.BASE_URL;
-// seconds into the clip where the exchange starts. The clip is match time 07:51.5–08:01.5;
-// the station countdown starts ~07:53.9 and stops ~07:59.7, so the 5.8 s count ends on it.
-const T0 = 2.4;
 ---
 <section class:list={['record', { compact }]} data-record aria-labelledby="record-title">
   <div class="wrap grid">
@@ -31,19 +28,26 @@ const T0 = 2.4;
           playsinline
           loop
           preload="metadata"
-          data-t0={T0}
           aria-label={t(record.title, lang)}
         ></video>
       ) : (
         <Image class="clip still" src={record.broadcast.src} alt={t(record.broadcast.alt, lang)} widths={[844]} />
       )}
       <div class="hud" aria-hidden="true">
-        <span class="hud-tag latin">LV.4 EXCHANGE</span>
-        <span class="hud-timer num" data-timer>{hasClip ? '0.0' : record.value}</span>
+        <span class="hud-tag">{t(record.resultLabel, lang)}</span>
+        <span class="hud-timer num">{record.value}</span>
         <span class="hud-unit num">s</span>
       </div>
       <span class="corner tl"></span><span class="corner br"></span>
     </div>
+
+    {hasClip && <div class="playback">
+      <span data-view data-pov={t(record.povLabel, lang)} data-broadcast={t(record.broadcastLabel, lang)}>{t(record.povLabel, lang)}</span>
+      <div class="controls">
+        <button type="button" data-toggle data-play={t(record.playLabel, lang)} data-pause={t(record.pauseLabel, lang)}>{t(record.playLabel, lang)}</button>
+        <button type="button" data-replay>{t(record.replayLabel, lang)}</button>
+      </div>
+    </div>}
 
     <div class="text">
       <p class="big num" aria-hidden="true">{record.value}<span>s</span></p>
@@ -53,9 +57,10 @@ const T0 = 2.4;
         {record.crew.map((c) => (
           <div><dt>{t(c.label, lang)}</dt><dd>{t(c.value, lang)}</dd></div>
         ))}
-        <div><dt>{lang === 'zh' ? '场次' : 'Match'}</dt><dd>{t(record.match, lang)}</dd></div>
+        <div><dt>{t(record.matchLabel, lang)}</dt><dd>{t(record.match, lang)}</dd></div>
       </dl>
       <a class="src" href={record.source} rel="noopener">{t(ui.watchSource, lang)}</a>
+      <a class="src" href={record.povSource} rel="noopener">{t(record.povSourceLabel, lang)}</a>
     </div>
   </div>
 </section>
@@ -65,27 +70,29 @@ const T0 = 2.4;
 
   document.querySelectorAll<HTMLElement>('[data-record]').forEach((root) => {
     const video = root.querySelector<HTMLVideoElement>('video');
-    const timer = root.querySelector<HTMLElement>('[data-timer]');
-    if (!video || !timer) return;
-    const t0 = parseFloat(video.dataset.t0 || '0');
-
-    const tick = () => {
-      const v = Math.min(Math.max(video.currentTime - t0, 0), 5.8);
-      timer.textContent = v.toFixed(1);
-      root.classList.toggle('done', v >= 5.8);
-      if (!video.paused) requestAnimationFrame(tick);
+    const toggle = root.querySelector<HTMLButtonElement>('[data-toggle]');
+    const view = root.querySelector<HTMLElement>('[data-view]');
+    if (!video || !toggle || !view) return;
+    let manuallyPaused = false;
+    const sync = () => {
+      toggle.textContent = video.paused ? toggle.dataset.play! : toggle.dataset.pause!;
+      view.textContent = video.currentTime >= 17.2 ? view.dataset.broadcast! : view.dataset.pov!;
     };
-    video.addEventListener('play', () => requestAnimationFrame(tick));
-
-    if (reducedMotion) {
-      video.removeAttribute('loop');
-      timer.textContent = '5.8';
-      return;
-    }
-    // play only while on screen
-    new IntersectionObserver(([e]) => {
-      if (e.isIntersecting) video.play().catch(() => {});
+    ['play', 'pause', 'timeupdate', 'seeked', 'ended'].forEach(event => video.addEventListener(event, sync));
+    toggle.addEventListener('click', () => {
+      manuallyPaused = !video.paused;
+      if (video.paused) video.play().catch(() => {});
       else video.pause();
+    });
+    root.querySelector('[data-replay]')?.addEventListener('click', () => {
+      manuallyPaused = false;
+      video.currentTime = 0;
+      video.play().catch(() => {});
+    });
+    if (reducedMotion) video.removeAttribute('loop');
+    new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) video.pause();
+      else if (!reducedMotion && !manuallyPaused) video.play().catch(() => {});
     }, { threshold: 0.35 }).observe(video);
   });
 </script>
@@ -100,6 +107,8 @@ const T0 = 2.4;
     align-items: center;
   }
   .screen {
+    grid-column: 1;
+    grid-row: 1;
     position: relative;
     aspect-ratio: 16 / 9;
     background: #000;
@@ -114,8 +123,8 @@ const T0 = 2.4;
   .clip.still { object-fit: contain; background: #0a0f18; }
   .hud {
     position: absolute;
-    left: 1.2rem;
-    bottom: 1rem;
+    right: 0.75rem;
+    top: 0.75rem;
     display: grid;
     grid-template-columns: auto auto;
     align-items: baseline;
@@ -133,10 +142,15 @@ const T0 = 2.4;
   .hud-timer {
     font-size: var(--t-2xl);
     line-height: 1.1;
-    color: var(--ink);
+    color: var(--amber);
     min-width: 3.2ch;
   }
-  .record.done .hud-timer { color: var(--amber); }
+  .playback { grid-column: 1; grid-row: 2; display: flex; justify-content: space-between; align-items: center; gap: 1rem; color: var(--ink-2); font-size: var(--t-sm); }
+  .grid { row-gap: 0.75rem; }
+  .controls { display: flex; gap: 0.5rem; }
+  .controls button { background: transparent; border: 1px solid var(--rule); padding: 0.4rem 0.7rem; color: var(--ink); font: inherit; cursor: pointer; }
+  .controls button:hover { border-color: var(--amber); }
+  .controls button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
   .hud-unit { color: var(--ink-2); }
   .corner {
     position: absolute;
@@ -148,7 +162,7 @@ const T0 = 2.4;
   .corner.tl { top: 10px; left: 10px; border-right: 0; border-bottom: 0; }
   .corner.br { bottom: 10px; right: 10px; border-left: 0; border-top: 0; }
 
-  .text { display: grid; gap: 1rem; }
+  .text { grid-column: 2; grid-row: 1 / 3; display: grid; gap: 1rem; }
   .big {
     font-size: clamp(5rem, 11vw, 9rem);
     line-height: 0.9;
@@ -177,5 +191,7 @@ const T0 = 2.4;
 
   @media (max-width: 900px) {
     .grid { grid-template-columns: 1fr; }
+    .text { grid-column: 1; grid-row: 3; margin-top: 1.5rem; }
+    .hud { display: none; }
   }
 </style>
