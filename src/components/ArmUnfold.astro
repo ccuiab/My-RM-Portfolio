@@ -48,6 +48,7 @@ const L = sceneCopy.armUnfold;
       <div><dt>{t(L.envelope, lang)}</dt><dd><span class="num">1400 × 1400 × 1200</span><span class="num u">mm</span></dd></div>
     </dl>
     <p class="note">{t(L.note, lang)}</p>
+    <p class="static-note">{t(L.staticNote, lang)}</p>
   </div>
 </div>
 
@@ -90,8 +91,12 @@ const L = sceneCopy.armUnfold;
 
     /* ---- pinned scroll scene; `draw` is swapped for the 3D version once it loads ---- */
     let draw = sketch;
-    let progress = reducedMotion ? 1 : 0;
+    const staticScene = reducedMotion || !window.matchMedia('(min-width: 900px)').matches;
+    let progress = staticScene ? 1 : 0;
     draw(progress);
+    // The proportionate SVG is the shared small-screen and reduced-motion still.
+    // Keep both the scene import and the GLB request behind this desktop gate.
+    if (staticScene) { root.classList.add('static-scene'); return; }
     if (!reducedMotion) {
       ScrollTrigger.create({
         trigger: root,
@@ -191,5 +196,8 @@ const L = sceneCopy.armUnfold;
   .readout [data-r], .readout [data-h] { display: inline-block; color: var(--amber); }
   .readout .u { font-size: var(--t-xs); color: var(--ink-2); margin-left: 0.3em; }
   .note { font-size: var(--t-xs); color: var(--ink-3); }
+  .static-note { display: none; font-size: var(--t-xs); color: var(--ink-3); }
+  .static-scene .readout > div:nth-child(-n+2), .static-scene .note { display: none; }
+  .static-scene .static-note { display: block; }
   @media (max-width: 760px) { .readout { grid-template-columns: repeat(2, auto); gap: 0.6rem 2rem; } }
 </style>
