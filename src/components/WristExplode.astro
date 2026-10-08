@@ -29,6 +29,8 @@ const L = sceneCopy.wristExplode;
   import { gsap, ScrollTrigger, reducedMotion } from '../scripts/smooth';
 
   document.querySelectorAll<HTMLElement>('[data-explode][data-model="1"]').forEach((root) => {
+    // Preserve the existing CAD still without importing Three.js or fetching a model.
+    if (reducedMotion || !window.matchMedia('(min-width: 900px)').matches) return;
     const canvas = root.querySelector<HTMLCanvasElement>('canvas')!;
     const svg = root.querySelector<SVGSVGElement>('svg.leaders')!;
     const list = root.querySelector<HTMLOListElement>('ol.labels')!;

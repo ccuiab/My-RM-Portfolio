@@ -25,6 +25,7 @@ const hasModel = existsSync(join(process.cwd(), 'public', 'models', file));
   import { ScrollTrigger, reducedMotion } from '../scripts/smooth';
 
   document.querySelectorAll<HTMLElement>('[data-tt]').forEach((root) => {
+      if (reducedMotion || !window.matchMedia('(min-width: 900px)').matches) return;
     const file = root.dataset.file;
     if (!file) return;
     const canvas = root.querySelector<HTMLCanvasElement>('canvas')!;

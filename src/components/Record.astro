@@ -44,6 +44,7 @@ const base = import.meta.env.BASE_URL;
     {hasClip && <div class="playback">
       <span data-view data-pov={t(record.povLabel, lang)} data-broadcast={t(record.broadcastLabel, lang)}>{t(record.povLabel, lang)}</span>
       <div class="controls">
+        <span class="replay-time num" aria-label={t(record.replayTimeLabel, lang)}><span data-elapsed>0.0</span> / <span data-duration>21.5</span> s</span>
         <button type="button" data-toggle data-play={t(record.playLabel, lang)} data-pause={t(record.pauseLabel, lang)}>{t(record.playLabel, lang)}</button>
         <button type="button" data-replay>{t(record.replayLabel, lang)}</button>
       </div>
@@ -72,13 +73,17 @@ const base = import.meta.env.BASE_URL;
     const video = root.querySelector<HTMLVideoElement>('video');
     const toggle = root.querySelector<HTMLButtonElement>('[data-toggle]');
     const view = root.querySelector<HTMLElement>('[data-view]');
+    const elapsed = root.querySelector<HTMLElement>('[data-elapsed]');
+    const duration = root.querySelector<HTMLElement>('[data-duration]');
     if (!video || !toggle || !view) return;
     let manuallyPaused = false;
     const sync = () => {
+      if (elapsed) elapsed.textContent = video.currentTime.toFixed(1);
+      if (duration && Number.isFinite(video.duration)) duration.textContent = video.duration.toFixed(1);
       toggle.textContent = video.paused ? toggle.dataset.play! : toggle.dataset.pause!;
       view.textContent = video.currentTime >= 17.2 ? view.dataset.broadcast! : view.dataset.pov!;
     };
-    ['play', 'pause', 'timeupdate', 'seeked', 'ended'].forEach(event => video.addEventListener(event, sync));
+    ['loadedmetadata', 'play', 'pause', 'timeupdate', 'seeked', 'ended'].forEach(event => video.addEventListener(event, sync));
     toggle.addEventListener('click', () => {
       manuallyPaused = !video.paused;
       if (video.paused) video.play().catch(() => {});
@@ -147,7 +152,8 @@ const base = import.meta.env.BASE_URL;
   }
   .playback { grid-column: 1; grid-row: 2; display: flex; justify-content: space-between; align-items: center; gap: 1rem; color: var(--ink-2); font-size: var(--t-sm); }
   .grid { row-gap: 0.75rem; }
-  .controls { display: flex; gap: 0.5rem; }
+  .controls { display: flex; align-items: center; gap: 0.5rem; }
+  .replay-time { font-size: var(--t-xs); white-space: nowrap; }
   .controls button { background: transparent; border: 1px solid var(--rule); padding: 0.4rem 0.7rem; color: var(--ink); font: inherit; cursor: pointer; }
   .controls button:hover { border-color: var(--amber); }
   .controls button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
@@ -193,5 +199,6 @@ const base = import.meta.env.BASE_URL;
     .grid { grid-template-columns: 1fr; }
     .text { grid-column: 1; grid-row: 3; margin-top: 1.5rem; }
     .hud { display: none; }
+    .playback { flex-wrap: wrap; }
   }
 </style>

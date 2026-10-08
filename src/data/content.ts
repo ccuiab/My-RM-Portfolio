@@ -114,6 +114,7 @@ export const sceneCopy = {
       en: 'Readouts track the wrist centre against the shoulder axis, driven by the joints of the real CAD model. The whole-robot envelope adds gimbal rotation and the chassis.',
     },
     sketchAlt: { zh: '机械臂从收折到展开', en: 'Arm unfolding from folded to extended' },
+    staticNote: { zh: '静态连杆比例示意：上臂 380 mm，前臂 420 mm；整车最大展开尺寸来自设计说明，示意图不表示实际 CAD 姿态或可达空间。', en: 'Static link-proportion sketch: 380 mm upper arm and 420 mm forearm. The whole-robot envelope comes from the design notes; this sketch does not represent a measured CAD pose or reachable workspace.' },
   },
   wristExplode: {
     title: { zh: '腕部拆解', en: 'Wrist exploded view' },
@@ -164,6 +165,7 @@ export const record = {
   playLabel: { zh: '播放', en: 'Play' },
   pauseLabel: { zh: '暂停', en: 'Pause' },
   replayLabel: { zh: '重播', en: 'Replay' },
+  replayTimeLabel: { zh: '回放时间', en: 'Replay time' },
   povSourceLabel: { zh: '操作手视角来源', en: 'Operator-view source' },
   povSource: 'https://www.bilibili.com/video/BV1yk8gz8Eu2/?p=3&t=1975',
   lede: {
