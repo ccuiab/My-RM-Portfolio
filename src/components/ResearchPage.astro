@@ -41,7 +41,7 @@ const lines_: { id: string; mark: string; title: T; stages: Stage[]; lede?: T; a
                   <Image src={s.pic.src} alt={t(s.pic.alt, lang)} widths={[480, 900]} sizes="(max-width: 900px) 100vw, 33vw" />
                 </button>
               ) : (
-                <div class="pic empty" aria-hidden="true"><span class="num">25 Hz+</span></div>
+                <div class="pic empty" aria-hidden="true"><span class="num">&gt;25 Hz</span></div>
               )}
               <h3 class="stage-title">{t(s.title, lang)}</h3>
               <p class="stage-body">{t(s.body, lang)}</p>

@@ -12,7 +12,7 @@ const { lang } = Astro.props;
 const hasModel = existsSync(join(process.cwd(), 'public', 'models', 'wrist.glb'));
 const L = lang === 'zh'
   ? { title: '腕部拆解', hint: '向下滚动，腕部按装配顺序拆开', alt: 'L4 段与腕部结构 CAD 渲染' }
-  : { title: 'Wrist, taken apart', hint: 'Scroll to take the wrist apart in assembly order', alt: 'CAD render of the L4 segment and wrist' };
+  : { title: 'Wrist exploded view', hint: 'Scroll to take the wrist apart in assembly order', alt: 'CAD render of the L4 segment and wrist' };
 ---
 <div class="explode" data-explode data-model={hasModel ? '1' : ''} data-lang={lang}>
   <div class="pin">

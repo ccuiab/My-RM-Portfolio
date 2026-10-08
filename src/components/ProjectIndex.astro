@@ -8,9 +8,9 @@ interface Props { lang: Lang }
 const { lang } = Astro.props;
 
 const sheets = [
-  { p: engineer, no: engineer.robotNo, figure: '5.8 s', figureLabel: { zh: '四级矿兑换，全场第一', en: 'Level-4 exchange, ranked first' } },
+  { p: engineer, no: engineer.robotNo, figure: '5.8 s', figureLabel: { zh: '四级矿石最短兑换时长，第一', en: 'Fastest level-4 ore exchange, ranked first' } },
   { p: hero, no: hero.robotNo, figure: '±0.1 m/s', figureLabel: { zh: '初速波动', en: 'Muzzle velocity spread' } },
-  { p: research, no: null, figure: '25 Hz+', figureLabel: { zh: '小弹丸中心供弹，已上车', en: '17 mm centre feed, on robots' } },
+  { p: research, no: null, figure: '>25 Hz', figureLabel: { zh: '小弹丸中心供弹，已上车', en: '17 mm centre feed, on robots' } },
 ];
 ---
 <section class="index wrap" aria-labelledby="index-title">

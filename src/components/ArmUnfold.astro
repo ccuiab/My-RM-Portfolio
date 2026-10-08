@@ -17,7 +17,7 @@ const hasModel = existsSync(join(process.cwd(), 'public', 'models', 'arm.glb'));
 <div class="unfold" data-unfold data-model={hasModel ? '1' : ''} data-labels={`${L.folded}|${L.extended}`}>
   <div class="pin">
     <div class="view panel">
-      <svg class="sketch" viewBox="-200 -880 1200 820" role="img" aria-label={lang === 'zh' ? '机械臂从收折到展开' : 'The arm going from folded to extended'}>
+      <svg class="sketch" viewBox="-200 -880 1200 820" role="img" aria-label={lang === 'zh' ? '机械臂从收折到展开' : 'Arm unfolding from folded to extended'}>
         <defs>
           <pattern id="arm-grid" width="40" height="40" patternUnits="userSpaceOnUse">
             <path d="M40 0H0V40" fill="none" stroke="var(--rule)" stroke-width="1" />
