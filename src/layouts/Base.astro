@@ -5,7 +5,7 @@ import '@fontsource/jetbrains-mono/400.css';
 import '@fontsource/jetbrains-mono/500.css';
 import '../styles/global.css';
 import { ui, href, altHref, t, type Lang, type T } from '../data/i18n';
-import { person } from '../data/content';
+import { person, pageCopy } from '../data/content';
 
 interface Props {
   lang: Lang;
@@ -54,7 +54,7 @@ const navItems = [
           <span class="sig-cjk">{person.nameZh}</span>
           <span class="sig-latin latin">{person.nameEn}</span>
         </a>
-        <nav class="nav" aria-label={lang === 'zh' ? '主导航' : 'Main'}>
+        <nav class="nav" aria-label={t(pageCopy.mainNav, lang)}>
           <ul>
             {navItems.map((item) => (
               <li>
@@ -83,7 +83,7 @@ const navItems = [
         </div>
         <ul class="footer-links">
           <li><a href={`mailto:${person.email}`}>{person.email}</a></li>
-          <li><a href={person.github} rel="noopener">github.com/ccuiab</a></li>
+          <li><a href={person.github} rel="noopener">{t(pageCopy.githubLabel, lang)}</a></li>
         </ul>
         <p class="footer-note">{t(ui.footerNote, lang)}</p>
       </div>

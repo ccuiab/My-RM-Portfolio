@@ -1,20 +1,18 @@
 ---
 // Skills as a bill of materials: item, specification, where it was used.
-import { bom } from '../data/content';
+import { bom, pageCopy } from '../data/content';
 import { t, type Lang } from '../data/i18n';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const head = lang === 'zh'
-  ? { no: '序号', item: '能力', spec: '规格', used: '用在哪' }
-  : { no: 'No.', item: 'Skill', spec: 'Specification', used: 'Used on' };
+const head = pageCopy.bomHead;
 ---
 <section class="bom wrap" aria-labelledby="bom-title">
-  <h2 id="bom-title" class="display heading">{lang === 'zh' ? '能力清单' : 'Bill of skills'}</h2>
+  <h2 id="bom-title" class="display heading">{t(pageCopy.bomTitle, lang)}</h2>
   <div class="scroll">
     <table>
       <thead>
-        <tr><th scope="col">{head.no}</th><th scope="col">{head.item}</th><th scope="col">{head.spec}</th><th scope="col">{head.used}</th></tr>
+        <tr><th scope="col">{t(head.no, lang)}</th><th scope="col">{t(head.item, lang)}</th><th scope="col">{t(head.spec, lang)}</th><th scope="col">{t(head.used, lang)}</th></tr>
       </thead>
       <tbody>
         {bom.map((row) => (

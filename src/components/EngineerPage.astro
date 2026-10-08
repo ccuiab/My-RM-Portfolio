@@ -8,7 +8,7 @@ import Loop from './Loop.astro';
 import WristExplode from './WristExplode.astro';
 import Lightbox from './Lightbox.astro';
 import NextSheet from './NextSheet.astro';
-import { engineer, hero } from '../data/content';
+import { engineer, hero, sceneCopy } from '../data/content';
 import { t, type Lang } from '../data/i18n';
 import lines from '../assets/gen/eng-reach-lines.webp';
 
@@ -42,15 +42,15 @@ const p = engineer;
         slot="wide"
         src="video/arm-feature.mp4"
         poster="video/arm-feature.jpg"
-        label={{ zh: '机械臂实车动作', en: 'The arm in motion on the real robot' }}
-        credit={{ zh: '画面：RoboMaster 机甲大师官方技术短片', en: 'Footage: official RoboMaster feature' }}
+        label={sceneCopy.engineer.armFeature.label}
+        credit={sceneCopy.engineer.armFeature.credit}
         href="https://www.bilibili.com/video/BV1Y482zjERP/"
       />
     )}
     </Chapter>
   ))}
 
-  <section class="wrap links" aria-label={lang === 'zh' ? '相关链接' : 'Links'}>
+  <section class="wrap links" aria-label={t(sceneCopy.engineer.relatedLinks, lang)}>
     <ul>
       {p.links.map((l) => <li><a href={l.href} rel="noopener">{t(l.label, lang)}</a></li>)}
     </ul>

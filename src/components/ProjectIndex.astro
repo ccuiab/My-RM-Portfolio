@@ -1,20 +1,19 @@
 ---
 // Home: the three project sheets, laid out as drawing-sheet title blocks.
 import { Image } from 'astro:assets';
-import { engineer, hero, research } from '../data/content';
+import { engineer, hero, research, pageCopy } from '../data/content';
 import { t, href, ui, type Lang } from '../data/i18n';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 
-const sheets = [
-  { p: engineer, no: engineer.robotNo, figure: '5.8 s', figureLabel: { zh: '四级矿石最短兑换时长，第一', en: 'Fastest level-4 ore exchange, ranked first' } },
-  { p: hero, no: hero.robotNo, figure: '±0.1 m/s', figureLabel: { zh: '初速波动', en: 'Muzzle velocity spread' } },
-  { p: research, no: null, figure: '>25 Hz', figureLabel: { zh: '小弹丸中心供弹，已上车', en: '17 mm centre feed, on robots' } },
-];
+const sheets = [engineer, hero, research].map((p, i) => ({
+  p, no: 'robotNo' in p ? p.robotNo : null,
+  figure: pageCopy.projectFigures[i].value, figureLabel: pageCopy.projectFigures[i].label,
+}));
 ---
 <section class="index wrap" aria-labelledby="index-title">
-  <h2 id="index-title" class="display heading">{lang === 'zh' ? '项目图纸' : 'Project sheets'}</h2>
+  <h2 id="index-title" class="display heading">{t(pageCopy.projectTitle, lang)}</h2>
 
   <ol class="sheets">
     {sheets.map(({ p, no, figure, figureLabel }, i) => (

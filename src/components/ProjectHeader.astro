@@ -3,6 +3,7 @@
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import { t, type Lang, type T } from '../data/i18n';
+import { pageCopy } from '../data/content';
 import type { Pic, Stat, TitleRow } from '../data/content';
 
 interface Props {
@@ -44,7 +45,7 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
         {titleBlock.map((r) => (
           <div class="tb-cell"><dt>{t(r.label, lang)}</dt><dd>{t(r.value, lang)}</dd></div>
         ))}
-        <div class="tb-cell"><dt>{lang === 'zh' ? '图号' : 'Drawing'}</dt><dd class="num">{drawing}</dd></div>
+        <div class="tb-cell"><dt>{t(pageCopy.drawing, lang)}</dt><dd class="num">{drawing}</dd></div>
       </dl>
     </div>
   )}

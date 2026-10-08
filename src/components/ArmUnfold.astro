@@ -5,19 +5,19 @@
 // Without it, or before it loads: a side-view kinematic sketch at true link proportions.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import type { Lang } from '../data/i18n';
+import { sceneCopy } from '../data/content';
+import { t, type Lang } from '../data/i18n';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 // builds run from the project root; import.meta.url points into the bundle, not src/
-const hasModel = existsSync(join(process.cwd(), 'public', 'models', 'arm.glb'));const L = lang === 'zh'
-  ? { folded: '收折', extended: '展开', height: '腕心高度', reach: '腕心前伸', env: '整车最大展开', note: '读数为腕心相对肩关节轴的实时位置，来自真实 CAD 模型的关节运动。整车最大展开尺寸计入云台旋转与底盘。' }
-  : { folded: 'Folded', extended: 'Extended', height: 'Wrist height', reach: 'Wrist reach', env: 'Whole-robot max envelope', note: 'Readouts track the wrist centre against the shoulder axis, driven by the joints of the real CAD model. The whole-robot envelope adds gimbal rotation and the chassis.' };
+const hasModel = existsSync(join(process.cwd(), 'public', 'models', 'arm.glb'));
+const L = sceneCopy.armUnfold;
 ---
-<div class="unfold" data-unfold data-model={hasModel ? '1' : ''} data-labels={`${L.folded}|${L.extended}`}>
+<div class="unfold" data-unfold data-model={hasModel ? '1' : ''} data-labels={`${t(L.folded, lang)}|${t(L.extended, lang)}`}>
   <div class="pin">
     <div class="view panel">
-      <svg class="sketch" viewBox="-200 -880 1200 820" role="img" aria-label={lang === 'zh' ? '机械臂从收折到展开' : 'Arm unfolding from folded to extended'}>
+      <svg class="sketch" viewBox="-200 -880 1200 820" role="img" aria-label={t(L.sketchAlt, lang)}>
         <defs>
           <pattern id="arm-grid" width="40" height="40" patternUnits="userSpaceOnUse">
             <path d="M40 0H0V40" fill="none" stroke="var(--rule)" stroke-width="1" />
@@ -39,15 +39,15 @@ const hasModel = existsSync(join(process.cwd(), 'public', 'models', 'arm.glb'));
         <circle class="m-sh" r="5" /><circle class="m-el" r="5" /><circle class="m-wr" r="5" />
         <text class="m-t2">L2 380</text><text class="m-t34">L3+L4 420</text>
       </svg>
-      <span class="state latin" data-state>{L.folded}</span>
+      <span class="state latin" data-state>{t(L.folded, lang)}</span>
     </div>
 
     <dl class="readout">
-      <div><dt>{L.reach}</dt><dd><span class="num" data-r>0</span><span class="num u">mm</span></dd></div>
-      <div><dt>{L.height}</dt><dd><span class="num" data-h>0</span><span class="num u">mm</span></dd></div>
-      <div><dt>{L.env}</dt><dd><span class="num">1400 × 1400 × 1200</span><span class="num u">mm</span></dd></div>
+      <div><dt>{t(L.reach, lang)}</dt><dd><span class="num" data-r>0</span><span class="num u">mm</span></dd></div>
+      <div><dt>{t(L.height, lang)}</dt><dd><span class="num" data-h>0</span><span class="num u">mm</span></dd></div>
+      <div><dt>{t(L.envelope, lang)}</dt><dd><span class="num">1400 × 1400 × 1200</span><span class="num u">mm</span></dd></div>
     </dl>
-    <p class="note">{L.note}</p>
+    <p class="note">{t(L.note, lang)}</p>
   </div>
 </div>
 

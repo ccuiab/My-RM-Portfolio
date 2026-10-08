@@ -4,24 +4,23 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { Image } from 'astro:assets';
-import type { Lang } from '../data/i18n';
+import { t, type Lang } from '../data/i18n';
+import { sceneCopy } from '../data/content';
 import fallback from '../assets/img/arm-l4.webp';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const hasModel = existsSync(join(process.cwd(), 'public', 'models', 'wrist.glb'));
-const L = lang === 'zh'
-  ? { title: '腕部拆解', hint: '向下滚动，腕部按装配顺序拆开', alt: 'L4 段与腕部结构 CAD 渲染' }
-  : { title: 'Wrist exploded view', hint: 'Scroll to take the wrist apart in assembly order', alt: 'CAD render of the L4 segment and wrist' };
+const L = sceneCopy.wristExplode;
 ---
 <div class="explode" data-explode data-model={hasModel ? '1' : ''} data-lang={lang}>
   <div class="pin">
     <div class="view panel">
-      <div class="still"><Image src={fallback} alt={L.alt} widths={[744]} /></div>
+      <div class="still"><Image src={fallback} alt={t(L.alt, lang)} widths={[744]} /></div>
       <canvas class="three" aria-hidden="true"></canvas>
       <svg class="leaders" aria-hidden="true"></svg>
-      <ol class="labels" aria-label={L.title}></ol>
-      <span class="hint">{L.hint}</span>
+      <ol class="labels" aria-label={t(L.title, lang)}></ol>
+      <span class="hint">{t(L.hint, lang)}</span>
     </div>
   </div>
 </div>

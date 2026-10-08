@@ -1,11 +1,12 @@
 ---
+import { pageCopy } from '../data/content';
 import { t, href, type Lang, type T } from '../data/i18n';
 interface Props { lang: Lang; slug: string; drawing: string; title: T }
 const { lang, slug, drawing, title } = Astro.props;
 ---
-<nav class="wrap next" aria-label={lang === 'zh' ? '下一张图纸' : 'Next sheet'}>
+<nav class="wrap next" aria-label={t(pageCopy.nextSheet, lang)}>
   <a href={href(lang, slug)}>
-    <span class="k">{lang === 'zh' ? '下一张图纸' : 'Next sheet'}</span>
+    <span class="k">{t(pageCopy.nextSheet, lang)}</span>
     <span class="num dwg">{drawing}</span>
     <span class="display ttl">{t(title, lang)}</span>
   </a>

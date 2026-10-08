@@ -24,6 +24,8 @@ jobs:
         uses: withastro/action@v6
         with:
           node-version: 24
+          # Includes the Smiley Sans subset step from package.json.
+          build-cmd: npm run build
 
   deploy:
     needs: build

@@ -2,7 +2,7 @@
 // Home hero: the robot is drawn as amber edge lines, then a scan bar reveals the photo.
 // HUD readouts lock in as the scan passes them.
 import { Image } from 'astro:assets';
-import { person } from '../data/content';
+import { person, pageCopy } from '../data/content';
 import { t, href, type Lang } from '../data/i18n';
 import lines from '../assets/gen/eng-reach-lines.webp';
 
@@ -37,7 +37,7 @@ const { lang } = Astro.props;
 
     <a class="cta" href={href(lang, 'engineer')}>
       <span class="badge latin">{person.badge}</span>
-      <span class="cta-text">{lang === 'zh' ? '看工程机器人 2025' : 'See the 2025 Engineer robot'}</span>
+      <span class="cta-text">{t(pageCopy.heroCta, lang)}</span>
     </a>
   </div>
 </section>
