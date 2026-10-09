@@ -27,6 +27,8 @@ export type WristScene = {
   setYaw: (deg: number) => void;
   render: () => Callout[];
   onResize: (cb: () => void) => void;
+  onInteraction: (cb: () => void) => void;
+  resetView: () => void;
 };
 
 export async function loadWristScene(canvas: HTMLCanvasElement, base: string): Promise<WristScene> {
@@ -44,11 +46,26 @@ export async function loadWristScene(canvas: HTMLCanvasElement, base: string): P
 
   // centre the exploded envelope in view; arm runs along -Z from the wrist
   model.position.set(0, -0.02, 0.09);
-  stage.frame(new THREE.Sphere(new THREE.Vector3(-0.03, 0.01, 0), 0.26), new THREE.Vector3(1, 0.55, 0.85));
+  // Every group's path is a straight segment between rest and full explosion.
+  // The union of both endpoint bounds contains every intermediate assembly pose,
+  // and framing its sphere keeps all parts visible from any orbit direction.
+  const envelope = new THREE.Box3().setFromObject(model);
+  for (const n of nodes) n.node.position.copy(n.rest).addScaledVector(n.dir, n.g.explode_dist_m);
+  envelope.union(new THREE.Box3().setFromObject(model));
+  for (const n of nodes) n.node.position.copy(n.rest);
+  // Centre the model on the union sphere so story yaw rotates it around the
+  // same pivot as the camera. All group anchors follow the model transform.
+  const sphere = envelope.getBoundingSphere(new THREE.Sphere());
+  model.position.sub(sphere.center);
+  sphere.center.set(0, 0, 0);
+  sphere.radius *= 1.04;
+  stage.frame(sphere, new THREE.Vector3(1, 0.55, 0.85));
 
   const { stagger_fraction: sf, max_order: mo } = meta.animation;
   const v = new THREE.Vector3();
   const ndc = new THREE.Vector3();
+
+  stage.enableInteraction();
 
   return {
     groups: meta.groups,
@@ -63,6 +80,8 @@ export async function loadWristScene(canvas: HTMLCanvasElement, base: string): P
       turntable.rotation.y = THREE.MathUtils.degToRad(deg);
     },
     onResize: stage.onResize,
+    onInteraction: stage.enableInteraction,
+    resetView: stage.resetView,
     render() {
       stage.render();
       const w = canvas.clientWidth, h = canvas.clientHeight;

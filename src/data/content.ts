@@ -92,6 +92,20 @@ export const pageCopy = {
 };
 
 export const sceneCopy = {
+  interaction: {
+    hint: { zh: '拖动模型自由旋转', en: 'Drag the model to explore' },
+    reset: { zh: '复位视角', en: 'Reset view' },
+    follow: { zh: '跟随滚动', en: 'Follow scroll' },
+    arm: { zh: '展开程度', en: 'Arm extension' },
+    wrist: { zh: '拆解程度', en: 'Exploded view' },
+  },
+  homeView: {
+    model: { zh: '3D 模型', en: '3D model' },
+    photo: { zh: '实拍照片', en: 'Field photo' },
+    loading: { zh: '正在加载 3D 模型…', en: 'Loading 3D model…' },
+    failed: { zh: '3D 暂不可用，已显示实拍照片。可点击 3D 模型重试。', en: '3D is unavailable. Showing the field photo; select 3D model to retry.' },
+    static: { zh: '实拍照片 · 静态展示', en: 'Field photo · Static view' },
+  },
   homeDescription: {
     zh: '崔楮焓的 RoboMaster 机械作品集：2025 工程机器人（5.8 s 四级矿石兑换，工程全明星）、2024 英雄机器人与技术预研。',
     en: 'Chuhan Cui’s RoboMaster mechanical portfolio: the 2025 Engineer robot (5.8 s level-4 exchange, Engineer All-Star), the 2024 Hero robot and module R&D.',
@@ -121,7 +135,7 @@ export const sceneCopy = {
   },
   wristExplode: {
     title: { zh: '腕部拆解', en: 'Wrist exploded view' },
-    hint: { zh: '向下滚动，腕部按装配顺序拆开', en: 'Scroll to take the wrist apart in assembly order' },
+    hint: { zh: '拖动旋转；滑动调节拆解程度', en: 'Drag to rotate; use the slider to explode' },
     alt: { zh: 'L4 段与腕部结构 CAD 渲染', en: 'CAD render of the L4 segment and wrist' },
   },
   modelTurntable: {

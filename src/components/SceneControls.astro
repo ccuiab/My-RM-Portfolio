@@ -1,0 +1,22 @@
+---
+import { sceneCopy } from '../data/content';
+import { t, type Lang } from '../data/i18n';
+interface Props { lang: Lang; progress?: 'arm' | 'wrist' }
+const { lang, progress } = Astro.props;
+const L = sceneCopy.interaction;
+---
+<div class="scene-controls" data-scene-controls>
+  <span class="drag-hint">{t(L.hint, lang)}</span>
+  {progress && <label class="progress-control"><span>{t(L[progress], lang)}</span><input data-scene-progress type="range" min="0" max="100" value="0" step="1" /></label>}
+  {progress && <button type="button" data-follow-scroll aria-pressed="true">{t(L.follow, lang)}</button>}
+  <button type="button" data-reset-view>{t(L.reset, lang)}</button>
+</div>
+<style>
+  .scene-controls { display: none; align-items: center; flex-wrap: wrap; gap: .65rem 1rem; color: var(--ink-2); font-size: var(--t-xs); }
+  :global(.has-3d) .scene-controls { display: flex; }
+  .progress-control { display: flex; align-items: center; gap: .6rem; }
+  input { width: clamp(100px, 14vw, 180px); accent-color: var(--amber); cursor: pointer; }
+  button { color: var(--ink); background: var(--ground); border: 1px solid var(--rule); padding: .45rem .7rem; cursor: pointer; font: inherit; }
+  button:hover, button[aria-pressed="true"] { border-color: var(--amber); color: var(--amber); }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+</style>
