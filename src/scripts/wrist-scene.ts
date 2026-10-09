@@ -27,6 +27,8 @@ export type WristScene = {
   setYaw: (deg: number) => void;
   render: () => Callout[];
   onResize: (cb: () => void) => void;
+  onInteraction: (cb: () => void) => void;
+  resetView: () => void;
 };
 
 export async function loadWristScene(canvas: HTMLCanvasElement, base: string): Promise<WristScene> {
@@ -50,6 +52,8 @@ export async function loadWristScene(canvas: HTMLCanvasElement, base: string): P
   const v = new THREE.Vector3();
   const ndc = new THREE.Vector3();
 
+  stage.enableInteraction();
+
   return {
     groups: meta.groups,
     setExplode(t) {
@@ -63,6 +67,8 @@ export async function loadWristScene(canvas: HTMLCanvasElement, base: string): P
       turntable.rotation.y = THREE.MathUtils.degToRad(deg);
     },
     onResize: stage.onResize,
+    onInteraction: stage.enableInteraction,
+    resetView: stage.resetView,
     render() {
       stage.render();
       const w = canvas.clientWidth, h = canvas.clientHeight;

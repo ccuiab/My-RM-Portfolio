@@ -18,6 +18,10 @@ export type ScanStage = {
   render: () => void;
   /** called after the canvas resizes (the drawing buffer is cleared then) */
   onResize: (cb: () => void) => void;
+  /** Pointer drag rotates the camera; wheel scrolling remains native. No continuous render loop. */
+  enableInteraction: (onChange?: () => void) => void;
+  /** Restore the most recent frame() direction, retaining the current model pose. */
+  resetView: () => void;
 };
 
 export async function loadScanStage(
@@ -80,13 +84,21 @@ export async function loadScanStage(
   }
 
   let framed: { sphere: THREE.Sphere; dir: THREE.Vector3 } | null = null;
+  const viewDirection = new THREE.Vector3();
+  let interactionEnabled = false;
+  let interactionChange: (() => void) | undefined;
+  const redrawInteraction = () => {
+    applyFrame();
+    if (interactionChange) interactionChange();
+    else renderer.render(scene, camera);
+  };
   const applyFrame = () => {
     if (!framed) return;
-    const { sphere, dir } = framed;
+    const { sphere } = framed;
     const vFov = THREE.MathUtils.degToRad(camera.fov / 2);
     const hFov = Math.atan(Math.tan(vFov) * camera.aspect);
     const dist = sphere.radius / Math.sin(Math.min(vFov, hFov));
-    camera.position.copy(sphere.center).addScaledVector(dir, dist);
+    camera.position.copy(sphere.center).addScaledVector(viewDirection, dist);
     camera.lookAt(sphere.center);
   };
 
@@ -107,6 +119,7 @@ export async function loadScanStage(
     renderer, scene, camera, model, turntable,
     frame(sphere, dir) {
       framed = { sphere: sphere.clone(), dir: dir.clone().normalize() };
+      viewDirection.copy(framed.dir);
       applyFrame();
     },
     setScan(s) {
@@ -119,6 +132,58 @@ export async function loadScanStage(
     },
     onResize(cb) {
       onResize = cb;
+    },
+    enableInteraction(onChange) {
+      interactionChange = onChange;
+      if (interactionEnabled) return;
+      interactionEnabled = true;
+      canvas.tabIndex = 0;
+      canvas.style.cursor = 'grab';
+      let pointer: { id: number; x: number; y: number } | null = null;
+      const spherical = new THREE.Spherical();
+      const rotate = (dx: number, dy: number) => {
+        if (!framed) return;
+        spherical.setFromVector3(viewDirection);
+        // A viewport-relative speed keeps a small wrist stage as easy to turn as the hero.
+        const speed = Math.PI * 2 / Math.max(canvas.clientHeight, 250);
+        spherical.theta -= dx * speed;
+        spherical.phi = THREE.MathUtils.clamp(spherical.phi - dy * speed, 0.08, Math.PI - 0.08);
+        viewDirection.setFromSpherical(spherical).normalize();
+        redrawInteraction();
+      };
+      canvas.addEventListener('pointerdown', event => {
+        if (event.button !== 0 || pointer) return;
+        event.preventDefault();
+        pointer = { id: event.pointerId, x: event.clientX, y: event.clientY };
+        canvas.setPointerCapture(event.pointerId);
+        canvas.style.cursor = 'grabbing';
+      });
+      canvas.addEventListener('pointermove', event => {
+        if (!pointer || pointer.id !== event.pointerId) return;
+        const dx = event.clientX - pointer.x, dy = event.clientY - pointer.y;
+        pointer.x = event.clientX; pointer.y = event.clientY;
+        if (dx || dy) rotate(dx, dy);
+      });
+      const end = (event: PointerEvent) => {
+        if (pointer?.id !== event.pointerId) return;
+        pointer = null;
+        canvas.style.cursor = 'grab';
+        if (canvas.hasPointerCapture(event.pointerId)) canvas.releasePointerCapture(event.pointerId);
+      };
+      canvas.addEventListener('pointerup', end);
+      canvas.addEventListener('pointercancel', end);
+      canvas.addEventListener('lostpointercapture', end);
+      canvas.addEventListener('keydown', event => {
+        const movement: Record<string, [number, number]> = { ArrowLeft: [-12, 0], ArrowRight: [12, 0], ArrowUp: [0, -12], ArrowDown: [0, 12] };
+        if (!movement[event.key]) return;
+        event.preventDefault();
+        rotate(...movement[event.key]);
+      });
+    },
+    resetView() {
+      if (!framed) return;
+      viewDirection.copy(framed.dir);
+      redrawInteraction();
     },
   };
 }
