@@ -8,7 +8,8 @@ import Loop from './Loop.astro';
 import WristExplode from './WristExplode.astro';
 import Lightbox from './Lightbox.astro';
 import NextSheet from './NextSheet.astro';
-import { engineer, hero, sceneCopy } from '../data/content';
+import ModelTurntable from './ModelTurntable.astro';
+import { engineer, hero, sceneCopy, pageCopy } from '../data/content';
 import { t, type Lang } from '../data/i18n';
 import lines from '../assets/gen/eng-reach-lines.webp';
 
@@ -30,6 +31,13 @@ const p = engineer;
     statsSource={p.statsSource}
   />
 
+  <section class="wrap assembly" aria-labelledby="assembly-title">
+    <div class="assembly-heading">
+      <h2 id="assembly-title" class="display">{t(pageCopy.engineerModelTitle, lang)}</h2>
+      <p>{t(pageCopy.engineerModelIntro, lang)}</p>
+    </div>
+    <ModelTurntable lang={lang} file="engineer.glb" still={p.cover.src} alt={pageCopy.engineerModelAlt} caption={pageCopy.engineerModelCaption} scan={false} />
+  </section>
   <Record lang={lang} compact />
 
   {p.chapters.map((c) => (
@@ -61,6 +69,11 @@ const p = engineer;
 </Base>
 
 <style>
+  .assembly { padding-top: 5rem; }
+  .assembly-heading { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: end; margin-bottom: 2rem; }
+  .assembly-heading h2 { font-size: var(--t-3xl); line-height: 1.15; }
+  .assembly-heading p { color: var(--ink-2); max-width: 52ch; }
+  @media (max-width: 760px) { .assembly-heading { grid-template-columns: 1fr; gap: 1rem; } }
   .links { padding-top: 5rem; }
   .links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; }
   .links a { color: var(--amber); text-underline-offset: 4px; }
