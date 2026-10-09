@@ -1,0 +1,144 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import ProjectHeader from './ProjectHeader.astro';
+import Lightbox from './Lightbox.astro';
+import NextSheet from './NextSheet.astro';
+import { research, engineer, type Stage } from '../data/content';
+import { t, ui, type Lang, type T } from '../data/i18n';
+import lines from '../assets/gen/launcher-dual-6-lines.webp';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const r = research;
+
+const lines_: { id: string; mark: string; title: T; stages: Stage[]; lede?: T; after?: T; branch?: boolean }[] = [
+  { id: 'launcher', mark: 'A', title: r.launcher.title, stages: r.launcher.stages },
+  { id: 'feeder', mark: 'B', title: r.feeder.title, stages: r.feeder.stages, after: r.feeder.mentor },
+  { id: 'swerve', mark: 'C', title: r.swerve.title, stages: r.swerve.branches, lede: r.swerve.lede, branch: true },
+];
+---
+<Base lang={lang} slug={r.slug} title={r.short} description={r.lede}>
+  <ProjectHeader lang={lang} drawing={r.drawing} title={r.title} lede={r.lede} cover={r.cover} lines={lines} />
+
+  {lines_.map((line) => (
+    <section class="line" id={line.id} aria-labelledby={`${line.id}-title`}>
+      <div class="wrap">
+        <div class="line-head">
+          <span class="mark" aria-hidden="true">{line.mark}</span>
+          <h2 id={`${line.id}-title`} class="display line-title">{t(line.title, lang)}</h2>
+        </div>
+        {line.lede && <p class="line-lede">{t(line.lede, lang)}</p>}
+
+        <ol class:list={['stages', { branch: line.branch }]} style={`--n:${line.stages.length}`}>
+          {line.stages.map((s, i) => (
+            <li class="stage">
+              <div class="stage-rail" aria-hidden="true">
+                <span class="num idx">{line.branch ? String.fromCharCode(97 + i) : `v${i + 1}`}</span>
+              </div>
+              {s.pic ? (
+                <button class:list={['pic', { light: s.pic.light }]} type="button" data-zoom={s.pic.src.src} data-alt={t(s.pic.alt, lang)} aria-label={`${t(ui.enlarge, lang)}: ${t(s.pic.alt, lang)}`}>
+                  <Image src={s.pic.src} alt={t(s.pic.alt, lang)} widths={[480, 900]} sizes="(max-width: 900px) 100vw, 33vw" />
+                </button>
+              ) : (
+                <div class="pic empty" aria-hidden="true"><span class="num">&gt;25 Hz</span></div>
+              )}
+              <h3 class="stage-title">{t(s.title, lang)}</h3>
+              <p class="stage-body">{t(s.body, lang)}</p>
+            </li>
+          ))}
+        </ol>
+        {line.after && <p class="after">{t(line.after, lang)}</p>}
+      </div>
+    </section>
+  ))}
+
+  <NextSheet lang={lang} slug={engineer.slug} drawing={engineer.drawing} title={engineer.title} />
+  <Lightbox lang={lang} />
+</Base>
+
+<style>
+  .line { padding-top: 6.5rem; }
+  .line-head { display: flex; align-items: center; gap: 1rem; }
+  .mark {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 3rem;
+    height: 3rem;
+    border: 1.5px solid var(--amber);
+    border-radius: 50%;
+    font-family: var(--f-latin);
+    font-weight: 700;
+    font-size: var(--t-lg);
+    color: var(--amber);
+  }
+  .line-title { font-size: var(--t-2xl); }
+  .line-lede { margin-top: 1rem; color: var(--ink-2); }
+
+  .stages {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+  .stage { display: grid; align-content: start; gap: 0.8rem; }
+  .stage-rail {
+    position: relative;
+    height: 1.6rem;
+    border-bottom: 1px solid var(--amber);
+  }
+  .stages:not(.branch) .stage:not(:last-child) .stage-rail::after {
+    /* arrow head pointing at the next stage */
+    content: '';
+    position: absolute;
+    right: -1.5rem;
+    bottom: -5px;
+    border: 5px solid transparent;
+    border-left: 9px solid var(--amber);
+  }
+  .branch .stage-rail { border-bottom-style: dashed; }
+  .idx { font-size: var(--t-sm); color: var(--amber); }
+  .pic {
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 1px solid var(--rule);
+    background: #04070c;
+    cursor: zoom-in;
+  }
+  .pic.light {
+    background:
+      linear-gradient(var(--plate-line) 1px, transparent 1px) 0 0 / 100% 32px,
+      linear-gradient(90deg, var(--plate-line) 1px, transparent 1px) 0 0 / 32px 100%,
+      var(--plate);
+  }
+  .pic :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; padding: 6%; }
+  .pic.light :global(img) { mix-blend-mode: multiply; }
+  .pic:hover { border-color: var(--amber); }
+  .pic.empty {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    cursor: default;
+    background:
+      repeating-linear-gradient(-45deg, transparent 0 14px, rgba(242, 181, 58, 0.06) 14px 15px),
+      var(--panel);
+  }
+  .pic.empty .num { font-size: var(--t-3xl); color: var(--amber); }
+  .stage-title { font-size: var(--t-lg); font-weight: 600; }
+  .stage-body { color: var(--ink-2); font-size: var(--t-sm); }
+  .after {
+    margin-top: 1.8rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    color: var(--ink-2);
+    font-size: var(--t-sm);
+  }
+  @media (max-width: 900px) {
+    .stages { grid-template-columns: 1fr; }
+    .stages:not(.branch) .stage:not(:last-child) .stage-rail::after { display: none; }
+  }
+</style>

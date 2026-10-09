@@ -1,0 +1,57 @@
+---
+// Native <dialog> lightbox for any [data-zoom] button on the page.
+import { ui, t, type Lang } from '../data/i18n';
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+---
+<dialog class="lb" data-lightbox aria-label={t(ui.enlarge, lang)}>
+  <form method="dialog"><button class="lb-close" aria-label={t(ui.close, lang)}>×</button></form>
+  <img alt="" />
+  <p class="lb-cap"></p>
+</dialog>
+
+<script>
+  const dlg = document.querySelector<HTMLDialogElement>('[data-lightbox]');
+  if (dlg) {
+    const img = dlg.querySelector('img')!;
+    const cap = dlg.querySelector('.lb-cap')!;
+    document.addEventListener('click', (e) => {
+      const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-zoom]');
+      if (btn) {
+        img.src = btn.dataset.zoom!;
+        img.alt = btn.dataset.alt || '';
+        cap.textContent = btn.dataset.alt || '';
+        dlg.showModal();
+        return;
+      }
+      if (e.target === dlg) dlg.close();
+    });
+  }
+</script>
+
+<style>
+  .lb {
+    max-width: min(92vw, 1400px);
+    max-height: 92vh;
+    padding: 0;
+    border: 1px solid var(--rule);
+    background: var(--panel);
+    color: var(--ink);
+  }
+  .lb::backdrop { background: rgba(3, 6, 11, 0.88); }
+  .lb img { display: block; max-width: 100%; max-height: calc(92vh - 3.5rem); margin: 0 auto; background: var(--plate); }
+  .lb-cap { padding: 0.8rem 1rem; font-size: var(--t-sm); color: var(--ink-2); }
+  .lb-close {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.6rem;
+    width: 2.4rem;
+    height: 2.4rem;
+    border: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-size: 1.6rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+</style>

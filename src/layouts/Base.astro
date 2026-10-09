@@ -1,0 +1,206 @@
+---
+import '@fontsource/chakra-petch/500.css';
+import '@fontsource/chakra-petch/700.css';
+import '@fontsource/jetbrains-mono/400.css';
+import '@fontsource/jetbrains-mono/500.css';
+import '../styles/global.css';
+import { ui, href, altHref, t, type Lang, type T } from '../data/i18n';
+import { person, pageCopy } from '../data/content';
+
+interface Props {
+  lang: Lang;
+  /** page slug without slashes; '' for home */
+  slug?: string;
+  title?: T;
+  description: T;
+}
+const { lang, slug = '', title, description } = Astro.props;
+const pageTitle = title ? `${t(title, lang)} · ${t(ui.siteTitle, lang)}` : t(ui.siteTitle, lang);
+const canonical = new URL(href(lang, slug), Astro.site).toString();
+const alternate = new URL(altHref(lang, slug), Astro.site).toString();
+const ogImage = new URL(`${import.meta.env.BASE_URL}og.jpg`, Astro.site).toString();
+
+const navItems = [
+  { slug: '', label: ui.nav.home },
+  { slug: 'engineer', label: ui.nav.engineer },
+  { slug: 'hero', label: ui.nav.hero },
+  { slug: 'research', label: ui.nav.research },
+];
+---
+<!doctype html>
+<html lang={lang === 'zh' ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={t(description, lang)} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang={lang === 'zh' ? 'en' : 'zh-CN'} href={alternate} />
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
+    <meta name="theme-color" content="#070d17" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={t(description, lang)} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body data-page={slug || 'home'}>
+    <a class="skip" href="#content">{t(ui.skip, lang)}</a>
+
+    <header class="topbar">
+      <div class="topbar-inner wrap">
+        <a class="sig" href={href(lang)} aria-label={t(ui.nav.home, lang)}>
+          <span class="sig-cjk">{person.nameZh}</span>
+          <span class="sig-latin latin">{person.nameEn}</span>
+        </a>
+        <nav class="nav" aria-label={t(pageCopy.mainNav, lang)}>
+          <ul>
+            {navItems.map((item) => (
+              <li>
+                <a href={href(lang, item.slug)} aria-current={item.slug === slug ? 'page' : undefined}>
+                  {t(item.label, lang)}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <a class="lang latin" href={altHref(lang, slug)} hreflang={lang === 'zh' ? 'en' : 'zh-CN'} aria-label={t(ui.switchLangLabel, lang)}>
+          {t(ui.switchLang, lang)}
+        </a>
+      </div>
+    </header>
+
+    <main id="content">
+      <slot />
+    </main>
+
+    <footer class="footer">
+      <div class="wrap footer-inner">
+        <div class="footer-id">
+          <span class="display footer-name">{person.nameZh}</span>
+          <span class="latin">{person.nameEn}</span>
+        </div>
+        <ul class="footer-links">
+          <li><a href={`mailto:${person.email}`}>{person.email}</a></li>
+          <li><a href={person.github} rel="noopener">{t(pageCopy.githubLabel, lang)}</a></li>
+        </ul>
+        <p class="footer-note">{t(ui.footerNote, lang)}</p>
+      </div>
+    </footer>
+
+    <script>
+      import '../scripts/smooth';
+    </script>
+  </body>
+</html>
+
+<style>
+  .topbar {
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(7, 13, 23, 0.72);
+    border-bottom: 1px solid var(--rule);
+  }
+  .topbar-inner {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    height: 60px;
+  }
+  .sig {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    text-decoration: none;
+    margin-right: auto;
+  }
+  .sig-cjk {
+    font-family: var(--f-cjk);
+    font-size: 1.35rem;
+    color: var(--ink);
+  }
+  .sig-latin {
+    font-size: var(--t-sm);
+    color: var(--ink-3);
+    letter-spacing: 0.04em;
+  }
+  .nav ul {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .nav a {
+    display: block;
+    padding: 0.4rem 0.8rem;
+    font-size: var(--t-sm);
+    color: var(--ink-2);
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .nav a:hover { color: var(--ink); }
+  .nav a[aria-current='page'] {
+    color: var(--ink);
+    border-bottom-color: var(--amber);
+  }
+  .lang {
+    font-size: var(--t-sm);
+    color: var(--amber);
+    text-decoration: none;
+    padding: 0.3rem 0.7rem;
+    border: 1px solid var(--amber-dim);
+  }
+  .lang:hover { border-color: var(--amber); }
+
+  main { display: block; }
+
+  .footer {
+    margin-top: 8rem;
+    border-top: 1px solid var(--rule);
+    background: var(--ground);
+  }
+  .footer-inner {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem 3rem;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  .footer-id { display: flex; flex-direction: column; gap: 0.25rem; }
+  .footer-name { font-size: var(--t-2xl); }
+  .footer-id .latin { color: var(--ink-3); }
+  .footer-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    justify-self: end;
+    text-align: right;
+  }
+  .footer-links a { color: var(--ink-2); text-decoration: none; }
+  .footer-links a:hover { color: var(--amber); }
+  .footer-note {
+    grid-column: 1 / -1;
+    font-size: var(--t-xs);
+    color: var(--ink-3);
+  }
+
+  @media (max-width: 760px) {
+    .sig-latin { display: none; }
+    .topbar-inner { gap: 0.8rem; }
+    .sig { margin-right: 0; }
+    .nav { flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+    .nav::-webkit-scrollbar { display: none; }
+    .nav a { padding: 0.4rem 0.5rem; white-space: nowrap; font-size: var(--t-xs); }
+    .footer-inner { grid-template-columns: 1fr; }
+    .footer-links { justify-self: start; text-align: left; }
+  }
+</style>

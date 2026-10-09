@@ -1,0 +1,60 @@
+---
+// Skills as a bill of materials: item, specification, where it was used.
+import { bom, pageCopy } from '../data/content';
+import { t, type Lang } from '../data/i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const head = pageCopy.bomHead;
+---
+<section class="bom wrap" aria-labelledby="bom-title">
+  <h2 id="bom-title" class="display heading">{t(pageCopy.bomTitle, lang)}</h2>
+  <div class="scroll">
+    <table>
+      <thead>
+        <tr><th scope="col">{t(head.no, lang)}</th><th scope="col">{t(head.item, lang)}</th><th scope="col">{t(head.spec, lang)}</th><th scope="col">{t(head.used, lang)}</th></tr>
+      </thead>
+      <tbody>
+        {bom.map((row) => (
+          <tr>
+            <td class="num no">{row.no}</td>
+            <th scope="row" class="item">{t(row.item, lang)}</th>
+            <td class="spec">{t(row.spec, lang)}</td>
+            <td class="used">{t(row.used, lang)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<style>
+  .bom { padding-top: 7rem; }
+  .heading { font-size: var(--t-3xl); margin-bottom: 2rem; }
+  .scroll { overflow-x: auto; }
+  table {
+    width: 100%;
+    min-width: 720px;
+    border-collapse: collapse;
+    font-size: var(--t-sm);
+  }
+  thead th {
+    text-align: left;
+    font-weight: 400;
+    color: var(--ink-3);
+    font-size: var(--t-xs);
+    padding: 0 1rem 0.7rem 0;
+    border-bottom: 1px solid var(--amber);
+  }
+  td, tbody th {
+    text-align: left;
+    vertical-align: top;
+    padding: 1rem 1rem 1rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .no { color: var(--amber); width: 5rem; }
+  .item { font-weight: 600; width: 11rem; }
+  .spec { color: var(--ink-2); }
+  .used { color: var(--ink-3); width: 13rem; }
+  tbody tr:hover td, tbody tr:hover th { background: rgba(242, 181, 58, 0.04); }
+</style>

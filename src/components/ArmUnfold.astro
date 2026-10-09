@@ -1,0 +1,247 @@
+---
+// Scroll-driven arm unfold, pinned while the visitor scrolls through it.
+// With public/models/arm.glb: the real arm (Three.js) unfolds from its CAD folded pose to
+// a forward reach while the scan turns it from amber outline into solid metal.
+// Without it, or before it loads: a side-view kinematic sketch at true link proportions.
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { sceneCopy } from '../data/content';
+import { t, type Lang } from '../data/i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+// builds run from the project root; import.meta.url points into the bundle, not src/
+const hasModel = existsSync(join(process.cwd(), 'public', 'models', 'arm.glb'));
+const L = sceneCopy.armUnfold;
+---
+<div class="unfold" data-unfold data-model={hasModel ? '1' : ''} data-labels={`${t(L.folded, lang)}|${t(L.extended, lang)}`}>
+  <div class="pin">
+    <div class="view panel">
+      <svg class="sketch" viewBox="-200 -880 1200 820" role="img" aria-label={t(L.sketchAlt, lang)}>
+        <defs>
+          <pattern id="arm-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M40 0H0V40" fill="none" stroke="var(--rule)" stroke-width="1" />
+          </pattern>
+        </defs>
+        <rect x="-200" y="-880" width="1200" height="820" fill="url(#arm-grid)" />
+        <g class="sk">
+          <line x1="-200" y1="-100" x2="1000" y2="-100" stroke="var(--ink-3)" stroke-width="2" />
+          <line class="l2" stroke="var(--ink)" stroke-width="30" stroke-linecap="round" />
+          <line class="l34" stroke="var(--ink-2)" stroke-width="22" stroke-linecap="round" />
+          <circle class="j-sh" r="20" fill="var(--ground)" stroke="var(--amber)" stroke-width="4" />
+          <circle class="j-el" r="16" fill="var(--ground)" stroke="var(--amber)" stroke-width="4" />
+          <circle class="j-wr" r="14" fill="var(--amber)" />
+        </g>
+      </svg>
+      <canvas class="three" aria-hidden="true"></canvas>
+      <svg class="marks" aria-hidden="true">
+        <line class="m-l2" /><line class="m-l34" />
+        <circle class="m-sh" r="5" /><circle class="m-el" r="5" /><circle class="m-wr" r="5" />
+        <text class="m-t2">L2 380</text><text class="m-t34">L3+L4 420</text>
+      </svg>
+      <span class="state latin" data-state>{t(L.folded, lang)}</span>
+    </div>
+
+    <figure class="envelopes" aria-describedby="envelope-guide">
+      <div class="envelope-card">
+        <svg viewBox="0 0 220 180" aria-hidden="true">
+          <path class="envelope-fixed" d="M20 175V121H79V175ZM20 121L38.9 102.1H97.9V156.1L79 175M79 121L97.9 102.1" />
+          <path class="envelope-dimension" d="M20 179H79M17 175V121" />
+        </svg>
+        <div><span class="envelope-label">{t(L.foldedEnvelope, lang)}</span><p class="num">590 × 590 × 540 <span>mm</span></p></div>
+      </div>
+      <div class="envelope-card">
+        <svg viewBox="0 0 220 180" aria-hidden="true">
+          <path class="envelope-target" d="M20 175V55H160V175ZM20 55L64.8 10.2H204.8V130.2L160 175M160 55L204.8 10.2" />
+          <path class="envelope-active" data-envelope-path d="M20 175V121H79V175ZM20 121L38.9 102.1H97.9V156.1L79 175M79 121L97.9 102.1" />
+          <path class="envelope-dimension" d="M20 179H160M17 175V55" />
+        </svg>
+        <div><span class="envelope-label">{t(L.expandedEnvelope, lang)}</span><p class="num">1400 × 1400 × 1200 <span>mm</span></p></div>
+      </div>
+      <figcaption id="envelope-guide">{t(L.envelopeGuide, lang)}</figcaption>
+    </figure>
+
+    <dl class="readout">
+      <div><dt>{t(L.reach, lang)}</dt><dd><span class="num" data-r>0</span><span class="num u">mm</span></dd></div>
+      <div><dt>{t(L.height, lang)}</dt><dd><span class="num" data-h>0</span><span class="num u">mm</span></dd></div>
+    </dl>
+    <p class="note">{t(L.note, lang)}</p>
+    <p class="static-note">{t(L.staticNote, lang)}</p>
+  </div>
+</div>
+
+<script>
+  import { gsap, ScrollTrigger, reducedMotion } from '../scripts/smooth';
+
+  type Pt = { x: number; y: number };
+  type Frame = { shoulder: Pt; elbow: Pt; wrist: Pt; reachMm: number; heightMm: number };
+
+  document.querySelectorAll<HTMLElement>('[data-unfold]').forEach((root) => {
+    const $ = <E extends Element>(s: string) => root.querySelector<E>(s)!;
+    const [folded, extended] = (root.dataset.labels || '|').split('|');
+    const hOut = $<HTMLElement>('[data-h]'), rOut = $<HTMLElement>('[data-r]'), stOut = $<HTMLElement>('[data-state]');
+    const attr = (el: Element, a: Record<string, number>) => { for (const k in a) el.setAttribute(k, a[k].toFixed(1)); };
+    const ease = gsap.parseEase('power2.inOut');
+
+    const readouts = (f: Frame, p: number) => {
+      // A separate schematic, anchored at its floor, interpolates the user-confirmed vehicle envelopes.
+      // It deliberately does not derive vehicle dimensions from the wrist-centre coordinates.
+      const q = ease(p), width = 59 + 81 * q, height = 54 + 66 * q, depth = width * 0.32;
+      const x = 20, y = 175 - height, right = x + width;
+      $('[data-envelope-path]').setAttribute('d', `M${x} 175V${y}H${right}V175ZM${x} ${y}L${x + depth} ${y - depth}H${right + depth}V${175 - depth}L${right} 175M${right} ${y}L${right + depth} ${y - depth}`);
+      root.dataset.envelopeProgress = p.toFixed(3);
+      rOut.textContent = `${Math.max(0, Math.round(f.reachMm))}`;
+      hOut.textContent = `${Math.round(f.heightMm)}`;
+      stOut.textContent = p > 0.97 ? extended : folded;
+      root.classList.toggle('extended', p > 0.97);
+    };
+
+    /* ---- 2D sketch (fallback and pre-load state) ---- */
+    const L2 = 380, L34 = 420, SH = { x: 0, y: -420 };
+    const rad = (d: number) => (d * Math.PI) / 180;
+    const sketch = (p: number) => {
+      const e_ = ease(p);
+      const sh = gsap.utils.interpolate(112, 32, e_);
+      const a2 = sh + gsap.utils.interpolate(-150, -20, e_);
+      const el = { x: SH.x + L2 * Math.cos(rad(sh)), y: SH.y - L2 * Math.sin(rad(sh)) };
+      const wr = { x: el.x + L34 * Math.cos(rad(a2)), y: el.y - L34 * Math.sin(rad(a2)) };
+      attr($('.l2'), { x1: SH.x, y1: SH.y, x2: el.x, y2: el.y });
+      attr($('.l34'), { x1: el.x, y1: el.y, x2: wr.x, y2: wr.y });
+      attr($('.j-sh'), { cx: SH.x, cy: SH.y });
+      attr($('.j-el'), { cx: el.x, cy: el.y });
+      attr($('.j-wr'), { cx: wr.x, cy: wr.y });
+      readouts({ shoulder: SH, elbow: el, wrist: wr, reachMm: wr.x - SH.x, heightMm: SH.y - wr.y }, p);
+    };
+
+    /* ---- pinned scroll scene; `draw` is swapped for the 3D version once it loads ---- */
+    let draw = sketch;
+    const staticScene = reducedMotion || !window.matchMedia('(min-width: 900px)').matches;
+    let progress = staticScene ? 1 : 0;
+    draw(progress);
+    // The proportionate SVG is the shared small-screen and reduced-motion still.
+    // Keep both the scene import and the GLB request behind this desktop gate.
+    if (staticScene) { root.classList.add('static-scene'); return; }
+    if (!reducedMotion) {
+      ScrollTrigger.create({
+        trigger: root,
+        start: 'top top+=76',
+        end: '+=150%',
+        pin: $('.pin'),
+        scrub: 0.6,
+        // hold the end pose for the last stretch so it reads as settled
+        onUpdate: (st) => { progress = Math.min(1, st.progress / 0.85); draw(progress); },
+      });
+    }
+    if (!root.dataset.model) return;
+
+    const start = () => import('../scripts/arm-scene').then(async ({ loadArmScene }) => {
+      const arm = await loadArmScene($<HTMLCanvasElement>('canvas.three'), import.meta.env.BASE_URL);
+      const lerp = gsap.utils.interpolate;
+      draw = (p: number) => {
+        const e_ = ease(p);
+        // CAD export pose is the folded pose; the end pose is a forward reach, wrist near level
+        arm.setPose({ J2: lerp(0, 110, e_), J3: lerp(0, -130, e_), J5: lerp(0, 40, e_) });
+        arm.setScan(Math.min(1, p * 2.4));
+        arm.setYaw(lerp(-20, 15, e_));
+        const f = arm.render();
+        attr($('.m-l2'), { x1: f.shoulder.x, y1: f.shoulder.y, x2: f.elbow.x, y2: f.elbow.y });
+        attr($('.m-l34'), { x1: f.elbow.x, y1: f.elbow.y, x2: f.wrist.x, y2: f.wrist.y });
+        attr($('.m-sh'), { cx: f.shoulder.x, cy: f.shoulder.y });
+        attr($('.m-el'), { cx: f.elbow.x, cy: f.elbow.y });
+        attr($('.m-wr'), { cx: f.wrist.x, cy: f.wrist.y });
+        attr($('.m-t2'), { x: (f.shoulder.x + f.elbow.x) / 2 + 14, y: (f.shoulder.y + f.elbow.y) / 2 - 8 });
+        attr($('.m-t34'), { x: (f.elbow.x + f.wrist.x) / 2 + 8, y: (f.elbow.y + f.wrist.y) / 2 - 14 });
+        readouts(f, p);
+      };
+      // the drawing buffer clears on resize (including the pin's layout change): redraw
+      arm.onResize(() => draw(progress));
+      root.classList.add('has-3d');
+      draw(progress);
+    }).catch((err) => console.warn('arm scene unavailable, keeping the sketch', err));
+
+    // load when the section gets near, so the rest of the page stays light
+    const io = new IntersectionObserver(([en]) => {
+      if (en.isIntersecting) { io.disconnect(); start(); }
+    }, { rootMargin: '800px 0px' });
+    io.observe(root);
+  });
+</script>
+
+<style>
+  .unfold { margin-top: 0.5rem; }
+  .pin { display: grid; gap: 1rem; }
+  .view {
+    position: relative;
+    height: min(48vh, 48vw);
+    min-height: 320px;
+    background: var(--ground);
+  }
+  .view > svg, .view > canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .three, .marks { opacity: 0; transition: opacity 0.6s; }
+  .has-3d .three, .has-3d .marks { opacity: 1; }
+  .has-3d .sk { opacity: 0; }
+  .sk { transition: opacity 0.4s; }
+
+  .marks { pointer-events: none; overflow: visible; }
+  .marks line { stroke: var(--amber); stroke-width: 1; stroke-dasharray: 3 5; }
+  .marks circle { fill: none; stroke: var(--amber); stroke-width: 1.5; }
+  .marks text {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    fill: var(--amber);
+    paint-order: stroke;
+    stroke: var(--ground);
+    stroke-width: 4px;
+  }
+
+  .state {
+    position: absolute;
+    top: 1rem;
+    left: 1.2rem;
+    font-size: var(--t-sm);
+    letter-spacing: 0.06em;
+    color: var(--ink-2);
+    padding-left: 0.8rem;
+    border-left: 3px solid var(--ink-3);
+    transition: color 0.3s, border-color 0.3s;
+  }
+  .extended .state { color: var(--amber); border-color: var(--amber); }
+
+  .readout {
+    display: grid;
+    grid-template-columns: repeat(2, auto);
+    justify-content: start;
+    gap: 0 3rem;
+    margin: 0;
+  }
+  .readout [data-r], .readout [data-h] { min-width: 4ch; text-align: right; }
+  .readout dt { font-size: var(--t-xs); color: var(--ink-3); }
+  .readout dd { margin: 0.15rem 0 0; font-size: var(--t-xl); line-height: 1.1; }
+  .readout [data-r], .readout [data-h] { display: inline-block; color: var(--amber); }
+  .readout .u { font-size: var(--t-xs); color: var(--ink-2); margin-left: 0.3em; }
+  .envelopes { margin: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 2rem; border-top: 1px solid var(--rule); padding-top: 0.65rem; }
+  .envelope-card { display: flex; align-items: end; gap: 1rem; min-width: 0; }
+  .envelope-card svg { width: 125px; height: 105px; flex-shrink: 0; overflow: visible; }
+  .envelope-card path { fill: none; stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .envelope-fixed { stroke: var(--ink-2); }
+  .envelope-target { stroke: var(--ink-3); stroke-dasharray: 3 4; }
+  .envelope-active { stroke: var(--amber); stroke-width: 1.5 !important; }
+  .envelope-dimension { stroke: var(--ink-3); }
+  .envelope-label { color: var(--ink-2); font-size: var(--t-xs); }
+  .envelope-card p { margin: 0.25rem 0 0; font-size: var(--t-md); white-space: nowrap; }
+  .envelope-card p span { color: var(--ink-3); font-size: var(--t-xs); }
+  .envelopes figcaption { grid-column: 1 / -1; margin-top: 0.55rem; font-size: var(--t-xs); color: var(--ink-3); line-height: 1.5; }
+  .static-scene .readout { display: none; }
+  @media (max-width: 1000px) { .envelope-card { gap: 0.5rem; } .envelope-card svg { width: 100px; } }
+  @media (max-width: 600px) {
+    .envelopes { column-gap: 0.75rem; }
+    .envelope-card { display: block; }
+    .envelope-card svg { width: 100%; height: 105px; }
+    .envelope-card p { font-size: 0.82rem; white-space: normal; }
+  }
+  .note { font-size: var(--t-xs); color: var(--ink-3); }
+  .static-note { display: none; font-size: var(--t-xs); color: var(--ink-3); }
+  .static-scene .readout > div:nth-child(-n+2), .static-scene .note { display: none; }
+  .static-scene .static-note { display: block; }
+  @media (max-width: 760px) { .readout { grid-template-columns: repeat(2, auto); gap: 0.6rem 2rem; } }
+</style>
