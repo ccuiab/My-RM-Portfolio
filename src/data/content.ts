@@ -69,7 +69,7 @@ export const ui = {
 export const pageCopy = {
   heroCta: { zh: '看工程机器人 2025', en: 'See the 2025 Engineer robot' },
   heroModelAlt: { zh: 'RM2024 英雄机器人整车', en: 'RM2024 Hero robot, full assembly' },
-  heroModelCaption: { zh: '整车总装：底盘、云台、发射与供弹，来自 SolidWorks 模型。', en: 'Full assembly: chassis, gimbal, launcher and feed, from the SolidWorks model.' },
+  heroModelCaption: { zh: '2024-09 版本：底盘、云台、发射与供弹的主要机械系统，来自 SolidWorks 总装模型。', en: 'September 2024 version: the main chassis, gimbal, launcher and feed systems, from the SolidWorks assembly.' },
   bomTitle: { zh: '能力清单', en: 'Bill of skills' },
   bomHead: {
     no: { zh: '序号', en: 'No.' }, item: { zh: '能力', en: 'Skill' },
@@ -109,6 +109,9 @@ export const sceneCopy = {
     height: { zh: '腕心高度', en: 'Wrist height' },
     reach: { zh: '腕心前伸', en: 'Wrist reach' },
     envelope: { zh: '整车最大展开', en: 'Whole-robot max envelope' },
+    foldedEnvelope: { zh: '整车收折包络', en: 'Folded robot envelope' },
+    expandedEnvelope: { zh: '整车展开包络', en: 'Expanded robot envelope' },
+    envelopeGuide: { zh: '整车尺寸按同一比例示意；包络变化随展开进度展示，不代表实时 CAD 测量。', en: 'Vehicle dimensions shown at a common scale. The envelope follows the unfold sequence; it is not a live CAD measurement.' },
     note: {
       zh: '读数为腕心相对肩关节轴的实时位置，来自真实 CAD 模型的关节运动。整车最大展开尺寸计入云台旋转与底盘。',
       en: 'Readouts track the wrist centre against the shoulder axis, driven by the joints of the real CAD model. The whole-robot envelope adds gimbal rotation and the chassis.',
@@ -149,7 +152,7 @@ export const person = {
   readouts: [
     { value: '5.8', unit: 's', label: { zh: '四级矿石兑换', en: 'Level-4 ore exchange' } },
     { value: '38', unit: 'kg', label: { zh: '整机质量', en: 'All-up mass' } },
-    { value: '1400', unit: 'mm', label: { zh: '最大工作空间', en: 'Max workspace' } },
+    { value: '1400', unit: 'mm', label: { zh: '整车展开包络', en: 'Robot envelope' } },
   ] as Spec[],
 };
 
@@ -233,8 +236,8 @@ export const engineer = {
           en: 'Arm workspace, FPV sight lines, UWB placement and the operator loop were treated as whole-robot constraints and laid out before any structure was drawn, so collision risk and integration effort came down at the design stage.',
         },
         {
-          zh: '收折状态 590×590×540 mm，满足起始尺寸限制；完全展开的工作空间达到 1400×1400×1200 mm。',
-          en: 'It folds to 590×590×540 mm to meet the starting-size limit and reaches a 1400×1400×1200 mm workspace fully extended.',
+          zh: '整车收折包络为 590×590×540 mm，满足起始尺寸限制；完全展开的整车包络达到 1400×1400×1200 mm。',
+          en: 'The whole robot folds into a 590×590×540 mm envelope to meet the starting-size limit and expands to a 1400×1400×1200 mm envelope.',
         },
       ],
       scene: 'arm-unfold',

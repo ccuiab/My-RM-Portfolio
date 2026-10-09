@@ -42,10 +42,28 @@ const L = sceneCopy.armUnfold;
       <span class="state latin" data-state>{t(L.folded, lang)}</span>
     </div>
 
+    <figure class="envelopes" aria-describedby="envelope-guide">
+      <div class="envelope-card">
+        <svg viewBox="0 0 220 180" aria-hidden="true">
+          <path class="envelope-fixed" d="M20 175V121H79V175ZM20 121L38.9 102.1H97.9V156.1L79 175M79 121L97.9 102.1" />
+          <path class="envelope-dimension" d="M20 179H79M17 175V121" />
+        </svg>
+        <div><span class="envelope-label">{t(L.foldedEnvelope, lang)}</span><p class="num">590 × 590 × 540 <span>mm</span></p></div>
+      </div>
+      <div class="envelope-card">
+        <svg viewBox="0 0 220 180" aria-hidden="true">
+          <path class="envelope-target" d="M20 175V55H160V175ZM20 55L64.8 10.2H204.8V130.2L160 175M160 55L204.8 10.2" />
+          <path class="envelope-active" data-envelope-path d="M20 175V121H79V175ZM20 121L38.9 102.1H97.9V156.1L79 175M79 121L97.9 102.1" />
+          <path class="envelope-dimension" d="M20 179H160M17 175V55" />
+        </svg>
+        <div><span class="envelope-label">{t(L.expandedEnvelope, lang)}</span><p class="num">1400 × 1400 × 1200 <span>mm</span></p></div>
+      </div>
+      <figcaption id="envelope-guide">{t(L.envelopeGuide, lang)}</figcaption>
+    </figure>
+
     <dl class="readout">
       <div><dt>{t(L.reach, lang)}</dt><dd><span class="num" data-r>0</span><span class="num u">mm</span></dd></div>
       <div><dt>{t(L.height, lang)}</dt><dd><span class="num" data-h>0</span><span class="num u">mm</span></dd></div>
-      <div><dt>{t(L.envelope, lang)}</dt><dd><span class="num">1400 × 1400 × 1200</span><span class="num u">mm</span></dd></div>
     </dl>
     <p class="note">{t(L.note, lang)}</p>
     <p class="static-note">{t(L.staticNote, lang)}</p>
@@ -66,6 +84,12 @@ const L = sceneCopy.armUnfold;
     const ease = gsap.parseEase('power2.inOut');
 
     const readouts = (f: Frame, p: number) => {
+      // A separate schematic, anchored at its floor, interpolates the user-confirmed vehicle envelopes.
+      // It deliberately does not derive vehicle dimensions from the wrist-centre coordinates.
+      const q = ease(p), width = 59 + 81 * q, height = 54 + 66 * q, depth = width * 0.32;
+      const x = 20, y = 175 - height, right = x + width;
+      $('[data-envelope-path]').setAttribute('d', `M${x} 175V${y}H${right}V175ZM${x} ${y}L${x + depth} ${y - depth}H${right + depth}V${175 - depth}L${right} 175M${right} ${y}L${right + depth} ${y - depth}`);
+      root.dataset.envelopeProgress = p.toFixed(3);
       rOut.textContent = `${Math.max(0, Math.round(f.reachMm))}`;
       hOut.textContent = `${Math.round(f.heightMm)}`;
       stOut.textContent = p > 0.97 ? extended : folded;
@@ -148,7 +172,7 @@ const L = sceneCopy.armUnfold;
   .pin { display: grid; gap: 1rem; }
   .view {
     position: relative;
-    height: min(64vh, 58vw);
+    height: min(48vh, 48vw);
     min-height: 320px;
     background: var(--ground);
   }
@@ -185,7 +209,7 @@ const L = sceneCopy.armUnfold;
 
   .readout {
     display: grid;
-    grid-template-columns: repeat(3, auto);
+    grid-template-columns: repeat(2, auto);
     justify-content: start;
     gap: 0 3rem;
     margin: 0;
@@ -195,6 +219,26 @@ const L = sceneCopy.armUnfold;
   .readout dd { margin: 0.15rem 0 0; font-size: var(--t-xl); line-height: 1.1; }
   .readout [data-r], .readout [data-h] { display: inline-block; color: var(--amber); }
   .readout .u { font-size: var(--t-xs); color: var(--ink-2); margin-left: 0.3em; }
+  .envelopes { margin: 0; display: grid; grid-template-columns: 1fr 1fr; column-gap: 2rem; border-top: 1px solid var(--rule); padding-top: 0.65rem; }
+  .envelope-card { display: flex; align-items: end; gap: 1rem; min-width: 0; }
+  .envelope-card svg { width: 125px; height: 105px; flex-shrink: 0; overflow: visible; }
+  .envelope-card path { fill: none; stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .envelope-fixed { stroke: var(--ink-2); }
+  .envelope-target { stroke: var(--ink-3); stroke-dasharray: 3 4; }
+  .envelope-active { stroke: var(--amber); stroke-width: 1.5 !important; }
+  .envelope-dimension { stroke: var(--ink-3); }
+  .envelope-label { color: var(--ink-2); font-size: var(--t-xs); }
+  .envelope-card p { margin: 0.25rem 0 0; font-size: var(--t-md); white-space: nowrap; }
+  .envelope-card p span { color: var(--ink-3); font-size: var(--t-xs); }
+  .envelopes figcaption { grid-column: 1 / -1; margin-top: 0.55rem; font-size: var(--t-xs); color: var(--ink-3); line-height: 1.5; }
+  .static-scene .readout { display: none; }
+  @media (max-width: 1000px) { .envelope-card { gap: 0.5rem; } .envelope-card svg { width: 100px; } }
+  @media (max-width: 600px) {
+    .envelopes { column-gap: 0.75rem; }
+    .envelope-card { display: block; }
+    .envelope-card svg { width: 100%; height: 105px; }
+    .envelope-card p { font-size: 0.82rem; white-space: normal; }
+  }
   .note { font-size: var(--t-xs); color: var(--ink-3); }
   .static-note { display: none; font-size: var(--t-xs); color: var(--ink-3); }
   .static-scene .readout > div:nth-child(-n+2), .static-scene .note { display: none; }
