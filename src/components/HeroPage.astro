@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import ProjectHeader from './ProjectHeader.astro';
+import Chapter from './Chapter.astro';
+import ModelTurntable from './ModelTurntable.astro';
+import Lightbox from './Lightbox.astro';
+import NextSheet from './NextSheet.astro';
+import { hero, research, pageCopy } from '../data/content';
+import heroChassis from '../assets/img/hero-chassis-adaptive.webp';
+import type { Lang } from '../data/i18n';
+import lines from '../assets/gen/hero-bot-lines.webp';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const p = hero;
+---
+<Base lang={lang} slug={p.slug} title={p.short} description={p.lede}>
+  <ProjectHeader
+    lang={lang}
+    drawing={p.drawing}
+    robotNo={p.robotNo}
+    title={p.title}
+    lede={p.lede}
+    cover={p.cover}
+    lines={lines}
+    titleBlock={p.titleBlock}
+    stats={p.stats}
+  />
+  {p.chapters.map((c) => (
+    <Chapter lang={lang} chapter={c}>
+      {c.id === 'chassis' && (
+        <ModelTurntable
+          lang={lang}
+          slot="wide"
+          file="hero.glb"
+          still={heroChassis}
+          alt={pageCopy.heroModelAlt}
+          caption={pageCopy.heroModelCaption}
+        />
+      )}
+    </Chapter>
+  ))}
+  <NextSheet lang={lang} slug={research.slug} drawing={research.drawing} title={research.title} />
+  <Lightbox lang={lang} />
+</Base>

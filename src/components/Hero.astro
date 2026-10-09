@@ -1,0 +1,219 @@
+---
+// Desktop: real CAD feature edges resolve into PBR in one three-second scan.
+// Mobile, reduced-motion and WebGL fallback: a finished photograph.
+import { Image } from 'astro:assets';
+import { person, pageCopy } from '../data/content';
+import { t, href, type Lang } from '../data/i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+---
+<section class="hero" data-hero aria-labelledby="hero-name">
+  <div class="stage" aria-hidden="true">
+    <Image class="photo" src={person.heroPic.src} alt="" widths={[960, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
+    <div class="model-stage"><canvas data-hero-canvas></canvas><div class="scan"></div></div>
+    <div class="vignette"></div>
+  </div>
+
+  <div class="wrap copy">
+    <p class="role latin">{person.role}</p>
+    <h1 id="hero-name" class="name">
+      <span class="name-cjk">{person.nameZh}</span>
+      <span class="name-latin latin">{person.nameEn}</span>
+    </h1>
+    <p class="tagline">{t(person.tagline, lang)}</p>
+    <p class="subline">{t(person.subline, lang)}</p>
+
+    <dl class="readouts">
+      {person.readouts.map((r, i) => (
+        <div class="readout" style={`--i:${i}`}>
+          <dt>{t(r.label, lang)}</dt>
+          <dd><span class="num val">{r.value}</span><span class="unit num">{r.unit}</span></dd>
+        </div>
+      ))}
+    </dl>
+
+    <a class="cta" href={href(lang, 'engineer')}>
+      <span class="badge latin">{person.badge}</span>
+      <span class="cta-text">{t(pageCopy.heroCta, lang)}</span>
+    </a>
+  </div>
+</section>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-hero]');
+  if (root) {
+    // Keep the finished image and facts until a fully decoded model can be rendered.
+    root.classList.add('locked');
+    if (window.matchMedia('(min-width: 900px) and (prefers-reduced-motion: no-preference)').matches) {
+      const canvas = root.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
+      if (canvas) import('../scripts/hero-scene').then(({ startHeroScene }) =>
+        startHeroScene(root, canvas, import.meta.env.BASE_URL),
+      ).catch(() => { root.classList.remove('has-3d'); root.classList.add('locked'); });
+    }
+  }
+</script>
+
+<style>
+  .hero {
+    --reveal: 0%;
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    padding: 7rem 0 4.5rem;
+    overflow: hidden;
+    isolation: isolate;
+  }
+  .stage {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .stage :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* the robot sits right of centre; keep it clear of the copy column */
+    object-position: 88% 50%;
+  }
+  .photo { filter: saturate(0.85) contrast(1.05); }
+  .model-stage {
+    position: absolute;
+    left: 45%; right: 0; top: 9%; bottom: 4%;
+    opacity: 0;
+  }
+  .model-stage canvas { width: 100%; height: 100%; display: block; }
+  .hero.has-3d .model-stage { opacity: 1; }
+  .hero.has-3d .photo { opacity: 0; }
+  .hero.has-3d .vignette {
+    background: linear-gradient(0deg, var(--ground), transparent 16%);
+  }
+  .scan {
+    position: absolute;
+    left: 16%; right: 16%; top: var(--scan-y, 0%);
+    height: 1px;
+    background: var(--amber);
+    box-shadow: 0 0 24px 3px rgba(242, 181, 58, 0.3);
+    pointer-events: none;
+  }
+  .hero.locked .scan { opacity: 0; }
+  .vignette {
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(7, 13, 23, 0.96) 0%, rgba(7, 13, 23, 0.82) 30%, rgba(7, 13, 23, 0.15) 58%, rgba(7, 13, 23, 0.25) 100%),
+      linear-gradient(0deg, var(--ground) 0%, transparent 30%),
+      linear-gradient(180deg, rgba(7, 13, 23, 0.7) 0%, transparent 18%);
+  }
+
+  .copy {
+    position: relative;
+    display: grid;
+    gap: 1.1rem;
+  }
+  .role {
+    font-size: var(--t-sm);
+    letter-spacing: 0.12em;
+    color: var(--amber);
+  }
+  .name {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+  .name-cjk {
+    font-family: var(--f-cjk);
+    font-size: clamp(4.5rem, 12vw, 10rem);
+    line-height: 0.92;
+    letter-spacing: 0.02em;
+  }
+  .name-latin {
+    font-size: var(--t-xl);
+    color: var(--ink-2);
+    letter-spacing: 0.06em;
+  }
+  .tagline {
+    font-family: var(--f-cjk);
+    font-size: var(--t-2xl);
+    line-height: 1.2;
+    margin-top: 0.6rem;
+  }
+  :lang(en) .tagline { font-family: var(--f-latin); font-weight: 700; letter-spacing: -0.01em; }
+  .subline {
+    color: var(--ink-2);
+    font-size: var(--t-md);
+  }
+
+  .readouts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    margin: 1.5rem 0 0;
+    border-top: 1px solid var(--rule);
+    max-width: 650px;
+  }
+  .readout {
+    flex: 1 1 140px;
+    padding: 1rem 1.4rem 0.2rem 0;
+    margin-right: 1.4rem;
+    border-right: 1px solid var(--rule);
+  }
+  .readout:last-child { border-right: 0; }
+  .readout dt {
+    font-size: var(--t-xs);
+    color: var(--ink-3);
+  }
+  .readout dd {
+    margin: 0.25rem 0 0;
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+  }
+  .readout .val {
+    font-size: var(--t-3xl);
+    line-height: 1;
+    color: var(--ink);
+    transition: color 0.3s;
+  }
+  .hero.locked .readout .val { color: var(--amber); }
+  .readout .unit { font-size: var(--t-md); color: var(--ink-2); }
+
+  .cta {
+    justify-self: start;
+    display: inline-flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    margin-top: 1.4rem;
+    padding: 0.8rem 1.4rem 0.9rem;
+    text-decoration: none;
+    background: var(--amber);
+    color: var(--ground);
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+    transition: transform 0.2s;
+  }
+  .cta:hover { transform: translateY(-2px); }
+  .badge { font-size: var(--t-xs); letter-spacing: 0.08em; opacity: 0.75; }
+  .cta-text { font-weight: 600; }
+
+  @media (min-width: 900px) {
+    .copy { padding-right: 53%; }
+    .name-cjk { font-size: clamp(4.5rem, 8vw, 9rem); white-space: nowrap; }
+    .tagline { font-size: clamp(1.7rem, 2.5vw, 2.8rem); }
+    .readouts { flex-wrap: nowrap; }
+    .readout { min-width: 0; flex-basis: 0; margin-right: 0.8rem; padding-right: 0.8rem; }
+    .readout .val { font-size: clamp(2rem, 3.4vw, 4rem); }
+  }
+  @media (max-width: 899px) {
+    .hero.has-3d .photo { opacity: 1; }
+    .hero.has-3d .model-stage { display: none; }
+  }
+  @media (max-width: 760px) {
+    .readout { flex-basis: 40%; }
+    .vignette {
+      background: linear-gradient(0deg, var(--ground) 8%, rgba(7, 13, 23, 0.75) 55%, rgba(7, 13, 23, 0.35) 100%);
+    }
+  }
+</style>

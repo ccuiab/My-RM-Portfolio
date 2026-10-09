@@ -1,0 +1,12 @@
+{
+  "match": "RMUC 2025 repechage match 30, HKUST vs Nanchang, round 3",
+  "officialResultSeconds": 5.8,
+  "evidence": "Official WR NEW popup at source approximately 32:05.5, game clock 6:17",
+  "segments": [
+    { "source": "https://www.bilibili.com/video/BV1yk8gz8Eu2/?p=3", "startSeconds": 1975, "durationSeconds": 17.2, "role": "Continuous operator view including both ore placements" },
+    { "source": "https://www.bilibili.com/video/BV1Py8vzNE74/", "startSeconds": 1924.5, "durationSeconds": 4.5, "role": "Official broadcast WR result" }
+  ],
+  "transitionSeconds": 0.24,
+  "playbackRate": 1,
+  "note": "The displayed 5.8 s is the official result, not a measurement of the edited video or an inferred referee timing boundary. Source camera clocks can differ by frames."
+}

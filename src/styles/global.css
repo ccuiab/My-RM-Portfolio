@@ -1,0 +1,151 @@
+/* ==========================================================================
+   Tokens
+   Carbon navy ground, referee-system amber as the one accent,
+   RM red/blue reserved for armour light bars and live status only.
+   ========================================================================== */
+@font-face {
+  font-family: 'Smiley Sans';
+  src: url('../assets/fonts/smiley-sans.woff2') format('woff2');
+  font-display: swap;
+}
+/* Chakra Petch / JetBrains Mono come from @fontsource imports in Base.astro */
+
+:root {
+  --ground: #070d17;
+  --panel: #0c1626;
+  --panel-2: #12213a;
+  --rule: #1d3150;
+  --rule-soft: rgba(29, 49, 80, 0.55);
+  --ink: #e7eef6;
+  --ink-2: #9fb0c6;
+  --ink-3: #7b8ea8;
+  /* CAD renders keep their white-ground renders; they sit on a cool grey plate */
+  --plate: #b7c3d1;
+  --plate-line: rgba(7, 13, 23, 0.07);
+  --amber: #f2b53a;
+  --amber-dim: rgba(242, 181, 58, 0.16);
+  --red: #ff4a4a;
+  --blue: #3d8bff;
+
+  --f-cjk: 'Smiley Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  --f-latin: 'Chakra Petch', 'Smiley Sans', 'Microsoft YaHei', sans-serif;
+  --f-mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+  --f-body: system-ui, -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+  /* modular scale ~1.333 from 16px */
+  --t-xs: 0.75rem;
+  --t-sm: 0.875rem;
+  --t-md: 1rem;
+  --t-lg: 1.333rem;
+  --t-xl: 1.777rem;
+  --t-2xl: 2.369rem;
+  --t-3xl: 3.157rem;
+  --t-4xl: clamp(3.2rem, 7vw, 6.2rem);
+
+  --gutter: clamp(1.25rem, 4vw, 3.5rem);
+  --maxw: 1320px;
+  --chamfer: 14px;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  background: var(--ground);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  font-family: var(--f-body);
+  font-size: var(--t-md);
+  line-height: 1.7;
+  background:
+    linear-gradient(var(--rule-soft) 1px, transparent 1px) 0 0 / 100% 64px,
+    linear-gradient(90deg, var(--rule-soft) 1px, transparent 1px) 0 0 / 64px 100%,
+    var(--ground);
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+img { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+::selection { background: var(--amber); color: var(--ground); }
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 3px;
+}
+
+.skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: 0.6rem 1rem;
+  background: var(--amber);
+  color: var(--ground);
+}
+.skip:focus { left: 1rem; top: 1rem; }
+
+.wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* ---------- type roles ---------- */
+.display {
+  font-family: var(--f-cjk);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+}
+:lang(en) .display { font-family: var(--f-latin); font-weight: 700; letter-spacing: -0.01em; }
+
+.latin { font-family: var(--f-latin); font-weight: 500; }
+.num { font-family: var(--f-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+
+h1, h2, h3, h4 { margin: 0; font-weight: 400; }
+p { margin: 0; max-width: 68ch; }
+
+/* ---------- chamfered panel ---------- */
+.panel {
+  position: relative;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  clip-path: polygon(
+    var(--chamfer) 0, 100% 0, 100% calc(100% - var(--chamfer)),
+    calc(100% - var(--chamfer)) 100%, 0 100%, 0 var(--chamfer)
+  );
+}
+.panel::before {
+  /* inner hairline that follows the chamfer */
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--rule);
+  clip-path: polygon(
+    var(--chamfer) 0, 100% 0, 100% calc(100% - var(--chamfer)),
+    calc(100% - var(--chamfer)) 100%, 0 100%, 0 var(--chamfer),
+    var(--chamfer) 0,
+    calc(var(--chamfer) + 0.4px) 1px, 1px calc(var(--chamfer) + 0.4px),
+    1px calc(100% - 1px), calc(100% - var(--chamfer) - 0.4px) calc(100% - 1px),
+    calc(100% - 1px) calc(100% - var(--chamfer) - 0.4px), calc(100% - 1px) 1px,
+    calc(var(--chamfer) + 0.4px) 1px
+  );
+}
+
+/* ---------- reduced motion: everything settles to its end state ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

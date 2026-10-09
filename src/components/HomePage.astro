@@ -1,0 +1,20 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from './Hero.astro';
+import Record from './Record.astro';
+import ProjectIndex from './ProjectIndex.astro';
+import Bom from './Bom.astro';
+import Honours from './Honours.astro';
+import { sceneCopy } from '../data/content';
+import type { Lang } from '../data/i18n';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+---
+<Base lang={lang} description={sceneCopy.homeDescription}>
+  <Hero lang={lang} />
+  <Record lang={lang} />
+  <ProjectIndex lang={lang} />
+  <Bom lang={lang} />
+  <Honours lang={lang} />
+</Base>
