@@ -7,6 +7,7 @@ import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { sceneCopy } from '../data/content';
 import { t, type Lang } from '../data/i18n';
+import SceneControls from './SceneControls.astro';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -33,7 +34,7 @@ const L = sceneCopy.armUnfold;
           <circle class="j-wr" r="14" fill="var(--amber)" />
         </g>
       </svg>
-      <canvas class="three" aria-hidden="true"></canvas>
+      <canvas class="three" tabindex="-1" role="img" aria-label={t(sceneCopy.interaction.hint, lang)}></canvas>
       <svg class="marks" aria-hidden="true">
         <line class="m-l2" /><line class="m-l34" />
         <circle class="m-sh" r="5" /><circle class="m-el" r="5" /><circle class="m-wr" r="5" />
@@ -42,6 +43,7 @@ const L = sceneCopy.armUnfold;
       <span class="state latin" data-state>{t(L.folded, lang)}</span>
     </div>
 
+    <SceneControls lang={lang} progress="arm" />
     <figure class="envelopes" aria-describedby="envelope-guide">
       <div class="envelope-card">
         <svg viewBox="0 0 220 180" aria-hidden="true">
@@ -117,6 +119,17 @@ const L = sceneCopy.armUnfold;
     let draw = sketch;
     const staticScene = reducedMotion || !window.matchMedia('(min-width: 900px)').matches;
     let progress = staticScene ? 1 : 0;
+    let scrollProgress = progress, manual = false;
+    const slider = $<HTMLInputElement>('[data-scene-progress]');
+    const follow = $<HTMLButtonElement>('[data-follow-scroll]');
+    const update = () => { slider.value = String(Math.round(progress * 100)); draw(progress); };
+    slider.addEventListener('input', () => {
+      manual = true; follow.setAttribute('aria-pressed', 'false');
+      progress = Number(slider.value) / 100; draw(progress);
+    });
+    follow.addEventListener('click', () => {
+      manual = false; follow.setAttribute('aria-pressed', 'true'); progress = scrollProgress; update();
+    });
     draw(progress);
     // The proportionate SVG is the shared small-screen and reduced-motion still.
     // Keep both the scene import and the GLB request behind this desktop gate.
@@ -129,7 +142,7 @@ const L = sceneCopy.armUnfold;
         pin: $('.pin'),
         scrub: 0.6,
         // hold the end pose for the last stretch so it reads as settled
-        onUpdate: (st) => { progress = Math.min(1, st.progress / 0.85); draw(progress); },
+        onUpdate: (st) => { scrollProgress = Math.min(1, st.progress / 0.85); if (!manual) { progress = scrollProgress; update(); } },
       });
     }
     if (!root.dataset.model) return;
@@ -155,6 +168,8 @@ const L = sceneCopy.armUnfold;
       };
       // the drawing buffer clears on resize (including the pin's layout change): redraw
       arm.onResize(() => draw(progress));
+      arm.onInteraction(() => draw(progress));
+      $('[data-reset-view]').addEventListener('click', () => arm.resetView());
       root.classList.add('has-3d');
       draw(progress);
     }).catch((err) => console.warn('arm scene unavailable, keeping the sketch', err));
@@ -178,6 +193,9 @@ const L = sceneCopy.armUnfold;
   }
   .view > svg, .view > canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
   .three, .marks { opacity: 0; transition: opacity 0.6s; }
+  .three { cursor: grab; touch-action: none; }
+  .three:active { cursor: grabbing; }
+  .marks, .state { pointer-events: none; }
   .has-3d .three, .has-3d .marks { opacity: 1; }
   .has-3d .sk { opacity: 0; }
   .sk { transition: opacity 0.4s; }
