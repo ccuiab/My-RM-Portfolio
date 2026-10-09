@@ -7,6 +7,7 @@ import { Image } from 'astro:assets';
 import { t, type Lang } from '../data/i18n';
 import { sceneCopy } from '../data/content';
 import fallback from '../assets/img/arm-l4.webp';
+import SceneControls from './SceneControls.astro';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -17,11 +18,12 @@ const L = sceneCopy.wristExplode;
   <div class="pin">
     <div class="view panel">
       <div class="still"><Image src={fallback} alt={t(L.alt, lang)} widths={[744]} /></div>
-      <canvas class="three" aria-hidden="true"></canvas>
+      <canvas class="three" tabindex="-1" role="img" aria-label={t(sceneCopy.interaction.hint, lang)}></canvas>
       <svg class="leaders" aria-hidden="true"></svg>
       <ol class="labels" aria-label={t(L.title, lang)}></ol>
       <span class="hint">{t(L.hint, lang)}</span>
     </div>
+    <SceneControls lang={lang} progress="wrist" />
   </div>
 </div>
 
@@ -57,6 +59,9 @@ const L = sceneCopy.wristExplode;
       });
 
       let t = reducedMotion ? 1 : 0;
+      let scrollProgress = t, manual = false;
+      const slider = root.querySelector<HTMLInputElement>('[data-scene-progress]')!;
+      const follow = root.querySelector<HTMLButtonElement>('[data-follow-scroll]')!;
       const draw = () => {
         scene.setExplode(t);
         scene.setYaw(gsap.utils.interpolate(-18, 22, t));
@@ -76,6 +81,14 @@ const L = sceneCopy.wristExplode;
         }
       };
       scene.onResize(draw);
+      scene.onInteraction(draw);
+      root.querySelector('[data-reset-view]')!.addEventListener('click', () => scene.resetView());
+      slider.addEventListener('input', () => {
+        manual = true; follow.setAttribute('aria-pressed', 'false'); t = Number(slider.value) / 100; draw();
+      });
+      follow.addEventListener('click', () => {
+        manual = false; follow.setAttribute('aria-pressed', 'true'); t = scrollProgress; slider.value = String(Math.round(t * 100)); draw();
+      });
       root.classList.add('has-3d');
       draw();
       if (reducedMotion) return;
@@ -85,7 +98,7 @@ const L = sceneCopy.wristExplode;
         end: '+=160%',
         pin: root.querySelector('.pin'),
         scrub: 0.6,
-        onUpdate: (st) => { t = Math.min(1, st.progress / 0.85); draw(); },
+        onUpdate: (st) => { scrollProgress = Math.min(1, st.progress / 0.85); if (!manual) { t = scrollProgress; slider.value = String(Math.round(t * 100)); draw(); } },
       });
       ScrollTrigger.refresh();
     }).catch((err) => console.warn('wrist scene unavailable, keeping the still', err));
@@ -99,6 +112,7 @@ const L = sceneCopy.wristExplode;
 
 <style>
   .explode { margin-top: 0.5rem; }
+  .pin { display: grid; gap: .75rem; }
   .view {
     position: relative;
     height: min(70vh, 62vw);
@@ -118,6 +132,10 @@ const L = sceneCopy.wristExplode;
   .has-3d .still { opacity: 0; }
   .has-3d .three, .has-3d .leaders, .has-3d .labels, .has-3d .hint { opacity: 1; }
   .three, .leaders { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .three { cursor: grab; touch-action: none; pointer-events: none; }
+  .has-3d .three { pointer-events: auto; }
+  .three:active { cursor: grabbing; }
+  .labels, .hint { pointer-events: none; }
   .leaders { pointer-events: none; overflow: visible; }
   .leaders :global(path) { fill: none; stroke: var(--amber); stroke-width: 1; }
   .leaders :global(circle) { fill: var(--amber); }

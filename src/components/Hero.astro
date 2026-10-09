@@ -2,16 +2,17 @@
 // Desktop: real CAD feature edges resolve into PBR in one three-second scan.
 // Mobile, reduced-motion and WebGL fallback: a finished photograph.
 import { Image } from 'astro:assets';
-import { person, pageCopy } from '../data/content';
+import { person, pageCopy, sceneCopy } from '../data/content';
 import { t, href, type Lang } from '../data/i18n';
+import SceneControls from './SceneControls.astro';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 ---
-<section class="hero" data-hero aria-labelledby="hero-name">
-  <div class="stage" aria-hidden="true">
+<section class="hero" data-hero data-view="static" data-loading={t(sceneCopy.homeView.loading, lang)} data-failed={t(sceneCopy.homeView.failed, lang)} aria-labelledby="hero-name">
+  <div class="stage">
     <Image class="photo" src={person.heroPic.src} alt="" widths={[960, 1920]} sizes="100vw" loading="eager" fetchpriority="high" />
-    <div class="model-stage"><canvas data-hero-canvas></canvas><div class="scan"></div></div>
+    <div class="model-stage"><canvas data-hero-canvas tabindex="-1" role="img" aria-label={t(sceneCopy.interaction.hint, lang)}></canvas><div class="scan"></div></div>
     <div class="vignette"></div>
   </div>
 
@@ -38,18 +39,56 @@ const { lang } = Astro.props;
       <span class="cta-text">{t(pageCopy.heroCta, lang)}</span>
     </a>
   </div>
+  <div class="view-switch">
+    <div class="view-buttons" aria-label={t(sceneCopy.homeView.model, lang)}>
+      <button type="button" data-home-view="model" aria-pressed="false">{t(sceneCopy.homeView.model, lang)}</button>
+      <button type="button" data-home-view="photo" aria-pressed="true">{t(sceneCopy.homeView.photo, lang)}</button>
+    </div>
+    <p data-home-status role="status">{t(sceneCopy.homeView.static, lang)}</p>
+  </div>
+  <SceneControls lang={lang} />
+  <noscript><style>.hero .photo { opacity: 1 !important; }</style></noscript>
 </section>
 
 <script>
   const root = document.querySelector<HTMLElement>('[data-hero]');
   if (root) {
-    // Keep the finished image and facts until a fully decoded model can be rendered.
     root.classList.add('locked');
     if (window.matchMedia('(min-width: 900px) and (prefers-reduced-motion: no-preference)').matches) {
-      const canvas = root.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
-      if (canvas) import('../scripts/hero-scene').then(({ startHeroScene }) =>
-        startHeroScene(root, canvas, import.meta.env.BASE_URL),
-      ).catch(() => { root.classList.remove('has-3d'); root.classList.add('locked'); });
+      root.classList.add('can-3d');
+      const status = root.querySelector<HTMLElement>('[data-home-status]')!;
+      const buttons = root.querySelectorAll<HTMLButtonElement>('[data-home-view]');
+      let choice = 'model', ready = false, loading: Promise<void> | null = null;
+      const show = (view: string, message = '') => {
+        root.dataset.view = view; status.textContent = message;
+        const canvas = root.querySelector<HTMLCanvasElement>('[data-hero-canvas]');
+        if (canvas) { canvas.tabIndex = view === 'model' ? 0 : -1; canvas.setAttribute('aria-hidden', String(view !== 'model')); }
+        buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.homeView === (view === 'loading' ? 'model' : view))));
+      };
+      const fail = () => {
+        ready = false; choice = 'photo';
+        root.classList.remove('has-3d'); root.classList.add('locked');
+        show('photo', root.dataset.failed);
+      };
+      const load = () => {
+        choice = 'model';
+        if (ready) { show('model'); return; }
+        show('loading', root.dataset.loading);
+        if (loading) return;
+        // A fresh canvas also allows recovery after WebGL context loss.
+        const oldCanvas = root.querySelector<HTMLCanvasElement>('[data-hero-canvas]')!;
+        const canvas = oldCanvas.cloneNode(false) as HTMLCanvasElement;
+        oldCanvas.replaceWith(canvas);
+        canvas.addEventListener('webglcontextlost', fail);
+        loading = import('../scripts/hero-scene').then(({ startHeroScene }) => startHeroScene(root, canvas, import.meta.env.BASE_URL))
+          .then(() => { ready = true; show(choice); })
+          .catch(fail).finally(() => { loading = null; });
+      };
+      buttons.forEach(button => button.addEventListener('click', () => {
+        if (button.dataset.homeView === 'model') load();
+        else { choice = 'photo'; show('photo'); }
+      }));
+      load();
     }
   }
 </script>
@@ -68,7 +107,8 @@ const { lang } = Astro.props;
   .stage {
     position: absolute;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
+    pointer-events: none;
   }
   .stage :global(img) {
     position: absolute;
@@ -86,9 +126,27 @@ const { lang } = Astro.props;
     opacity: 0;
   }
   .model-stage canvas { width: 100%; height: 100%; display: block; }
+  .hero.has-3d canvas { pointer-events: auto; cursor: grab; touch-action: none; }
+  .hero.has-3d canvas:active { cursor: grabbing; }
+  .hero :global(.scene-controls) { position: absolute; right: 5%; bottom: 2rem; z-index: 2; }
   .hero.has-3d .model-stage { opacity: 1; }
   .hero.has-3d .photo { opacity: 0; }
-  .hero.has-3d .vignette {
+  .hero[data-view="photo"] .photo, .hero[data-view="static"] .photo { opacity: 1; }
+  .hero[data-view="photo"] .model-stage, .hero[data-view="loading"] .model-stage { opacity: 0; pointer-events: none; }
+  .hero[data-view="photo"] canvas, .hero[data-view="loading"] canvas { pointer-events: none; }
+  .hero[data-view="photo"] :global(.scene-controls) { display: none; }
+  .view-switch { position: absolute; right: 5%; top: 6rem; z-index: 2; max-width: 21rem; text-align: right; }
+  .view-buttons { display: none; gap: .5rem; justify-content: end; }
+  .can-3d .view-buttons { display: flex; }
+  .view-buttons button { font: inherit; font-size: var(--t-xs); padding: .5rem .8rem; color: var(--ink-2); background: var(--ground); border: 1px solid var(--rule); cursor: pointer; }
+  .view-buttons button[aria-pressed="true"] { color: var(--amber); border-color: var(--amber); }
+  .view-buttons button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  [data-home-status] { font-size: var(--t-xs); color: var(--ink); margin-top: .5rem; padding: .5rem .7rem; background: rgba(7, 13, 23, .94); }
+  [data-home-status]:empty { display: none; }
+  @media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+    .hero[data-view="static"] .photo, .hero[data-view="loading"] .photo { opacity: 0; }
+  }
+  .hero.has-3d[data-view="model"] .vignette {
     background: linear-gradient(0deg, var(--ground), transparent 16%);
   }
   .scan {
@@ -111,6 +169,7 @@ const { lang } = Astro.props;
 
   .copy {
     position: relative;
+    pointer-events: none;
     display: grid;
     gap: 1.1rem;
   }
@@ -182,6 +241,7 @@ const { lang } = Astro.props;
   .readout .unit { font-size: var(--t-md); color: var(--ink-2); }
 
   .cta {
+    pointer-events: auto;
     justify-self: start;
     display: inline-flex;
     flex-direction: column;

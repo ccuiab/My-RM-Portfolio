@@ -28,6 +28,8 @@ export type ArmScene = {
   setYaw: (d: number) => void;
   render: () => Marks;
   onResize: (cb: () => void) => void;
+  onInteraction: (cb: () => void) => void;
+  resetView: () => void;
 };
 
 export async function loadArmScene(canvas: HTMLCanvasElement, base: string): Promise<ArmScene> {
@@ -65,12 +67,16 @@ export async function loadArmScene(canvas: HTMLCanvasElement, base: string): Pro
     return new THREE.Vector2((v.x * 0.5 + 0.5) * canvas.clientWidth, (-v.y * 0.5 + 0.5) * canvas.clientHeight);
   };
 
+  stage.enableInteraction();
+
   return {
     setPose(p) {
       for (const j of joints) j.node.quaternion.copy(q.setFromAxisAngle(j.axis, deg(p[j.name as JointName] ?? 0)));
     },
     setScan: stage.setScan,
     onResize: stage.onResize,
+    onInteraction: stage.enableInteraction,
+    resetView: stage.resetView,
     setYaw(d) {
       turntable.rotation.y = deg(d);
     },

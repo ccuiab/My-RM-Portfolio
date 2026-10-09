@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { loadScanStage } from './scan-scene';
 
-/** One camera-locked CAD reveal. The world-space scan bounds come from the loaded robot. */
+/** One CAD reveal, followed by free camera inspection. The world-space scan bounds come from the loaded robot. */
 export async function startHeroScene(root: HTMLElement, canvas: HTMLCanvasElement, base: string) {
   const range: [number, number] = [1, -1];
   const stage = await loadScanStage(canvas, base, 'engineer.glb', { axis: new THREE.Vector3(0, 1, 0), range });
@@ -45,6 +45,18 @@ export async function startHeroScene(root: HTMLElement, canvas: HTMLCanvasElemen
     if (progress < 1) animation = requestAnimationFrame(render);
     else { complete = true; root.classList.add('locked'); }
   };
+  const finishReveal = () => {
+    if (cancelled) return;
+    cancelAnimationFrame(animation);
+    complete = true;
+    stage.setScan(1);
+    root.dataset.scanProgress = '1';
+    root.classList.add('locked');
+    values.forEach(item => item.el.textContent = item.text);
+    stage.render();
+  };
+  stage.enableInteraction(finishReveal);
+  root.querySelector('[data-reset-view]')?.addEventListener('click', stage.resetView);
   stage.onResize(() => { if (complete && !cancelled) stage.render(); });
   canvas.addEventListener('webglcontextlost', () => {
     cancelled = true;
@@ -54,4 +66,5 @@ export async function startHeroScene(root: HTMLElement, canvas: HTMLCanvasElemen
     values.forEach(item => item.el.textContent = item.text);
   });
   animation = requestAnimationFrame(render);
+  return { resetView: stage.resetView };
 }
