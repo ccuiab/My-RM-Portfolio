@@ -67,6 +67,12 @@ export const ui = {
 /* ---------------------------------------------------------- page and scene copy */
 
 export const pageCopy = {
+  homeProjects: { zh: '浏览项目', en: 'Explore projects' },
+  homeEngineer: { zh: '查看工程机器人', en: 'View the Engineer' },
+  engineerModelTitle: { zh: '先看整车，再看机构', en: 'Explore the robot, then its mechanisms' },
+  engineerModelIntro: { zh: '从整车视角看底盘、机械臂与上装的空间关系，再向下了解比赛表现和各个机构。', en: 'Explore how the chassis, arm and upper structure fit together, then continue to match performance and individual mechanisms.' },
+  engineerModelAlt: { zh: '2025 工程机器人整车模型', en: '2025 Engineer robot assembly' },
+  engineerModelCaption: { zh: '工程整车总装视图；下方继续查看机械臂展开与腕部拆解。', en: 'Engineer assembly view. Continue below for the arm extension and wrist exploded view.' },
   heroCta: { zh: '看工程机器人 2025', en: 'See the 2025 Engineer robot' },
   heroModelAlt: { zh: 'RM2024 英雄机器人整车', en: 'RM2024 Hero robot, full assembly' },
   heroModelCaption: { zh: '2024-09 版本：底盘、云台、发射与供弹的主要机械系统，来自 SolidWorks 总装模型。', en: 'September 2024 version: the main chassis, gimbal, launcher and feed systems, from the SolidWorks assembly.' },
@@ -98,13 +104,6 @@ export const sceneCopy = {
     follow: { zh: '跟随滚动', en: 'Follow scroll' },
     arm: { zh: '展开程度', en: 'Arm extension' },
     wrist: { zh: '拆解程度', en: 'Exploded view' },
-  },
-  homeView: {
-    model: { zh: '3D 模型', en: '3D model' },
-    photo: { zh: '实拍照片', en: 'Field photo' },
-    loading: { zh: '正在加载 3D 模型…', en: 'Loading 3D model…' },
-    failed: { zh: '3D 暂不可用，已显示实拍照片。可点击 3D 模型重试。', en: '3D is unavailable. Showing the field photo; select 3D model to retry.' },
-    static: { zh: '实拍照片 · 静态展示', en: 'Field photo · Static view' },
   },
   homeDescription: {
     zh: '崔楮焓的 RoboMaster 机械作品集：2025 工程机器人（5.8 s 四级矿石兑换，工程全明星）、2024 英雄机器人与技术预研。',
@@ -151,7 +150,7 @@ export const person = {
   role: 'MECHANICAL LEAD // HKUST ENTERPRIZE',
   badge: 'RM2025 ENGINEER ALL-STAR',
   tagline: { zh: '我设计上赛场的机器人。', en: 'I design robots built for the arena.' },
-  subline: { zh: '长臂展，快拆，零重大结构损伤。', en: 'Long reach. Quick release. Zero major structural damage.' },
+  subline: { zh: '工程、英雄与机构预研，从整车布局到机械细节。', en: 'Engineer, Hero and mechanism R&D, from whole-robot layout to mechanical detail.' },
   edu: {
     zh: '香港科技大学 CPEG 本科，AI / Robotics 辅修，2023–2027',
     en: 'BEng Computer Engineering (CPEG), HKUST, minor in AI / Robotics, 2023–2027',
