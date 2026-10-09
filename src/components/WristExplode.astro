@@ -132,7 +132,8 @@ const L = sceneCopy.wristExplode;
   .has-3d .still { opacity: 0; }
   .has-3d .three, .has-3d .leaders, .has-3d .labels, .has-3d .hint { opacity: 1; }
   .three, .leaders { position: absolute; inset: 0; width: 100%; height: 100%; }
-  .three { cursor: grab; touch-action: none; }
+  .three { cursor: grab; touch-action: none; pointer-events: none; }
+  .has-3d .three { pointer-events: auto; }
   .three:active { cursor: grabbing; }
   .labels, .hint { pointer-events: none; }
   .leaders { pointer-events: none; overflow: visible; }
