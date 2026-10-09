@@ -9,11 +9,11 @@ import { t, type Lang, type T } from '../data/i18n';
 import { sceneCopy } from '../data/content';
 import SceneControls from './SceneControls.astro';
 
-interface Props { lang: Lang; file: string; still: ImageMetadata; alt: T; caption: T }
-const { lang, file, still, alt, caption } = Astro.props;
+interface Props { lang: Lang; file: string; still: ImageMetadata; alt: T; caption: T; scan?: boolean }
+const { lang, file, still, alt, caption, scan = true } = Astro.props;
 const hasModel = existsSync(join(process.cwd(), 'public', 'models', file));
 ---
-<figure class="tt" data-tt data-file={hasModel ? file : ''}>
+<figure class="tt" data-tt data-file={hasModel ? file : ''} data-scan={scan ? '1' : '0'}>
   <div class="view panel">
     <div class="still"><Image src={still} alt={t(alt, lang)} widths={[720, 1100]} sizes="(max-width: 900px) 100vw, 70vw" /></div>
     <canvas class="three" tabindex="-1" role="img" aria-label={t(sceneCopy.interaction.hint, lang)}></canvas>
@@ -38,9 +38,10 @@ const hasModel = existsSync(join(process.cwd(), 'public', 'models', file));
       const sphere = box.getBoundingSphere(new THREE.Sphere());
       stage.model.position.sub(sphere.center);
       sphere.center.set(0, 0, 0);
-      stage.frame(sphere, new THREE.Vector3(1, 0.5, 1.1));
+      stage.frame(sphere, file === 'engineer.glb' ? new THREE.Vector3(-1.25, 0.62, 1.8) : new THREE.Vector3(1, 0.5, 1.1));
 
-      let yaw = -30, scan = reducedMotion ? 1 : 0, interacting = false;
+      const scanEnabled = root.dataset.scan !== '0';
+      let yaw = scanEnabled ? -30 : 0, scan = scanEnabled ? 0 : 1, interacting = false;
       const draw = () => {
         stage.turntable.rotation.y = THREE.MathUtils.degToRad(yaw);
         stage.setScan(scan);
@@ -54,7 +55,7 @@ const hasModel = existsSync(join(process.cwd(), 'public', 'models', file));
       canvas.addEventListener('pointerdown', () => { interacting = true; scan = 1; draw(); });
       root.querySelector('[data-reset-view]')!.addEventListener('click', () => stage.resetView());
 
-      if (!reducedMotion) {
+      if (!reducedMotion && scanEnabled) {
         ScrollTrigger.create({
           trigger: root,
           start: 'top 80%',
