@@ -40,7 +40,7 @@ const lines_: { id: string; mark: string; title: T; stages: Stage[]; lede?: T; a
               <div class="stage-visual">
               {s.pic?.model ? <ModuleMedia pic={s.pic} lang={lang} /> : s.pic ? (
                 <button class:list={['pic', { light: s.pic.light }]} type="button" data-zoom={s.pic.src.src} data-alt={t(s.pic.alt, lang)} aria-label={`${t(ui.enlarge, lang)}: ${t(s.pic.alt, lang)}`}>
-                  <Image src={s.pic.src} alt={t(s.pic.alt, lang)} widths={[480, 900]} sizes="(max-width: 900px) 100vw, 60vw" />
+                  <Image src={s.pic.src} alt={t(s.pic.alt, lang)} widths={[480, 900, 1400, 2400]} sizes="(max-width: 900px) 100vw, 60vw" />
                 </button>
               ) : (
                 <div class="pic empty" aria-hidden="true"><span class="num">&gt;25 Hz</span></div>
@@ -137,7 +137,7 @@ const lines_: { id: string; mark: string; title: T; stages: Stage[]; lede?: T; a
       linear-gradient(90deg, var(--plate-line) 1px, transparent 1px) 0 0 / 32px 100%,
       var(--plate);
   }
-  .pic :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; padding: 6%; }
+  .pic :global(img) { width: 100%; aspect-ratio: 4 / 3; object-fit: contain; padding: 2%; }
   .pic.light :global(img) { mix-blend-mode: multiply; }
   .pic:hover { border-color: var(--amber); }
   .pic.empty {

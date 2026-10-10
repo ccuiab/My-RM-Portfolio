@@ -1,177 +1,147 @@
 ---
-// Pinned wrist exploded view: scroll pulls the J4–J8 end of the arm apart, part by part,
-// with callouts that track each group. Without WebGL/the model: a still render instead.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { Image } from 'astro:assets';
 import { t, type Lang } from '../data/i18n';
 import { sceneCopy } from '../data/content';
-import fallback from '../assets/img/arm-l4.webp';
+import fallback from '../assets/gen/l4-exploded.webp';
 import SceneControls from './SceneControls.astro';
-
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const hasModel = existsSync(join(process.cwd(), 'public', 'models', 'wrist.glb'));
+const hasModel = existsSync(join(process.cwd(), 'public', 'models', 'l4.glb'));
 const L = sceneCopy.wristExplode;
 ---
-<div class="explode" data-explode data-model={hasModel ? '1' : ''} data-lang={lang}>
-  <div class="pin">
-    <div class="view panel">
-      <div class="still"><Image src={fallback} alt={t(L.alt, lang)} widths={[744]} /></div>
+<section class="explode" data-explode data-model={hasModel ? '1' : ''} data-lang={lang}>
+  <header class="intro"><h3>{t(L.title, lang)}</h3><p>{t(L.intro, lang)}</p></header>
+  <div class="view panel">
+    <div class="model-view">
+      <div class="still"><Image src={fallback} alt={t(L.alt, lang)} widths={[900, 1600, 2400]} sizes="100vw" /></div>
       <canvas class="three" tabindex="-1" role="img" aria-label={t(sceneCopy.interaction.hint, lang)}></canvas>
-      <svg class="leaders" aria-hidden="true"></svg>
-      <ol class="labels" aria-label={t(L.title, lang)}></ol>
       <span class="hint">{t(L.hint, lang)}</span>
     </div>
-    <SceneControls lang={lang} progress="wrist" />
+    <svg class="leaders" aria-hidden="true"></svg>
+    <ol class="labels" aria-label={t(L.title, lang)}></ol>
   </div>
-</div>
+  {hasModel && <button type="button" class="load-model" data-load-model data-loading={t(sceneCopy.module.loading, lang)} data-failed={t(sceneCopy.module.failed, lang)}>{t(sceneCopy.module.model, lang)}</button>}
+  <SceneControls lang={lang} progress="wrist" followScroll={false} />
+</section>
 
 <script>
-  import { gsap, ScrollTrigger, reducedMotion } from '../scripts/smooth';
-
   document.querySelectorAll<HTMLElement>('[data-explode][data-model="1"]').forEach((root) => {
-    // Preserve the existing CAD still without importing Three.js or fetching a model.
-    if (reducedMotion || !window.matchMedia('(min-width: 900px)').matches) return;
     const canvas = root.querySelector<HTMLCanvasElement>('canvas')!;
     const svg = root.querySelector<SVGSVGElement>('svg.leaders')!;
     const list = root.querySelector<HTMLOListElement>('ol.labels')!;
+    const slider = root.querySelector<HTMLInputElement>('[data-scene-progress]')!;
+    const loadButton = root.querySelector<HTMLButtonElement>('[data-load-model]')!;
+    const desktop = window.matchMedia('(min-width: 900px)');
     const zh = root.dataset.lang === 'zh';
     const NS = 'http://www.w3.org/2000/svg';
-
-    const start = () => import('../scripts/wrist-scene').then(async ({ loadWristScene }) => {
-      const scene = await loadWristScene(canvas, import.meta.env.BASE_URL);
-      // label column order: by where each part ends up on screen, so leaders don't cross
-      scene.setExplode(1);
-      scene.setYaw(22);
-      const endY = new Map(scene.render().map((c) => [c.key, c.y]));
-      const groups = [...scene.groups].sort((a, b) => endY.get(a.key)! - endY.get(b.key)!);
-      const items = groups.map((g, i) => {
-        const li = document.createElement('li');
-        li.innerHTML = `<span class="n">${String(i + 1).padStart(2, '0')}</span><span class="t"></span>`;
-        li.querySelector('.t')!.textContent = zh ? g.label_zh : g.label_en;
-        list.appendChild(li);
-        const line = document.createElementNS(NS, 'path');
-        const dot = document.createElementNS(NS, 'circle');
-        dot.setAttribute('r', '3');
-        svg.append(line, dot);
-        return { g, li, line, dot };
+    let started = false;
+    slider.value = '100';
+    const start = () => {
+      if (started) return;
+      started = true;
+      loadButton.disabled = true;
+      loadButton.textContent = loadButton.dataset.loading!;
+      return import('../scripts/wrist-scene').then(async ({ loadWristScene }) => {
+        const scene = await loadWristScene(canvas, import.meta.env.BASE_URL);
+        scene.setExplode(1);
+        scene.setYaw(22);
+        const endY = new Map(scene.render().map((c) => [c.key, c.y]));
+        const groups = [...scene.groups].sort((a, b) => endY.get(a.key)! - endY.get(b.key)!);
+        list.replaceChildren();
+        svg.replaceChildren();
+        const items = groups.map((g, i) => {
+          const li = document.createElement('li');
+          const number = document.createElement('span');
+          number.className = 'n';
+          number.textContent = String(i + 1).padStart(2, '0');
+          const label = document.createElement('span');
+          label.className = 't';
+          label.textContent = zh ? g.label_zh : g.label_en;
+          li.append(number, label);
+          list.appendChild(li);
+          const line = document.createElementNS(NS, 'path');
+          const dot = document.createElementNS(NS, 'circle');
+          dot.setAttribute('r', '3');
+          svg.append(line, dot);
+          return { g, li, line, dot };
+        });
+        const draw = () => {
+          const progress = Number(slider.value) / 100;
+          scene.setExplode(progress);
+          const pts = new Map(scene.render().map((c) => [c.key, c]));
+          // Compact screens put the labels below the canvas, without leader lines.
+          if (!desktop.matches) return;
+          const box = root.querySelector('.view')!.getBoundingClientRect();
+          const reveal = Math.max(0, Math.min(1, (progress - 0.55) / 0.3));
+          for (const it of items) {
+            const c = pts.get(it.g.key)!;
+            const r = it.li.getBoundingClientRect();
+            const lx = r.left - box.left - 6, ly = r.top - box.top + r.height / 2;
+            it.line.setAttribute('d', `M${c.x.toFixed(1)},${c.y.toFixed(1)} L${lx - 28},${ly} L${lx},${ly}`);
+            it.dot.setAttribute('cx', c.x.toFixed(1));
+            it.dot.setAttribute('cy', c.y.toFixed(1));
+            it.line.style.opacity = it.dot.style.opacity = String(reveal * (c.visible ? 1 : 0));
+          }
+        };
+        scene.onResize(draw);
+        scene.onInteraction(draw);
+        root.querySelector('[data-reset-view]')!.addEventListener('click', () => scene.resetView());
+        slider.addEventListener('input', draw);
+        desktop.addEventListener('change', draw);
+        root.classList.add('has-3d');
+        loadButton.hidden = true;
+        draw();
+      }).catch((err) => {
+        started = false;
+        loadButton.disabled = false;
+        loadButton.textContent = loadButton.dataset.failed!;
+        console.warn('wrist scene unavailable, keeping the still', err);
       });
-
-      let t = reducedMotion ? 1 : 0;
-      let scrollProgress = t, manual = false;
-      const slider = root.querySelector<HTMLInputElement>('[data-scene-progress]')!;
-      const follow = root.querySelector<HTMLButtonElement>('[data-follow-scroll]')!;
-      const draw = () => {
-        scene.setExplode(t);
-        scene.setYaw(gsap.utils.interpolate(-18, 22, t));
-        const pts = new Map(scene.render().map((c) => [c.key, c]));
-        const box = root.querySelector('.view')!.getBoundingClientRect();
-        const reveal = gsap.utils.clamp(0, 1, (t - 0.55) / 0.3);
-        for (const it of items) {
-          const c = pts.get(it.g.key)!;
-          const r = it.li.getBoundingClientRect();
-          const lx = r.left - box.left - 6, ly = r.top - box.top + r.height / 2;
-          const elbow = lx - 28;
-          it.line.setAttribute('d', `M${c.x.toFixed(1)},${c.y.toFixed(1)} L${elbow},${ly} L${lx},${ly}`);
-          it.dot.setAttribute('cx', c.x.toFixed(1));
-          it.dot.setAttribute('cy', c.y.toFixed(1));
-          it.line.style.opacity = it.dot.style.opacity = String(reveal * (c.visible ? 1 : 0));
-          it.li.style.opacity = String(0.25 + 0.75 * reveal);
-        }
-      };
-      scene.onResize(draw);
-      scene.onInteraction(draw);
-      root.querySelector('[data-reset-view]')!.addEventListener('click', () => scene.resetView());
-      slider.addEventListener('input', () => {
-        manual = true; follow.setAttribute('aria-pressed', 'false'); t = Number(slider.value) / 100; draw();
-      });
-      follow.addEventListener('click', () => {
-        manual = false; follow.setAttribute('aria-pressed', 'true'); t = scrollProgress; slider.value = String(Math.round(t * 100)); draw();
-      });
-      root.classList.add('has-3d');
-      draw();
-      if (reducedMotion) return;
-      ScrollTrigger.create({
-        trigger: root,
-        start: 'top top+=76',
-        end: '+=160%',
-        pin: root.querySelector('.pin'),
-        scrub: 0.6,
-        onUpdate: (st) => { scrollProgress = Math.min(1, st.progress / 0.85); if (!manual) { t = scrollProgress; slider.value = String(Math.round(t * 100)); draw(); } },
-      });
-      ScrollTrigger.refresh();
-    }).catch((err) => console.warn('wrist scene unavailable, keeping the still', err));
-
-    const io = new IntersectionObserver(([en]) => {
-      if (en.isIntersecting) { io.disconnect(); start(); }
-    }, { rootMargin: '900px 0px' });
+    };
+    loadButton.addEventListener('click', start);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !desktop.matches) return;
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) { io.disconnect(); start(); }
+    }, { rootMargin: '700px 0px' });
     io.observe(root);
   });
 </script>
 
 <style>
-  .explode { margin-top: 0.5rem; }
-  .pin { display: grid; gap: .75rem; }
-  .view {
-    position: relative;
-    height: min(70vh, 62vw);
-    min-height: 360px;
-    background: var(--ground);
-  }
-  .still {
-    position: absolute;
-    inset: 0;
-    display: grid;
-    place-items: center;
-    background: var(--plate);
-    transition: opacity 0.5s;
-  }
-  .still :global(img) { max-height: 90%; width: auto; mix-blend-mode: multiply; }
-  .three, .leaders, .labels, .hint { opacity: 0; transition: opacity 0.6s; }
-  .has-3d .still { opacity: 0; }
+  .explode { margin-top: 1.5rem; display: grid; gap: .75rem; }
+  .intro h3 { margin: 0 0 .5rem; font-size: var(--t-lg); }
+  .intro p { margin: 0; max-width: 58rem; color: var(--ink-2); }
+  .load-model { justify-self: start; padding: .6rem 1rem; border: 1px solid var(--amber); color: var(--amber); background: var(--panel); font: inherit; cursor: pointer; }
+  .load-model[hidden] { display: none; }
+  .load-model:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  .view { position: relative; height: min(70vh, 62vw); min-height: 440px; background: var(--ground); }
+  .model-view { position: absolute; inset: 0; }
+  .still { position: absolute; inset: 0; display: grid; place-items: center; background: var(--plate); transition: opacity .5s; }
+  .still :global(img) { width: 100%; height: 100%; min-height: 0; object-fit: contain; padding: 2%; mix-blend-mode: multiply; }
+  .three, .leaders, .labels, .hint { opacity: 0; transition: opacity .6s; }
+  .has-3d .still { opacity: 0; pointer-events: none; }
   .has-3d .three, .has-3d .leaders, .has-3d .labels, .has-3d .hint { opacity: 1; }
   .three, .leaders { position: absolute; inset: 0; width: 100%; height: 100%; }
   .three { cursor: grab; touch-action: none; pointer-events: none; }
   .has-3d .three { pointer-events: auto; }
   .three:active { cursor: grabbing; }
-  .labels, .hint { pointer-events: none; }
-  .leaders { pointer-events: none; overflow: visible; }
+  .labels, .hint, .leaders { pointer-events: none; }
+  .leaders { overflow: visible; }
   .leaders :global(path) { fill: none; stroke: var(--amber); stroke-width: 1; }
   .leaders :global(circle) { fill: var(--amber); }
-
-  .labels {
-    position: absolute;
-    right: 1.4rem;
-    top: 50%;
-    transform: translateY(-50%);
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: grid;
-    gap: 0.35rem;
-    width: min(16rem, 30%);
-  }
-  .labels :global(li) {
-    display: grid;
-    grid-template-columns: 2rem 1fr;
-    align-items: baseline;
-    font-size: var(--t-xs);
-    color: var(--ink-2);
-    padding: 0.15rem 0 0.15rem 0.5rem;
-    border-left: 1px solid var(--rule);
-    background: rgba(7, 13, 23, 0.6);
-  }
+  .labels { position: absolute; right: 1.4rem; top: 50%; transform: translateY(-50%); list-style: none; margin: 0; padding: 0; display: grid; gap: .35rem; width: min(16rem, 30%); }
+  .labels :global(li) { display: grid; grid-template-columns: 2rem 1fr; align-items: baseline; font-size: var(--t-xs); color: var(--ink-2); padding: .15rem 0 .15rem .5rem; border-left: 1px solid var(--rule); background: rgba(7, 13, 23, .6); }
   .labels :global(.n) { font-family: var(--f-mono); color: var(--amber); }
-  .hint {
-    position: absolute;
-    left: 1.2rem;
-    bottom: 1rem;
-    font-size: var(--t-xs);
-    color: var(--ink-3);
-  }
-  @media (max-width: 760px) {
-    .labels { display: none; }
+  .hint { position: absolute; left: 1.2rem; bottom: 1rem; font-size: var(--t-xs); color: var(--ink-3); }
+  @media (max-width: 899px) {
+    .view { height: auto; min-height: 0; }
+    .model-view { position: relative; height: 360px; }
     .leaders { display: none; }
+    .labels { display: none; position: static; transform: none; width: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; padding: 1rem; }
+    .has-3d .labels { display: grid; }
+    .labels :global(li) { grid-template-columns: 1.8rem minmax(0, 1fr); }
+    .hint { left: .8rem; bottom: .75rem; max-width: calc(100% - 1.6rem); }
   }
 </style>

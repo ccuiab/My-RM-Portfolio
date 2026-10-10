@@ -1,14 +1,14 @@
 ---
 import { sceneCopy } from '../data/content';
 import { t, type Lang } from '../data/i18n';
-interface Props { lang: Lang; progress?: 'arm' | 'wrist' }
-const { lang, progress } = Astro.props;
+interface Props { lang: Lang; progress?: 'arm' | 'wrist'; followScroll?: boolean }
+const { lang, progress, followScroll = true } = Astro.props;
 const L = sceneCopy.interaction;
 ---
 <div class="scene-controls" data-scene-controls>
   <span class="drag-hint">{t(L.hint, lang)}</span>
   {progress && <label class="progress-control"><span>{t(L[progress], lang)}</span><input data-scene-progress type="range" min="0" max="100" value="0" step="1" /></label>}
-  {progress && <button type="button" data-follow-scroll aria-pressed="true">{t(L.follow, lang)}</button>}
+  {progress && followScroll && <button type="button" data-follow-scroll aria-pressed="true">{t(L.follow, lang)}</button>}
   <button type="button" data-reset-view>{t(L.reset, lang)}</button>
 </div>
 <style>
