@@ -22,13 +22,14 @@ export type ScanStage = {
   enableInteraction: (onChange?: () => void) => void;
   /** Restore the most recent frame() direction, retaining the current model pose. */
   resetView: () => void;
+  dispose: () => void;
 };
 
 export async function loadScanStage(
   canvas: HTMLCanvasElement,
   base: string,
   file: string,
-  scan: { axis: THREE.Vector3; range: [number, number] },
+  scan: { axis: THREE.Vector3; range: [number, number]; solidOnly?: boolean },
 ): Promise<ScanStage> {
   // preserveDrawingBuffer keeps the last frame visible between scroll-driven redraws
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
@@ -52,7 +53,13 @@ export async function loadScanStage(
   scene.add(fill);
 
   const draco = new DRACOLoader().setDecoderPath(`${base}models/draco/`);
-  const gltf = await new GLTFLoader().setDRACOLoader(draco).loadAsync(`${base}models/${file}`);
+  let gltf;
+  try {
+    gltf = await new GLTFLoader().setDRACOLoader(draco).loadAsync(`${base}models/${file}`);
+  } catch (error) {
+    renderer.dispose();
+    throw error;
+  } finally { draco.dispose(); }
   const model = gltf.scene;
   const turntable = new THREE.Group();
   turntable.add(model);
@@ -75,12 +82,12 @@ export async function loadScanStage(
     for (const mat of Array.isArray(m.material) ? m.material : [m.material]) {
       if (seen.has(mat)) continue;
       seen.add(mat);
-      mat.clippingPlanes = [solidClip];
+      mat.clippingPlanes = scan.solidOnly ? [] : [solidClip];
       // lift the near-black anodised parts a little so they read on the navy ground
       const std = mat as THREE.MeshStandardMaterial;
       if (std.color && std.color.getHSL(hsl).l < 0.08) std.color.offsetHSL(0, 0, 0.06);
     }
-    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry, 25), wireMat));
+    if (!scan.solidOnly) m.add(new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry, 25), wireMat));
   }
 
   let framed: { sphere: THREE.Sphere; dir: THREE.Vector3 } | null = null;
@@ -112,7 +119,8 @@ export async function loadScanStage(
     applyFrame();
     onResize?.();
   };
-  new ResizeObserver(resize).observe(canvas);
+  const resizeObserver = new ResizeObserver(resize);
+  resizeObserver.observe(canvas);
   resize();
 
   return {
@@ -184,6 +192,25 @@ export async function loadScanStage(
       if (!framed) return;
       viewDirection.copy(framed.dir);
       redrawInteraction();
+    },
+    dispose() {
+      resizeObserver.disconnect();
+      const geometries = new Set<THREE.BufferGeometry>();
+      const materials = new Set<THREE.Material>([wireMat]);
+      const textures = new Set<THREE.Texture>();
+      model.traverse(object => {
+        const mesh = object as THREE.Mesh;
+        if (mesh.geometry) geometries.add(mesh.geometry);
+        if (mesh.material) for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+          materials.add(material);
+          for (const value of Object.values(material)) if (value instanceof THREE.Texture) textures.add(value);
+        }
+      });
+      geometries.forEach(geometry => geometry.dispose());
+      materials.forEach(material => material.dispose());
+      textures.forEach(texture => texture.dispose());
+      renderer.dispose();
+      renderer.forceContextLoss();
     },
   };
 }

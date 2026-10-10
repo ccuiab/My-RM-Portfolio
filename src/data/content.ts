@@ -23,7 +23,7 @@ import feederSmall from '../assets/img/feeder-small.webp';
 import heroWheel from '../assets/img/hero-wheel.webp';
 import exoPic from '../assets/img/exo-suit.webp';
 
-export type Pic = { src: ImageMetadata; alt: T; /** CAD render on white: show on a light plate */ light?: boolean };
+export type Pic = { src: ImageMetadata; alt: T; /** CAD render on white: show on a light plate */ light?: boolean; model?: string; modelNote?: T };
 export type Spec = { label: T; value: string; unit?: string; note?: T };
 export type Stat = Spec & { rank?: string };
 export type Chapter = {
@@ -75,6 +75,8 @@ export const pageCopy = {
   engineerModelCaption: { zh: '工程整车总装视图；下方继续查看机械臂展开与腕部拆解。', en: 'Engineer assembly view. Continue below for the arm extension and wrist exploded view.' },
   heroCta: { zh: '看工程机器人 2025', en: 'See the 2025 Engineer robot' },
   heroModelAlt: { zh: 'RM2024 英雄机器人整车', en: 'RM2024 Hero robot, full assembly' },
+  heroModelTitle: { zh: '整车与机构，一起看清', en: 'Explore the assembly and its mechanisms' },
+  heroModelIntro: { zh: '先转动整车查看布局，再逐项对照发射、供弹与底盘的照片和模型。', en: 'Turn the full assembly to explore its layout, then compare the photos and models of the launcher, feed and chassis.' },
   heroModelCaption: { zh: '2024-09 版本：底盘、云台、发射与供弹的主要机械系统，来自 SolidWorks 总装模型。', en: 'September 2024 version: the main chassis, gimbal, launcher and feed systems, from the SolidWorks assembly.' },
   bomTitle: { zh: '能力清单', en: 'Bill of skills' },
   bomHead: {
@@ -139,6 +141,13 @@ export const sceneCopy = {
   },
   modelTurntable: {
     hint: { zh: '拖动旋转', en: 'Drag to turn' },
+  },
+  module: {
+    photo: { zh: '照片 / 渲染', en: 'Photo / render' },
+    model: { zh: '3D 模型', en: '3D model' },
+    loading: { zh: '正在加载模型…', en: 'Loading model…' },
+    failed: { zh: '模型暂时无法加载，可切回照片查看。', en: 'The model could not load. You can switch back to the photo.' },
+    hint: { zh: '拖动旋转 · 方向键调整视角', en: 'Drag to rotate · Arrow keys adjust the view' },
   },
 };
 
@@ -314,7 +323,7 @@ export const engineer = {
           en: 'Each swerve module detaches on its own, so between-match fixes are a module swap.',
         },
       ],
-      pics: [{ src: engWheel, light: true, alt: { zh: '工程舵轮模组', en: 'Engineer swerve module' } }],
+      pics: [{ src: engWheel, model: 'engineer-swerve.glb', light: true, alt: { zh: '工程舵轮模组', en: 'Engineer swerve module' } }],
     },
     {
       id: 'pump',
@@ -339,7 +348,7 @@ export const engineer = {
           en: 'At under 300 g it leaves more mass and inertia budget at the end of the arm.',
         },
       ],
-      pics: [{ src: pump, light: true, alt: { zh: '3508 改装真空泵', en: '3508-converted vacuum pump' } }],
+      pics: [{ src: pump, model: 'engineer-pump.glb', light: true, alt: { zh: '3508 改装真空泵', en: '3508-converted vacuum pump' } }],
     },
     {
       id: 'reliability',
@@ -405,7 +414,7 @@ export const hero = {
     zh: '我独立负责整车机械设计，覆盖云台、发射、42 mm 大弹丸侧供弹和自适应悬挂，补上了队里英雄机器人这一块能力。',
     en: 'I was the sole mechanical designer for the whole robot, covering the gimbal, launcher, 42 mm side feed and adaptive suspension, and filled the gap the team had in its Hero lineup.',
   },
-  cover: { src: heroBot, light: true, alt: { zh: 'RM2024 英雄机器人整车', en: 'RM2024 Hero robot' } } as Pic,
+  cover: { src: heroBot, model: 'hero.glb', light: true, alt: { zh: 'RM2024 英雄机器人整车', en: 'RM2024 Hero robot' } } as Pic,
   titleBlock: [
     { label: { zh: '赛季', en: 'Season' }, value: { zh: 'RoboMaster 2024', en: 'RoboMaster 2024' } },
     { label: { zh: '职责', en: 'Role' }, value: { zh: '整车机械设计', en: 'Sole mechanical designer' } },
@@ -437,8 +446,8 @@ export const hero = {
         },
       ],
       pics: [
-        { src: heroLauncher, light: true, alt: { zh: 'RM2024 英雄发射机构', en: 'RM2024 Hero launcher' } },
-        { src: heroBot, light: true, alt: { zh: '英雄机器人整车', en: 'Hero robot, full assembly' } },
+        { src: heroLauncher, model: 'hero-launcher.glb', modelNote: { zh: '模型为 2024-09 总装中的发射模块；配图与模型的局部配置可能不同。', en: 'Launcher from the September 2024 assembly. Local details may differ from the image.' }, light: true, alt: { zh: 'RM2024 英雄发射机构', en: 'RM2024 Hero launcher' } },
+        { src: heroBot, model: 'hero.glb', light: true, alt: { zh: '英雄机器人整车', en: 'Hero robot, full assembly' } },
       ],
     },
     {
@@ -455,7 +464,7 @@ export const hero = {
           en: 'Anti-jam geometry tuned around projectile size tolerance sustains a steady 2 Hz feed.',
         },
       ],
-      pics: [{ src: feederLarge, light: true, alt: { zh: '大弹丸侧供弹', en: '42 mm side feed' } }],
+      pics: [{ src: feederLarge, model: 'hero-feed.glb', modelNote: { zh: '2024-09 版本，包含侧供弹与鹅颈弹链。', en: 'September 2024 version, including the side feed and curved feed tube.' }, light: true, alt: { zh: '大弹丸侧供弹', en: '42 mm side feed' } }],
     },
     {
       id: 'chassis',
@@ -475,7 +484,7 @@ export const hero = {
           en: 'Tested through ramp jumps, 15 cm forward step descents, 8 cm lateral step descents and a 30 cm vertical drop.',
         },
       ],
-      pics: [{ src: heroChassis, light: true, alt: { zh: '自适应悬挂底盘', en: 'Adaptive suspension chassis' } }],
+      pics: [{ src: heroChassis, model: 'hero-chassis.glb', modelNote: { zh: '2024-09 总装中的底盘与悬挂。', en: 'Chassis and suspension from the September 2024 assembly.' }, light: true, alt: { zh: '自适应悬挂底盘', en: 'Adaptive suspension chassis' } }],
     },
   ] as Chapter[],
 };
@@ -491,24 +500,24 @@ export const research = {
     zh: '比赛之外的模块预研。两条迭代线一路做到能上车，另外两种舵轮按不同兵种的需求分头验证。',
     en: 'Module research outside the match calendar. Two lines iterated until they were ready for a robot, and two swerve designs were tested separately against the needs of different robot classes.',
   },
-  cover: { src: launcher6, light: true, alt: { zh: '双级六摩擦轮发射机构', en: 'Dual-stage six-wheel launcher' } } as Pic,
+  cover: { src: launcher6, model: 'research-launcher6.glb', modelNote: { zh: '六摩擦轮试验版 CAD；板件与图示版本不同。', en: 'Six-wheel test assembly; plate details differ from the image.' }, light: true, alt: { zh: '双级六摩擦轮发射机构', en: 'Dual-stage six-wheel launcher' } } as Pic,
   launcher: {
     title: { zh: '发射机构：从单级到双级六摩擦轮', en: 'Launcher: from single-stage to dual-stage six-wheel' },
     stages: [
       {
         title: { zh: 'RM2024 英雄单级发射', en: 'RM2024 Hero, single stage' },
         body: { zh: '对轴摩擦轮加预加速小轮，是后面所有多级方案的起点。', en: 'Double-supported friction wheels with a pre-acceleration pair: the starting point for every multi-stage design that followed.' },
-        pic: { src: heroLauncher, light: true, alt: { zh: 'RM2024 英雄发射机构', en: 'RM2024 Hero launcher' } },
+        pic: { src: heroLauncher, model: 'hero-launcher.glb', modelNote: { zh: '模型为 2024-09 总装中的发射模块；配图与模型的局部配置可能不同。', en: 'Launcher from the September 2024 assembly. Local details may differ from the image.' }, light: true, alt: { zh: 'RM2024 英雄发射机构', en: 'RM2024 Hero launcher' } },
       },
       {
         title: { zh: '双级四摩擦轮样机', en: 'Dual-stage, four wheels' },
         body: { zh: '样机暴露左右散布较大的问题。中间试过三摩擦轮，初射角稳定了，弹速一致性不够。', en: 'The prototype showed wide left-right dispersion. A three-wheel detour stabilised launch angle but could not hold muzzle velocity consistent.' },
-        pic: { src: launcher4, light: true, alt: { zh: '双级四摩擦轮样机', en: 'Dual-stage four-wheel prototype' } },
+        pic: { src: launcher4, model: 'research-launcher4.glb', modelNote: { zh: '四摩擦轮试验版 CAD；板件与图示版本不同。', en: 'Four-wheel test assembly; plate details differ from the image.' }, light: true, alt: { zh: '双级四摩擦轮样机', en: 'Dual-stage four-wheel prototype' } },
       },
       {
         title: { zh: '双级六摩擦轮', en: 'Dual-stage, six wheels' },
         body: { zh: '列为主要研发方向，同时兼顾弹速一致性和散布控制。', en: 'Designated the main development direction, aiming to hold both velocity consistency and dispersion.' },
-        pic: { src: launcher6, light: true, alt: { zh: '双级六摩擦轮方案', en: 'Dual-stage six-wheel design' } },
+        pic: { src: launcher6, model: 'research-launcher6.glb', modelNote: { zh: '六摩擦轮试验版 CAD；板件与图示版本不同。', en: 'Six-wheel test assembly; plate details differ from the image.' }, light: true, alt: { zh: '双级六摩擦轮方案', en: 'Dual-stage six-wheel design' } },
       },
     ] as Stage[],
   },
@@ -518,7 +527,7 @@ export const research = {
       {
         title: { zh: '初版预研', en: 'First pass' },
         body: { zh: '多层预制、整流罩、防剪切优先的设计思路。', en: 'Multi-layer staging, a fairing, and shear protection as the leading priority.' },
-        pic: { src: feederSmall, light: true, alt: { zh: '小弹丸中心供弹', en: '17 mm centre feed' } },
+        pic: { src: feederSmall, model: 'research-feeder.glb', modelNote: { zh: '模型为 20240816 目录中的 MKV 供弹版本，与图示初版不同。', en: 'MKV feed assembly from the 20240816 source folder, a different revision from the pictured first design.' }, light: true, alt: { zh: '小弹丸中心供弹', en: '17 mm centre feed' } },
       },
       {
         title: { zh: '迭代上车', en: 'On the robots' },
@@ -540,12 +549,12 @@ export const research = {
       {
         title: { zh: '高负载：工程机器人', en: 'High load: Engineer' },
         body: { zh: '宽橡胶胎提供抓地力和一定减震，四个 MGN7 滑块加气弹簧组成舵下悬挂，扛得住高载荷，底盘姿态稳。', en: 'Wide rubber tyres for grip and some damping; four MGN7 carriages and gas springs form an under-module suspension that carries high load and keeps the chassis level.' },
-        pic: { src: engWheel, light: true, alt: { zh: '高负载工程舵轮', en: 'High-load Engineer swerve module' } },
+        pic: { src: engWheel, model: 'engineer-swerve.glb', light: true, alt: { zh: '高负载工程舵轮', en: 'High-load Engineer swerve module' } },
       },
       {
         title: { zh: '轻量化：2025 英雄预研', en: 'Lightweight: 2025 Hero study' },
         body: { zh: '舵上直接用 3508 电机本体，齿轮传动配合光电门做位置校准，聚氨酯轮加舵上悬挂，结构高度尽量压缩。', en: 'The 3508 motor body sits on the steering axis, a gear drive with a photoelectric gate handles homing, and polyurethane wheels with over-module suspension keep the height down.' },
-        pic: { src: heroWheel, light: true, alt: { zh: '轻量化英雄舵轮', en: 'Lightweight Hero swerve module' } },
+        pic: { src: heroWheel, model: 'research-hero-wheel.glb', modelNote: { zh: '模型为 V0.2 源 CAD，局部配置与配图不同。', en: 'V0.2 source CAD; local details differ from the image.' }, light: true, alt: { zh: '轻量化英雄舵轮', en: 'Lightweight Hero swerve module' } },
       },
     ] as Stage[],
   },

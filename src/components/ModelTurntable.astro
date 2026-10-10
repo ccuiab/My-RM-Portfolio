@@ -19,6 +19,7 @@ const hasModel = existsSync(join(process.cwd(), 'public', 'models', file));
     <canvas class="three" tabindex="-1" role="img" aria-label={t(sceneCopy.interaction.hint, lang)}></canvas>
     <span class="hint">{t(sceneCopy.modelTurntable.hint, lang)}</span>
   </div>
+  {hasModel && <button type="button" class="load-model" data-load-model data-loading={t(sceneCopy.module.loading, lang)} data-failed={t(sceneCopy.module.failed, lang)}>{t(sceneCopy.module.model, lang)}</button>}
   <SceneControls lang={lang} />
   <figcaption>{t(caption, lang)}</figcaption>
 </figure>
@@ -27,13 +28,19 @@ const hasModel = existsSync(join(process.cwd(), 'public', 'models', file));
   import { ScrollTrigger, reducedMotion } from '../scripts/smooth';
 
   document.querySelectorAll<HTMLElement>('[data-tt]').forEach((root) => {
-      if (reducedMotion || !window.matchMedia('(min-width: 900px)').matches) return;
     const file = root.dataset.file;
     if (!file) return;
     const canvas = root.querySelector<HTMLCanvasElement>('canvas')!;
+    const loadButton = root.querySelector<HTMLButtonElement>('[data-load-model]')!;
+    let started = false;
 
-    const start = () => Promise.all([import('../scripts/scan-scene'), import('three')]).then(async ([{ loadScanStage }, THREE]) => {
-      const stage = await loadScanStage(canvas, import.meta.env.BASE_URL, file, { axis: new THREE.Vector3(0, 0, 1), range: [0.7, -0.7] });
+    const start = () => {
+      if (started) return;
+      started = true;
+      loadButton.disabled = true;
+      loadButton.textContent = loadButton.dataset.loading!;
+      return Promise.all([import('../scripts/scan-scene'), import('three')]).then(async ([{ loadScanStage }, THREE]) => {
+      const stage = await loadScanStage(canvas, import.meta.env.BASE_URL, file, { axis: new THREE.Vector3(0, 0, 1), range: [0.7, -0.7], solidOnly: root.dataset.scan === '0' });
       const box = new THREE.Box3().setFromObject(stage.model);
       const sphere = box.getBoundingSphere(new THREE.Sphere());
       stage.model.position.sub(sphere.center);
@@ -49,6 +56,7 @@ const hasModel = existsSync(join(process.cwd(), 'public', 'models', file));
       };
       stage.onResize(draw);
       root.classList.add('has-3d');
+      loadButton.hidden = true;
       draw();
 
       stage.enableInteraction(draw);
@@ -64,7 +72,15 @@ const hasModel = existsSync(join(process.cwd(), 'public', 'models', file));
           onUpdate: (st) => { if (!interacting) { scan = st.progress; yaw = -30 + st.progress * 40; draw(); } },
         });
       }
-    }).catch((err) => console.warn('model unavailable, keeping the still', err));
+    }).catch((err) => {
+      started = false;
+      loadButton.disabled = false;
+      loadButton.textContent = loadButton.dataset.failed!;
+      console.warn('model unavailable, keeping the still', err);
+    });
+    };
+    loadButton.addEventListener('click', start);
+    if (reducedMotion || !window.matchMedia('(min-width: 900px)').matches) return;
 
     const io = new IntersectionObserver(([en]) => {
       if (en.isIntersecting) { io.disconnect(); start(); }
@@ -75,6 +91,8 @@ const hasModel = existsSync(join(process.cwd(), 'public', 'models', file));
 
 <style>
   .tt { margin: 0; display: grid; gap: 0.6rem; }
+  .load-model { justify-self: start; padding: .6rem 1rem; border: 1px solid var(--amber); color: var(--amber); background: var(--panel); font: inherit; cursor: pointer; }
+  .load-model[hidden] { display: none; }
   .view {
     position: relative;
     height: min(62vh, 56vw);
