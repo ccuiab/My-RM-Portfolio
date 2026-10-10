@@ -20,7 +20,7 @@
   --ink-2: #9fb0c6;
   --ink-3: #7b8ea8;
   /* CAD renders keep their white-ground renders; they sit on a cool grey plate */
-  --plate: #b7c3d1;
+  --plate: #c9d1d9;
   --plate-line: rgba(7, 13, 23, 0.07);
   --amber: #f2b53a;
   --amber-dim: rgba(242, 181, 58, 0.16);
@@ -63,11 +63,7 @@ body {
   font-family: var(--f-body);
   font-size: var(--t-md);
   line-height: 1.7;
-  background:
-    linear-gradient(var(--rule-soft) 1px, transparent 1px) 0 0 / 100% 64px,
-    linear-gradient(90deg, var(--rule-soft) 1px, transparent 1px) 0 0 / 64px 100%,
-    var(--ground);
-  background-attachment: fixed;
+  background: var(--ground);
   overflow-x: hidden;
 }
 

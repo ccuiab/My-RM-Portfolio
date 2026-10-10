@@ -1,0 +1,53 @@
+---
+import { Image } from 'astro:assets';
+import { existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { sceneCopy, type Pic } from '../data/content';
+import { t, ui, type Lang } from '../data/i18n';
+interface Props { pic: Pic; lang: Lang }
+const { pic, lang } = Astro.props;
+const L = sceneCopy.module;
+if (!pic.model || !existsSync(join(process.cwd(), 'public/models', pic.model))) throw new Error(`Missing module model: ${pic.model}`);
+---
+<figure class="module-media" data-module-media data-model={pic.model} data-failed={t(L.failed, lang)} data-loading={t(L.loading, lang)}>
+  <div class="media-switch" role="group" aria-label={t(pic.alt, lang)}>
+    <button type="button" data-show-photo aria-pressed="true">{t(L.photo, lang)}</button>
+    <button type="button" data-show-model aria-pressed="false">{t(L.model, lang)}</button>
+  </div>
+  <div class="media-view">
+    <button class:list={['photo', { light: pic.light }]} type="button" data-module-photo data-zoom={pic.src.src} data-alt={t(pic.alt, lang)} aria-label={`${t(ui.enlarge, lang)}: ${t(pic.alt, lang)}`}>
+      <Image src={pic.src} alt={t(pic.alt, lang)} widths={[480, 900, 1400]} sizes="(max-width: 900px) 100vw, 65vw" />
+    </button>
+    <div class="model" data-module-view hidden></div>
+    <p class="status" data-module-status role="status" hidden></p>
+  </div>
+  <div class="controls" data-module-controls hidden>
+    <span>{t(L.hint, lang)}</span>
+    <button type="button" data-module-reset>{t(sceneCopy.interaction.reset, lang)}</button>
+  </div>
+  <figcaption>{t(pic.alt, lang)}{pic.modelNote && <small>{t(pic.modelNote, lang)}</small>}</figcaption>
+</figure>
+<script>
+  import '../scripts/module-media';
+</script>
+<style>
+  .module-media { margin: 0; background: var(--panel); min-width: 0; }
+  .media-switch { display: flex; border-bottom: 1px solid var(--rule); }
+  .media-switch button { flex: 1; padding: .7rem .5rem; border: 0; border-bottom: 2px solid transparent; }
+  button { color: var(--ink-2); background: transparent; font: inherit; font-size: var(--t-xs); cursor: pointer; }
+  .media-switch button[aria-pressed="true"] { border-bottom-color: var(--amber); color: var(--amber); background: var(--ground); }
+  button:focus-visible { outline: 2px solid var(--amber); outline-offset: -3px; }
+  .media-view { position: relative; aspect-ratio: 4 / 3; background: radial-gradient(ellipse at 50% 45%, #182438, var(--ground) 78%); }
+  .photo { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; border: 0; cursor: zoom-in; }
+  .photo.light { background: var(--plate); }
+  .photo :global(img) { width: 100%; height: 100%; object-fit: cover; }
+  .photo.light :global(img) { object-fit: contain; padding: 5%; mix-blend-mode: multiply; }
+  .model { position: absolute; inset: 0; }
+  .model :global(canvas) { width: 100%; height: 100%; touch-action: none; }
+  .status { position: absolute; inset: 0; margin: 0; padding: 2rem; display: grid; place-content: center; text-align: center; color: var(--ink-2); font-size: var(--t-sm); pointer-events: none; }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem; padding: .6rem .8rem; border-top: 1px solid var(--rule); color: var(--ink-3); font-size: var(--t-xs); }
+  .controls button { border: 1px solid var(--rule); padding: .4rem .6rem; }
+  figcaption { padding: .6rem .8rem; font-size: var(--t-xs); color: var(--ink-2); border-top: 1px solid var(--rule); }
+  small { display: block; margin-top: .4rem; color: var(--ink-3); font-size: inherit; }
+  [hidden] { display: none !important; }
+</style>
