@@ -6,8 +6,7 @@ import ModelTurntable from './ModelTurntable.astro';
 import Lightbox from './Lightbox.astro';
 import NextSheet from './NextSheet.astro';
 import { hero, research, pageCopy } from '../data/content';
-import heroChassis from '../assets/img/hero-chassis-adaptive.webp';
-import type { Lang } from '../data/i18n';
+import { t, type Lang } from '../data/i18n';
 import lines from '../assets/gen/hero-bot-lines.webp';
 
 interface Props { lang: Lang }
@@ -26,20 +25,21 @@ const p = hero;
     titleBlock={p.titleBlock}
     stats={p.stats}
   />
-  {p.chapters.map((c) => (
-    <Chapter lang={lang} chapter={c}>
-      {c.id === 'chassis' && (
-        <ModelTurntable
-          lang={lang}
-          slot="wide"
-          file="hero.glb"
-          still={heroChassis}
-          alt={pageCopy.heroModelAlt}
-          caption={pageCopy.heroModelCaption}
-        />
-      )}
-    </Chapter>
-  ))}
+  <section class="wrap assembly" aria-labelledby="assembly-title">
+    <div class="assembly-heading">
+      <h2 id="assembly-title" class="display">{t(pageCopy.heroModelTitle, lang)}</h2>
+      <p>{t(pageCopy.heroModelIntro, lang)}</p>
+    </div>
+    <ModelTurntable lang={lang} file="hero.glb" still={p.cover.src} alt={pageCopy.heroModelAlt} caption={pageCopy.heroModelCaption} scan={false} />
+  </section>
+  {p.chapters.map((c) => <Chapter lang={lang} chapter={c} />)}
   <NextSheet lang={lang} slug={research.slug} drawing={research.drawing} title={research.title} />
   <Lightbox lang={lang} />
 </Base>
+<style>
+  .assembly { padding-top: 5rem; }
+  .assembly-heading { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: end; margin-bottom: 2rem; }
+  .assembly-heading h2 { font-size: var(--t-3xl); line-height: 1.15; }
+  .assembly-heading p { color: var(--ink-2); max-width: 52ch; }
+  @media (max-width: 760px) { .assembly-heading { grid-template-columns: 1fr; gap: 1rem; } }
+</style>
