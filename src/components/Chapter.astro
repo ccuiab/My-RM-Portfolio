@@ -45,12 +45,12 @@ const pics = c.pics ?? [];
 
   {pics.length > 0 && (
     <div class="wrap">
-      <ul class:list={['pics', `n${Math.min(pics.length, 4)}`, { 'has-model': pics.some(p => p.model) }]}>
+      <ul class:list={['pics', `n${Math.min(pics.length, 4)}`, { 'has-model': pics.some(p => p.model), 'leading-figure': pics.length > 1 && pics.length % 2 === 1 }]}>
         {pics.map((p, i) => (
           <li>
             {p.model ? <ModuleMedia pic={p} lang={lang} /> : (
             <button class:list={['pic', { light: p.light }]} type="button" data-zoom={p.src.src} data-alt={t(p.alt, lang)} aria-label={`${t(ui.enlarge, lang)}: ${t(p.alt, lang)}`}>
-              <Image src={p.src} alt={t(p.alt, lang)} widths={[480, 900, 1400]} sizes={pics.length === 1 ? '100vw' : '(max-width: 560px) 100vw, 50vw'} />
+              <Image src={p.src} alt={t(p.alt, lang)} widths={[480, 900, 1400, 2400]} sizes={pics.length === 1 || (i === 0 && pics.length % 2 === 1) ? '100vw' : '(max-width: 560px) 100vw, 50vw'} />
               <span class="cap"><span class="num">{c.mark}{i + 1}</span> {t(p.alt, lang)}</span>
             </button>
             )}
@@ -59,6 +59,7 @@ const pics = c.pics ?? [];
       </ul>
     </div>
   )}
+  {Astro.slots.has('after-media') && <div class="wrap wide"><slot name="after-media" /></div>}
 </section>
 
 <style>
@@ -139,13 +140,13 @@ const pics = c.pics ?? [];
   .pics.n1 { --cols: 1; }
   .pics.n2 { --cols: 2; }
   .pics.n3, .pics.n4 { --cols: 2; }
-  .pics.n3 > li:first-child { grid-column: 1 / -1; }
+  .pics.leading-figure > li:first-child { grid-column: 1 / -1; }
   .pics li { min-width: 0; }
   .pics :global(.module-media) { border: 0; background: transparent; }
   .pics :global(.media-switch) { justify-content: flex-start; gap: 1.5rem; border: 0; margin-bottom: .8rem; }
   .pics :global(.media-switch button) { flex: none; padding: .55rem 0; background: transparent; font-size: var(--t-sm); }
   .pics :global(.media-view) { background: var(--panel); }
-  .pics.n1 :global(.media-view), .pics.n3 > li:first-child :global(.media-view) { aspect-ratio: 16 / 9; }
+  .pics.n1 :global(.media-view), .pics.leading-figure > li:first-child :global(.media-view) { aspect-ratio: 16 / 9; }
   .pics :global(.controls), .pics :global(figcaption) { border: 0; padding: .7rem 0; }
   .pics :global(figcaption) { color: var(--ink-2); }
   .pic {
@@ -162,13 +163,13 @@ const pics = c.pics ?? [];
   .pic.light {
     background: var(--plate);
   }
-  .pics.n1 .pic :global(img), .pics.n3 > li:first-child .pic :global(img) { aspect-ratio: 16 / 9; }
+  .pics.n1 .pic :global(img), .pics.leading-figure > li:first-child .pic :global(img) { aspect-ratio: 16 / 9; }
   .pic :global(img) {
     width: 100%;
     aspect-ratio: 4 / 3;
-    object-fit: cover;
+    object-fit: contain;
   }
-  .pic.light :global(img) { object-fit: contain; padding: 6%; mix-blend-mode: multiply; }
+  .pic.light :global(img) { padding: 2%; mix-blend-mode: multiply; }
   .cap {
     padding: .8rem 0;
     font-size: var(--t-xs);
@@ -187,8 +188,8 @@ const pics = c.pics ?? [];
   }
   @media (max-width: 560px) {
     .pics { --cols: 1 !important; }
-    .pics.n1 :global(.media-view), .pics.n3 > li:first-child :global(.media-view) { aspect-ratio: 4 / 3; }
-    .pics.n1 .pic :global(img), .pics.n3 > li:first-child .pic :global(img) { aspect-ratio: 4 / 3; }
+    .pics.n1 :global(.media-view), .pics.leading-figure > li:first-child :global(.media-view) { aspect-ratio: 4 / 3; }
+    .pics.n1 .pic :global(img), .pics.leading-figure > li:first-child .pic :global(img) { aspect-ratio: 4 / 3; }
     .ch-head { gap: 1rem; }
   }
 </style>
