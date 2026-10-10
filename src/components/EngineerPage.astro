@@ -36,14 +36,14 @@ const p = engineer;
       <h2 id="assembly-title" class="display">{t(pageCopy.engineerModelTitle, lang)}</h2>
       <p>{t(pageCopy.engineerModelIntro, lang)}</p>
     </div>
-    <ModelTurntable lang={lang} file="engineer.glb" still={p.cover.src} alt={pageCopy.engineerModelAlt} caption={pageCopy.engineerModelCaption} scan={false} />
+    <ModelTurntable lang={lang} file="engineer.glb" still={p.assembly.src} alt={pageCopy.engineerModelAlt} caption={pageCopy.engineerModelCaption} scan={false} />
   </section>
   <Record lang={lang} compact />
 
   {p.chapters.map((c) => (
     <Chapter lang={lang} chapter={c}>
       {c.scene === 'arm-unfold' && <ArmUnfold lang={lang} slot="wide" />}
-    {c.id === 'arm' && <WristExplode lang={lang} slot="wide" />}
+    {c.id === 'arm' && <WristExplode lang={lang} slot="after-media" />}
     {c.id === 'arm' && (
       <Loop
         lang={lang}

@@ -11,7 +11,7 @@ const AMBER = { r: 242, g: 181, b: 58 };
 // blur suppresses texture noise; gain/cut set how many edges survive (tuned by eye)
 const jobs = [
   { src: 'eng-reach.webp', width: 1920, blur: 0.9, gain: 7, cut: 9 },
-  { src: 'hero-bot.webp', width: 982, blur: 0.6, gain: 6, cut: 10 },
+  { src: 'hero-bot.webp', width: 1920, blur: 0.6, gain: 6, cut: 10 },
   { src: 'launcher-dual-6.png', width: 1200, blur: 0.6, gain: 6, cut: 10 },
 ];
 
@@ -21,7 +21,7 @@ for (const job of jobs) {
   const input = join(root, 'src', 'assets', 'img', job.src);
   const { data, info } = await sharp(input)
     .flatten({ background: '#ffffff' })
-    .resize({ width: job.width })
+    .resize({ width: job.width, withoutEnlargement: true })
     .greyscale()
     .blur(job.blur)
     // Laplacian edge magnitude

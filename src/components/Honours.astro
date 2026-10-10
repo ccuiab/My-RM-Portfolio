@@ -1,7 +1,7 @@
 ---
 import { Image } from 'astro:assets';
 import { honours, exo, person, record, pageCopy } from '../data/content';
-import { t, type Lang } from '../data/i18n';
+import { t, ui, type Lang } from '../data/i18n';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -15,7 +15,9 @@ const { lang } = Astro.props;
       ))}
     </ul>
     <figure class="poster">
-      <Image src={record.allstar.src} alt={t(record.allstar.alt, lang)} widths={[400, 649]} sizes="(max-width: 900px) 60vw, 260px" />
+      <button type="button" data-zoom={record.allstar.src.src} data-alt={t(record.allstar.alt, lang)} aria-label={`${t(ui.enlarge, lang)}: ${t(record.allstar.alt, lang)}`}>
+      <Image src={record.allstar.src} alt={t(record.allstar.alt, lang)} widths={[400, 649, 900]} sizes="(max-width: 900px) 80vw, 400px" />
+      </button>
     </figure>
   </div>
 
@@ -64,7 +66,8 @@ const { lang } = Astro.props;
     border-bottom: 1px solid var(--rule);
   }
   .year { color: var(--amber); font-size: var(--t-sm); padding-top: 0.15rem; }
-  .poster { margin: 1.8rem 0 0; width: 220px; }
+  .poster { margin: 1.8rem 0 0; width: min(100%, 400px); }
+  .poster button { display: block; padding: 0; border: 0; width: 100%; background: transparent; cursor: zoom-in; }
   .poster :global(img) { width: 100%; height: auto; border: 1px solid var(--rule); }
 
   .exo { display: grid; }

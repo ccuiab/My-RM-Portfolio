@@ -5,6 +5,7 @@ import Record from './Record.astro';
 import ProjectIndex from './ProjectIndex.astro';
 import Bom from './Bom.astro';
 import Honours from './Honours.astro';
+import Lightbox from './Lightbox.astro';
 import { sceneCopy } from '../data/content';
 import type { Lang } from '../data/i18n';
 
@@ -13,8 +14,9 @@ const { lang } = Astro.props;
 ---
 <Base lang={lang} description={sceneCopy.homeDescription}>
   <Hero lang={lang} />
-  <ProjectIndex lang={lang} />
   <Record lang={lang} />
+  <ProjectIndex lang={lang} />
   <Bom lang={lang} />
   <Honours lang={lang} />
+  <Lightbox lang={lang} />
 </Base>

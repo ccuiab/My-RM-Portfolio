@@ -1,6 +1,6 @@
-// Wrist exploded view on top of the shared scan stage.
-// public/models/wrist.glb: groups `ex_<key>`, origin at the J5/J6 axis intersection.
-// public/models/wrist.json: per-group explode_dir / explode_dist_m / order / callout_anchor.
+// Complete L4 and distal wrist exploded view on the shared stage.
+// public/models/l4.glb: groups `ex_<key>`, origin at the J5/J6 axis intersection.
+// public/models/l4.json: per-group explode_dir / explode_dist_m / order / callout_anchor.
 import * as THREE from 'three';
 import { loadScanStage } from './scan-scene';
 
@@ -32,15 +32,15 @@ export type WristScene = {
 };
 
 export async function loadWristScene(canvas: HTMLCanvasElement, base: string): Promise<WristScene> {
-  const meta: WristMeta = await fetch(`${base}models/wrist.json`).then((r) => r.json());
+  const meta: WristMeta = await fetch(`${base}models/l4.json`).then((r) => { if (!r.ok) throw new Error('L4 metadata unavailable'); return r.json(); });
   // no scan for this one: keep everything solid (range puts the plane far behind)
-  const stage = await loadScanStage(canvas, base, 'wrist.glb', { axis: new THREE.Vector3(0, 0, 1), range: [-5, -5] });
+  const stage = await loadScanStage(canvas, base, 'l4.glb', { axis: new THREE.Vector3(0, 0, 1), range: [-5, -5], solidOnly: true });
   stage.setScan(1);
   const { model, turntable, camera } = stage;
 
   const nodes = meta.groups.map((g) => {
     const node = model.getObjectByName(`ex_${g.key}`);
-    if (!node) throw new Error(`wrist.glb is missing ex_${g.key}`);
+    if (!node) throw new Error(`l4.glb is missing ex_${g.key}`);
     return { g, node, rest: node.position.clone(), dir: new THREE.Vector3(...g.explode_dir).normalize(), anchor: new THREE.Vector3(...g.callout_anchor) };
   });
 
