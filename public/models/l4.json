@@ -1,0 +1,386 @@
+{
+  "schema_version": 1,
+  "units": "metres",
+  "up_axis": "+Y",
+  "orientation": "same axes as arm.glb; origin at J5/J6 intersection",
+  "source_origin_in_arm_glb_m": [
+    -0.04073284566402435,
+    0.09235865622758865,
+    0.20766101777553558
+  ],
+  "groups": [
+    {
+      "key": "air_fittings",
+      "label_zh": "腕部旋转气接头",
+      "label_en": "Wrist rotary air fittings",
+      "explode_dir": [
+        -0.9999762177467346,
+        0.006890001706779003,
+        -0.0003840001008938998
+      ],
+      "explode_dist_m": 0.15,
+      "order": 0,
+      "callout_anchor": [
+        -0.08550117909908295,
+        -0.0001706241600913927,
+        -0.0174546018242836
+      ]
+    },
+    {
+      "key": "bevel_carrier",
+      "label_zh": "J6 锥齿轮传动",
+      "label_en": "J6 bevel-gear transmission",
+      "explode_dir": [
+        -0.0001650000485824421,
+        0.0317700058221817,
+        0.999495267868042
+      ],
+      "explode_dist_m": 0.07,
+      "order": 5,
+      "callout_anchor": [
+        -0.02242809534072876,
+        0.0008431393653154373,
+        0.010975038632750511
+      ]
+    },
+    {
+      "key": "cup",
+      "label_zh": "HB80 吸盘与 J8 轴",
+      "label_en": "HB80 bellows cup and J8 shaft",
+      "explode_dir": [
+        -0.0001650000485824421,
+        0.0317700058221817,
+        0.999495267868042
+      ],
+      "explode_dist_m": 0.15,
+      "order": 0,
+      "callout_anchor": [
+        0.01563039794564247,
+        0.01672687567770481,
+        0.031987257301807404
+      ]
+    },
+    {
+      "key": "j4_output",
+      "label_zh": "J4 中空输出轴",
+      "label_en": "J4 hollow output shaft",
+      "explode_dir": [
+        0.0,
+        -0.055686019361019135,
+        -0.998448371887207
+      ],
+      "explode_dist_m": 0.055,
+      "order": 8,
+      "callout_anchor": [
+        0.012666666880249977,
+        0.025786783546209335,
+        -0.20208290219306946
+      ]
+    },
+    {
+      "key": "j5_belt",
+      "label_zh": "J5 等速同步带",
+      "label_en": "J5 1:1 timing-belt drive",
+      "explode_dir": [
+        -0.9999762177467346,
+        0.006890001706779003,
+        -0.0003840001008938998
+      ],
+      "explode_dist_m": 0.07,
+      "order": 3,
+      "callout_anchor": [
+        -0.03307390958070755,
+        -0.042602233588695526,
+        -0.13988426327705383
+      ]
+    },
+    {
+      "key": "l4_base_joint",
+      "label_zh": "L4 基端轴与保护结构",
+      "label_en": "L4 proximal shaft and guards",
+      "explode_dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "explode_dist_m": 0.14,
+      "order": 3,
+      "callout_anchor": [
+        0.041499994695186615,
+        0.08682288974523544,
+        -0.4473881721496582
+      ]
+    },
+    {
+      "key": "l4_base_plates",
+      "label_zh": "L4 基端上下连接板",
+      "label_en": "L4 proximal cross plates",
+      "explode_dir": [
+        0.0,
+        0.9535825848579407,
+        -0.30113136768341064
+      ],
+      "explode_dist_m": 0.18,
+      "order": 2,
+      "callout_anchor": [
+        -0.03998170793056488,
+        -0.021510561928153038,
+        -0.3255453109741211
+      ]
+    },
+    {
+      "key": "l4_distal_plates",
+      "label_zh": "L4 末端上下连接板",
+      "label_en": "L4 distal cross plates",
+      "explode_dir": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "explode_dist_m": 0.18,
+      "order": 2,
+      "callout_anchor": [
+        -0.002738315612077713,
+        -0.05360197275876999,
+        -0.24276761710643768
+      ]
+    },
+    {
+      "key": "l4_drive",
+      "label_zh": "L4 万向轴传动",
+      "label_en": "L4 universal-joint drive",
+      "explode_dir": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "explode_dist_m": 0.12,
+      "order": 3,
+      "callout_anchor": [
+        -0.006676474120467901,
+        0.07092845439910889,
+        -0.3810057044029236
+      ]
+    },
+    {
+      "key": "l4_left_frame",
+      "label_zh": "L4 左侧长主板",
+      "label_en": "L4 left longitudinal plate",
+      "explode_dir": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "explode_dist_m": 0.23,
+      "order": 1,
+      "callout_anchor": [
+        0.03799999877810478,
+        -0.006847394164651632,
+        -0.34285980463027954
+      ]
+    },
+    {
+      "key": "l4_motor_mounts",
+      "label_zh": "L4 电机安装与轴承板",
+      "label_en": "L4 motor and bearing mounts",
+      "explode_dir": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "explode_dist_m": 0.14,
+      "order": 3,
+      "callout_anchor": [
+        0.04025619477033615,
+        0.03265335038304329,
+        -0.3541456162929535
+      ]
+    },
+    {
+      "key": "l4_pipe_clamps",
+      "label_zh": "L4 中心管夹",
+      "label_en": "L4 central tube clamps",
+      "explode_dir": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "explode_dist_m": 0.18,
+      "order": 3,
+      "callout_anchor": [
+        0.037999968975782394,
+        0.08635590970516205,
+        -0.4341081380844116
+      ]
+    },
+    {
+      "key": "l4_right_frame",
+      "label_zh": "L4 右侧长主板",
+      "label_en": "L4 right longitudinal plate",
+      "explode_dir": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "explode_dist_m": 0.23,
+      "order": 1,
+      "callout_anchor": [
+        -0.03799999877810478,
+        -0.006974447518587112,
+        -0.3426538407802582
+      ]
+    },
+    {
+      "key": "l4_video",
+      "label_zh": "L4 图传模块",
+      "label_en": "L4 video transmitter",
+      "explode_dir": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "explode_dist_m": 0.16,
+      "order": 3,
+      "callout_anchor": [
+        -0.005451621022075415,
+        0.1260746866464615,
+        -0.3139309585094452
+      ]
+    },
+    {
+      "key": "l6_frame_left",
+      "label_zh": "L6 左侧板",
+      "label_en": "L6 left frame plate",
+      "explode_dir": [
+        -0.9999762177467346,
+        0.006890001706779003,
+        -0.0003840001008938998
+      ],
+      "explode_dist_m": 0.105,
+      "order": 2,
+      "callout_anchor": [
+        -0.03569269925355911,
+        -0.03329253941774368,
+        -0.09766744822263718
+      ]
+    },
+    {
+      "key": "l6_frame_right",
+      "label_zh": "L6 右侧板与横板",
+      "label_en": "L6 right plate and cross plates",
+      "explode_dir": [
+        0.9999762177467346,
+        -0.006890001706779003,
+        0.0003840001008938998
+      ],
+      "explode_dist_m": 0.1,
+      "order": 2,
+      "callout_anchor": [
+        0.04549778625369072,
+        -0.002062428742647171,
+        -0.028384823352098465
+      ]
+    },
+    {
+      "key": "slip_ring",
+      "label_zh": "导电滑环 ES712",
+      "label_en": "ES712 slip ring",
+      "explode_dir": [
+        0.0,
+        -0.055686019361019135,
+        -0.998448371887207
+      ],
+      "explode_dist_m": 0.1,
+      "order": 0,
+      "callout_anchor": [
+        -0.004135148599743843,
+        -0.023204583674669266,
+        -0.2338707447052002
+      ]
+    },
+    {
+      "key": "wheel_left",
+      "label_zh": "左驱动轮与齿轮组",
+      "label_en": "Left drive wheel and gear train",
+      "explode_dir": [
+        -0.9999762177467346,
+        0.006890001706779003,
+        -0.0003840001008938998
+      ],
+      "explode_dist_m": 0.13,
+      "order": 1,
+      "callout_anchor": [
+        -0.06768175959587097,
+        -0.02616906724870205,
+        -0.0004274544189684093
+      ]
+    },
+    {
+      "key": "wheel_right",
+      "label_zh": "右驱动轮与齿轮组",
+      "label_en": "Right drive wheel and gear train",
+      "explode_dir": [
+        0.9999762177467346,
+        -0.006890001706779003,
+        0.0003840001008938998
+      ],
+      "explode_dist_m": 0.15,
+      "order": 1,
+      "callout_anchor": [
+        0.05549303814768791,
+        0.00030223591602407396,
+        0.02697884291410446
+      ]
+    },
+    {
+      "key": "wrist_motors",
+      "label_zh": "后置电机与传动轴",
+      "label_en": "Rear motors and drive shaft",
+      "explode_dir": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "explode_dist_m": 0.09,
+      "order": 8,
+      "callout_anchor": [
+        0.014504986815154552,
+        -0.006847832351922989,
+        -0.1348550021648407
+      ]
+    }
+  ],
+  "animation": {
+    "stagger_fraction": 0.065,
+    "max_order": 8,
+    "t_range": [
+      0,
+      1
+    ]
+  },
+  "rest_bbox_m": {
+    "min": [
+      -0.08963970094919205,
+      -0.0549595020711422,
+      -0.5495824813842773
+    ],
+    "max": [
+      0.0676722526550293,
+      0.17362692952156067,
+      0.071770578622818
+    ]
+  },
+  "exploded_bbox_m": {
+    "min": [
+      -0.2396361529827118,
+      -0.23495951294898987,
+      -0.6040508151054382
+    ],
+    "max": [
+      0.21766869723796844,
+      0.32012778520584106,
+      0.22169487178325653
+    ]
+  },
+  "source_scope": "Complete L4.2025.10.1 structural assembly plus L6_v2 distal wrist assembly; source CAD ancestry, not kinematic link labels."
+}

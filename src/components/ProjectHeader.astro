@@ -29,7 +29,7 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
     </div>
 
     <figure class:list={['ph-pic', { light: cover.light }]}>
-      <Image class="ph-photo" src={cover.src} alt={t(cover.alt, lang)} widths={[720, 1200, 1620]} sizes="(max-width: 900px) 100vw, 58vw" loading="eager" />
+      <Image class="ph-photo" src={cover.src} alt={t(cover.alt, lang)} widths={[720, 1200, 1620, 2400]} sizes="(max-width: 900px) 100vw, 58vw" loading="eager" />
       {lines && <Image class="ph-lines" src={lines} alt="" aria-hidden="true" widths={[720, 1200]} sizes="(max-width: 900px) 100vw, 58vw" loading="eager" />}
       {robotNo && (
         <div class="plate" aria-hidden="true">
@@ -103,7 +103,7 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
   .ph-pic.light {
     background: var(--plate);
   }
-  .ph-pic :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .ph-pic :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
   .ph-pic.light :global(img) { object-fit: contain; padding: 3%; }
   .ph-pic.light :global(.ph-photo) { mix-blend-mode: multiply; }
   .ph-pic :global(.ph-photo) { clip-path: inset(0 calc(100% - var(--reveal)) 0 0); }

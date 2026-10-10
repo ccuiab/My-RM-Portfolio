@@ -15,12 +15,12 @@ const hasModel = existsSync(join(process.cwd(), 'public', 'models', file));
 ---
 <figure class="tt" data-tt data-file={hasModel ? file : ''} data-scan={scan ? '1' : '0'}>
   <div class="view panel">
-    <div class="still"><Image src={still} alt={t(alt, lang)} widths={[720, 1100]} sizes="(max-width: 900px) 100vw, 70vw" /></div>
+    <div class="still"><Image src={still} alt={t(alt, lang)} widths={[720, 1400, 2400]} sizes="(max-width: 900px) 100vw, 70vw" /></div>
     <canvas class="three" tabindex="-1" role="img" aria-label={t(sceneCopy.interaction.hint, lang)}></canvas>
     <span class="hint">{t(sceneCopy.modelTurntable.hint, lang)}</span>
   </div>
   {hasModel && <button type="button" class="load-model" data-load-model data-loading={t(sceneCopy.module.loading, lang)} data-failed={t(sceneCopy.module.failed, lang)}>{t(sceneCopy.module.model, lang)}</button>}
-  <SceneControls lang={lang} />
+  <SceneControls lang={lang} followScroll={scan} />
   <figcaption>{t(caption, lang)}</figcaption>
 </figure>
 
@@ -107,7 +107,7 @@ const hasModel = existsSync(join(process.cwd(), 'public', 'models', file));
     background: var(--plate);
     transition: opacity 0.5s;
   }
-  .still :global(img) { max-height: 92%; width: auto; mix-blend-mode: multiply; }
+  .still :global(img) { width: 100%; height: 100%; min-height: 0; object-fit: contain; padding: 2%; mix-blend-mode: multiply; }
   .three { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 0.6s; cursor: grab; touch-action: none; pointer-events: none; }
   .has-3d .three { pointer-events: auto; }
   .three:active { cursor: grabbing; }
