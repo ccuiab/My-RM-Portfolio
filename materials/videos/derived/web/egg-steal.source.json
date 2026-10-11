@@ -1,0 +1,73 @@
+{
+  "name": "egg-steal",
+  "match": "RMUC 2025 复活赛第26场，香港科技大学 vs 华东理工大学，第二局",
+  "verifiedAt": "2026-10-12",
+  "catalog": "materials/documents/derived/bilibili-video-catalog.json",
+  "evidence": "按源文件时间逐帧/1 fps 抽帧目视核实，关键帧与比赛倒计时见各 segment.evidence。精确定位以单帧 seek 结果为准。",
+  "segments": [
+    {
+      "source": "https://www.bilibili.com/video/BV1YN83zCEUy/?p=8",
+      "bvid": "BV1YN83zCEUy",
+      "page": 8,
+      "title": "[RM复活赛]第二十六场香港科技大学VS华东理工大学全兵种视角回放 - R2SuqqreProject_0",
+      "uploader": "翔林魔主",
+      "uploaderId": 1568334988,
+      "sourceFile": "materials/videos/source/bilibili/engineer-pov/BV1YN83zCEUy-P08 - [RM复活赛]第二十六场香港科技大学VS华东理工大学全兵种视角回放 - R2SuqqreProject_0.mp4",
+      "sourceSha256FromCatalog": "41b9ef32a1b79e9ef8f7557002862102a289c2a2bd921a5092b74254101ffff3",
+      "startSeconds": 1311.8,
+      "durationSeconds": 9.2,
+      "endSeconds": 1321.0,
+      "startTimecode": "00:21:51.80",
+      "endTimecode": "00:22:01.00",
+      "role": "港科大工程第一视角：从蓝方银矿石资源岛取矿",
+      "inputFile": "materials/videos/derived/inputs/egg-steal-pov.mp4",
+      "evidence": "21:52–21:57 末端向蓝色边界资源岛的白色矿石下降并吸取；21:59–22:01 白色矿石随末端抬起并转离。精确抽帧 21:57.00 的第二局比赛倒计时为 5:01。",
+      "copyrightOwner": "RoboMaster赛事画面制作方；投稿与视角编排署名见 uploader"
+    },
+    {
+      "source": "https://www.bilibili.com/video/BV13T8ezrEwC/?p=1",
+      "bvid": "BV13T8ezrEwC",
+      "page": 1,
+      "title": "复活赛 第26场 香港科技大学 ENTERPRIZE战队 VS 华东理工大学 起源战队 RMUC 2025",
+      "uploader": "RoboMaster机甲大师",
+      "uploaderId": null,
+      "sourceFile": "materials/videos/source/bilibili/official-matches/BV13T8ezrEwC-P01 - 复活赛 第26场 香港科技大学 ENTERPRIZE战队 VS 华东理工大学 起源战队 RMUC 2025.mp4",
+      "sourceSha256FromCatalog": "41e26a89cf90940df4cba96cf3d9bb4418a85ad3cff6b7ff90f1a34a588fe626",
+      "startSeconds": 1019.6,
+      "durationSeconds": 4.8,
+      "endSeconds": 1024.4,
+      "startTimecode": "00:16:59.60",
+      "endTimecode": "00:17:04.40",
+      "role": "官方全场：取矿后的离岛动作，接续第一视角",
+      "inputFile": "materials/videos/derived/inputs/egg-steal-official.mp4",
+      "evidence": "官方 16:56.00 的第二局倒计时同为 5:01，红方 2 号工程位于蓝方银矿石资源岛，与 POV 21:57.00 相差 301 秒。选段 16:59.60–17:04.40 中可见红方 2 号离岛；官方为全景，没有近距离吸盘特写。",
+      "copyrightOwner": "RoboMaster赛事画面制作方；投稿与视角编排署名见 uploader"
+    }
+  ],
+  "transitionSeconds": 0.24,
+  "loop": {
+    "seamSeconds": 0.24,
+    "method": "片尾与片头交叉淡化 6 帧；输出从原片头后 0.24 秒开始，片头六帧用在末尾接缝",
+    "expectedDurationSeconds": 13.52
+  },
+  "playbackRate": 1,
+  "output": {
+    "video": "materials/videos/derived/web/egg-steal.mp4",
+    "poster": "materials/images/derived/video-posters/egg-steal.jpg",
+    "width": 1280,
+    "height": 720,
+    "fps": 25,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "crf": 24,
+    "audio": false,
+    "faststart": true,
+    "maxBytes": 6000000,
+    "posterSeconds": 5.0
+  },
+  "copyright": {
+    "attribution": "保留原投稿与赛事转播水印，原画面版权归对应原投稿作者或赛事制作方；本项目仅制作静音节选与封面。",
+    "permissionStatus": "公开来源及署名已记录，未额外核实转载授权。"
+  },
+  "note": "两机位按第二局倒计时 5:01 与红方 2 号的位置对齐；官方选段延续取矿后的离岛，不补造近景。"
+}
