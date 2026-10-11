@@ -1,0 +1,1109 @@
+{
+  "scope": "2025工程赛季；用户明确不含2024英雄，不含没有工程机器人的联盟赛",
+  "verifiedAt": "2026-10-11T11:15:04.217221Z",
+  "coverage": "官方赛事与公开投稿合集内已找到并核实的 2025 工程相关素材；分 P 各自保存。",
+  "excluded": [
+    "2024 英雄赛季",
+    "不含工程机器人的 3v3 联盟赛",
+    "2026 赛季",
+    "无关兵种第一视角"
+  ],
+  "downloadQuality": "保留公开可用的最佳音视频流，合并为 MP4；具体编码、分辨率、时长与 SHA256 逐文件记录。",
+  "identification": {
+    "allStarEngineer": "香港科技大学 ENTERPRIZE 工程属于创新者 INNOVATOR；全明星工程视角为 R2。",
+    "evidence": "materials/images/site/eng-allstar.webp：官方全明星工程卡片标有 INNOVATOR。"
+  },
+  "sources": [
+    {
+      "name": "RoboMaster 机甲大师官方",
+      "url": "https://space.bilibili.com/20554233/"
+    },
+    {
+      "name": "翔林魔主 / xianglinmozhu",
+      "url": "https://space.bilibili.com/1568334988/"
+    },
+    {
+      "name": "star_Light星",
+      "url": "https://space.bilibili.com/319349289/"
+    },
+    {
+      "name": "花师小哲-中二",
+      "url": "https://space.bilibili.com/259430549/"
+    }
+  ],
+  "summary": {
+    "posts": 14,
+    "files": 34,
+    "bytes": 10674739752,
+    "groups": {
+      "official-matches": 3,
+      "all-star": 3,
+      "robot-demo": 2,
+      "highlights": 1,
+      "engineer-pov": 17,
+      "clips": 8
+    }
+  },
+  "videos": [
+    {
+      "bvid": "BV13T8ezrEwC",
+      "page": 1,
+      "title": "复活赛 第26场 香港科技大学 ENTERPRIZE战队 VS 华东理工大学 起源战队 RMUC 2025",
+      "group": "official-matches",
+      "reason": "标题及官方/投稿合集确认与港科大ENTERPRIZE相关",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV13T8ezrEwC/?p=1",
+      "file": "materials/videos/source/bilibili/official-matches/BV13T8ezrEwC-P01 - 复活赛 第26场 香港科技大学 ENTERPRIZE战队 VS 华东理工大学 起源战队 RMUC 2025.mp4",
+      "bytes": 232401181,
+      "sha256": "41e26a89cf90940df4cba96cf3d9bb4418a85ad3cff6b7ff90f1a34a588fe626",
+      "duration": 1393.072698,
+      "streams": [
+        {
+          "codec_name": "hevc",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "RoboMaster机甲大师",
+      "completedAt": "2026-10-11T10:24:53Z",
+      "uploaderId": null,
+      "publishedAt": "2025-07-27T04:07:05+00:00"
+    },
+    {
+      "bvid": "BV1Py8vzNE74",
+      "page": 1,
+      "title": "复活赛 第30场 南昌大学 Passion战队 VS 香港科技大学 ENTERPRIZE战队 RMUC 2025",
+      "group": "official-matches",
+      "reason": "标题及官方/投稿合集确认与港科大ENTERPRIZE相关",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1Py8vzNE74/?p=1",
+      "file": "materials/videos/source/bilibili/official-matches/BV1Py8vzNE74-P01 - 复活赛 第30场 南昌大学 Passion战队 VS 香港科技大学 ENTERPRIZE战队 RMUC 2025.mp4",
+      "bytes": 406570448,
+      "sha256": "068d43b5e4b8434293aa6d14baad18ec7d9b6467c198e80a2348a6fde725dc16",
+      "duration": 2432.304989,
+      "streams": [
+        {
+          "codec_name": "hevc",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "RoboMaster机甲大师",
+      "completedAt": "2026-10-11T10:27:24Z",
+      "uploaderId": null,
+      "publishedAt": "2025-07-27T10:11:29+00:00"
+    },
+    {
+      "bvid": "BV1QW8gzrETq",
+      "page": 1,
+      "title": "复活赛 第33场 哈尔滨工业大学（深圳） 南工骁鹰战队 VS 香港科技大学 ENTERPRIZE战队 RMUC 2025",
+      "group": "official-matches",
+      "reason": "标题及官方/投稿合集确认与港科大ENTERPRIZE相关",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1QW8gzrETq/?p=1",
+      "file": "materials/videos/source/bilibili/official-matches/BV1QW8gzrETq-P01 - 复活赛 第33场 哈尔滨工业大学（深圳） 南工骁鹰战队 VS 香港科技大学 ENTERPRIZE战队 RMUC 2025.mp4",
+      "bytes": 177189048,
+      "sha256": "4c3af1d5ddc4c35fa2ca68a61f5be2f63bedde4d7c6fa68fc2be83d62dd1542c",
+      "duration": 1243.512971,
+      "streams": [
+        {
+          "codec_name": "av1",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "RoboMaster机甲大师",
+      "completedAt": "2026-10-11T10:28:38Z",
+      "uploaderId": null,
+      "publishedAt": "2025-07-27T12:59:52+00:00"
+    },
+    {
+      "bvid": "BV1Uvt3zKEt4",
+      "page": 1,
+      "title": "全明星赛 创新者 INNOVATOR战队 VS 缔造者 CREATOR战队 RMUC 2025",
+      "group": "all-star",
+      "reason": "用户确认参加RM2025工程全明星",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1Uvt3zKEt4/?p=1",
+      "file": "materials/videos/source/bilibili/all-star/BV1Uvt3zKEt4-P01 - 全明星赛 创新者 INNOVATOR战队 VS 缔造者 CREATOR战队 RMUC 2025.mp4",
+      "bytes": 506242253,
+      "sha256": "169f4d845d5590a6815c43288998bbbc998ac04d970a933e1029d98673e30834",
+      "duration": 3402.156054,
+      "streams": [
+        {
+          "codec_name": "hevc",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "RoboMaster机甲大师",
+      "completedAt": "2026-10-11T10:34:02Z",
+      "uploaderId": 20554233,
+      "sourcePart": "全明星赛 创新者 INNOVATOR战队 VS 缔造者 CREATOR战队 RMUC 2025",
+      "sourceDurationSeconds": 3403,
+      "publishedAt": "2025-08-04T14:11:55+00:00"
+    },
+    {
+      "bvid": "BV1bstjzEE7A",
+      "page": 1,
+      "title": "全明星入场！",
+      "group": "all-star",
+      "reason": "用户确认参加RM2025工程全明星",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1bstjzEE7A/?p=1",
+      "file": "materials/videos/source/bilibili/all-star/BV1bstjzEE7A-P01 - 全明星入场！.mp4",
+      "bytes": 43903721,
+      "sha256": "47a4929d0a5f39fbc68c8f5f2de8c9c88cd9c626829f5ee17f9b82cab38ce82d",
+      "duration": 330.434694,
+      "streams": [
+        {
+          "codec_name": "av1",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "RoboMaster机甲大师",
+      "completedAt": "2026-10-11T10:25:56Z",
+      "uploaderId": null,
+      "publishedAt": "2025-08-05T03:41:00+00:00"
+    },
+    {
+      "bvid": "BV1Svt3zKE5e",
+      "page": 1,
+      "title": "RoboMaster 2025 超级对抗赛·全国赛 颁奖仪式",
+      "group": "all-star",
+      "reason": "用户确认参加RM2025工程全明星",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1Svt3zKE5e/?p=1",
+      "file": "materials/videos/source/bilibili/all-star/BV1Svt3zKE5e-P01 - RoboMaster 2025 超级对抗赛·全国赛 颁奖仪式.mp4",
+      "bytes": 348696923,
+      "sha256": "33a196e5523db977dbbabd82c9f14fe498a976e666363bc26d1539b8104c3a42",
+      "duration": 1874.213379,
+      "streams": [
+        {
+          "codec_name": "hevc",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "RoboMaster机甲大师",
+      "completedAt": "2026-10-11T10:32:16Z",
+      "uploaderId": 20554233,
+      "sourcePart": "RoboMaster 2025 超级对抗赛·全国赛 颁奖仪式",
+      "sourceDurationSeconds": 1875,
+      "publishedAt": "2025-08-04T14:13:02+00:00"
+    },
+    {
+      "bvid": "BV1Y482zjERP",
+      "page": 1,
+      "title": "轮式末端机械臂｜香港科技大学 工程机器人",
+      "group": "robot-demo",
+      "reason": "标题及官方/投稿合集确认与港科大ENTERPRIZE相关",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1Y482zjERP/?p=1",
+      "file": "materials/videos/source/bilibili/robot-demo/BV1Y482zjERP-P01 - 轮式末端机械臂｜香港科技大学 工程机器人.mp4",
+      "bytes": 12086403,
+      "sha256": "fff12b9a343959e3756f66e54873defe27da7d2cb77f22b877c846d9892d1f72",
+      "duration": 64.032154,
+      "streams": [
+        {
+          "codec_name": "hevc",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "RoboMaster机甲大师",
+      "completedAt": "2026-10-11T10:28:11Z",
+      "uploaderId": 20554233,
+      "sourcePart": "轮式末端六轴机械臂 ｜香港科技大学 工程机器人",
+      "sourceDurationSeconds": 65,
+      "publishedAt": "2025-07-31T10:39:58+00:00"
+    },
+    {
+      "bvid": "BV1pw8gzoEue",
+      "page": 1,
+      "title": "【纵横驰骋，最强辅助】RMUC 2025 复活赛精彩回顾 Day2",
+      "group": "highlights",
+      "reason": "2025 复活赛 Day2 官方回顾，已抽帧确认包含香港科技大学比赛画面",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1pw8gzoEue/?p=1",
+      "file": "materials/videos/source/bilibili/highlights/BV1pw8gzoEue-P01 - 【纵横驰骋，最强辅助】RMUC 2025 复活赛精彩回顾 Day2.mp4",
+      "bytes": 25286610,
+      "sha256": "f92d2dc878093eb1d19497f4e92fcf02b920919317551ff44b1271d096e8ccbf",
+      "duration": 101.85746,
+      "streams": [
+        {
+          "codec_name": "hevc",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "RoboMaster机甲大师",
+      "completedAt": "2026-10-11T10:29:51Z",
+      "uploaderId": null,
+      "publishedAt": "2025-07-27T14:51:51+00:00"
+    },
+    {
+      "bvid": "BV1YN83zCEUy",
+      "page": 1,
+      "title": "[RM复活赛]第二十六场香港科技大学VS华东理工大学全兵种视角回放 - main_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1YN83zCEUy/?p=1",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1YN83zCEUy-P01 - [RM复活赛]第二十六场香港科技大学VS华东理工大学全兵种视角回放 - main_0.mp4",
+      "bytes": 571272140,
+      "sha256": "a617a78f393babea7667387b86f2c1a65cf50e5b291c3dd702eb1d1d1aebf67b",
+      "duration": 1672.0145,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T10:41:01Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "main_0",
+      "sourceDurationSeconds": 1673,
+      "publishedAt": "2025-07-27T11:09:17+00:00",
+      "viewLabel": "比赛主画面"
+    },
+    {
+      "bvid": "BV1YN83zCEUy",
+      "page": 8,
+      "title": "[RM复活赛]第二十六场香港科技大学VS华东理工大学全兵种视角回放 - R2SuqqreProject_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1YN83zCEUy/?p=8",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1YN83zCEUy-P08 - [RM复活赛]第二十六场香港科技大学VS华东理工大学全兵种视角回放 - R2SuqqreProject_0.mp4",
+      "bytes": 521022283,
+      "sha256": "41b9ef32a1b79e9ef8f7557002862102a289c2a2bd921a5092b74254101ffff3",
+      "duration": 1675.032608,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T10:37:43Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "R2SuqqreProject_0",
+      "sourceDurationSeconds": 1676,
+      "publishedAt": "2025-07-27T11:09:17+00:00",
+      "viewLabel": "港科大工程第一视角"
+    },
+    {
+      "bvid": "BV1YN83zCEUy",
+      "page": 12,
+      "title": "[RM复活赛]第二十六场香港科技大学VS华东理工大学全兵种视角回放 - ControlRoom_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1YN83zCEUy/?p=12",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1YN83zCEUy-P12 - [RM复活赛]第二十六场香港科技大学VS华东理工大学全兵种视角回放 - ControlRoom_0.mp4",
+      "bytes": 144825565,
+      "sha256": "eaded72eacd139c03d4554cb335bb0d0e7088996b380caa55d66ce2e8db468cc",
+      "duration": 1672.0,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T10:35:10Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "ControlRoom_0",
+      "sourceDurationSeconds": 1673,
+      "publishedAt": "2025-07-27T11:09:17+00:00",
+      "viewLabel": "监控室视角"
+    },
+    {
+      "bvid": "BV1YN83zCEUy",
+      "page": 13,
+      "title": "[RM复活赛]第二十六场香港科技大学VS华东理工大学全兵种视角回放 - OtherArea_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1YN83zCEUy/?p=13",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1YN83zCEUy-P13 - [RM复活赛]第二十六场香港科技大学VS华东理工大学全兵种视角回放 - OtherArea_0.mp4",
+      "bytes": 330203137,
+      "sha256": "a9d3401738d65339a7eadca72bc048d16489c9cb2ae397be87470c4e46633859",
+      "duration": 1672.035833,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T10:38:58Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "OtherArea_0",
+      "sourceDurationSeconds": 1673,
+      "publishedAt": "2025-07-27T11:09:17+00:00",
+      "viewLabel": "场外固定机位"
+    },
+    {
+      "bvid": "BV1yk8gz8Eu2",
+      "page": 1,
+      "title": "[RM复活赛]第三十场南昌大学VS香港科技大学全兵种视角回放 - main_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1yk8gz8Eu2/?p=1",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1yk8gz8Eu2-P01 - [RM复活赛]第三十场南昌大学VS香港科技大学全兵种视角回放 - main_0.mp4",
+      "bytes": 928306866,
+      "sha256": "8b4c1a2bcdb5e04a2b58294e8c310fab5d1f271d5d3d375af7282782cfd328e4",
+      "duration": 2456.057167,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T10:49:27Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "main_0",
+      "sourceDurationSeconds": 2457,
+      "publishedAt": "2025-07-27T12:12:49+00:00",
+      "viewLabel": "比赛主画面"
+    },
+    {
+      "bvid": "BV1yk8gz8Eu2",
+      "page": 3,
+      "title": "[RM复活赛]第三十场南昌大学VS香港科技大学全兵种视角回放 - B2SuqqreProject_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1yk8gz8Eu2/?p=3",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1yk8gz8Eu2-P03 - [RM复活赛]第三十场南昌大学VS香港科技大学全兵种视角回放 - B2SuqqreProject_0.mp4",
+      "bytes": 749637175,
+      "sha256": "500f2d4a590801d89b295bfc00d192792eac37a35cb59819383f3f2c4eec1e2e",
+      "duration": 2460.076054,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T10:52:58Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "B2SuqqreProject_0",
+      "sourceDurationSeconds": 2461,
+      "publishedAt": "2025-07-27T12:12:49+00:00",
+      "viewLabel": "港科大工程第一视角"
+    },
+    {
+      "bvid": "BV1yk8gz8Eu2",
+      "page": 12,
+      "title": "[RM复活赛]第三十场南昌大学VS香港科技大学全兵种视角回放 - ControlRoom_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1yk8gz8Eu2/?p=12",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1yk8gz8Eu2-P12 - [RM复活赛]第三十场南昌大学VS香港科技大学全兵种视角回放 - ControlRoom_0.mp4",
+      "bytes": 205113136,
+      "sha256": "0511f2439bab8d5df40fc93f2dd1cd3478d9d3e97a85dc4a8a702e3e31e97e39",
+      "duration": 2452.003833,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T10:41:59Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "ControlRoom_0",
+      "sourceDurationSeconds": 2453,
+      "publishedAt": "2025-07-27T12:12:49+00:00",
+      "viewLabel": "监控室视角"
+    },
+    {
+      "bvid": "BV1yk8gz8Eu2",
+      "page": 13,
+      "title": "[RM复活赛]第三十场南昌大学VS香港科技大学全兵种视角回放 - OtherArea_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1yk8gz8Eu2/?p=13",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1yk8gz8Eu2-P13 - [RM复活赛]第三十场南昌大学VS香港科技大学全兵种视角回放 - OtherArea_0.mp4",
+      "bytes": 454505831,
+      "sha256": "c074139242f6a409bd9e3eacfb7e596a706ceef072a86ff0864345bd226f0e4f",
+      "duration": 2452.003833,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T10:50:11Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "OtherArea_0",
+      "sourceDurationSeconds": 2453,
+      "publishedAt": "2025-07-27T12:12:49+00:00",
+      "viewLabel": "场外固定机位"
+    },
+    {
+      "bvid": "BV1Aw8gzoEZd",
+      "page": 1,
+      "title": "[RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - main_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1Aw8gzoEZd/?p=1",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1Aw8gzoEZd-P01 - [RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - main_0.mp4",
+      "bytes": 511802436,
+      "sha256": "4b8ded5aa4ce2b7bcdbfcd7525edcbebbaa6184f30f037fb1467103725c98258",
+      "duration": 1312.0145,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T10:52:36Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "main_0",
+      "sourceDurationSeconds": 1313,
+      "publishedAt": "2025-07-27T15:19:27+00:00",
+      "viewLabel": "比赛主画面"
+    },
+    {
+      "bvid": "BV1Aw8gzoEZd",
+      "page": 3,
+      "title": "[RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - B2SuqqreProject_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1Aw8gzoEZd/?p=3",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1Aw8gzoEZd-P03 - [RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - B2SuqqreProject_0.mp4",
+      "bytes": 361300525,
+      "sha256": "bd8ea8255494ebf4e2cd4a307cdd1fc40c56e36597ecac0fa39059dde301be22",
+      "duration": 1280.0,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T10:54:12Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "B2SuqqreProject_0",
+      "sourceDurationSeconds": 1281,
+      "publishedAt": "2025-07-27T15:19:27+00:00",
+      "viewLabel": "港科大工程第一视角"
+    },
+    {
+      "bvid": "BV1Aw8gzoEZd",
+      "page": 12,
+      "title": "[RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - ControlRoom_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1Aw8gzoEZd/?p=12",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1Aw8gzoEZd-P12 - [RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - ControlRoom_0.mp4",
+      "bytes": 159749504,
+      "sha256": "8ac021d1dfc25f903961f3cf3c44b4050c910b6f82090277b3cd363097c3f95f",
+      "duration": 1312.0145,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T10:52:33Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "ControlRoom_0",
+      "sourceDurationSeconds": 1313,
+      "publishedAt": "2025-07-27T15:19:27+00:00",
+      "viewLabel": "监控室视角"
+    },
+    {
+      "bvid": "BV1Aw8gzoEZd",
+      "page": 13,
+      "title": "[RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - OtherArea_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1Aw8gzoEZd/?p=13",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1Aw8gzoEZd-P13 - [RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - OtherArea_0.mp4",
+      "bytes": 263223316,
+      "sha256": "603400229f606c191c9b0b009fa74d0e764256a0b4afc77c10a4db66415a4c14",
+      "duration": 1312.035833,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T10:57:40Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "OtherArea_0",
+      "sourceDurationSeconds": 1313,
+      "publishedAt": "2025-07-27T15:19:27+00:00",
+      "viewLabel": "场外固定机位"
+    },
+    {
+      "bvid": "BV1YFhLz4Evi",
+      "page": 1,
+      "title": "[RM全国赛]第九十七场全明星赛创新者VS缔造者全兵种视角回放 - main_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1YFhLz4Evi/?p=1",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1YFhLz4Evi-P01 - [RM全国赛]第九十七场全明星赛创新者VS缔造者全兵种视角回放 - main_0.mp4",
+      "bytes": 1073636811,
+      "sha256": "e9a45224b9b8fd15ca14d2fd15a6f451ed25d3315405466907b60c58dc6b3bcd",
+      "duration": 2756.0,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T11:08:54Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "main_0",
+      "sourceDurationSeconds": 2757,
+      "publishedAt": "2025-08-03T17:41:04+00:00",
+      "viewLabel": "比赛主画面"
+    },
+    {
+      "bvid": "BV1YFhLz4Evi",
+      "page": 3,
+      "title": "[RM全国赛]第九十七场全明星赛创新者VS缔造者全兵种视角回放 - B2SuqqreProject_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1YFhLz4Evi/?p=3",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1YFhLz4Evi-P03 - [RM全国赛]第九十七场全明星赛创新者VS缔造者全兵种视角回放 - B2SuqqreProject_0.mp4",
+      "bytes": 770512384,
+      "sha256": "0275104475335ebffab58ed203399ed38dc891635af78feca36119e85891ad03",
+      "duration": 2765.0,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T11:03:01Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "B2SuqqreProject_0",
+      "sourceDurationSeconds": 2766,
+      "publishedAt": "2025-08-03T17:41:04+00:00",
+      "viewLabel": "对手蓝方工程；同场对照素材"
+    },
+    {
+      "bvid": "BV1YFhLz4Evi",
+      "page": 7,
+      "title": "[RM全国赛]第九十七场全明星赛创新者VS缔造者全兵种视角回放 - ControlRoom_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1YFhLz4Evi/?p=7",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1YFhLz4Evi-P07 - [RM全国赛]第九十七场全明星赛创新者VS缔造者全兵种视角回放 - ControlRoom_0.mp4",
+      "bytes": 479383738,
+      "sha256": "d6e241701e348b1c222454ac8e7be6b0b9cd7c9143ce210f09ce345ec676b1fa",
+      "duration": 2760.0,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T11:06:45Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "ControlRoom_0",
+      "sourceDurationSeconds": 2761,
+      "publishedAt": "2025-08-03T17:41:04+00:00",
+      "viewLabel": "监控室视角"
+    },
+    {
+      "bvid": "BV1YFhLz4Evi",
+      "page": 8,
+      "title": "[RM全国赛]第九十七场全明星赛创新者VS缔造者全兵种视角回放 - OtherArea_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1YFhLz4Evi/?p=8",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1YFhLz4Evi-P08 - [RM全国赛]第九十七场全明星赛创新者VS缔造者全兵种视角回放 - OtherArea_0.mp4",
+      "bytes": 541678771,
+      "sha256": "cdf3d1ba19059d3734f499f54a04984da11970c36f734dfd7c663f268fb66c04",
+      "duration": 2756.067833,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T11:06:51Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "OtherArea_0",
+      "sourceDurationSeconds": 2757,
+      "publishedAt": "2025-08-03T17:41:04+00:00",
+      "viewLabel": "场外固定机位"
+    },
+    {
+      "bvid": "BV1YFhLz4Evi",
+      "page": 10,
+      "title": "[RM全国赛]第九十七场全明星赛创新者VS缔造者全兵种视角回放 - R2SuqqreProject_0",
+      "group": "engineer-pov",
+      "reason": "翔林魔主公开比赛投稿的主画面、港科大工程、监控室及场外视角；全明星保留双方工程视角",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1YFhLz4Evi/?p=10",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1YFhLz4Evi-P10 - [RM全国赛]第九十七场全明星赛创新者VS缔造者全兵种视角回放 - R2SuqqreProject_0.mp4",
+      "bytes": 786550936,
+      "sha256": "f638d22bb53b820227a857182c68e84fa238b19bbcf26831a9d5b5cdba9e3aca",
+      "duration": 2760.124331,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-11T11:14:47Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "R2SuqqreProject_0",
+      "sourceDurationSeconds": 2761,
+      "publishedAt": "2025-08-03T17:41:04+00:00",
+      "viewLabel": "红方创新者工程；港科大工程视角"
+    },
+    {
+      "bvid": "BV1r6tjzME6L",
+      "page": 125,
+      "title": "RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-1",
+      "group": "clips",
+      "reason": "2025 全明星赛工程机器人精彩剪辑，含捞矿、斗舞和兑矿花絮",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1r6tjzME6L/?p=125",
+      "file": "materials/videos/source/bilibili/clips/BV1r6tjzME6L-P125 - RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-1.mp4",
+      "bytes": 11457293,
+      "sha256": "e1ddb9a0e9a555f83f570b46729858f1d06cd40240332841d46d19b1dc3c9d5d",
+      "duration": 32.466,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "花师小哲-中二",
+      "completedAt": "2026-10-11T11:05:00Z",
+      "uploaderId": 259430549,
+      "sourcePart": "全明星赛-创新者VS缔造者-1",
+      "sourceDurationSeconds": 33,
+      "publishedAt": "2025-08-05T02:08:32+00:00"
+    },
+    {
+      "bvid": "BV1r6tjzME6L",
+      "page": 126,
+      "title": "RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-2",
+      "group": "clips",
+      "reason": "2025 全明星赛工程机器人精彩剪辑，含捞矿、斗舞和兑矿花絮",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1r6tjzME6L/?p=126",
+      "file": "materials/videos/source/bilibili/clips/BV1r6tjzME6L-P126 - RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-2.mp4",
+      "bytes": 4389562,
+      "sha256": "4043c115c0154ce1eb51e25dcf42dfd599d52c2d3f0106e3c82eddc8d6db9c73",
+      "duration": 13.412653,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "花师小哲-中二",
+      "completedAt": "2026-10-11T11:04:34Z",
+      "uploaderId": 259430549,
+      "sourcePart": "全明星赛-创新者VS缔造者-2",
+      "sourceDurationSeconds": 14,
+      "publishedAt": "2025-08-05T02:08:32+00:00"
+    },
+    {
+      "bvid": "BV1r6tjzME6L",
+      "page": 127,
+      "title": "RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-3",
+      "group": "clips",
+      "reason": "2025 全明星赛工程机器人精彩剪辑，含捞矿、斗舞和兑矿花絮",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1r6tjzME6L/?p=127",
+      "file": "materials/videos/source/bilibili/clips/BV1r6tjzME6L-P127 - RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-3.mp4",
+      "bytes": 5407308,
+      "sha256": "0b16fc7942d282ddeb9bf4bc634e4ab7fbc99c1383a5a4b165bcc9827501c98c",
+      "duration": 13.412653,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "花师小哲-中二",
+      "completedAt": "2026-10-11T11:05:23Z",
+      "uploaderId": 259430549,
+      "sourcePart": "全明星赛-创新者VS缔造者-3",
+      "sourceDurationSeconds": 14,
+      "publishedAt": "2025-08-05T02:08:32+00:00"
+    },
+    {
+      "bvid": "BV1r6tjzME6L",
+      "page": 128,
+      "title": "RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-4",
+      "group": "clips",
+      "reason": "2025 全明星赛工程机器人精彩剪辑，含捞矿、斗舞和兑矿花絮",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1r6tjzME6L/?p=128",
+      "file": "materials/videos/source/bilibili/clips/BV1r6tjzME6L-P128 - RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-4.mp4",
+      "bytes": 2949908,
+      "sha256": "fb466121df7202fb8ad847226c1dcd785c79fcfc0ce79be09f5243e68599f4e6",
+      "duration": 9.466,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "花师小哲-中二",
+      "completedAt": "2026-10-11T11:05:40Z",
+      "uploaderId": 259430549,
+      "sourcePart": "全明星赛-创新者VS缔造者-4",
+      "sourceDurationSeconds": 10,
+      "publishedAt": "2025-08-05T02:08:32+00:00"
+    },
+    {
+      "bvid": "BV1r6tjzME6L",
+      "page": 129,
+      "title": "RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-5-出现了，阴沟里捞矿",
+      "group": "clips",
+      "reason": "2025 全明星赛工程机器人精彩剪辑，含捞矿、斗舞和兑矿花絮",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1r6tjzME6L/?p=129",
+      "file": "materials/videos/source/bilibili/clips/BV1r6tjzME6L-P129 - RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-5-出现了，阴沟里捞矿.mp4",
+      "bytes": 15905657,
+      "sha256": "a267d37772aee2cc14123ed74a41e912fafc9d59129735d02f676d9980bbefdc",
+      "duration": 44.1,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "花师小哲-中二",
+      "completedAt": "2026-10-11T11:05:53Z",
+      "uploaderId": 259430549,
+      "sourcePart": "全明星赛-创新者VS缔造者-5-出现了，阴沟里捞矿",
+      "sourceDurationSeconds": 45,
+      "publishedAt": "2025-08-05T02:08:32+00:00"
+    },
+    {
+      "bvid": "BV1r6tjzME6L",
+      "page": 130,
+      "title": "RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-6",
+      "group": "clips",
+      "reason": "2025 全明星赛工程机器人精彩剪辑，含捞矿、斗舞和兑矿花絮",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1r6tjzME6L/?p=130",
+      "file": "materials/videos/source/bilibili/clips/BV1r6tjzME6L-P130 - RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-6.mp4",
+      "bytes": 7315636,
+      "sha256": "d505eaa6b6a534c947ae28082c0336781c6e1e128bda7b60623ff67e7053b59e",
+      "duration": 23.513333,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "花师小哲-中二",
+      "completedAt": "2026-10-11T11:06:37Z",
+      "uploaderId": 259430549,
+      "sourcePart": "全明星赛-创新者VS缔造者-6",
+      "sourceDurationSeconds": 24,
+      "publishedAt": "2025-08-05T02:08:32+00:00"
+    },
+    {
+      "bvid": "BV1r6tjzME6L",
+      "page": 131,
+      "title": "RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-7-斗舞现场",
+      "group": "clips",
+      "reason": "2025 全明星赛工程机器人精彩剪辑，含捞矿、斗舞和兑矿花絮",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1r6tjzME6L/?p=131",
+      "file": "materials/videos/source/bilibili/clips/BV1r6tjzME6L-P131 - RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-7-斗舞现场.mp4",
+      "bytes": 12869972,
+      "sha256": "3134a3e59f173a7684ec7816afcd6032719c92b4eee4eb62d96f90f07267e8f9",
+      "duration": 39.766,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "花师小哲-中二",
+      "completedAt": "2026-10-11T11:06:27Z",
+      "uploaderId": 259430549,
+      "sourcePart": "全明星赛-创新者VS缔造者-7-斗舞现场",
+      "sourceDurationSeconds": 40,
+      "publishedAt": "2025-08-05T02:08:32+00:00"
+    },
+    {
+      "bvid": "BV1r6tjzME6L",
+      "page": 132,
+      "title": "RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-8-兑矿我也扭扭扭",
+      "group": "clips",
+      "reason": "2025 全明星赛工程机器人精彩剪辑，含捞矿、斗舞和兑矿花絮",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1r6tjzME6L/?p=132",
+      "file": "materials/videos/source/bilibili/clips/BV1r6tjzME6L-P132 - RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-8-兑矿我也扭扭扭.mp4",
+      "bytes": 3821282,
+      "sha256": "39350c05e4bc4e503296e077f82e5fb72ea65085512f27a09e36aa6b20bb4e8d",
+      "duration": 13.505533,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 1920,
+          "height": 1080
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "花师小哲-中二",
+      "completedAt": "2026-10-11T11:06:47Z",
+      "uploaderId": 259430549,
+      "sourcePart": "全明星赛-创新者VS缔造者-8-兑矿我也扭扭扭",
+      "sourceDurationSeconds": 14,
+      "publishedAt": "2025-08-05T02:08:32+00:00"
+    },
+    {
+      "bvid": "BV1MV8nzFEcb",
+      "page": 1,
+      "title": "复活赛寄了，可以发了",
+      "group": "robot-demo",
+      "reason": "用户指定的视频；已抽帧确认港科大 2025 工程机器人上台阶",
+      "status": "complete",
+      "url": "https://www.bilibili.com/video/BV1MV8nzFEcb/",
+      "file": "materials/videos/source/bilibili/robot-demo/BV1MV8nzFEcb - 复活赛寄了，可以发了.mp4",
+      "bytes": 5521993,
+      "sha256": "d007be571e3a76cc3406b445663f2a3af46e65e5c2b3eea3256f9a8a36469127",
+      "duration": 143.559563,
+      "streams": [
+        {
+          "codec_name": "hevc",
+          "codec_type": "video",
+          "width": 384,
+          "height": 854
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "star_Light星",
+      "uploaderId": 319349289,
+      "sourcePart": "mmexport1753719353019",
+      "sourceDurationSeconds": 144,
+      "publishedAt": "2025-07-28T16:19:09+00:00"
+    }
+  ]
+}

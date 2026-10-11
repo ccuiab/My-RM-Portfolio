@@ -1,5 +1,6 @@
 *.7z
 .venv/
+**/__pycache__/
 tmp/
 .superpowers/
 plans/

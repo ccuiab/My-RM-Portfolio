@@ -18,8 +18,8 @@ function within(base, ...parts) {
   if (!rel || rel.startsWith('..') || isAbsolute(rel)) throw new Error(`Unsafe archive path: ${target}`);
   return target;
 }
-async function command(file, args, cwd = root) {
-  return (await run(file, args, {cwd, maxBuffer: 32 * 1024 * 1024, env: {...process.env, ASTRO_TELEMETRY_DISABLED: '1'}})).stdout.trim();
+async function command(file, args, cwd = root, timeout = 0) {
+  return (await run(file, args, {cwd, timeout, maxBuffer: 32 * 1024 * 1024, env: {...process.env, ASTRO_TELEMETRY_DISABLED: '1'}})).stdout.trim();
 }
 async function json(args) { return JSON.parse(await command('gh', args)); }
 async function exists(path) { try { await stat(path); return true; } catch { return false; } }
@@ -72,16 +72,23 @@ for (const [sha, records] of grouped) {
   await mkdir(staging, {recursive: true});
   const artifact = artifacts.find(a => a.name === 'github-pages' && !a.expired && a.workflow_run?.head_sha === sha);
   let method, artifactSha256;
+  let hasOriginalArtifact = false;
   if (astro && artifact) {
     console.log(`Downloading original Pages artifact ${id}`);
     const download = within(staging, 'artifact');
     await mkdir(download, {recursive: true});
     const tar = join(download, 'artifact.tar');
-    if (!(await exists(tar))) await command('gh', ['run', 'download', String(artifact.workflow_run.id), '--repo', repo, '--name', 'github-pages', '--dir', download]);
-    artifactSha256 = createHash('sha256').update(await readFile(tar)).digest('hex');
-    await extract(tar, destination);
-    method = 'original-github-pages-artifact';
-  } else if (astro) {
+    try {
+      if (!(await exists(tar))) await command('gh', ['run', 'download', String(artifact.workflow_run.id), '--repo', repo, '--name', 'github-pages', '--dir', download], root, 180000);
+      artifactSha256 = createHash('sha256').update(await readFile(tar)).digest('hex');
+      await extract(tar, destination);
+      method = 'original-github-pages-artifact';
+      hasOriginalArtifact = true;
+    } catch {
+      console.log(`Original artifact unavailable within the download window; rebuilding ${id}`);
+    }
+  }
+  if (astro && !hasOriginalArtifact) {
     console.log(`Rebuilding archived Astro source ${id}`);
     const source = within(staging, 'source');
     const tar = within(staging, 'source.tar');
@@ -96,11 +103,14 @@ for (const [sha, records] of grouped) {
     const modules = within(source, 'node_modules');
     if (!(await exists(modules))) await symlink(join(root, 'node_modules'), modules, 'junction');
     try {
+      if (await exists(join(source, 'scripts/prepare-assets.mjs'))) {
+        await command(process.execPath, [join(source, 'scripts/prepare-assets.mjs')], source);
+      }
       await command(process.execPath, [join(source, 'scripts/subset-fonts.mjs')], source);
       await command(process.execPath, [join(root, 'node_modules/astro/bin/astro.mjs'), 'build', '--outDir', destination], source);
     } finally { await unlink(modules); }
     method = 'rebuilt-from-deployed-git-commit';
-  } else {
+  } else if (!astro) {
     console.log(`Restoring legacy website ${id}`);
     const rootEntries = tree.split(/\r?\n/);
     const legacyDirectory = rootEntries.includes('docs') ? 'docs' : rootEntries.includes('CV') ? 'CV' : '';
@@ -125,7 +135,8 @@ for (const [sha, records] of grouped) {
   const metadata = {
     id, sourceCommit: sha, firstDeployedAt: first.created_at,
     deploymentRecords: records, method,
-    ...(artifact ? {artifactId: artifact.id, workflowRunId: artifact.workflow_run.id, artifactSha256} : {}),
+    ...(hasOriginalArtifact ? {artifactId: artifact.id, workflowRunId: artifact.workflow_run.id, artifactSha256} : {}),
+    ...(artifact && !hasOriginalArtifact ? {originalArtifactAvailable: true, originalArtifactRetrieved: false} : {}),
     restoredAt: new Date().toISOString(), base: '/My-RM-Portfolio', entryPoint, ...info,
   };
   await writeFile(metadataPath, JSON.stringify(metadata, null, 2) + '\n');

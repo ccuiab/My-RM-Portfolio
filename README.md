@@ -57,7 +57,7 @@ npm run preview
 npm run archive:history
 ```
 
-此命令使用 `gh` 的现有 GitHub 登录和 Git，恢复仓库的 GitHub Pages 发布记录：仍可下载的原始包直接解包；已过期的 Astro 包从对应 Git 提交和相同依赖版本重建；旧版手写网站保存为静态源码快照。每个目录的 `version.json` 标明保存方式，重复提交的发布记录合并到同一版本。
+此命令使用 `gh` 的现有 GitHub 登录和 Git，恢复仓库的 GitHub Pages 发布记录：能取得的原始包直接解包；已过期或下载不可用的 Astro 包从对应 Git 提交和相同依赖版本重建；旧版手写网站保存为静态源码快照。每个目录的 `version.json` 标明保存方式，重复提交的发布记录合并到同一版本。
 
 预览指定旧版 Astro 网站时执行：
 
@@ -68,3 +68,9 @@ npm run preview -- --outDir publish/history/<版本目录>
 历史网页和大型原始素材只保存在本地，不重复提交进 Git。源码历史保留在 Git 中；自动归档不会覆盖之前的版本。目录整理的文件去向、大小及 SHA-256 位于 `materials/documents/audits/reorganization/migration.json`。
 
 Windows 克隆时启用 `git -c core.symlinks=true clone ...`，并确保系统支持符号链接。项目规则以中文 `AGENTS.md` 为准。
+
+## 2025 工程视频档案
+
+已核实的视频按官方比赛、全明星、工程及监控视角、实车演示、精彩回顾和花絮分目录保存到 `materials/videos/source/bilibili/`。可读清单在 [Bilibili 视频索引](materials/documents/bilibili-video-catalog.md)，机器可读清单记录原链接、UP 主、分 P、分辨率、时长和 SHA256。
+
+下载工具为 `scripts/download-bilibili.py`，使用 `.venv` 中的 `yt-dlp` 和 `C:/ffmpeg/bin/ffmpeg.exe`；分段下载可断点续传，不需要浏览器 Cookie。下载结束后运行 `scripts/catalog-bilibili.py` 校验文件并刷新索引。原片保留在本地素材库，网站继续使用 Bilibili 介绍视频。

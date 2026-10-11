@@ -5,3 +5,5 @@
 `archive/`、`source/`、`documents/audits/` 保留较大的本地原始素材和审计证据，构建不会把它们发布到网站。审计报告中保留原始记录的旧路径，文件的新位置可查 `documents/audits/reorganization/migration.json`。
 
 CAD 原始文件在 `D:\RM2025` 和 OneDrive，只读使用。本目录存放的是导出和派生文件。
+
+2025 工程赛季的 Bilibili 原片集中在 `videos/source/bilibili/`。来源、分 P、分辨率和文件校验值见 [视频索引](documents/bilibili-video-catalog.md) 与 `documents/bilibili-video-catalog.json`。
