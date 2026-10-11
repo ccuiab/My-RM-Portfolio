@@ -9,7 +9,7 @@ const { lang } = Astro.props;
 const L = sceneCopy.armExchange;
 const times = [0, 1.4, 2.2, 3.7, 4.8, 5.2, 6.5];
 ---
-<div class="exchange" data-arm-exchange data-play={t(L.play, lang)} data-pause={t(L.pause, lang)} data-loading={t(L.loading, lang)} data-unavailable={t(L.unavailable, lang)}>
+<div class="exchange is-static" data-arm-exchange data-play={t(L.play, lang)} data-pause={t(L.pause, lang)} data-loading={t(L.loading, lang)} data-unavailable={t(L.unavailable, lang)}>
   <div class="exchange-view" data-view>
     <div class="exchange-still">
       <Image src={still} alt={t(L.staticAlt, lang)} width={1200} loading="lazy" />
@@ -20,6 +20,7 @@ const times = [0, 1.4, 2.2, 3.7, 4.8, 5.2, 6.5];
     <div class="view-label"><span class="phase" data-phase>{t(L.phases[0], lang)}</span><span class="illustration">{t(L.illustration, lang)}</span></div>
     <span class="scene-status" data-status role="status">{t(L.loading, lang)}</span>
     <span class="orbit-hint">{t(L.hint, lang)}</span>
+    <p class="static-note">{t(L.staticNote, lang)}</p>
   </div>
   <fieldset class="exchange-controls" disabled>
     <legend class="sr-only">{t(L.timeline, lang)}</legend>
@@ -36,9 +37,8 @@ const times = [0, 1.4, 2.2, 3.7, 4.8, 5.2, 6.5];
       <dl class="joints" aria-label={t(L.joints, lang)}>{Array.from({ length: 6 }, (_, i) => <div><dt>J{i + 1}</dt><dd data-joint={i}>0.0°</dd></div>)}</dl>
       <div class="envelope"><span>{t(L.envelope, lang)}</span><div><output data-envelope>—</output><span class="unit">mm</span><span class="extent-bar" aria-hidden="true"><i data-extent></i></span></div></div>
     </div>
-    <p class="scope">{t(L.scope, lang)}</p>
   </fieldset>
-  <p class="static-note">{t(L.staticNote, lang)}</p>
+  <p class="caption">{t(L.caption, lang)}</p>
 </div>
 
 <script>
@@ -67,7 +67,7 @@ const times = [0, 1.4, 2.2, 3.7, 4.8, 5.2, 6.5];
 </script>
 
 <style>
-  .exchange { margin-top: .5rem; border: 1px solid var(--rule); background: var(--ground); }
+  .exchange { --scene-inset: 1.25rem; margin-top: .5rem; border: 1px solid var(--rule); background: var(--ground); }
   .exchange-view { height: clamp(420px, 34vw, 500px); position: relative; overflow: hidden; }
   .exchange-still, canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
   .exchange-still { background: var(--plate); display: grid; place-items: center; }
@@ -76,59 +76,71 @@ const times = [0, 1.4, 2.2, 3.7, 4.8, 5.2, 6.5];
   canvas:active { cursor: grabbing; }
   .is-ready canvas { opacity: 1; pointer-events: auto; }
   .is-ready .exchange-still { visibility: hidden; }
-  .view-label { position: absolute; top: 1.1rem; left: 1.25rem; right: 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; pointer-events: none; }
+  .view-label { position: absolute; top: 1.1rem; left: var(--scene-inset); right: var(--scene-inset); display: flex; justify-content: space-between; align-items: center; gap: 1rem; pointer-events: none; }
   .phase { border-left: 3px solid var(--amber); padding-left: .65rem; font-size: var(--t-sm); color: var(--ink); }
   .illustration { color: var(--ink-2); font-size: var(--t-xs); background: var(--ground); padding: .3rem .5rem; }
-  .scene-status { position: absolute; bottom: 1rem; left: 1.25rem; padding: .4rem .65rem; background: var(--ground); color: var(--ink-2); font-size: var(--t-xs); }
-  .orbit-hint { position: absolute; bottom: 1rem; right: 1.25rem; color: var(--ink-3); font-size: var(--t-xs); pointer-events: none; display: none; }
+  .scene-status { position: absolute; bottom: 1rem; left: var(--scene-inset); padding: .4rem .65rem; background: var(--ground); color: var(--ink-2); font-size: var(--t-xs); }
+  .orbit-hint { position: absolute; bottom: 1rem; right: var(--scene-inset); color: var(--ink-3); font-size: var(--t-xs); pointer-events: none; display: none; }
   .is-ready .scene-status { display: none; }
   .is-ready .orbit-hint { display: block; }
   .scene-label { display: none; position: absolute; top: 0; left: 0; pointer-events: none; font-size: .65rem; white-space: nowrap; padding: .2rem .4rem; background: var(--ground); color: var(--ink-2); }
   .is-ready .scene-label { display: block; }
   .station-label { color: var(--amber); border-bottom: 1px solid var(--amber); }
-  fieldset { margin: 0; padding: 0; min-width: 0; border: 0; display: none; }
-  .is-ready fieldset { display: block; }
-  .transport { display: flex; align-items: center; gap: 1rem; padding: .9rem 1.25rem .5rem; border-top: 1px solid var(--rule); }
-  button { color: var(--ink-2); background: transparent; border: 1px solid var(--rule); padding: .5rem .7rem; cursor: pointer; font: inherit; font-size: var(--t-xs); }
+  /* Keep the same desktop rows while the viewport scheduler releases the GLB. */
+  fieldset { margin: 0; padding: .75rem var(--scene-inset); min-width: 0; border: 0; border-top: 1px solid var(--rule); height: 130px; display: grid; grid-template-rows: 36px 28px 24px; gap: 8px; visibility: hidden; }
+  .is-ready fieldset { visibility: visible; }
+  .transport { display: flex; align-items: center; gap: 1rem; }
+  button { color: var(--ink-2); background: transparent; border: 1px solid var(--rule); padding: .45rem .7rem; cursor: pointer; font: inherit; font-size: var(--t-xs); }
   button:hover { color: var(--amber); border-color: var(--amber); }
   button:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 4px; }
   .play { color: var(--amber); min-width: 6rem; display: flex; justify-content: center; gap: .6rem; }
+  .play, .reset { height: 36px; }
   .play [data-play-icon] { min-width: 1ch; font-family: var(--f-mono); }
   .timeline { flex: 1; position: relative; padding: .6rem 0; }
   .timeline input { display: block; width: 100%; margin: 0; accent-color: var(--amber); cursor: pointer; }
   .ticks { position: absolute; left: 8px; right: 8px; bottom: 0; pointer-events: none; }
   .ticks i { position: absolute; height: 4px; width: 1px; background: var(--ink-3); }
   .time { font: var(--t-xs) var(--f-mono); color: var(--amber); min-width: 6.5ch; text-align: right; }
-  .phases { display: grid; grid-template-columns: repeat(7, 1fr); padding: .6rem 1.25rem .85rem; gap: .5rem; }
-  .phases button { border: 0; border-bottom: 1px solid var(--rule); padding: .35rem .15rem .55rem; }
+  .phases { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: .5rem; }
+  .phases button { border: 0; border-bottom: 1px solid var(--rule); padding: .2rem .15rem .35rem; white-space: nowrap; }
   .phases button[aria-current] { color: var(--amber); border-color: var(--amber); }
-  .telemetry { display: grid; grid-template-columns: 1fr 220px; gap: 1.5rem; border-top: 1px solid var(--rule); padding: 1rem 1.25rem .75rem; }
-  .joints { margin: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+  .telemetry { display: grid; grid-template-columns: minmax(0, 1fr) 260px; align-items: center; gap: 1.25rem; }
+  .joints { margin: 0; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: .5rem; font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+  .joints > div { display: flex; align-items: baseline; gap: .45rem; white-space: nowrap; }
   .joints dt { font-size: .65rem; color: var(--ink-3); }
-  .joints dd { margin: .4rem 0 0; font-size: var(--t-sm); color: var(--ink); }
-  .envelope { padding-left: 1.25rem; border-left: 1px solid var(--rule); }
+  .joints dd { margin: 0; font-size: var(--t-xs); color: var(--ink-2); }
+  .envelope { display: flex; align-items: center; gap: .75rem; padding-left: 1.25rem; border-left: 1px solid var(--rule); }
   .envelope > span { font-size: .65rem; color: var(--ink-3); }
-  .envelope > div { display: flex; align-items: center; gap: .5rem; margin-top: .4rem; }
-  .envelope output { color: var(--amber); font: var(--t-sm) var(--f-mono); min-width: 4ch; }
+  .envelope > div { display: flex; flex: 1; align-items: center; gap: .4rem; }
+  .envelope output { color: var(--amber); font: var(--t-xs) var(--f-mono); min-width: 4ch; }
   .unit { font: .65rem var(--f-mono); color: var(--ink-3); }
   .extent-bar { flex: 1; height: 3px; background: var(--rule); }
   .extent-bar i { display: block; width: 100%; height: 100%; background: var(--amber); transform-origin: left; }
-  .scope, .static-note { margin: 0; padding: 0 1.25rem 1rem; font-size: var(--t-xs); line-height: 1.6; color: var(--ink-3); max-width: none; }
-  .static-note { display: none; padding-top: 1rem; border-top: 1px solid var(--rule); }
-  .is-static .static-note { display: block; }
+  .caption { margin: 0; padding: 0 var(--scene-inset) .75rem; font-size: var(--t-xs); line-height: 1.6; color: var(--ink-3); max-width: none; }
+  .static-note { position: absolute; bottom: 1rem; left: var(--scene-inset); right: var(--scene-inset); display: none; margin: 0; padding: .4rem .65rem; background: var(--ground); font-size: var(--t-xs); line-height: 1.6; color: var(--ink-2); max-width: none; }
+  .is-static:not(.is-fallback) .static-note { display: block; }
   .is-static:not(.is-fallback) .scene-status { display: none; }
   .is-static .phase { display: none; }
   .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  @media (min-width: 761px) and (max-width: 1000px) {
+    .telemetry { grid-template-columns: minmax(0, 1fr) 210px; gap: .75rem; }
+    .joints > div { gap: .25rem; }
+    .joints dd { font-size: .65rem; }
+    .envelope { gap: .5rem; padding-left: .75rem; }
+  }
   @media (max-width: 760px) {
+    .exchange { --scene-inset: .75rem; }
     .exchange-view { height: 360px; }
     .view-label { justify-content: flex-end; top: .75rem; left: .75rem; right: .75rem; }
     fieldset, canvas { display: none !important; }
     .exchange-still { visibility: visible !important; }
     .static-note { display: block; }
+    .caption { padding-top: .75rem; border-top: 1px solid var(--rule); }
   }
   @media (prefers-reduced-motion: reduce) {
     fieldset, canvas { display: none !important; }
     .exchange-still { visibility: visible !important; }
     .static-note { display: block; }
+    .caption { padding-top: .75rem; border-top: 1px solid var(--rule); }
   }
 </style>

@@ -12,7 +12,6 @@ const hasModel = existsSync(join(process.cwd(), 'materials/models/derived/web/ar
 const L = sceneCopy.armExplode;
 ---
 <section class="explode" data-arm-explode data-model={hasModel ? '1' : ''} data-state="assembled">
-  <header class="intro"><h3>{t(L.title, lang)}</h3><p>{t(L.intro, lang)}</p></header>
   <div class="view">
     <div class="still"><Image src={fallback} alt={t(L.alt, lang)} widths={[900, 1600]} sizes="100vw" /></div>
     <canvas class="three" tabindex="0" role="img" aria-label={t(L.hint, lang)}></canvas>
@@ -20,8 +19,12 @@ const L = sceneCopy.armExplode;
     <div class="hud" data-part-hud data-idle={t(L.hover, lang)} data-mount={t(L.mount, lang)}>
       <span class="joint" data-part-joint></span><span data-part-name>{t(L.hover, lang)}</span>
     </div>
+    <p class="static-note">{t(L.staticNote, lang)}</p>
+    <p class="status" role="status" data-status data-loading={t(sceneCopy.module.loading, lang)} data-failed={t(sceneCopy.module.failed, lang)} hidden></p>
   </div>
-  <div class="controls" hidden>
+  <p class="caption">{t(L.caption, lang)}</p>
+  <fieldset class="controls" disabled>
+    <legend class="sr-only">{t(L.controls, lang)}</legend>
     <div class="states" role="group" aria-label={t(L.controls, lang)}>
       <button type="button" data-explode-to="0" aria-pressed="true">{t(L.assemble, lang)}</button>
       <button type="button" data-explode-to="1" aria-pressed="false">{t(L.explode, lang)}</button>
@@ -30,16 +33,14 @@ const L = sceneCopy.armExplode;
     </div>
     <label class="range"><span>{t(L.progress, lang)}</span><input type="range" min="0" max="100" value="0" step="1" data-explode-range /><output data-progress>0%</output></label>
     <span class="hint">{t(L.hint, lang)}</span>
-  </div>
-  <p class="static-note">{t(L.staticNote, lang)}</p>
-  <p class="status" role="status" data-status data-loading={t(sceneCopy.module.loading, lang)} data-failed={t(sceneCopy.module.failed, lang)} hidden></p>
+  </fieldset>
 </section>
 
 <script>
   import { mountViewportScene } from '../scripts/lib/viewport-scene';
   document.querySelectorAll<HTMLElement>('[data-arm-explode][data-model="1"]').forEach(root => {
     const status = root.querySelector<HTMLElement>('[data-status]')!;
-    const controls = root.querySelector<HTMLElement>('.controls')!;
+    const controls = root.querySelector<HTMLFieldSetElement>('.controls')!;
     mountViewportScene({
       root, view: root.querySelector<HTMLElement>('.view')!,
       media: '(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
@@ -48,10 +49,10 @@ const L = sceneCopy.armExplode;
         if (signal.aborted) return;
         return loadArmExplodeScene(root, import.meta.env.BASE_URL, signal);
       },
-      loading() { delete root.dataset.failedState; status.hidden = false; status.textContent = status.dataset.loading!; },
-      ready() { root.classList.add('has-3d'); root.dataset.ready = 'true'; controls.hidden = false; status.hidden = true; },
+      loading() { delete root.dataset.failedState; root.classList.add('is-loading'); status.hidden = false; status.textContent = status.dataset.loading!; },
+      ready() { root.classList.remove('is-loading'); root.classList.add('has-3d'); root.dataset.ready = 'true'; controls.disabled = false; status.hidden = true; },
       reset() {
-        root.classList.remove('has-3d'); delete root.dataset.ready; controls.hidden = true;
+        root.classList.remove('has-3d', 'is-loading'); delete root.dataset.ready; controls.disabled = true;
         status.hidden = root.dataset.failedState !== 'true';
         const canvas = root.querySelector('canvas')!; canvas.replaceWith(canvas.cloneNode(false));
       },
@@ -61,11 +62,7 @@ const L = sceneCopy.armExplode;
 </script>
 
 <style>
-  .explode { display: grid; gap: 1.2rem; min-width: 0; }
-  .intro { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: clamp(1.5rem, 4vw, 3.5rem); }
-  .intro h3 { margin: 0; font-family: var(--f-cjk); font-size: var(--t-lg); }
-  :global(html[lang="en"]) .intro h3 { font-family: var(--f-latin); font-weight: 600; }
-  .intro p { color: var(--ink-2); font-size: var(--t-sm); line-height: 1.8; }
+  .explode { --scene-inset: 1.25rem; display: grid; gap: .75rem; min-width: 0; }
   .view { position: relative; height: clamp(420px, 38vw, 540px); overflow: hidden; background: radial-gradient(ellipse at 50% 45%, var(--panel-2), var(--ground) 78%); }
   .still, .three { position: absolute; inset: 0; width: 100%; height: 100%; }
   .still :global(img) { width: 100%; height: 100%; object-fit: contain; transform: scale(1.2); }
@@ -76,21 +73,33 @@ const L = sceneCopy.armExplode;
   .link-labels { display: none; position: absolute; inset: 0; pointer-events: none; }
   .has-3d .link-labels { display: block; }
   .link-labels span { position: absolute; top: 0; left: 0; padding: .2rem .4rem; color: var(--amber); border-left: 1px solid var(--amber); background: var(--ground); font: .7rem var(--f-mono); }
-  .hud { position: absolute; bottom: 1rem; left: 1.25rem; right: 1.25rem; display: none; gap: .2rem; pointer-events: none; color: var(--ink-2); font-size: var(--t-xs); overflow-wrap: anywhere; }
+  .hud { position: absolute; bottom: 1rem; left: var(--scene-inset); right: var(--scene-inset); display: none; gap: .2rem; pointer-events: none; color: var(--ink-2); font-size: var(--t-xs); overflow-wrap: anywhere; }
   .has-3d .hud { display: grid; }
   [data-hover-part] .hud { color: var(--amber); }
   .joint { font-family: var(--f-mono); color: var(--ink-3); }
-  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem; }
+  /* A disabled, invisible fieldset still reserves its desktop control rows. */
+  .controls { margin: 0; padding: 0 var(--scene-inset); min-width: 0; border: 0; height: 76px; display: grid; grid-template-columns: max-content minmax(0, 1fr); grid-template-rows: 40px 24px; align-items: center; gap: 8px 1.5rem; visibility: hidden; }
+  .has-3d .controls { visibility: visible; }
   .states { display: flex; flex-wrap: wrap; gap: .5rem; }
-  button { border: 1px solid var(--rule); padding: .55rem .8rem; color: var(--ink-2); background: var(--ground); font: inherit; font-size: var(--t-sm); cursor: pointer; }
+  button { height: 40px; border: 1px solid var(--rule); padding: .55rem .8rem; color: var(--ink-2); background: var(--ground); font: inherit; font-size: var(--t-sm); cursor: pointer; }
   button[aria-pressed="true"], button:hover { color: var(--amber); border-color: var(--amber); }
   button:focus-visible, input:focus-visible, canvas:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
-  .range { display: flex; align-items: center; gap: .7rem; flex: 1; min-width: 250px; color: var(--ink-2); font-size: var(--t-xs); }
-  input { accent-color: var(--amber); flex: 1; min-width: 100px; cursor: pointer; }
+  .range { display: flex; align-items: center; gap: .7rem; min-width: 0; color: var(--ink-2); font-size: var(--t-xs); }
+  input { accent-color: var(--amber); flex: 1; min-width: 0; cursor: pointer; }
   output { min-width: 4ch; text-align: right; font-family: var(--f-mono); color: var(--amber); }
-  .hint { flex-basis: 100%; color: var(--ink-3); font-size: var(--t-xs); }
-  .status, .static-note { color: var(--ink-2); font-size: var(--t-sm); }
-  .has-3d .static-note, [hidden] { display: none; }
-  @media (max-width: 900px) { .intro { grid-template-columns: minmax(0, 1fr); gap: .5rem; } }
-  @media (max-width: 767px) { .view { height: 340px; } .still :global(img) { transform: scale(1.8); } }
+  .hint { grid-column: 1 / -1; color: var(--ink-3); font-size: var(--t-xs); }
+  .caption { margin: 0; padding: 0 var(--scene-inset); max-width: none; color: var(--ink-3); font-size: var(--t-xs); line-height: 1.6; }
+  .status, .static-note { position: absolute; bottom: 1rem; left: var(--scene-inset); right: var(--scene-inset); margin: 0; max-width: none; padding: .4rem .65rem; background: var(--ground); color: var(--ink-2); font-size: var(--t-xs); line-height: 1.6; }
+  .has-3d .static-note, .is-loading .static-note, [data-failed-state="true"] .static-note, [hidden] { display: none; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  @media (min-width: 768px) and (max-width: 1000px) {
+    .controls { gap: 8px .75rem; }
+    button { padding-inline: .5rem; font-size: var(--t-xs); }
+    .range { gap: .4rem; }
+  }
+  @media (max-width: 767px), (pointer: coarse), (prefers-reduced-motion: reduce) {
+    .controls, .three { display: none; }
+    .still { visibility: visible; }
+  }
+  @media (max-width: 767px) { .explode { --scene-inset: .75rem; } .view { height: 340px; } .still :global(img) { transform: scale(1.8); } }
 </style>
