@@ -153,3 +153,10 @@ p { margin: 0; max-width: 68ch; }
 /* Transparent archival CAD cutouts: consistent grading without a light plate. */
 .cutout { background: radial-gradient(ellipse at 50% 50%, #1b2a3d 0%, var(--ground) 75%) !important; border: 0 !important; }
 .cutout img { mix-blend-mode: normal !important; filter: saturate(.42) brightness(1.28) contrast(.92) drop-shadow(0 12px 16px #0005); }
+
+/* Keep the English Engineer title within the first-fold layout. */
+@media (min-width: 901px) {
+  :lang(en) body[data-page='engineer'] [data-ph] .title {
+    font-size: clamp(3rem, 3.6vw, 3.8rem);
+  }
+}
