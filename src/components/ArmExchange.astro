@@ -1,0 +1,177 @@
+---
+import { Image } from 'astro:assets';
+import { sceneCopy } from '../data/content';
+import { t, type Lang } from '../data/i18n';
+import still from '../../materials/images/derived/site/cad-cutouts/engineer-full.png';
+
+interface Props { lang: Lang }
+const { lang } = Astro.props;
+const L = sceneCopy.armExchange;
+const times = [0, 1.4, 2.2, 3.7, 4.8, 5.2, 6.5];
+---
+<div class="exchange" data-arm-exchange data-play={t(L.play, lang)} data-pause={t(L.pause, lang)} data-loading={t(L.loading, lang)} data-unavailable={t(L.unavailable, lang)}>
+  <div class="exchange-view" data-view>
+    <div class="exchange-still">
+      <Image src={still} alt={t(L.staticAlt, lang)} width={1200} loading="lazy" />
+    </div>
+    <canvas data-canvas role="img" aria-label={t(L.canvasAlt, lang)}></canvas>
+    <span class="scene-label mineral-label" data-mineral-label>{t(L.mineral, lang)}</span>
+    <span class="scene-label station-label" data-station-label>{t(L.station, lang)}</span>
+    <div class="view-label"><span class="phase" data-phase>{t(L.phases[0], lang)}</span><span class="illustration">{t(L.illustration, lang)}</span></div>
+    <span class="scene-status" data-status role="status">{t(L.loading, lang)}</span>
+    <span class="orbit-hint">{t(L.hint, lang)}</span>
+  </div>
+  <fieldset class="exchange-controls" disabled>
+    <legend class="sr-only">{t(L.timeline, lang)}</legend>
+    <div class="transport">
+      <button class="play" type="button" data-toggle aria-pressed="true"><span data-play-icon aria-hidden="true">Ⅱ</span><span data-play-label>{t(L.pause, lang)}</span></button>
+      <label class="timeline"><span class="sr-only">{t(L.timeline, lang)}</span><input data-timeline type="range" min="0" max="7.2" step="0.01" value="0" /><span class="ticks" aria-hidden="true">{times.map((time) => <i style={`left:${time / 7.2 * 100}%`}></i>)}</span></label>
+      <output class="time" data-time>0.00 s</output>
+      <button type="button" class="reset" data-reset>{t(L.reset, lang)}</button>
+    </div>
+    <div class="phases" aria-label={t(L.stages, lang)}>
+      {L.phases.map((phase, i) => <button type="button" data-keyframe={times[i]} data-phase-index={i} aria-current={i === 0 ? 'step' : undefined}>{t(phase, lang)}</button>)}
+    </div>
+    <div class="telemetry">
+      <dl class="joints" aria-label={t(L.joints, lang)}>{Array.from({ length: 6 }, (_, i) => <div><dt>J{i + 1}</dt><dd data-joint={i}>0.0°</dd></div>)}</dl>
+      <div class="envelope"><span>{t(L.envelope, lang)}</span><div><output data-envelope>—</output><span class="unit">mm</span><span class="extent-bar" aria-hidden="true"><i data-extent></i></span></div></div>
+    </div>
+    <p class="scope">{t(L.scope, lang)}</p>
+  </fieldset>
+  <p class="static-note">{t(L.staticNote, lang)}</p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-arm-exchange]').forEach((root) => {
+    const view = root.querySelector<HTMLElement>('[data-view]')!;
+    const eligible = window.matchMedia('(min-width: 761px) and (prefers-reduced-motion: no-preference)');
+    let visible = false;
+    let loading = false;
+    let generation = 0;
+    let controller: { setVisible: (value: boolean) => void; dispose: () => void } | undefined;
+    const fallback = () => {
+      root.classList.remove('is-ready', 'is-loading');
+      root.classList.add('is-static');
+    };
+    const start = async () => {
+      if (!eligible.matches || !visible || controller || loading) return;
+      loading = true;
+      const token = ++generation;
+      root.classList.remove('is-static', 'is-fallback');
+      root.classList.add('is-loading');
+      root.querySelector<HTMLElement>('[data-status]')!.textContent = root.dataset.loading!;
+      try {
+        const { createArmExchange } = await import('../scripts/arm-exchange-scene');
+        if (token !== generation) return;
+        const next = await createArmExchange(root, import.meta.env.BASE_URL);
+        if (token !== generation) { next.dispose(); return; }
+        controller = next;
+        root.classList.remove('is-loading');
+        root.classList.add('is-ready');
+        controller.setVisible(visible && !document.hidden);
+      } catch (error) {
+        if (token !== generation) return;
+        fallback();
+        root.classList.add('is-fallback');
+        root.querySelector<HTMLElement>('[data-status]')!.textContent = root.dataset.unavailable!;
+        console.warn('Arm exchange unavailable; displaying the CAD still.', error);
+      } finally { if (token === generation) loading = false; }
+    };
+    const sync = () => {
+      if (!eligible.matches) {
+        ++generation;
+        loading = false;
+        controller?.dispose();
+        controller = undefined;
+        fallback();
+      } else {
+        controller?.setVisible(visible && !document.hidden);
+        void start();
+      }
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = entry.isIntersecting;
+      sync();
+    }, { threshold: 0 });
+    observer.observe(view);
+    eligible.addEventListener('change', sync);
+    document.addEventListener('visibilitychange', sync);
+    const cleanup = () => {
+      ++generation;
+      controller?.dispose();
+      observer.disconnect();
+      eligible.removeEventListener('change', sync);
+      document.removeEventListener('visibilitychange', sync);
+    };
+    window.addEventListener('pagehide', cleanup, { once: true });
+    document.addEventListener('astro:before-swap', cleanup, { once: true });
+    if (!eligible.matches) fallback();
+  });
+</script>
+
+<style>
+  .exchange { margin-top: .5rem; border: 1px solid var(--rule); background: var(--ground); }
+  .exchange-view { height: clamp(420px, 34vw, 500px); position: relative; overflow: hidden; }
+  .exchange-still, canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .exchange-still { background: var(--plate); display: grid; place-items: center; }
+  .exchange-still img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+  canvas { opacity: 0; pointer-events: none; touch-action: none; cursor: grab; }
+  canvas:active { cursor: grabbing; }
+  .is-ready canvas { opacity: 1; pointer-events: auto; }
+  .is-ready .exchange-still { visibility: hidden; }
+  .view-label { position: absolute; top: 1.1rem; left: 1.25rem; right: 1.25rem; display: flex; justify-content: space-between; align-items: center; gap: 1rem; pointer-events: none; }
+  .phase { border-left: 3px solid var(--amber); padding-left: .65rem; font-size: var(--t-sm); color: var(--ink); }
+  .illustration { color: var(--ink-2); font-size: var(--t-xs); background: var(--ground); padding: .3rem .5rem; }
+  .scene-status { position: absolute; bottom: 1rem; left: 1.25rem; padding: .4rem .65rem; background: var(--ground); color: var(--ink-2); font-size: var(--t-xs); }
+  .orbit-hint { position: absolute; bottom: 1rem; right: 1.25rem; color: var(--ink-3); font-size: var(--t-xs); pointer-events: none; display: none; }
+  .is-ready .scene-status { display: none; }
+  .is-ready .orbit-hint { display: block; }
+  .scene-label { display: none; position: absolute; top: 0; left: 0; pointer-events: none; font-size: .65rem; white-space: nowrap; padding: .2rem .4rem; background: var(--ground); color: var(--ink-2); }
+  .is-ready .scene-label { display: block; }
+  .station-label { color: var(--amber); border-bottom: 1px solid var(--amber); }
+  fieldset { margin: 0; padding: 0; min-width: 0; border: 0; display: none; }
+  .is-ready fieldset { display: block; }
+  .transport { display: flex; align-items: center; gap: 1rem; padding: .9rem 1.25rem .5rem; border-top: 1px solid var(--rule); }
+  button { color: var(--ink-2); background: transparent; border: 1px solid var(--rule); padding: .5rem .7rem; cursor: pointer; font: inherit; font-size: var(--t-xs); }
+  button:hover { color: var(--amber); border-color: var(--amber); }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 4px; }
+  .play { color: var(--amber); min-width: 6rem; display: flex; justify-content: center; gap: .6rem; }
+  .play [data-play-icon] { min-width: 1ch; font-family: var(--f-mono); }
+  .timeline { flex: 1; position: relative; padding: .6rem 0; }
+  .timeline input { display: block; width: 100%; margin: 0; accent-color: var(--amber); cursor: pointer; }
+  .ticks { position: absolute; left: 8px; right: 8px; bottom: 0; pointer-events: none; }
+  .ticks i { position: absolute; height: 4px; width: 1px; background: var(--ink-3); }
+  .time { font: var(--t-xs) var(--f-mono); color: var(--amber); min-width: 6.5ch; text-align: right; }
+  .phases { display: grid; grid-template-columns: repeat(7, 1fr); padding: .6rem 1.25rem .85rem; gap: .5rem; }
+  .phases button { border: 0; border-bottom: 1px solid var(--rule); padding: .35rem .15rem .55rem; }
+  .phases button[aria-current] { color: var(--amber); border-color: var(--amber); }
+  .telemetry { display: grid; grid-template-columns: 1fr 220px; gap: 1.5rem; border-top: 1px solid var(--rule); padding: 1rem 1.25rem .75rem; }
+  .joints { margin: 0; display: grid; grid-template-columns: repeat(6, 1fr); gap: 1rem; font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+  .joints dt { font-size: .65rem; color: var(--ink-3); }
+  .joints dd { margin: .4rem 0 0; font-size: var(--t-sm); color: var(--ink); }
+  .envelope { padding-left: 1.25rem; border-left: 1px solid var(--rule); }
+  .envelope > span { font-size: .65rem; color: var(--ink-3); }
+  .envelope > div { display: flex; align-items: center; gap: .5rem; margin-top: .4rem; }
+  .envelope output { color: var(--amber); font: var(--t-sm) var(--f-mono); min-width: 4ch; }
+  .unit { font: .65rem var(--f-mono); color: var(--ink-3); }
+  .extent-bar { flex: 1; height: 3px; background: var(--rule); }
+  .extent-bar i { display: block; width: 100%; height: 100%; background: var(--amber); transform-origin: left; }
+  .scope, .static-note { margin: 0; padding: 0 1.25rem 1rem; font-size: var(--t-xs); line-height: 1.6; color: var(--ink-3); max-width: none; }
+  .static-note { display: none; padding-top: 1rem; border-top: 1px solid var(--rule); }
+  .is-static .static-note { display: block; }
+  .is-static:not(.is-fallback) .scene-status { display: none; }
+  .is-static .phase { display: none; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; }
+  @media (max-width: 760px) {
+    .exchange-view { height: 360px; }
+    .view-label { justify-content: flex-end; top: .75rem; left: .75rem; right: .75rem; }
+    fieldset, canvas { display: none !important; }
+    .exchange-still { visibility: visible !important; }
+    .static-note { display: block; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    fieldset, canvas { display: none !important; }
+    .exchange-still { visibility: visible !important; }
+    .static-note { display: block; }
+  }
+</style>
