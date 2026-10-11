@@ -1,6 +1,7 @@
 ---
 // Project page opener: big robot ID plate, title, lede, and a drawing title block.
 import type { ImageMetadata } from 'astro';
+import ModuleMedia from './ModuleMedia.astro';
 import { Image } from 'astro:assets';
 import { t, type Lang, type T } from '../data/i18n';
 import { pageCopy } from '../data/content';
@@ -28,15 +29,13 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
       <p class="lede">{t(lede, lang)}</p>
     </div>
 
-    <figure class:list={['ph-pic', { light: cover.light }]}>
-      <Image class="ph-photo" src={cover.src} alt={t(cover.alt, lang)} widths={[720, 1200, 1620, 2400]} sizes="(max-width: 900px) 100vw, 58vw" loading="eager" />
-      {lines && <Image class="ph-lines" src={lines} alt="" aria-hidden="true" widths={[720, 1200]} sizes="(max-width: 900px) 100vw, 58vw" loading="eager" />}
-      {robotNo && (
-        <div class="plate" aria-hidden="true">
-          <span class="bar"></span><span class="num plate-no">{robotNo}</span><span class="bar"></span>
-        </div>
+    <div class="ph-visual">
+      {cover.model ? <ModuleMedia pic={cover} lang={lang} /> : (
+        <figure class:list={['ph-pic', { light: cover.light, cutout: cover.cutout }]}>
+          <Image src={cover.src} alt={t(cover.alt, lang)} widths={[720, 1200, 1620, 2400]} sizes="(max-width: 900px) 100vw, 58vw" loading="eager" />
+        </figure>
       )}
-    </figure>
+    </div>
   </div>
 
   {titleBlock.length > 0 && (
@@ -66,48 +65,35 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
   )}
 </header>
 
-<script>
-  import { gsap, reducedMotion } from '../scripts/smooth';
-  const root = document.querySelector<HTMLElement>('[data-ph]');
-  const linesEl = root?.querySelector<HTMLElement>('.ph-lines');
-  if (root && linesEl && !reducedMotion) {
-    const s = { p: 0 };
-    gsap.to(s, {
-      p: 100, duration: 1.6, delay: 0.2, ease: 'power2.inOut',
-      onUpdate: () => root.style.setProperty('--reveal', `${s.p}%`),
-    });
-  } else root?.style.setProperty('--reveal', '100%');
-</script>
-
 <style>
-  .ph { --reveal: 0%; padding-top: clamp(7.5rem, 12vw, 10rem); }
+  .ph { padding-top: clamp(7rem, 9vw, 8.5rem); }
   .ph-grid {
     display: grid;
-    grid-template-columns: minmax(0, .86fr) minmax(0, 1.14fr);
-    gap: clamp(2rem, 4vw, 4rem);
+    grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
+    gap: clamp(1.5rem, 3vw, 3rem);
     align-items: center;
   }
   .ph-copy { display: grid; gap: 1.8rem; padding: 2rem 0; position: relative; z-index: 1; }
   .dwg { font-size: var(--t-sm); color: var(--amber); letter-spacing: .02em; display: flex; align-items: center; gap: .9rem; }
   .dwg::before { content: ''; width: 2.4rem; height: 3px; background: var(--amber); }
-  .title { font-size: clamp(3.5rem, 6.6vw, 6.3rem); line-height: .98; letter-spacing: -.035em; text-wrap: balance; }
+  .title { font-size: clamp(2.8rem, 4.8vw, 4.8rem); line-height: .98; letter-spacing: -.035em; text-wrap: balance; }
   .lede { color: var(--ink-2); font-size: clamp(1.05rem, 1.45vw, 1.25rem); line-height: 1.8; max-width: 42ch; }
 
   .ph-pic {
     position: relative;
     margin: 0;
-    aspect-ratio: 1 / 1;
+    aspect-ratio: 5 / 4;
     overflow: hidden;
     background: #04070c;
   }
   .ph-pic.light {
-    background: var(--plate);
+    background: linear-gradient(145deg, #b8c5d0, #899dae);
   }
   .ph-pic :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
   .ph-pic.light :global(img) { object-fit: contain; padding: 3%; }
-  .ph-pic.light :global(.ph-photo) { mix-blend-mode: multiply; }
-  .ph-pic :global(.ph-photo) { clip-path: inset(0 calc(100% - var(--reveal)) 0 0); }
-  .ph-pic :global(.ph-lines) { clip-path: inset(0 0 0 var(--reveal)); }
+  .ph-pic.light :global(img) { mix-blend-mode: multiply; filter: saturate(.6) contrast(1.04); }
+
+
 
   .plate {
     position: absolute;
@@ -132,6 +118,12 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
     box-shadow: 0 0 14px 2px rgba(61, 139, 255, 0.7);
   }
 
+  .ph-visual { min-width: 0; }
+  .ph-visual :global(.module-media) { background: transparent; }
+  .ph-visual :global(.media-view) { height: clamp(340px, 37vw, 500px); }
+  .ph-visual :global(figcaption) { display: none; }
+  .ph-visual :global(.controls) { padding: .75rem 0; }
+  .ph-visual :global(.controls > span) { display: none; }
   .tb {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -148,11 +140,11 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
 
   .stats {
     list-style: none;
-    margin: 3rem 0 0;
+    margin: 1.75rem 0 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 2rem;
+    gap: 1.5rem;
   }
   .stats li {
     position: relative;
@@ -161,7 +153,7 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
     padding: 1rem 0 0;
     border-top: 2px solid var(--rule);
   }
-  .v { font-family: var(--f-latin); font-size: clamp(2.5rem, 4vw, 3.8rem); font-weight: 600; letter-spacing: -.04em; line-height: 1; color: var(--ink); }
+  .v { font-family: var(--f-latin); font-size: clamp(2rem, 3vw, 3rem); font-weight: 600; letter-spacing: -.04em; line-height: 1; color: var(--ink); }
   .stats li:first-child { border-top-color: var(--amber); }
   .stats li:first-child .v { color: var(--amber); }
   .u { font-size: 0.5em; color: var(--ink-2); margin-left: 0.2em; }
@@ -180,11 +172,17 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
   @media (max-width: 900px) {
     .ph-grid { grid-template-columns: 1fr; gap: 2rem; }
     .ph-copy { padding: 0; gap: 1.25rem; }
-    .title { font-size: clamp(3.2rem, 10vw, 5.5rem); max-width: 13ch; }
+    .title { font-size: clamp(2.5rem, 8vw, 4rem); max-width: 13ch; }
     .ph-pic { aspect-ratio: 4 / 3; }
     .lede { max-width: 60ch; }
     .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1.25rem; }
     .v { font-size: clamp(2rem, 6vw, 3rem); }
-    .tb { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .ph-visual { min-width: 0; }
+  .ph-visual :global(.module-media) { background: transparent; }
+  .ph-visual :global(.media-view) { height: clamp(340px, 37vw, 500px); }
+  .ph-visual :global(figcaption) { display: none; }
+  .ph-visual :global(.controls) { padding: .75rem 0; }
+  .ph-visual :global(.controls > span) { display: none; }
+  .tb { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>

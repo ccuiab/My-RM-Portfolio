@@ -29,8 +29,8 @@ const head = pageCopy.bomHead;
 </section>
 
 <style>
-  .bom { padding-top: 7rem; }
-  .heading { font-size: var(--t-3xl); margin-bottom: 2rem; }
+  .bom { padding-top: clamp(3rem, 6vw, 5rem); }
+  .heading { font-size: clamp(2.2rem, 4vw, 3.15rem); margin-bottom: 1.6rem; }
   .scroll { overflow-x: auto; }
   table {
     width: 100%;
@@ -49,7 +49,7 @@ const head = pageCopy.bomHead;
   td, tbody th {
     text-align: left;
     vertical-align: top;
-    padding: 1rem 1rem 1rem 0;
+    padding: .85rem 1rem .85rem 0;
     border-bottom: 1px solid var(--rule);
   }
   .no { color: var(--amber); width: 5rem; }
@@ -57,4 +57,10 @@ const head = pageCopy.bomHead;
   .spec { color: var(--ink-2); }
   .used { color: var(--ink-3); width: 13rem; }
   tbody tr:hover td, tbody tr:hover th { background: rgba(242, 181, 58, 0.04); }
+  @media (max-width: 720px) {
+    table { min-width: 620px; }
+    .no { width: 3.5rem; }
+    .item { width: 9rem; }
+    .used { width: 11rem; }
+  }
 </style>

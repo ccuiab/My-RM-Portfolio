@@ -1,0 +1,54 @@
+{
+  "method": "Built-in image_gen transparent background editing",
+  "prompt": "Remove only pale background and shadow. Preserve all mechanical parts, viewpoint, colors and proportions; keep silver and white metal opaque; include detached exploded parts. No redesign or invented details.",
+  "images": [
+    {
+      "original": "../../img/engineer-full.webp",
+      "cutout": "engineer-full.png"
+    },
+    {
+      "original": "../../img/eng-arm-overview.png",
+      "cutout": "eng-arm-overview.png"
+    },
+    {
+      "original": "../../img/arm-l3.webp",
+      "cutout": "arm-l3.png"
+    },
+    {
+      "original": "../../gen/l4-assembled.webp",
+      "cutout": "l4-assembled.png"
+    },
+    {
+      "original": "../../gen/l4-exploded.webp",
+      "cutout": "l4-exploded.png"
+    },
+    {
+      "original": "../../img/air-pump.webp",
+      "cutout": "air-pump.png"
+    },
+    {
+      "original": "../../img/eng-wheel.webp",
+      "cutout": "eng-wheel.png"
+    },
+    {
+      "original": "../../img/controller.webp",
+      "cutout": "controller.png"
+    },
+    {
+      "original": "../../img/hero-bot.webp",
+      "cutout": "hero-bot.png"
+    },
+    {
+      "original": "../../img/hero-chassis-adaptive.webp",
+      "cutout": "hero-chassis-adaptive.png"
+    },
+    {
+      "original": "../../img/hero-launcher-2024.png",
+      "cutout": "hero-launcher-2024.png"
+    },
+    {
+      "original": "../../img/feeder-large.webp",
+      "cutout": "feeder-large.png"
+    }
+  ]
+}

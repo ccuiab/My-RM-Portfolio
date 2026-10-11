@@ -1,4 +1,4 @@
-// Arm unfold scene on top of the shared scan stage.
+// Solid CAD pose demonstration with a fixed camera frame across the complete pose sweep.
 // public/models/arm.glb (asset pipeline, see output/codex/report.md):
 //   link_base > link_1 > link_2 > link_3 > link_4 > { link_5 > link_6, link_wheel }
 //   every link origin sits on its joint axis; extras.web_axis is the local axis;
@@ -24,8 +24,6 @@ export type Marks = {
 
 export type ArmScene = {
   setPose: (p: Pose) => void;
-  setScan: (s: number) => void;
-  setYaw: (d: number) => void;
   render: () => Marks;
   onResize: (cb: () => void) => void;
   onInteraction: (cb: () => void) => void;
@@ -33,8 +31,8 @@ export type ArmScene = {
 };
 
 export async function loadArmScene(canvas: HTMLCanvasElement, base: string): Promise<ArmScene> {
-  // scan: solid appears at the wrist end (+Z) first and sweeps back toward the base
-  const stage = await loadScanStage(canvas, base, 'arm.glb', { axis: new THREE.Vector3(0, 0, 1), range: [0.95, -0.6] });
+  // Reuse stage loading, lighting and orbit controls with solid materials throughout.
+  const stage = await loadScanStage(canvas, base, 'arm.glb', { axis: new THREE.Vector3(0, 0, 1), range: [0.95, -0.6], solidOnly: true });
   const { model, turntable, camera } = stage;
 
   const node = (n: string) => {
@@ -56,10 +54,24 @@ export async function loadArmScene(canvas: HTMLCanvasElement, base: string): Pro
     }
   });
 
-  // side three-quarter view, framed on the swept envelope (folded at origin → reach ~0.7 m forward)
-  stage.frame(new THREE.Sphere(new THREE.Vector3(0, 0.1, 0.34), 0.44), new THREE.Vector3(-1, 0.28, 0.42));
-
   const q = new THREE.Quaternion();
+  const applyPose = (p: Pose) => {
+    for (const j of joints) j.node.quaternion.copy(q.setFromAxisAngle(j.axis, deg(p[j.name as JointName] ?? 0)));
+    model.updateMatrixWorld(true);
+  };
+  // Union sampled mesh bounds before framing: one fixed target and radius, including
+  // folded hardware and all intermediate poses. This is a display sweep, not workspace analysis.
+  const swept = new THREE.Box3();
+  for (let i = 0; i <= 40; i++) {
+    const p = i / 40;
+    applyPose({ J2: 110 * p, J3: -130 * p, J5: 40 * p });
+    swept.union(new THREE.Box3().setFromObject(model, true));
+  }
+  applyPose({});
+  const sphere = swept.getBoundingSphere(new THREE.Sphere());
+  // The swept box is fitted in projection, avoiding sphere-sized empty margins.
+  stage.frame(sphere, new THREE.Vector3(-1, 0.28, 0.42), swept);
+
   const v = new THREE.Vector3();
   const sh = new THREE.Vector3(), el = new THREE.Vector3(), wr = new THREE.Vector3();
   const toScreen = (p: THREE.Vector3) => {
@@ -71,15 +83,11 @@ export async function loadArmScene(canvas: HTMLCanvasElement, base: string): Pro
 
   return {
     setPose(p) {
-      for (const j of joints) j.node.quaternion.copy(q.setFromAxisAngle(j.axis, deg(p[j.name as JointName] ?? 0)));
+      applyPose(p);
     },
-    setScan: stage.setScan,
     onResize: stage.onResize,
     onInteraction: stage.enableInteraction,
     resetView: stage.resetView,
-    setYaw(d) {
-      turntable.rotation.y = deg(d);
-    },
     render() {
       stage.render();
       shoulderNode.getWorldPosition(sh);

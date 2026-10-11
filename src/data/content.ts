@@ -2,30 +2,30 @@ import type { ImageMetadata } from 'astro';
 import type { T } from './i18n';
 
 import engReach from '../assets/img/eng-reach.webp';
-import engineerFull from '../assets/img/engineer-full.webp';
+import engineerFull from '../assets/img/cad-cutouts/engineer-full.png';
 import engField from '../assets/img/eng-phtot2.jpg';
 import engField2 from '../assets/img/eng-photo1.jpg';
 import engStats from '../assets/img/eng-mvp.webp';
 import engAllstar from '../assets/img/eng-allstar.webp';
-import armOverview from '../assets/img/eng-arm-overview.png';
+import armOverview from '../assets/img/cad-cutouts/eng-arm-overview.png';
 import armRig from '../assets/img/eng-arm.webp';
-import armL3 from '../assets/img/arm-l3.webp';
-import armL4 from '../assets/gen/l4-assembled.webp';
-import armL4Exploded from '../assets/gen/l4-exploded.webp';
-import pump from '../assets/img/air-pump.webp';
-import engWheel from '../assets/img/eng-wheel.webp';
-import controller from '../assets/img/controller.webp';
-import heroBot from '../assets/img/hero-bot.webp';
-import heroChassis from '../assets/img/hero-chassis-adaptive.webp';
-import heroLauncher from '../assets/img/hero-launcher-2024.png';
-import launcher4 from '../assets/img/launcher-dual-4.png';
-import launcher6 from '../assets/img/launcher-dual-6.png';
-import feederLarge from '../assets/img/feeder-large.webp';
-import feederSmall from '../assets/img/feeder-small.webp';
-import heroWheel from '../assets/img/hero-wheel.webp';
+import armL3 from '../assets/img/cad-cutouts/arm-l3.png';
+import armL4 from '../assets/img/cad-cutouts/l4-assembled.png';
+import armL4Exploded from '../assets/img/cad-cutouts/l4-exploded.png';
+import pump from '../assets/img/cad-cutouts/air-pump.png';
+import engWheel from '../assets/img/cad-cutouts/eng-wheel.png';
+import controller from '../assets/img/cad-cutouts/controller.png';
+import heroBot from '../assets/img/cad-cutouts/hero-bot.png';
+import heroChassis from '../assets/img/cad-cutouts/hero-chassis-adaptive.png';
+import heroLauncher from '../assets/img/cad-cutouts/hero-launcher-2024.png';
+import launcher4 from '../assets/img/research-cutouts/launcher-dual-4.png';
+import launcher6 from '../assets/img/research-cutouts/launcher-dual-6.png';
+import feederLarge from '../assets/img/cad-cutouts/feeder-large.png';
+import feederSmall from '../assets/img/research-cutouts/feeder-small.png';
+import heroWheel from '../assets/img/research-cutouts/hero-wheel.png';
 import exoPic from '../assets/img/exo-suit.webp';
 
-export type Pic = { src: ImageMetadata; alt: T; /** CAD render on white: show on a light plate */ light?: boolean; model?: string; modelNote?: T };
+export type Pic = { src: ImageMetadata; alt: T; /** CAD render on white: show on a light plate */ light?: boolean; cutout?: boolean; model?: string; modelNote?: T };
 export type Spec = { label: T; value: string; unit?: string; note?: T };
 export type Stat = Spec & { rank?: string };
 export type Chapter = {
@@ -128,10 +128,10 @@ export const sceneCopy = {
     envelope: { zh: '整车最大展开', en: 'Whole-robot max envelope' },
     foldedEnvelope: { zh: '整车收折包络', en: 'Folded robot envelope' },
     expandedEnvelope: { zh: '整车展开包络', en: 'Expanded robot envelope' },
-    envelopeGuide: { zh: '整车尺寸按同一比例示意；包络变化随展开进度展示，不代表实时 CAD 测量。', en: 'Vehicle dimensions shown at a common scale. The envelope follows the unfold sequence; it is not a live CAD measurement.' },
+    envelopeGuide: { zh: '整车设计包络，非当前机械臂姿态的实时测量。', en: 'Whole-robot design envelopes, not live measurements of the current arm pose.' },
     note: {
-      zh: '读数为腕心相对肩关节轴的实时位置，来自真实 CAD 模型的关节运动。整车最大展开尺寸计入云台旋转与底盘。',
-      en: 'Readouts track the wrist centre against the shoulder axis, driven by the joints of the real CAD model. The whole-robot envelope adds gimbal rotation and the chassis.',
+      zh: 'CAD 关节姿态插值演示；读数为腕心相对肩轴的位置，不代表已验证的实机轨迹或可达空间。',
+      en: 'Interpolated CAD joint poses. Readouts locate the wrist relative to the shoulder; this is not a validated robot trajectory or reachable workspace.',
     },
     sketchAlt: { zh: '机械臂从收折到展开', en: 'Arm unfolding from folded to extended' },
     staticNote: { zh: '静态连杆比例示意：上臂 380 mm，前臂 420 mm；整车最大展开尺寸来自设计说明，示意图不表示实际 CAD 姿态或可达空间。', en: 'Static link-proportion sketch: 380 mm upper arm and 420 mm forearm. The whole-robot envelope comes from the design notes; this sketch does not represent a measured CAD pose or reachable workspace.' },
@@ -146,10 +146,12 @@ export const sceneCopy = {
     hint: { zh: '拖动旋转', en: 'Drag to turn' },
   },
   module: {
-    photo: { zh: '照片 / 渲染', en: 'Photo / render' },
+    photo: { zh: '设计视图', en: 'Design view' },
+    rotate: { zh: '播放演示', en: 'Play presentation' },
+    pause: { zh: '暂停演示', en: 'Pause presentation' },
     model: { zh: '3D 模型', en: '3D model' },
     loading: { zh: '正在加载模型…', en: 'Loading model…' },
-    failed: { zh: '模型暂时无法加载，可切回照片查看。', en: 'The model could not load. You can switch back to the photo.' },
+    failed: { zh: '模型暂时无法加载，已显示设计视图。', en: 'The model could not load. Showing the design view.' },
     hint: { zh: '拖动旋转 · 方向键调整视角', en: 'Drag to rotate · Arrow keys adjust the view' },
   },
 };
@@ -187,6 +189,7 @@ export const record = {
   value: '5.8',
   title: { zh: '两颗矿石，5.8 秒。', en: 'Two ores. 5.8 seconds.' },
   resultLabel: { zh: '四级兑换 · 官方成绩', en: 'Level 4 · Official result' },
+  timerLabel: { zh: '兑换计时', en: 'Exchange time' },
   matchLabel: { zh: '场次', en: 'Match' },
   povLabel: { zh: '操作手视角 · 原速', en: 'Operator view · Real time' },
   broadcastLabel: { zh: '官方转播 · WR NEW', en: 'Official broadcast · WR NEW' },
@@ -226,7 +229,7 @@ export const engineer = {
     en: 'An Engineer robot with a six-axis arm and a wheeled end effector. I led the whole-robot structural design, from the PUMA configuration and link lengths to the vehicle layout, and took it from nothing to the competition field in three months.',
   },
   cover: { src: engReach, alt: { zh: '工程机器人，机械臂完全伸出', en: 'The Engineer robot with its arm fully extended' } } as Pic,
-  assembly: { src: engineerFull, light: true, alt: { zh: '工程机器人 SolidWorks 整车总装', en: 'Engineer robot, SolidWorks assembly' } } as Pic,
+  assembly: { src: engineerFull, cutout: true, alt: { zh: '工程机器人 SolidWorks 整车总装', en: 'Engineer robot, SolidWorks assembly' } } as Pic,
   field: { src: engField, alt: { zh: '赛场上的工程机器人', en: 'The Engineer robot on the field' } } as Pic,
   cover2: { src: engField2, alt: { zh: '工程机器人在场地上移动', en: 'The Engineer robot driving across the field' } } as Pic,
   titleBlock: [
@@ -299,10 +302,10 @@ export const engineer = {
         },
       ],
       pics: [
-        { src: armOverview, light: true, alt: { zh: '六轴机械臂 CAD 总览', en: 'Six-axis arm, CAD overview' } },
-        { src: armL3, light: true, alt: { zh: '万向轴传动与后置电机', en: 'Universal-joint drive and rear-mounted motor' } },
-        { src: armL4, light: true, alt: { zh: '完整 L4 与腕部总装', en: 'Complete L4 and wrist assembly' } },
-        { src: armL4Exploded, light: true, alt: { zh: '完整 L4 与腕部爆炸图', en: 'Complete L4 and wrist exploded view' } },
+        { src: armOverview, cutout: true, alt: { zh: '六轴机械臂 CAD 总览', en: 'Six-axis arm, CAD overview' } },
+        { src: armL3, cutout: true, alt: { zh: '万向轴传动与后置电机', en: 'Universal-joint drive and rear-mounted motor' } },
+        { src: armL4, cutout: true, alt: { zh: '完整 L4 与腕部总装', en: 'Complete L4 and wrist assembly' } },
+        { src: armL4Exploded, cutout: true, alt: { zh: '完整 L4 与腕部爆炸图', en: 'Complete L4 and wrist exploded view' } },
         { src: armRig, alt: { zh: '机械臂装配实物', en: 'The assembled arm on the bench' } },
       ],
     },
@@ -328,7 +331,7 @@ export const engineer = {
           en: 'Each swerve module detaches on its own, so between-match fixes are a module swap.',
         },
       ],
-      pics: [{ src: engWheel, model: 'engineer-swerve.glb', light: true, alt: { zh: '工程舵轮模组', en: 'Engineer swerve module' } }],
+      pics: [{ src: engWheel, model: 'engineer-swerve.glb', cutout: true, alt: { zh: '工程舵轮模组', en: 'Engineer swerve module' } }],
     },
     {
       id: 'pump',
@@ -353,7 +356,7 @@ export const engineer = {
           en: 'At under 300 g it leaves more mass and inertia budget at the end of the arm.',
         },
       ],
-      pics: [{ src: pump, model: 'engineer-pump.glb', light: true, alt: { zh: '3508 改装真空泵', en: '3508-converted vacuum pump' } }],
+      pics: [{ src: pump, model: 'engineer-pump.glb', cutout: true, alt: { zh: '3508 改装真空泵', en: '3508-converted vacuum pump' } }],
     },
     {
       id: 'reliability',
@@ -400,7 +403,7 @@ export const engineer = {
           en: 'CNC for the load-bearing parts and 3D printing for the shell and brackets kept cost low and made iterating on operator feedback quick.',
         },
       ],
-      pics: [{ src: controller, light: true, alt: { zh: '自定义控制器', en: 'Custom controller' } }],
+      pics: [{ src: controller, cutout: true, alt: { zh: '自定义控制器', en: 'Custom controller' } }],
     },
   ] as Chapter[],
   links: [
@@ -419,7 +422,7 @@ export const hero = {
     zh: '我独立负责整车机械设计，覆盖云台、发射、42 mm 大弹丸侧供弹和自适应悬挂，补上了队里英雄机器人这一块能力。',
     en: 'I was the sole mechanical designer for the whole robot, covering the gimbal, launcher, 42 mm side feed and adaptive suspension, and filled the gap the team had in its Hero lineup.',
   },
-  cover: { src: heroBot, model: 'hero.glb', light: true, alt: { zh: 'RM2024 英雄机器人整车', en: 'RM2024 Hero robot' } } as Pic,
+  cover: { src: heroBot, model: 'hero.glb', cutout: true, alt: { zh: 'RM2024 英雄机器人整车', en: 'RM2024 Hero robot' } } as Pic,
   titleBlock: [
     { label: { zh: '赛季', en: 'Season' }, value: { zh: 'RoboMaster 2024', en: 'RoboMaster 2024' } },
     { label: { zh: '职责', en: 'Role' }, value: { zh: '整车机械设计', en: 'Sole mechanical designer' } },
@@ -451,7 +454,7 @@ export const hero = {
         },
       ],
       pics: [
-        { src: heroLauncher, model: 'hero-launcher.glb', modelNote: { zh: '2024-09 总装中的发射模块，图片与交互模型取自同一 CAD 装配。', en: 'Launcher from the September 2024 assembly; image and interactive model share the same CAD source.' }, light: true, alt: { zh: 'RM2024 英雄发射机构', en: 'RM2024 Hero launcher' } },
+        { src: heroLauncher, model: 'hero-launcher.glb', modelNote: { zh: '2024-09 总装中的发射模块，图片与交互模型取自同一 CAD 装配。', en: 'Launcher from the September 2024 assembly; image and interactive model share the same CAD source.' }, cutout: true, alt: { zh: 'RM2024 英雄发射机构', en: 'RM2024 Hero launcher' } },
       ],
     },
     {
@@ -468,7 +471,7 @@ export const hero = {
           en: 'Anti-jam geometry tuned around projectile size tolerance sustains a steady 2 Hz feed.',
         },
       ],
-      pics: [{ src: feederLarge, model: 'hero-side-feed.glb', modelNote: { zh: '独立侧供弹总成：弹仓、拨弹机构与驱动。', en: 'Standalone side-feed assembly: hopper, feeding mechanism and drive.' }, light: true, alt: { zh: '大弹丸侧供弹', en: '42 mm side feed' } }],
+      pics: [{ src: feederLarge, model: 'hero-side-feed.glb', modelNote: { zh: '独立侧供弹总成：弹仓、拨弹机构与驱动。', en: 'Standalone side-feed assembly: hopper, feeding mechanism and drive.' }, cutout: true, alt: { zh: '大弹丸侧供弹', en: '42 mm side feed' } }],
     },
     {
       id: 'chassis',
@@ -488,7 +491,7 @@ export const hero = {
           en: 'Tested through ramp jumps, 15 cm forward step descents, 8 cm lateral step descents and a 30 cm vertical drop.',
         },
       ],
-      pics: [{ src: heroChassis, model: 'hero-adaptive-chassis.glb', modelNote: { zh: '裸车架、四轮与联动悬挂，对照图中的底盘结构。', en: 'Bare frame, four wheels and linked suspension, matching the pictured chassis structure.' }, light: true, alt: { zh: '自适应悬挂底盘', en: 'Adaptive suspension chassis' } }],
+      pics: [{ src: heroChassis, model: 'hero-adaptive-chassis.glb', modelNote: { zh: '裸车架、四轮与联动悬挂，对照图中的底盘结构。', en: 'Bare frame, four wheels and linked suspension, matching the pictured chassis structure.' }, cutout: true, alt: { zh: '自适应悬挂底盘', en: 'Adaptive suspension chassis' } }],
     },
   ] as Chapter[],
 };
@@ -504,24 +507,24 @@ export const research = {
     zh: '比赛之外的模块预研。两条迭代线一路做到能上车，另外两种舵轮按不同兵种的需求分头验证。',
     en: 'Module research outside the match calendar. Two lines iterated until they were ready for a robot, and two swerve designs were tested separately against the needs of different robot classes.',
   },
-  cover: { src: launcher6, model: 'research-launcher6.glb', modelNote: { zh: '六摩擦轮试验装配，图片与交互模型取自同一 CAD 源文件。', en: 'Six-wheel test assembly; image and interactive model share the same CAD source.' }, light: true, alt: { zh: '双级六摩擦轮发射机构', en: 'Dual-stage six-wheel launcher' } } as Pic,
+  cover: { src: launcher6, cutout: true, alt: { zh: '双级六摩擦轮发射机构', en: 'Dual-stage six-wheel launcher' } } as Pic,
   launcher: {
     title: { zh: '发射机构：从单级到双级六摩擦轮', en: 'Launcher: from single-stage to dual-stage six-wheel' },
     stages: [
       {
         title: { zh: 'RM2024 英雄单级发射', en: 'RM2024 Hero, single stage' },
         body: { zh: '对轴摩擦轮加预加速小轮，是后面所有多级方案的起点。', en: 'Double-supported friction wheels with a pre-acceleration pair: the starting point for every multi-stage design that followed.' },
-        pic: { src: heroLauncher, model: 'hero-launcher.glb', modelNote: { zh: '2024-09 总装中的发射模块，图片与交互模型取自同一 CAD 装配。', en: 'Launcher from the September 2024 assembly; image and interactive model share the same CAD source.' }, light: true, alt: { zh: 'RM2024 英雄发射机构', en: 'RM2024 Hero launcher' } },
+        pic: { src: heroLauncher, model: 'hero-launcher.glb', modelNote: { zh: '2024-09 总装中的发射模块，图片与交互模型取自同一 CAD 装配。', en: 'Launcher from the September 2024 assembly; image and interactive model share the same CAD source.' }, cutout: true, alt: { zh: 'RM2024 英雄发射机构', en: 'RM2024 Hero launcher' } },
       },
       {
         title: { zh: '双级四摩擦轮样机', en: 'Dual-stage, four wheels' },
         body: { zh: '样机暴露左右散布较大的问题。中间试过三摩擦轮，初射角稳定了，弹速一致性不够。', en: 'The prototype showed wide left-right dispersion. A three-wheel detour stabilised launch angle but could not hold muzzle velocity consistent.' },
-        pic: { src: launcher4, model: 'research-launcher4.glb', modelNote: { zh: '四摩擦轮试验装配，图片与交互模型取自同一 CAD 源文件。', en: 'Four-wheel test assembly; image and interactive model share the same CAD source.' }, light: true, alt: { zh: '双级四摩擦轮样机', en: 'Dual-stage four-wheel prototype' } },
+        pic: { src: launcher4, cutout: true, alt: { zh: '双级四摩擦轮样机', en: 'Dual-stage four-wheel prototype' } },
       },
       {
         title: { zh: '双级六摩擦轮', en: 'Dual-stage, six wheels' },
         body: { zh: '列为主要研发方向，同时兼顾弹速一致性和散布控制。', en: 'Designated the main development direction, aiming to hold both velocity consistency and dispersion.' },
-        pic: { src: launcher6, model: 'research-launcher6.glb', modelNote: { zh: '六摩擦轮试验装配，图片与交互模型取自同一 CAD 源文件。', en: 'Six-wheel test assembly; image and interactive model share the same CAD source.' }, light: true, alt: { zh: '双级六摩擦轮方案', en: 'Dual-stage six-wheel design' } },
+        pic: { src: launcher6, cutout: true, alt: { zh: '双级六摩擦轮方案', en: 'Dual-stage six-wheel design' } },
       },
     ] as Stage[],
   },
@@ -531,7 +534,7 @@ export const research = {
       {
         title: { zh: '结构预研', en: 'Feed development' },
         body: { zh: '多层预制、整流罩、防剪切优先的设计思路。', en: 'Multi-layer staging, a fairing, and shear protection as the leading priority.' },
-        pic: { src: feederSmall, model: 'research-feeder.glb', modelNote: { zh: '图片与模型为 2024-08-16 存档中的 MKV 供弹装配。', en: 'Image and model show the MKV feed assembly from the 2024-08-16 archive.' }, light: true, alt: { zh: '小弹丸中心供弹', en: '17 mm centre feed' } },
+        pic: { src: feederSmall, cutout: true, alt: { zh: '小弹丸中心供弹', en: '17 mm centre feed' } },
       },
       {
         title: { zh: '迭代上车', en: 'On the robots' },
@@ -553,12 +556,12 @@ export const research = {
       {
         title: { zh: '高负载：工程机器人', en: 'High load: Engineer' },
         body: { zh: '宽橡胶胎提供抓地力和一定减震，四个 MGN7 滑块加气弹簧组成舵下悬挂，扛得住高载荷，底盘姿态稳。', en: 'Wide rubber tyres for grip and some damping; four MGN7 carriages and gas springs form an under-module suspension that carries high load and keeps the chassis level.' },
-        pic: { src: engWheel, model: 'engineer-swerve.glb', light: true, alt: { zh: '高负载工程舵轮', en: 'High-load Engineer swerve module' } },
+        pic: { src: engWheel, model: 'engineer-swerve.glb', cutout: true, alt: { zh: '高负载工程舵轮', en: 'High-load Engineer swerve module' } },
       },
       {
         title: { zh: '轻量化：2025 英雄预研', en: 'Lightweight: 2025 Hero study' },
         body: { zh: '舵上直接用 3508 电机本体，齿轮传动配合光电门做位置校准，聚氨酯轮加舵上悬挂，结构高度尽量压缩。', en: 'The 3508 motor body sits on the steering axis, a gear drive with a photoelectric gate handles homing, and polyurethane wheels with over-module suspension keep the height down.' },
-        pic: { src: heroWheel, model: 'research-hero-wheel.glb', modelNote: { zh: 'V0.2 舵轮装配，图片与交互模型取自同一 CAD 源文件。', en: 'V0.2 swerve assembly; image and interactive model share the same CAD source.' }, light: true, alt: { zh: '轻量化英雄舵轮', en: 'Lightweight Hero swerve module' } },
+        pic: { src: heroWheel, cutout: true, alt: { zh: '轻量化英雄舵轮', en: 'Lightweight Hero swerve module' } },
       },
     ] as Stage[],
   },

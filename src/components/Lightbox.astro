@@ -18,6 +18,7 @@ const { lang } = Astro.props;
     document.addEventListener('click', (e) => {
       const btn = (e.target as HTMLElement).closest<HTMLElement>('[data-zoom]');
       if (btn) {
+        dlg.classList.toggle("cutout", Boolean(btn.closest('.cutout, [data-cutout="true"]')));
         img.src = btn.dataset.zoom!;
         img.alt = btn.dataset.alt || '';
         cap.textContent = btn.dataset.alt || '';
@@ -39,7 +40,7 @@ const { lang } = Astro.props;
     color: var(--ink);
   }
   .lb::backdrop { background: rgba(3, 6, 11, 0.88); }
-  .lb img { display: block; max-width: 100%; max-height: calc(92vh - 3.5rem); margin: 0 auto; background: var(--plate); }
+  .lb img { display: block; max-width: 100%; max-height: calc(92vh - 3.5rem); margin: 0 auto; background: transparent; }
   .lb-cap { padding: 0.8rem 1rem; font-size: var(--t-sm); color: var(--ink-2); }
   .lb-close {
     position: absolute;

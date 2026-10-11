@@ -20,7 +20,7 @@
   --ink-2: #9fb0c6;
   --ink-3: #7b8ea8;
   /* CAD renders keep their white-ground renders; they sit on a cool grey plate */
-  --plate: #c9d1d9;
+  --plate: #aebcca;
   --plate-line: rgba(7, 13, 23, 0.07);
   --amber: #f2b53a;
   --amber-dim: rgba(242, 181, 58, 0.16);
@@ -43,7 +43,7 @@
   --t-4xl: clamp(3.2rem, 7vw, 6.2rem);
 
   --gutter: clamp(1.25rem, 4vw, 3.5rem);
-  --maxw: 1320px;
+  --maxw: 1280px;
   --chamfer: 14px;
 }
 
@@ -145,3 +145,7 @@ p { margin: 0; max-width: 68ch; }
     scroll-behavior: auto !important;
   }
 }
+
+/* Transparent archival CAD cutouts: consistent grading without a light plate. */
+.cutout { background: radial-gradient(ellipse at 50% 50%, #1b2a3d 0%, var(--ground) 75%) !important; border: 0 !important; }
+.cutout img { mix-blend-mode: normal !important; filter: saturate(.42) brightness(1.28) contrast(.92) drop-shadow(0 12px 16px #0005); }

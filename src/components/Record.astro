@@ -34,9 +34,10 @@ const base = import.meta.env.BASE_URL;
         <Image class="clip still" src={record.broadcast.src} alt={t(record.broadcast.alt, lang)} widths={[844]} />
       )}
       <div class="hud" aria-hidden="true">
-        <span class="hud-tag">{t(record.resultLabel, lang)}</span>
-        <span class="hud-timer num">{record.value}</span>
+        <span class="hud-tag">{t(hasClip ? record.timerLabel : record.resultLabel, lang)}</span>
+        <span class="hud-timer num" data-exchange-time>{hasClip ? '0.0' : record.value}</span>
         <span class="hud-unit num">s</span>
+
       </div>
       <span class="corner tl"></span><span class="corner br"></span>
     </div>
@@ -68,6 +69,7 @@ const base = import.meta.env.BASE_URL;
 
 <script>
   import { reducedMotion } from '../scripts/smooth';
+  import { exchangeAt } from '../scripts/exchange-timing';
 
   document.querySelectorAll<HTMLElement>('[data-record]').forEach((root) => {
     const video = root.querySelector<HTMLVideoElement>('video');
@@ -75,6 +77,7 @@ const base = import.meta.env.BASE_URL;
     const view = root.querySelector<HTMLElement>('[data-view]');
     const elapsed = root.querySelector<HTMLElement>('[data-elapsed]');
     const duration = root.querySelector<HTMLElement>('[data-duration]');
+    const exchangeTime = root.querySelector<HTMLElement>('[data-exchange-time]');
     if (!video || !toggle || !view) return;
     let manuallyPaused = false;
     const sync = () => {
@@ -82,8 +85,18 @@ const base = import.meta.env.BASE_URL;
       if (duration && Number.isFinite(video.duration)) duration.textContent = video.duration.toFixed(1);
       toggle.textContent = video.paused ? toggle.dataset.play! : toggle.dataset.pause!;
       view.textContent = video.currentTime >= 17.2 ? view.dataset.broadcast! : view.dataset.pov!;
+      const exchange = exchangeAt(video.currentTime);
+      if (exchangeTime) exchangeTime.textContent = exchange.seconds.toFixed(1);
+
     };
-    ['loadedmetadata', 'play', 'pause', 'timeupdate', 'seeked', 'ended'].forEach(event => video.addEventListener(event, sync));
+    let frame = 0;
+    const animate = () => {
+      sync();
+      if (!video.paused) frame = requestAnimationFrame(animate);
+    };
+    video.addEventListener('play', () => { cancelAnimationFrame(frame); animate(); });
+    video.addEventListener('pause', () => cancelAnimationFrame(frame));
+    ['loadedmetadata', 'play', 'pause', 'timeupdate', 'seeking', 'seeked', 'ended'].forEach(event => video.addEventListener(event, sync));
     toggle.addEventListener('click', () => {
       manuallyPaused = !video.paused;
       if (video.paused) video.play().catch(() => {});
@@ -103,12 +116,12 @@ const base = import.meta.env.BASE_URL;
 </script>
 
 <style>
-  .record { padding: 7rem 0; }
-  .record.compact { padding: 3rem 0; }
+  .record { padding: clamp(3rem, 6vw, 5rem) 0; }
+  .record.compact { padding: 2.25rem 0; border-bottom: 1px solid var(--rule-soft); }
   .grid {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-    gap: clamp(2rem, 5vw, 4.5rem);
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3rem);
     align-items: center;
   }
   .screen {
@@ -158,6 +171,7 @@ const base = import.meta.env.BASE_URL;
   .controls button:hover { border-color: var(--amber); }
   .controls button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
   .hud-unit { color: var(--ink-2); }
+  .hud { pointer-events: none; }
   .corner {
     position: absolute;
     width: 22px;
@@ -168,16 +182,16 @@ const base = import.meta.env.BASE_URL;
   .corner.tl { top: 10px; left: 10px; border-right: 0; border-bottom: 0; }
   .corner.br { bottom: 10px; right: 10px; border-left: 0; border-top: 0; }
 
-  .text { grid-column: 2; grid-row: 1 / 3; display: grid; gap: 1rem; }
+  .text { grid-column: 2; grid-row: 1 / 3; display: grid; gap: .8rem; }
   .big {
-    font-size: clamp(5rem, 11vw, 9rem);
+    font-size: clamp(4.5rem, 8vw, 7rem);
     line-height: 0.9;
     color: var(--amber);
     letter-spacing: -0.03em;
   }
   .big span { font-size: 0.35em; color: var(--ink-2); margin-left: 0.15em; }
-  .title { font-size: var(--t-2xl); }
-  .lede { color: var(--ink-2); }
+  .title { font-size: clamp(1.8rem, 2.5vw, 2.35rem); }
+  .lede { color: var(--ink-2); font-size: var(--t-sm); }
   .crew {
     display: grid;
     gap: 0.5rem;
@@ -195,10 +209,12 @@ const base = import.meta.env.BASE_URL;
     text-underline-offset: 4px;
   }
 
-  @media (max-width: 900px) {
+  @media (max-width: 760px) {
     .grid { grid-template-columns: 1fr; }
-    .text { grid-column: 1; grid-row: 3; margin-top: 1.5rem; }
-    .hud { display: none; }
+    .text { grid-column: 1; grid-row: 3; margin-top: .9rem; }
+    .hud { top: .5rem; right: .5rem; padding: .35rem .5rem; }
+    .hud-tag { font-size: .6rem; letter-spacing: 0; }
+    .hud-timer { font-size: 1.65rem; }
     .playback { flex-wrap: wrap; }
   }
 </style>

@@ -12,7 +12,7 @@ export type ScanStage = {
   /** yaw group around the model */
   turntable: THREE.Group;
   /** frame the camera on a world-space sphere, looking along `dir` (from target to camera) */
-  frame: (sphere: THREE.Sphere, dir: THREE.Vector3) => void;
+  frame: (sphere: THREE.Sphere, dir: THREE.Vector3, bounds?: THREE.Box3) => void;
   /** 0 = all wireframe, 1 = all solid; sweeps along world `axis` across `range` */
   setScan: (s: number) => void;
   render: () => void;
@@ -58,6 +58,7 @@ export async function loadScanStage(
     gltf = await new GLTFLoader().setDRACOLoader(draco).loadAsync(`${base}models/${file}`);
   } catch (error) {
     renderer.dispose();
+    renderer.forceContextLoss();
     throw error;
   } finally { draco.dispose(); }
   const model = gltf.scene;
@@ -72,10 +73,15 @@ export async function loadScanStage(
   const wireClip = new THREE.Plane(axis.clone().negate(), 0);
   // feature-edge outlines read as a drawing; a full triangle wireframe turns into a blob
   const wireMat = new THREE.LineBasicMaterial({
-    color: 0xf2b53a, transparent: true, opacity: 0.32, depthWrite: false, clippingPlanes: [wireClip],
+    color: 0xf2b53a, transparent: true, opacity: 0.55, depthWrite: false, clippingPlanes: [wireClip],
   });
   const meshes: THREE.Mesh[] = [];
   model.traverse((o) => { if ((o as THREE.Mesh).isMesh) meshes.push(o as THREE.Mesh); });
+  model.updateMatrixWorld(true);
+  const overallSize = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3()).length();
+  const edgeCache = new Map<THREE.BufferGeometry, THREE.EdgesGeometry>();
+  // A depth-only surface hides edges on the far side, keeping CAD linework readable.
+  const depthMat = new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: true, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
   const hsl = { h: 0, s: 0, l: 0 };
   const seen = new Set<THREE.Material>();
   for (const m of meshes) {
@@ -87,10 +93,23 @@ export async function loadScanStage(
       const std = mat as THREE.MeshStandardMaterial;
       if (std.color && std.color.getHSL(hsl).l < 0.08) std.color.offsetHSL(0, 0, 0.06);
     }
-    if (!scan.solidOnly) m.add(new THREE.LineSegments(new THREE.EdgesGeometry(m.geometry, 25), wireMat));
+    if (!scan.solidOnly) {
+      const depth = new THREE.Mesh(m.geometry, depthMat);
+      depth.renderOrder = -1;
+      m.add(depth);
+      // Omit sub-pixel fastener linework rather than accumulating visual noise.
+      const size = new THREE.Box3().setFromObject(m).getSize(new THREE.Vector3()).length();
+      if (size >= overallSize * 0.008) {
+        let edges = edgeCache.get(m.geometry);
+        if (!edges) { edges = new THREE.EdgesGeometry(m.geometry, 35); edgeCache.set(m.geometry, edges); }
+        const line = new THREE.LineSegments(edges, wireMat);
+        line.renderOrder = 1;
+        m.add(line);
+      }
+    }
   }
 
-  let framed: { sphere: THREE.Sphere; dir: THREE.Vector3 } | null = null;
+  let framed: { sphere: THREE.Sphere; dir: THREE.Vector3; bounds?: THREE.Box3 } | null = null;
   const viewDirection = new THREE.Vector3();
   let interactionEnabled = false;
   let interactionChange: (() => void) | undefined;
@@ -104,7 +123,21 @@ export async function loadScanStage(
     const { sphere } = framed;
     const vFov = THREE.MathUtils.degToRad(camera.fov / 2);
     const hFov = Math.atan(Math.tan(vFov) * camera.aspect);
-    const dist = sphere.radius / Math.sin(Math.min(vFov, hFov));
+    let dist = sphere.radius / Math.sin(Math.min(vFov, hFov));
+    if (framed.bounds) {
+      // Perspective inequalities for all eight corners of a conservative swept box.
+      // Keep 8% screen margin; camera distance remains valid after every orbit/resize.
+      const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), viewDirection).normalize();
+      const up = new THREE.Vector3().crossVectors(viewDirection, right).normalize();
+      const { min, max } = framed.bounds;
+      dist = 0;
+      for (const x of [min.x, max.x]) for (const y of [min.y, max.y]) for (const z of [min.z, max.z]) {
+        const offset = new THREE.Vector3(x, y, z).sub(sphere.center);
+        const depth = offset.dot(viewDirection);
+        dist = Math.max(dist, depth + camera.near * 2, depth + Math.abs(offset.dot(right)) / (Math.tan(hFov) * .92), depth + Math.abs(offset.dot(up)) / (Math.tan(vFov) * .92));
+      }
+      dist = Math.max(dist, sphere.radius * .2);
+    }
     camera.position.copy(sphere.center).addScaledVector(viewDirection, dist);
     camera.lookAt(sphere.center);
   };
@@ -125,13 +158,14 @@ export async function loadScanStage(
 
   return {
     renderer, scene, camera, model, turntable,
-    frame(sphere, dir) {
-      framed = { sphere: sphere.clone(), dir: dir.clone().normalize() };
+    frame(sphere, dir, bounds) {
+      framed = { sphere: sphere.clone(), dir: dir.clone().normalize(), bounds: bounds?.clone() };
       viewDirection.copy(framed.dir);
       applyFrame();
     },
     setScan(s) {
-      const t = THREE.MathUtils.lerp(scan.range[0], scan.range[1], s);
+      // Exact endpoints must not clip oversized vehicle geometry.
+      const t = s <= 0 ? 1000 : s >= 1 ? -1000 : THREE.MathUtils.lerp(scan.range[0], scan.range[1], s);
       solidClip.constant = -t;
       wireClip.constant = t;
     },
@@ -196,7 +230,7 @@ export async function loadScanStage(
     dispose() {
       resizeObserver.disconnect();
       const geometries = new Set<THREE.BufferGeometry>();
-      const materials = new Set<THREE.Material>([wireMat]);
+      const materials = new Set<THREE.Material>([wireMat, depthMat]);
       const textures = new Set<THREE.Texture>();
       model.traverse(object => {
         const mesh = object as THREE.Mesh;

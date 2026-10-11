@@ -19,8 +19,8 @@ const sheets = [engineer, hero, research].map((p, i) => ({
     {sheets.map(({ p, no, figure, figureLabel }, i) => (
       <li class="sheet">
         <a class="sheet-link" href={href(lang, p.slug)}>
-          <div class:list={['pic', { light: p.cover.light }]}>
-            <Image src={p.cover.src} alt={t(p.cover.alt, lang)} widths={[640, 1100, 1800]} sizes="(max-width: 900px) 100vw, 60vw" />
+          <div class:list={['pic', { light: p.cover.light, cutout: p.cover.cutout }]}>
+            <Image src={p.cover.src} alt={t(p.cover.alt, lang)} widths={[640, 1100, 1800]} sizes="(max-width: 720px) 100vw, 52vw" />
             {no && <span class="robot-no num" aria-hidden="true">{no}</span>}
           </div>
           <div class="block">
@@ -40,35 +40,35 @@ const sheets = [engineer, hero, research].map((p, i) => ({
 </section>
 
 <style>
-  .index { padding-top: clamp(4rem, 8vw, 8rem); scroll-margin-top: 6rem; }
-  .heading { font-size: clamp(2.6rem, 5vw, 4.8rem); margin-bottom: 3rem; }
-  .sheets { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(4rem, 8vw, 7rem); }
-  .sheet-link { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 5rem); align-items: center; color: inherit; text-decoration: none; }
-  .sheet:nth-child(2) .pic { order: 2; }
-  .sheet:nth-child(2) .sheet-link { grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr); }
-  .pic { position: relative; aspect-ratio: 6 / 5; overflow: hidden; background: var(--panel); }
+  .index { padding-top: clamp(2.5rem, 5vw, 4rem); scroll-margin-top: 6rem; }
+  .heading { font-size: clamp(2.2rem, 4vw, 3.5rem); margin-bottom: 1.8rem; }
+  .sheets { list-style: none; margin: 0; padding: 0; display: grid; }
+  .sheet { padding: 1.6rem 0; border-top: 1px solid var(--rule); }
+  .sheet:last-child { border-bottom: 1px solid var(--rule); }
+  .sheet-link { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; color: inherit; text-decoration: none; }
+  .pic { position: relative; aspect-ratio: 8 / 5; overflow: hidden; background: var(--panel); }
   .pic :global(img) { width: 100%; height: 100%; object-fit: contain; transition: transform .6s ease; }
   .pic.light { background: var(--plate); }
-  .pic.light :global(img) { padding: 2%; mix-blend-mode: multiply; }
+  .pic.light :global(img) { padding: 3%; mix-blend-mode: multiply; }
   .sheet-link:hover .pic :global(img) { transform: scale(1.035); }
-  .robot-no { position: absolute; right: 1.3rem; bottom: .7rem; font-family: var(--f-latin); font-size: clamp(5rem, 9vw, 9rem); line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(242,181,58,.75); }
+  .robot-no { position: absolute; right: 1rem; bottom: .7rem; font-family: var(--f-latin); font-size: clamp(3.5rem, 5vw, 5rem); line-height: 1; color: transparent; -webkit-text-stroke: 1px rgba(242,181,58,.75); }
   .pic.light .robot-no { -webkit-text-stroke-color: rgba(7,13,23,.35); }
-  .block { display: grid; gap: 1.5rem; padding: 1rem 0; }
+  .block { display: grid; gap: .85rem; padding: .5rem 0; }
   .dwg { font-size: var(--t-xs); color: var(--amber); }
-  .name { font-size: clamp(2.2rem, 3.8vw, 4rem); line-height: 1.12; max-width: 15ch; }
-  .lede { color: var(--ink-2); font-size: var(--t-sm); max-width: 43ch; line-height: 1.85; }
-  .figure { display: flex; align-items: center; gap: 1.4rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
-  .fig { font-size: clamp(1.8rem, 2.5vw, 2.8rem); color: var(--ink); white-space: nowrap; }
+  .name { font-size: clamp(2rem, 3vw, 3rem); line-height: 1.12; max-width: 17ch; }
+  .lede { color: var(--ink-2); font-size: var(--t-sm); max-width: 43ch; line-height: 1.75; }
+  .figure { display: flex; align-items: center; gap: 1rem; padding-top: .85rem; border-top: 1px solid var(--rule); }
+  .fig { font-size: clamp(1.5rem, 2vw, 2rem); color: var(--ink); white-space: nowrap; }
   .fig-label { font-size: var(--t-xs); color: var(--ink-3); max-width: 19ch; }
-  .go { display: inline-flex; justify-self: start; align-items: center; gap: 2rem; font-size: var(--t-sm); color: var(--amber); padding: .6rem 0; }
+  .go { display: inline-flex; justify-self: start; align-items: center; gap: 1rem; font-size: var(--t-sm); color: var(--amber); padding: .3rem 0; }
   .go::after { content: ''; width: 2.5rem; height: .5rem; border-top: 1px solid currentColor; border-right: 1px solid currentColor; transform: skewX(40deg) translateY(.2rem); transition: width .25s; }
   .sheet-link:hover .go::after { width: 4rem; }
-  @media (max-width: 900px) {
-    .sheet-link, .sheet:nth-child(2) .sheet-link { grid-template-columns: 1fr; gap: 1.8rem; }
-    .sheet:nth-child(2) .pic { order: 0; }
-    .pic { aspect-ratio: 4 / 3; }
+  @media (max-width: 720px) {
+    .sheet-link { grid-template-columns: 1fr; gap: 1.2rem; }
+    .pic { aspect-ratio: 3 / 2; }
+    .sheet { padding: 1.35rem 0; }
     .block { gap: 1.1rem; padding: 0; }
-    .name { max-width: none; font-size: clamp(2.2rem, 7vw, 3.5rem); }
+    .name { max-width: none; font-size: clamp(2rem, 6vw, 2.6rem); }
     .lede { max-width: 60ch; }
     .figure { padding-top: 1.2rem; }
     .heading { margin-bottom: 2rem; }

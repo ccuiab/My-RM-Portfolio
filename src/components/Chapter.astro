@@ -11,7 +11,8 @@ const { lang, chapter: c } = Astro.props;
 const pics = c.pics ?? [];
 ---
 <section class="ch" id={c.id} aria-labelledby={`${c.id}-title`}>
-  <div class="wrap ch-grid">
+  <div class:list={["wrap ch-grid", { "with-media": pics.length > 0 || Astro.slots.has("wide") }]} >
+    <div class="ch-copy">
     <div class="ch-head">
       <span class="mark" aria-hidden="true">{c.mark}</span>
       <h2 id={`${c.id}-title`} class="display ch-title">{t(c.title, lang)}</h2>
@@ -39,17 +40,18 @@ const pics = c.pics ?? [];
 
       <slot />
     </div>
-  </div>
+    </div>
 
-  {Astro.slots.has('wide') && <div class="wrap wide"><slot name="wide" /></div>}
+  <div class="ch-media">
+  {Astro.slots.has('wide') && <div class="wide"><slot name="wide" /></div>}
 
   {pics.length > 0 && (
-    <div class="wrap">
-      <ul class:list={['pics', `n${Math.min(pics.length, 4)}`, { 'has-model': pics.some(p => p.model), 'leading-figure': pics.length > 1 && pics.length % 2 === 1 }]}>
+    <div>
+      <ul class:list={['pics', `n${Math.min(pics.length, 4)}`, { 'has-model': pics.some(p => p.model), 'leading-figure': pics.length === 3 }]}>
         {pics.map((p, i) => (
           <li>
             {p.model ? <ModuleMedia pic={p} lang={lang} /> : (
-            <button class:list={['pic', { light: p.light }]} type="button" data-zoom={p.src.src} data-alt={t(p.alt, lang)} aria-label={`${t(ui.enlarge, lang)}: ${t(p.alt, lang)}`}>
+            <button class:list={['pic', { light: p.light, cutout: p.cutout }]} type="button" data-zoom={p.src.src} data-alt={t(p.alt, lang)} aria-label={`${t(ui.enlarge, lang)}: ${t(p.alt, lang)}`}>
               <Image src={p.src} alt={t(p.alt, lang)} widths={[480, 900, 1400, 2400]} sizes={pics.length === 1 || (i === 0 && pics.length % 2 === 1) ? '100vw' : '(max-width: 560px) 100vw, 50vw'} />
               <span class="cap"><span class="num">{c.mark}{i + 1}</span> {t(p.alt, lang)}</span>
             </button>
@@ -59,38 +61,48 @@ const pics = c.pics ?? [];
       </ul>
     </div>
   )}
+  </div>
+  </div>
   {Astro.slots.has('after-media') && <div class="wrap wide"><slot name="after-media" /></div>}
 </section>
 
 <style>
-  .ch { padding-top: clamp(6rem, 10vw, 9rem); scroll-margin-top: 80px; }
+  .ch { padding-top: clamp(3.5rem, 6vw, 5.5rem); scroll-margin-top: 80px; }
   .ch-grid {
     display: grid;
-    grid-template-columns: minmax(0, .82fr) minmax(0, 1.18fr);
-    gap: clamp(2rem, 6vw, 5.5rem);
+    grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+    align-items: start;
+    gap: clamp(1.5rem, 4vw, 3.5rem);
     padding-top: 2rem;
     position: relative;
   }
+  .ch-copy { display: grid; gap: 1.5rem; min-width: 0; }
+  .ch-media { min-width: 0; display: grid; gap: 1rem; }
+  .ch-grid:not(.with-media) { grid-template-columns: 1fr; }
+  .ch-grid:not(.with-media) .ch-copy { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 3rem; }
+  .ch-media .wide, .ch-media .pics { margin-top: 0; }
+  .ch-media :global(.media-view) { height: clamp(300px, 29vw, 410px); }
   .ch-grid::before { content: ''; position: absolute; top: 0; left: var(--gutter); right: var(--gutter); height: 1px; background: var(--rule); }
   .ch-head {
-    position: sticky;
+    position: static;
     top: 90px;
     align-self: start;
     display: grid;
-    gap: 1.5rem;
+    grid-template-columns: 2.5rem minmax(0, 1fr);
+    gap: 1rem;
   }
   .mark {
     display: block;
     font-family: var(--f-latin);
     font-weight: 700;
-    font-size: clamp(3.5rem, 6vw, 5rem);
+    font-size: 2.4rem;
     line-height: .85;
     letter-spacing: -.05em;
     color: var(--amber);
   }
-  .ch-title { font-size: clamp(2.25rem, 3.4vw, 3.5rem); line-height: 1.08; text-wrap: balance; }
-  .ch-body { display: grid; gap: 1.8rem; padding-top: .15rem; }
-  .ch-lede { font-size: clamp(1.15rem, 1.65vw, 1.5rem); line-height: 1.65; color: var(--ink); max-width: 42ch; }
+  .ch-title { font-size: clamp(1.9rem, 2.6vw, 2.7rem); line-height: 1.08; text-wrap: balance; }
+  .ch-body { display: grid; gap: 1.2rem; padding-top: .15rem; }
+  .ch-lede { font-size: clamp(1.1rem, 1.4vw, 1.3rem); line-height: 1.65; color: var(--ink); max-width: 42ch; }
 
   .specs {
     display: flex;
@@ -109,7 +121,7 @@ const pics = c.pics ?? [];
     padding: 0;
     list-style: none;
     display: grid;
-    gap: 1.1rem;
+    gap: .7rem;
     color: var(--ink-2);
   }
   .bullets li {
@@ -127,28 +139,23 @@ const pics = c.pics ?? [];
     background: var(--amber);
   }
 
-  .wide { margin-top: 3rem; display: grid; gap: 1.5rem; }
+  .wide { margin-top: 1.75rem; display: grid; gap: 1.5rem; }
 
   .pics {
     list-style: none;
-    margin: 3rem 0 0;
+    margin: 1.75rem 0 0;
     padding: 0;
     display: grid;
-    gap: 2rem;
+    gap: 1rem;
     grid-template-columns: repeat(var(--cols, 2), minmax(0, 1fr));
   }
   .pics.n1 { --cols: 1; }
+  .pics.n4 { --cols: 2; }
   .pics.n2 { --cols: 2; }
-  .pics.n3, .pics.n4 { --cols: 2; }
+  .pics.n3 { --cols: 2; }
   .pics.leading-figure > li:first-child { grid-column: 1 / -1; }
   .pics li { min-width: 0; }
-  .pics :global(.module-media) { border: 0; background: transparent; }
-  .pics :global(.media-switch) { justify-content: flex-start; gap: 1.5rem; border: 0; margin-bottom: .8rem; }
-  .pics :global(.media-switch button) { flex: none; padding: .55rem 0; background: transparent; font-size: var(--t-sm); }
-  .pics :global(.media-view) { background: var(--panel); }
-  .pics.n1 :global(.media-view), .pics.leading-figure > li:first-child :global(.media-view) { aspect-ratio: 16 / 9; }
-  .pics :global(.controls), .pics :global(figcaption) { border: 0; padding: .7rem 0; }
-  .pics :global(figcaption) { color: var(--ink-2); }
+  .pics.has-model { --cols: 1; gap: 1.5rem; }
   .pic {
     display: grid;
     width: 100%;
@@ -160,9 +167,7 @@ const pics = c.pics ?? [];
     text-align: left;
     cursor: zoom-in;
   }
-  .pic.light {
-    background: var(--plate);
-  }
+  .pic.light { background: var(--plate); }
   .pics.n1 .pic :global(img), .pics.leading-figure > li:first-child .pic :global(img) { aspect-ratio: 16 / 9; }
   .pic :global(img) {
     width: 100%;
@@ -180,15 +185,16 @@ const pics = c.pics ?? [];
   .pic:hover .cap { color: var(--ink); }
 
   @media (max-width: 900px) {
-    .ch-grid { grid-template-columns: 1fr; gap: 1.8rem; }
+    .ch-grid, .ch-grid:not(.with-media) .ch-copy { grid-template-columns: 1fr; gap: 1.8rem; }
     .ch-head { position: static; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.25rem; align-items: start; }
-    .mark { font-size: 3.2rem; }
-    .ch-title { font-size: clamp(2rem, 5vw, 3rem); }
+    .mark { font-size: 2.25rem; }
+    .pics.n4 { --cols: 2; }
+    .ch-title { font-size: clamp(1.8rem, 4vw, 2.5rem); }
     .pics { gap: 1.5rem; }
   }
   @media (max-width: 560px) {
     .pics { --cols: 1 !important; }
-    .pics.n1 :global(.media-view), .pics.leading-figure > li:first-child :global(.media-view) { aspect-ratio: 4 / 3; }
+    .pics.n1 :global(.media-view), .pics.leading-figure > li:first-child :global(.media-view) { aspect-ratio: auto; width: 100%; }
     .pics.n1 .pic :global(img), .pics.leading-figure > li:first-child .pic :global(img) { aspect-ratio: 4 / 3; }
     .ch-head { gap: 1rem; }
   }
