@@ -2,11 +2,12 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { cleanPartName } from './part-name';
 
 /** Shared part viewer. Its owner decides when rendering is allowed. */
 export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string, file: string, label: HTMLElement, canRender: () => boolean) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.25;
@@ -20,7 +21,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   fill.position.set(-2, .5, 1); scene.add(fill);
   const rim = new THREE.DirectionalLight(amber, 1.5);
   rim.position.set(1, 1, -2); scene.add(rim);
-  const draco = new DRACOLoader().setDecoderPath(`${base}models/draco/`);
+  const draco = new DRACOLoader().setDecoderPath(`${base}models/draco/`).setWorkerLimit(1);
   let model: THREE.Group;
   try {
     model = (await new GLTFLoader().setDRACOLoader(draco).loadAsync(`${base}models/${file}`)).scene;
@@ -38,24 +39,37 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   canvas.tabIndex = 0;
   const bounds = new THREE.Box3().setFromObject(model, true);
   const sphere = bounds.getBoundingSphere(new THREE.Sphere());
-  const initialDirection = new THREE.Vector3(1, .8, 1.5).normalize();
+  const initialDirection = new THREE.Vector3(1, .45, 1.6).normalize();
   let radius = sphere.radius * 1.13;
   controls.target.copy(sphere.center);
   const direction = initialDirection.clone();
+  const corners: { mesh: THREE.Mesh; point: THREE.Vector3 }[] = [];
+  model.traverse(object => {
+    const mesh = object as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    mesh.geometry.computeBoundingBox();
+    const { min, max } = mesh.geometry.boundingBox!;
+    for (const x of [min.x, max.x]) for (const y of [min.y, max.y]) for (const z of [min.z, max.z]) corners.push({ mesh, point: new THREE.Vector3(x, y, z) });
+  });
   const fit = () => {
     direction.copy(camera.position).sub(controls.target);
     if (!direction.lengthSq()) direction.copy(initialDirection);
     direction.normalize();
+    model.updateMatrixWorld(true);
+    const points = corners.map(({ mesh, point }) => point.clone().applyMatrix4(mesh.matrixWorld));
+    const center = new THREE.Box3().setFromPoints(points).getCenter(new THREE.Vector3());
+    controls.target.copy(center);
     const vertical = THREE.MathUtils.degToRad(camera.fov / 2);
     const horizontal = Math.atan(Math.tan(vertical) * camera.aspect);
     const right = new THREE.Vector3().crossVectors(camera.up, direction).normalize();
     const up = new THREE.Vector3().crossVectors(direction, right).normalize();
     let distance = .01;
-    // Fit the CAD box in the actual viewing direction, avoiding a tiny model in a large canvas.
-    for (const x of [bounds.min.x, bounds.max.x]) for (const y of [bounds.min.y, bounds.max.y]) for (const z of [bounds.min.z, bounds.max.z]) {
-      const p = new THREE.Vector3(x, y, z).sub(sphere.center).multiplyScalar(radius / sphere.radius);
+    // Use occupied part corners at the current explosion amount, rather than
+    // enlarging an empty sphere and cancelling the visible separation.
+    for (const point of points) {
+      const p = point.sub(center).multiplyScalar(radius / sphere.radius);
       const depth = p.dot(direction);
-      distance = Math.max(distance, depth + Math.abs(p.dot(right)) / (Math.tan(horizontal) * .92), depth + Math.abs(p.dot(up)) / (Math.tan(vertical) * .92));
+      distance = Math.max(distance, depth + Math.abs(p.dot(right)) / (Math.tan(horizontal) * .86), depth + Math.abs(p.dot(up)) / (Math.tan(vertical) * .8));
     }
     camera.position.copy(controls.target).addScaledVector(direction, distance);
     camera.lookAt(controls.target);
@@ -108,7 +122,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       saved.push({ material, color: material.emissive.clone(), intensity: material.emissiveIntensity });
       material.emissive.copy(amber); material.emissiveIntensity = .85;
     }
-    label.textContent = source?.split('/').pop() ?? hit.name;
+    label.textContent = cleanPartName(source?.split('/').pop() ?? hit.name);
     label.hidden = false;
   };
   const render = () => {

@@ -4,6 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { gsap } from 'gsap';
+import { cleanPartName } from './lib/part-name';
 
 type Part = {
   key: string;
@@ -48,7 +49,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string): Prom
   const parts = meta.parts.map(part => {
     const node = nodes.get(part.key);
     if (!node || node.userData.node_name !== part.node_name) throw new Error(`Arm part mismatch: ${part.key}`);
-    return { part, node, rest: node.position.clone(), offset: new THREE.Vector3(...part.explode_offset_m) };
+    return { part, node, rest: node.position.clone(), offset: new THREE.Vector3(...part.explode_offset_m), center: new THREE.Box3().setFromObject(node).getCenter(new THREE.Vector3()), group: part.link === 'link_base' ? 1 : part.link === 'link_wheel' ? 5 : Number(part.link.replace('link_', '')) };
   });
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
   // A modest drawing buffer, one Draco worker, no shadows/postprocessing, no idle loop.
@@ -78,7 +79,42 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string): Prom
   controls.maxPolarAngle = Math.PI - .08;
   controls.rotateSpeed = .7;
   controls.zoomSpeed = .6;
-  const direction = new THREE.Vector3(1, .45, .8).normalize();
+  const direction = new THREE.Vector3(1, .48, 1.6).normalize();
+  // Lay the rigid links out in chain order, then separate each group's parts
+  // along the audited assembly vectors. Motors remain at their CAD rest poses.
+  const chain = new THREE.Vector3(direction.z, .12, -direction.x).normalize();
+  const groups = Array.from({ length: 6 }, (_, i) => {
+    const members = parts.filter(p => p.group === i + 1);
+    const box = new THREE.Box3();
+    members.forEach(p => box.union(new THREE.Box3().setFromObject(p.node)));
+    const center = box.getCenter(new THREE.Vector3());
+    const size = box.getSize(new THREE.Vector3());
+    const halfWidth = (Math.abs(chain.x) * size.x + Math.abs(chain.z) * size.z) / 2;
+    return { members, center, halfWidth, translation: new THREE.Vector3(), label: root.querySelector<HTMLElement>(`[data-link-label="${i + 1}"]`)! };
+  });
+  let chainDistance = 0;
+  groups.forEach((group, i) => {
+    if (i) chainDistance += groups[i - 1].halfWidth + group.halfWidth + .16;
+    const destination = groups[0].center.clone().addScaledVector(chain, chainDistance);
+    destination.y += i * .018;
+    group.translation.copy(destination).sub(group.center);
+    const largest = Math.max(...group.members.map(p => p.offset.length()), .001);
+    group.members.forEach(p => {
+      if (p.part.motor) { p.offset.set(0, 0, 0); return; }
+      // The former 615 mm downward offset is an export-layout outlier in L3.
+      // Compress distance while retaining its direction and membership.
+      const length = p.offset.length();
+      if (length) p.offset.setLength(.025 + .13 * length / largest);
+      p.offset.add(group.translation);
+    });
+  });
+  const guidePositions = new Float32Array(parts.length * 6);
+  const guideGeometry = new THREE.BufferGeometry();
+  guideGeometry.setAttribute('position', new THREE.BufferAttribute(guidePositions, 3));
+  const guideMaterial = new THREE.LineBasicMaterial({ color: amber, transparent: true, opacity: 0, depthWrite: false });
+  const guides = new THREE.LineSegments(guideGeometry, guideMaterial);
+  guides.frustumCulled = false;
+  scene.add(guides);
   let fitDistance = 0;
   let visible = false;
   let disposed = false;
@@ -86,8 +122,9 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string): Prom
   let spinning = false;
   let lastSpin = 0;
   let frames = 0;
-  let progress = { value: 0 };
+  const progress = { value: Number(slider.value) / 100 };
   let tween: gsap.core.Tween | undefined;
+  let introduced = root.dataset.introduced === 'true';
   let selected: THREE.Object3D | undefined;
   const meshes: THREE.Mesh[] = [];
   const materials = new Map<THREE.Mesh, THREE.Material | THREE.Material[]>();
@@ -122,7 +159,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string): Prom
     for (const point of points) {
       point.sub(center);
       const depth = point.dot(view);
-      fitDistance = Math.max(fitDistance, depth + Math.abs(point.dot(right)) / (tanH * .84), depth + Math.abs(point.dot(up)) / (tanV * .78));
+      fitDistance = Math.max(fitDistance, depth + Math.abs(point.dot(right)) / (tanH * .88), depth + Math.abs(point.dot(up)) / (tanV * .76));
     }
     controls.minDistance = fitDistance * .65;
     controls.maxDistance = fitDistance * 1.65;
@@ -158,8 +195,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string): Prom
         }
         mesh.material = highlights.get(mesh)!;
       });
-      // This exact string is also the node name in the GLB; no translated guesswork.
-      hudName.textContent = node.userData.node_name;
+      hudName.textContent = cleanPartName(node.userData.node_name);
       const link = node.userData.link as string;
       hudJoint.textContent = link === 'link_base' ? hud.dataset.mount! : `J${link === 'link_wheel' ? '7' : link.replace('link_', '')} · ${link}`;
       root.dataset.hoverPart = node.userData.part_key;
@@ -196,6 +232,15 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string): Prom
     model.updateMatrixWorld(true);
     hitTest();
     renderer.render(scene, camera);
+    groups.forEach(group => {
+      const box = new THREE.Box3();
+      group.members.filter(p => !p.part.motor).forEach(p => box.union(new THREE.Box3().setFromObject(p.node)));
+      const point = box.getCenter(new THREE.Vector3());
+      point.y = box.max.y + .035;
+      point.project(camera);
+      group.label.style.transform = `translate(${(point.x * .5 + .5) * canvas.clientWidth}px, ${(-point.y * .5 + .5) * canvas.clientHeight}px) translate(-50%, -100%)`;
+      group.label.style.opacity = `${THREE.MathUtils.smoothstep(progress.value, .15, .5)}`;
+    });
     root.dataset.frames = String(++frames);
     root.dataset.drawCalls = String(renderer.info.render.calls);
     root.dataset.triangles = String(renderer.info.render.triangles);
@@ -203,6 +248,12 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string): Prom
   };
   const applyProgress = () => {
     for (const { node, rest, offset } of parts) node.position.copy(rest).addScaledVector(offset, progress.value);
+    parts.forEach((p, i) => {
+      p.center.toArray(guidePositions, i * 6);
+      p.center.clone().addScaledVector(p.offset, progress.value).toArray(guidePositions, i * 6 + 3);
+    });
+    guideGeometry.attributes.position.needsUpdate = true;
+    guideMaterial.opacity = .035 * progress.value;
     refit();
     const percentage = Math.round(progress.value * 100);
     slider.value = String(percentage);
@@ -280,7 +331,10 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string): Prom
     setVisible(value) {
       visible = value;
       root.dataset.rendering = String(value);
-      if (value) { tween?.resume(); lastSpin = performance.now(); requestDraw(); }
+      if (value) {
+        tween?.resume(); lastSpin = performance.now(); requestDraw();
+        if (!introduced) { introduced = true; root.dataset.introduced = 'true'; transition(.7); }
+      }
       else { tween?.pause(); cancelAnimationFrame(frame); frame = 0; hoverPoint = undefined; select(); }
     },
     dispose() {
@@ -306,6 +360,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string): Prom
       geometries.forEach(geometry => geometry.dispose());
       allMaterials.forEach(material => material.dispose());
       textures.forEach(texture => texture.dispose());
+      guideGeometry.dispose(); guideMaterial.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
     },
