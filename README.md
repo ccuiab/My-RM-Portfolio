@@ -51,7 +51,7 @@ npm run preview
 
 `npm run build` 会准备静态资源、生成得意黑字体子集，输出到 `publish/current/`，并自动保存到 `publish/history/<时间与提交>/`。部署工作流只上传 `publish/current/`，历史网页不会混入线上站点。模型与视频的网址仍分别为 `models/`、`video/`，站点 base 为 `/My-RM-Portfolio`。
 
-`materials/models/derived/web/` 或 `materials/videos/derived/web/` 修改后，重新执行开发或构建命令刷新临时静态目录。全部网站文案位于 `src/data/content.ts`。`npm run materials:inventory` 扫描完整本地素材库、计算 SHA-256，并更新 Markdown 和 CSV 索引。
+`materials/models/derived/web/` 保存机械臂、整臂爆炸、舵轮和气泵模型；`materials/videos/derived/web/` 保存首页 5.8 s 成绩片段与工程页片尾的上台阶、偷银矿、抢矿三段静音循环，封面位于 `materials/images/derived/video-posters/`。片尾视频输入位于 `materials/videos/derived/inputs/`，源视频保留在 `materials/videos/source/bilibili/`，运行 `scripts/cut-eggs.ps1` 可重新剪辑。素材修改后重新执行开发或构建命令刷新临时静态目录。全部网站文案位于 `src/data/content.ts`。`npm run materials:inventory` 扫描完整本地素材库、计算 SHA-256，并更新 Markdown 和 CSV 索引。
 
 ## 历史版本
 
@@ -76,3 +76,5 @@ Windows 克隆时启用 `git -c core.symlinks=true clone ...`，并确保系统�
 已核实的视频按官方比赛、全明星、工程及监控视角、实车演示、精彩回顾和花絮分目录保存到 `materials/videos/source/bilibili/`。可读清单在 [Bilibili 视频索引](materials/documents/derived/bilibili-video-catalog.md)，机器可读清单记录原链接、UP 主、分 P、分辨率、时长和 SHA256。
 
 下载工具为 `scripts/download-bilibili.py`，使用 `.venv` 中的 `yt-dlp` 和 `C:/ffmpeg/bin/ffmpeg.exe`；分段下载可断点续传，不需要浏览器 Cookie。下载结束后运行 `scripts/catalog-bilibili.py` 校验文件并刷新索引。原片保留在本地素材库，网站继续使用 Bilibili 介绍视频。
+
+工程页片尾展示上台阶、偷银矿（复活赛对华东理工）和抢矿（全明星）三段静音循环。成片位于 `materials/videos/derived/web/egg-*.mp4`，封面位于 `materials/images/derived/video-posters/egg-*.jpg`；剪辑输入保存在 `materials/videos/derived/inputs/`，源视频位于 `materials/videos/source/bilibili/`。编辑参数和复现脚本分别见成片旁的 `egg-*.source.json` 与 `scripts/cut-eggs.ps1`。

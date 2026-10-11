@@ -1,6 +1,6 @@
 {
   "createdAt": "2026-10-11T12:39:12.927Z",
-  "completedAt": "2026-10-11T12:42:30.5545874Z",
+  "completedAt": "2026-10-11T17:24:45.540Z",
   "recovery": "Windows Recycle Bin for deletions; reverse source/destination for moves",
   "summary": {
     "index/INVENTORY.md": {
@@ -32,8 +32,8 @@
       "bytes": 88788
     },
     "deleted/images": {
-      "files": 844,
-      "bytes": 2049215717
+      "files": 847,
+      "bytes": 2050985951
     },
     "source/images": {
       "files": 54,
@@ -52,8 +52,8 @@
       "bytes": 1557404127
     },
     "deleted/models": {
-      "files": 121,
-      "bytes": 1260144605
+      "files": 123,
+      "bytes": 1261019173
     },
     "source/videos": {
       "files": 35,
@@ -15638,6 +15638,61 @@
       "reason": "当前 Record 视频及其公开来源记录",
       "bytes": 791,
       "sha256": "d371a3fbebcebe71793466d10021458fb73e1b1177b619f322cfae8d3d52f721"
+    },
+    {
+      "source": "materials/models/derived/web/l4.glb",
+      "destination": null,
+      "level": "derived",
+      "usage": "未使用",
+      "reason": "旧腕部爆炸模型已由全臂模型替换；src/ 与 scripts/ 无引用。历史副本保存在所列发布版本。",
+      "bytes": 865660,
+      "sha256": "78c94615759a6e5ee26df47e4dbd58a3699fc0e6cafde12e403f0e47463de18e",
+      "replacement": "materials/models/derived/web/arm-parts.glb",
+      "historyCopy": "publish/history/20261011-064128-astro-1f5384a/models/l4.glb"
+    },
+    {
+      "source": "materials/models/derived/web/l4.json",
+      "destination": null,
+      "level": "derived",
+      "usage": "未使用",
+      "reason": "旧腕部爆炸参数已由全臂参数替换；src/ 与 scripts/ 无引用。历史副本保存在所列发布版本。",
+      "bytes": 8908,
+      "sha256": "766ee4311582e423a7aace7854b64575d2ac73b52ca6897fa8660bd4131e0fc8",
+      "replacement": "materials/models/derived/web/arm-parts.json",
+      "historyCopy": "publish/history/20261011-064128-astro-1f5384a/models/l4.json"
+    },
+    {
+      "source": "materials/images/derived/site/cad-cutouts/l4-assembled.png",
+      "destination": null,
+      "level": "derived",
+      "usage": "未使用",
+      "reason": "旧腕部静态图已由全臂爆炸静态图替换；src/ 与 scripts/ 无引用。历史副本保存在所列发布版本。",
+      "bytes": 1045738,
+      "sha256": "1857c7b193cbcf9f64470c13e86a88627e3865e4f7096eb2bf6c2e037b514a2b",
+      "replacement": "materials/images/derived/site/cad-cutouts/arm-exploded.png",
+      "historyCopy": "publish/history/20261011-040020-astro-4d70476/_astro/l4-assembled.BTY6oFKa.png"
+    },
+    {
+      "source": "materials/images/derived/generated/l4-assembled.webp",
+      "destination": null,
+      "level": "derived",
+      "usage": "未使用",
+      "reason": "仅用于生成已退役的腕部静态图，当前页面与处理脚本均无引用；历史副本保存在所列发布版本。",
+      "bytes": 542836,
+      "sha256": "42224c56cca120d0b7edcfc627879845206a52d823217a454c7a26fdd7cd74ab",
+      "replacement": "materials/images/derived/site/cad-cutouts/arm-exploded.png",
+      "historyCopy": "publish/history/20261010-063629-astro-396d509/_astro/l4-assembled.D7pFbD6M.webp"
+    },
+    {
+      "source": "materials/images/derived/generated/eng-reach-lines.webp",
+      "destination": null,
+      "level": "derived",
+      "usage": "未使用",
+      "reason": "旧机械臂展开线稿已由 A 章兑矿六轴示意动画替换；src/ 与 scripts/ 无引用。历史副本保存在所列发布版本。",
+      "bytes": 181660,
+      "sha256": "88fdea9ae1d3539327edca1aef43e6fb24a6d9c5cc7a9fb8c4ac9397ee77dfcd",
+      "replacement": "materials/models/derived/web/arm.glb",
+      "historyCopy": "publish/history/20261011-040020-astro-4d70476/_astro/eng-reach-lines.BM9mV7Kd.webp"
     }
   ]
 }
