@@ -1,0 +1,65 @@
+---
+import { Image } from 'astro:assets';
+import { sceneCopy, type Pic } from '../data/content';
+import { t, ui, type Lang } from '../data/i18n';
+interface Props { pic: Pic; lang: Lang; kind: 'pump' | 'swerve' }
+const { pic, lang, kind } = Astro.props;
+const L = sceneCopy[kind];
+---
+<figure class="mechanism" data-mechanism={kind} data-model={pic.model} data-failed={t(sceneCopy.module.failed, lang)} data-loading={t(sceneCopy.module.loading, lang)} data-static={t(L.static, lang)}>
+  <div class="media-view" data-mechanism-view>
+    <button class="still cutout" type="button" data-zoom={pic.src.src} data-alt={t(pic.alt, lang)} aria-label={`${t(ui.enlarge, lang)}: ${t(pic.alt, lang)}`}>
+      <Image src={pic.src} alt={t(pic.alt, lang)} widths={[480, 900, 1400, 2400]} sizes="(max-width: 900px) 100vw, 55vw" />
+    </button>
+    <div class="model" data-mechanism-canvas></div>
+    <span class="badge">{t(L.badge, lang)}</span>
+    <output class="hover" data-part-name hidden></output>
+    <p class="status" data-mechanism-status role="status" hidden></p>
+  </div>
+  <div class="controls" data-mechanism-controls hidden>
+    {kind === 'swerve' && <>
+      <div class="states" role="group" aria-label={t(sceneCopy.swerve.amount, lang)}>
+        <button type="button" data-explode-to="0" aria-pressed="true">{t(sceneCopy.swerve.assemble, lang)}</button>
+        <button type="button" data-explode-to="1" aria-pressed="false">{t(sceneCopy.swerve.explode, lang)}</button>
+      </div>
+      <label class="amount"><span>{t(sceneCopy.swerve.amount, lang)}</span><input type="range" min="0" max="100" step="1" value="0" data-explode-amount /><output data-explode-output>0%</output></label>
+    </>}
+    <button type="button" data-mechanism-play data-pause={t(L.pause, lang)} data-play={t(L.play, lang)} aria-pressed="true">{t(L.pause, lang)}</button>
+    <button type="button" data-mechanism-reset>{t(sceneCopy.interaction.reset, lang)}</button>
+    <span class="hint">{t(L.hint, lang)}</span>
+  </div>
+  <figcaption>{t(pic.alt, lang)}<small>{t(L.note, lang)}</small></figcaption>
+</figure>
+<script>
+  import '../scripts/module-mechanisms';
+</script>
+<style>
+  .mechanism { margin: 0; min-width: 0; background: var(--panel); }
+  .media-view { position: relative; height: clamp(300px, 40vw, 530px); overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #182438, var(--ground) 78%); }
+  .still, .model { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .still { border: 0; background: var(--plate); padding: 3%; cursor: zoom-in; }
+  .still :global(img) { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
+  .model { visibility: hidden; pointer-events: none; }
+  [data-ready="true"] .model { visibility: visible; pointer-events: auto; }
+  [data-ready="true"] .still { visibility: hidden; }
+  .model :global(canvas) { width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  .model :global(canvas:active) { cursor: grabbing; }
+  .model :global(canvas:focus-visible) { outline: 2px solid var(--amber); outline-offset: -3px; }
+  .badge { position: absolute; top: 1rem; left: 1rem; color: var(--amber); font-size: var(--t-xs); pointer-events: none; }
+  .hover { position: absolute; bottom: 1rem; left: 1rem; right: 1rem; width: fit-content; max-width: calc(100% - 2rem); padding: .5rem .7rem; color: var(--amber); border: 1px solid var(--amber); background: var(--ground); font-family: var(--f-mono); font-size: var(--t-xs); overflow-wrap: anywhere; pointer-events: none; }
+  .status { position: absolute; bottom: 0; left: 0; right: 0; margin: 0; padding: .75rem; font-size: var(--t-xs); color: var(--ink-2); background: var(--panel); text-align: center; }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; padding: .8rem 1rem; }
+  .states { display: flex; gap: .5rem; }
+  .controls button { border: 1px solid var(--rule); padding: .5rem .65rem; background: var(--ground); color: var(--ink-2); font: inherit; font-size: var(--t-xs); cursor: pointer; }
+  .controls button:hover, button[aria-pressed="true"] { color: var(--amber); border-color: var(--amber); }
+  button:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  .amount { display: flex; align-items: center; flex: 1 1 220px; gap: .6rem; color: var(--ink-3); font-size: var(--t-xs); }
+  input { min-width: 60px; width: 100%; accent-color: var(--amber); }
+  .amount output { width: 4ch; flex-shrink: 0; color: var(--amber); font-family: var(--f-mono); }
+  .amount > span { white-space: nowrap; }
+  .hint { flex-basis: 100%; color: var(--ink-3); font-size: var(--t-xs); }
+  figcaption { padding: .8rem 1rem; border-top: 1px solid var(--rule); font-size: var(--t-sm); color: var(--ink); }
+  small { display: block; margin-top: .3rem; font-size: var(--t-xs); color: var(--ink-3); line-height: 1.6; }
+  [hidden] { display: none !important; }
+  @media (max-width: 900px), (prefers-reduced-motion: reduce) { .model, .badge, .controls { display: none; } .still { visibility: visible !important; } }
+</style>
