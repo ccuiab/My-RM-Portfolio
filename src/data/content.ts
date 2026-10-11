@@ -63,7 +63,7 @@ export const ui = {
 export const pageCopy = {
   homeProjects: { zh: '浏览项目', en: 'Explore projects' },
   homeEngineer: { zh: '查看工程机器人', en: 'View the Engineer' },
-  bomTitle: { zh: '能力清单', en: 'Bill of skills' },
+  bomTitle: { zh: '能力清单', en: 'Skills' },
   bomHead: {
     no: { zh: '序号', en: 'No.' }, item: { zh: '能力', en: 'Skill' },
     spec: { zh: '规格', en: 'Specification' }, used: { zh: '用在哪', en: 'Used on' },
@@ -209,8 +209,8 @@ export const record = {
   povSourceLabel: { zh: '操作手视角来源', en: 'Operator-view source' },
   povSource: 'https://www.bilibili.com/video/BV1yk8gz8Eu2/?p=3&t=1975',
   lede: {
-    zh: '这是 RMUC 2025 全场四级矿石的最短兑换时长。机械臂、腕部、底盘和控制器，每一处设计最后都落在这几秒里。',
-    en: 'The fastest level-4 ore exchange of RMUC 2025. Every decision in the arm, wrist, chassis and controller ends up inside these few seconds.',
+    zh: '这是 RMUC 2025 全场四级矿石的最短兑换时长。机械臂、腕部、底盘和控制器共同完成这次兑换。',
+    en: 'The fastest level-4 ore exchange of RMUC 2025. The arm, wrist, chassis and controller all contribute to this exchange.',
   },
   match: {
     zh: 'RMUC 2025 复活赛第 30 场 · 第三局，对阵南昌大学 Passion',
@@ -298,12 +298,12 @@ export const engineer = {
       title: { zh: '高稳定舵轮底盘', en: 'High-stability swerve chassis' },
       lede: {
         zh: '重机械臂高速动作时，底盘要稳住。操作手可以边移动底盘边操作机械臂。',
-        en: 'When a heavy arm moves fast, the chassis has to stay put. The operator can keep driving while working the arm.',
+        en: 'The chassis must remain stable while the heavy arm moves at speed. The operator can drive while working the arm.',
       },
       bullets: [
         {
           zh: '5 寸实心橡胶轮提供抓地力和耐磨性，支撑赛场脱困与快速返回补给。',
-          en: 'Five-inch solid rubber tyres provide the grip and wear resistance to break free on the field and get back to supply quickly.',
+          en: 'Five-inch solid rubber tyres provide grip and wear resistance for field recovery and quick returns for resupply.',
         },
       ],
       pics: [{ src: engWheel, model: 'engineer-swerve.glb', cutout: true, alt: { zh: '工程舵轮模组', en: 'Engineer swerve module' } }],
@@ -354,7 +354,7 @@ export const engineer = {
       title: { zh: '自定义控制器', en: 'Custom controller' },
       lede: {
         zh: '工程机器人的输入终端。拓扑和主机械臂近似同构，按 1:2 映射，操作手不用在脑子里换算姿态。',
-        en: 'The Engineer robot’s input device. Its topology mirrors the main arm with a 1:2 mapping, so the operator stops translating hand motion into robot pose.',
+        en: 'The Engineer robot’s input device. Its topology mirrors the main arm with a 1:2 mapping, so the operator need not mentally convert hand motion into robot pose.',
       },
       bullets: [
         { zh: '按操作手的手臂数据调整 L2 位置，操作姿态更自然。', en: 'L2 was positioned from the operator’s arm measurements for a more natural posture.' },
@@ -444,17 +444,13 @@ export const hero = {
       mark: 'A',
       title: { zh: '双端支撑摩擦轮发射系统', en: 'Double-supported friction-wheel launcher' },
       lede: {
-        zh: '从弹道和俯仰角建模出发，最后靠样机问题闭环收敛。',
-        en: 'It started with ballistic and pitch modelling and converged by closing the loop on prototype faults.',
+        zh: '弹道与俯仰角建模为发射方案提供依据。',
+        en: 'Ballistic and pitch-angle modelling informed the launcher design.',
       },
       bullets: [
         {
-          zh: '针对摩擦轮振动、掉速和弹丸未共速三个问题逐一迭代结构。',
-          en: 'The structure was iterated against three faults one by one: friction-wheel vibration, speed droop and projectiles leaving before matching wheel speed.',
-        },
-        {
-          zh: '对轴支撑、双端轴承和预加速轮组共同稳定发射结构。',
-          en: 'Double-supported shafts, bearings at both ends and a pre-acceleration wheel pair stabilize the launcher structure.',
+          zh: '针对摩擦轮振动、掉速和弹丸未共速，采用对轴支撑、双端轴承与预加速轮组稳定发射结构。',
+          en: 'The launcher uses shaft supports, bearings at both ends and a pre-acceleration wheel pair to address wheel vibration, speed droop and projectile/wheel speed mismatch.',
         },
       ],
       pics: [
@@ -466,8 +462,8 @@ export const hero = {
       mark: 'B',
       title: { zh: '大弹丸侧供弹', en: 'Large-projectile side feed' },
       lede: {
-        zh: '面向类高尔夫球的大弹丸连续供弹，在队内已有的侧供弹方案上优化，先收敛可靠性和卡滞风险。',
-        en: 'Built to feed golf-ball-sized projectiles continuously. It refines the team’s existing side-feed design and prioritises reliability and jam prevention over novelty.',
+        zh: '面向类高尔夫球的大弹丸连续供弹，在队内已有的侧供弹方案上优化，优先提高可靠性、降低卡滞风险。',
+        en: 'Built to feed golf-ball-sized projectiles continuously, it refines the team’s existing side-feed design with a focus on reliability and jam prevention.',
       },
       bullets: [
         {
@@ -488,7 +484,7 @@ export const hero = {
       bullets: [
         {
           zh: '较大轮距加预紧压簧，抑制发射后坐力带来的整车晃动。',
-          en: 'A wide track and preloaded compression springs damp body roll after firing.',
+          en: 'A wide track and preloaded compression springs reduce chassis shake from recoil.',
         },
         {
           zh: '实测通过飞坡、正向与侧向下台阶，以及垂直跌落测试。',
@@ -519,12 +515,12 @@ export const research = {
       },
       {
         title: { zh: '双级四摩擦轮样机', en: 'Dual-stage, four wheels' },
-        body: { zh: '样机暴露左右散布较大的问题。中间试过三摩擦轮，初射角稳定了，弹速一致性不够。', en: 'The prototype showed wide left-right dispersion. A three-wheel detour stabilised launch angle but could not hold muzzle velocity consistent.' },
+        body: { zh: '样机暴露左右散布较大的问题。中间试过三摩擦轮，初射角稳定了，弹速一致性不够。', en: 'The prototype showed wide left-right dispersion. An intermediate three-wheel design stabilised the launch angle but did not keep muzzle velocity consistent.' },
         pic: { src: launcher4, cutout: true, alt: { zh: '双级四摩擦轮样机', en: 'Dual-stage four-wheel prototype' } },
       },
       {
         title: { zh: '双级六摩擦轮', en: 'Dual-stage, six wheels' },
-        body: { zh: '列为主要研发方向，同时兼顾弹速一致性和散布控制。', en: 'Designated the main development direction, aiming to hold both velocity consistency and dispersion.' },
+        body: { zh: '目标是兼顾弹速一致性和散布控制。', en: 'The design targets consistent muzzle velocity and controlled dispersion.' },
         pic: { src: launcher6, cutout: true, alt: { zh: '双级六摩擦轮方案', en: 'Dual-stage six-wheel design' } },
       },
     ] as Stage[],
@@ -540,7 +536,7 @@ export const research = {
     ] as Stage[],
     mentor: {
       zh: '另外指导学弟优化小弹丸侧供弹，弹频从 20 Hz 提升到接近 30 Hz。',
-      en: 'I also mentored a junior member through the 17 mm side feed, taking it from 20 Hz to close to 30 Hz.',
+      en: 'I also mentored a junior teammate on the 17 mm side feed, increasing its rate from 20 Hz to close to 30 Hz.',
     },
   },
   swerve: {
@@ -565,7 +561,7 @@ export const exo = {
   kind: { zh: '课程项目', en: 'Course project' },
   bullets: [
     { zh: '基于 DH 参数法建立运动学模型，在仿真中验证工作空间覆盖。', en: 'Built a Denavit–Hartenberg kinematic model and checked workspace coverage in simulation.' },
-    { zh: '手背 IMU 预测手臂运动方向，驱动外骨骼跟随；助力模式下闭环保持姿态并输出辅助力。', en: 'An IMU on the back of the hand predicts motion and drives the exoskeleton to follow; in assist mode closed-loop control holds the pose and adds force.' },
+    { zh: '手背 IMU 预测手臂运动方向，驱动外骨骼跟随；助力模式下闭环保持姿态并输出辅助力。', en: 'An IMU on the back of the hand predicts motion and drives the exoskeleton to follow; in assist mode, closed-loop control holds the pose and applies assistive force.' },
   ],
   pic: { src: exoPic, alt: { zh: '四轴手臂外骨骼原型', en: '4-DOF arm exoskeleton prototype' } } as Pic,
 };
@@ -606,7 +602,7 @@ export const bom = [
   {
     no: 'S-06',
     item: { zh: '跨组联调', en: 'Cross-team integration' },
-    spec: { zh: '和电控、视觉、算法一起对齐联调风险', en: 'Aligning integration risk with the electronics, vision and algorithms teams' },
+    spec: { zh: '与电控、视觉、算法团队共同梳理联调风险', en: 'Coordinating integration risks with the controls, vision and algorithms teams' },
     used: { zh: '工程 2025 操作链路', en: 'Engineer 2025 operator loop' },
   },
 ];
