@@ -1,0 +1,89 @@
+{
+  "name": "egg-grab",
+  "match": "RMUC 2025 全明星赛，第二局，港科大工程属于红方 INNOVATOR 创新者",
+  "verifiedAt": "2026-10-12",
+  "catalog": "materials/documents/derived/bilibili-video-catalog.json",
+  "evidence": "按源文件时间逐帧/1 fps 抽帧目视核实，关键帧与比赛倒计时见各 segment.evidence。精确定位以单帧 seek 结果为准。",
+  "segments": [
+    {
+      "source": "https://www.bilibili.com/video/BV1YFhLz4Evi/?p=10",
+      "bvid": "BV1YFhLz4Evi",
+      "page": 10,
+      "title": "[RM全国赛]第九十七场全明星赛创新者VS缔造者全兵种视角回放 - R2SuqqreProject_0",
+      "uploader": "翔林魔主",
+      "uploaderId": 1568334988,
+      "sourceFile": "materials/videos/source/bilibili/engineer-pov/BV1YFhLz4Evi-P10 - [RM全国赛]第九十七场全明星赛创新者VS缔造者全兵种视角回放 - R2SuqqreProject_0.mp4",
+      "sourceSha256FromCatalog": "f638d22bb53b820227a857182c68e84fa238b19bbcf26831a9d5b5cdba9e3aca",
+      "startSeconds": 2345.6,
+      "durationSeconds": 9.2,
+      "endSeconds": 2354.8,
+      "startTimecode": "00:39:05.60",
+      "endTimecode": "00:39:14.80",
+      "role": "红方创新者工程第一视角：从蓝方工程携带位置吸走黑色矿石",
+      "inputFile": "materials/videos/derived/inputs/egg-grab-pov.mp4",
+      "evidence": "39:07 附近贴近蓝方 2 号工程；39:09.00 倒计时 5:08，末端接触对方携带的黑色矿石；39:11–39:14 矿石被吸起并移至本机镜头前，对方工程退开。",
+      "copyrightOwner": "RoboMaster赛事画面制作方；投稿与视角编排署名见 uploader"
+    },
+    {
+      "source": "https://www.bilibili.com/video/BV1Uvt3zKEt4/?p=1",
+      "bvid": "BV1Uvt3zKEt4",
+      "page": 1,
+      "title": "全明星赛 创新者 INNOVATOR战队 VS 缔造者 CREATOR战队 RMUC 2025",
+      "uploader": "RoboMaster机甲大师",
+      "uploaderId": 20554233,
+      "sourceFile": "materials/videos/source/bilibili/all-star/BV1Uvt3zKEt4-P01 - 全明星赛 创新者 INNOVATOR战队 VS 缔造者 CREATOR战队 RMUC 2025.mp4",
+      "sourceSha256FromCatalog": "169f4d845d5590a6815c43288998bbbc998ac04d970a933e1029d98673e30834",
+      "startSeconds": 2785.6,
+      "durationSeconds": 4.8,
+      "endSeconds": 2790.4,
+      "startTimecode": "00:46:25.60",
+      "endTimecode": "00:46:30.40",
+      "role": "官方全场：同一次交锋的全景回看",
+      "inputFile": "materials/videos/derived/inputs/egg-grab-official.mp4",
+      "evidence": "官方 46:25.00 倒计时 5:07，红蓝 2 号工程在蓝方资源岛旁接触，接近 POV 39:09.00 的 5:08。46:25.60–46:30.40 重看交锋和分离；官方为全景，具体吸取以 POV 为主证据。",
+      "copyrightOwner": "RoboMaster赛事画面制作方；投稿与视角编排署名见 uploader"
+    }
+  ],
+  "transitionSeconds": 0.24,
+  "loop": {
+    "seamSeconds": 0.24,
+    "method": "片尾与片头交叉淡化 6 帧；输出从原片头后 0.24 秒开始，片头六帧用在末尾接缝",
+    "expectedDurationSeconds": 13.52
+  },
+  "playbackRate": 1,
+  "output": {
+    "video": "materials/videos/derived/web/egg-grab.mp4",
+    "poster": "materials/images/derived/video-posters/egg-grab.jpg",
+    "width": 1280,
+    "height": 720,
+    "fps": 25,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "crf": 24,
+    "audio": false,
+    "faststart": true,
+    "maxBytes": 6000000,
+    "posterSeconds": 3.2
+  },
+  "copyright": {
+    "attribution": "保留原投稿与赛事转播水印，原画面版权归对应原投稿作者或赛事制作方；本项目仅制作静音节选与封面。",
+    "permissionStatus": "公开来源及署名已记录，未额外核实转载授权。"
+  },
+  "note": "官方片段是同一动作的第二机位回看，倒计时会回退数秒，并非连续时间线。合集 P131“斗舞现场”覆盖同一交锋；P129“阴沟里捞矿”是 6:44–6:21 的资源岛地面取矿，排除。",
+  "crossChecks": [
+    {
+      "bvid": "BV1r6tjzME6L",
+      "page": 129,
+      "source": "https://www.bilibili.com/video/BV1r6tjzME6L/?p=129",
+      "title": "RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-5-出现了，阴沟里捞矿",
+      "conclusion": "排除：资源岛地面取矿，不是从对方工程身上拿走矿石。"
+    },
+    {
+      "bvid": "BV1r6tjzME6L",
+      "page": 131,
+      "source": "https://www.bilibili.com/video/BV1r6tjzME6L/?p=131",
+      "title": "RoboMaster2025-全国赛-精彩工程合集-Part 3 - 全明星赛-创新者VS缔造者-7-斗舞现场",
+      "conclusion": "确认：第二局 5:09–5:02 左右的红蓝工程交锋，与所选原片动作相同。"
+    }
+  ]
+}
