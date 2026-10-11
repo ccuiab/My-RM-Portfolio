@@ -48,7 +48,11 @@ const times = [0, 1.4, 2.2, 3.7, 4.8, 5.2, 6.5];
     mountViewportScene({
       root, view: root.querySelector<HTMLElement>('[data-view]')!,
       media: '(min-width: 761px) and (prefers-reduced-motion: no-preference)',
-      async load() { const { createArmExchange } = await import('../scripts/arm-exchange-scene'); return createArmExchange(root, import.meta.env.BASE_URL); },
+      async load(signal) {
+        const { createArmExchange } = await import('../scripts/arm-exchange-scene');
+        if (signal.aborted) return;
+        return createArmExchange(root, import.meta.env.BASE_URL, signal);
+      },
       loading() { root.classList.remove('is-static', 'is-fallback'); root.classList.add('is-loading'); status.textContent = root.dataset.loading!; },
       ready() { root.classList.remove('is-loading'); root.classList.add('is-ready'); },
       reset() {

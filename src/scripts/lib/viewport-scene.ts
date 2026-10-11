@@ -3,7 +3,7 @@ type Options = {
   root: HTMLElement;
   view: HTMLElement;
   media: string;
-  load: () => Promise<ViewportScene>;
+  load: (signal: AbortSignal) => Promise<ViewportScene | undefined>;
   loading: () => void;
   ready: () => void;
   reset: () => void;
@@ -22,6 +22,7 @@ export function mountViewportScene(options: Options) {
   let inView = false, pending = false, dead = false, failed = false;
   let generation = 0;
   let scene: ViewportScene | undefined;
+  let loading: AbortController | undefined;
   const owner = {};
   const wanted = () => inView && mode.matches && !document.hidden && !dead;
   const release = () => {
@@ -36,10 +37,12 @@ export function mountViewportScene(options: Options) {
     slots.add(owner);
     pending = true;
     const current = ++generation;
+    loading = new AbortController();
     options.root.dataset.context = 'loading';
     options.loading();
     try {
-      const next = await options.load();
+      const next = await options.load(loading.signal);
+      if (!next) return;
       if (current !== generation || !wanted()) { next.dispose(); return; }
       scene = next;
       options.root.dataset.context = 'active';
@@ -48,6 +51,7 @@ export function mountViewportScene(options: Options) {
     } catch (error) {
       if (current === generation && wanted()) { failed = true; options.failed(error); }
     } finally {
+      loading = undefined;
       pending = false;
       if (!scene) { options.reset(); release(); if (wanted() && !failed) void start(); }
     }
@@ -55,10 +59,12 @@ export function mountViewportScene(options: Options) {
   const unload = () => {
     waiting.delete(start);
     ++generation;
+    loading?.abort();
+    loading = undefined;
     scene?.dispose();
     scene = undefined;
-    // Do not replace a canvas while its async loader still owns it.
-    if (!pending) { options.reset(); release(); }
+    options.reset();
+    if (!pending) release();
   };
   const sync = () => {
     if (!inView || !mode.matches) { unload(); return; }

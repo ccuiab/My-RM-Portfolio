@@ -5,7 +5,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { cleanPartName } from './part-name';
 
 /** Shared part viewer. Its owner decides when rendering is allowed. */
-export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string, file: string, label: HTMLElement, canRender: () => boolean) {
+export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string, file: string, label: HTMLElement, canRender: () => boolean, signal: AbortSignal) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -21,13 +21,23 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   fill.position.set(-2, .5, 1); scene.add(fill);
   const rim = new THREE.DirectionalLight(amber, 1.5);
   rim.position.set(1, 1, -2); scene.add(rim);
-  const draco = new DRACOLoader().setDecoderPath(`${base}models/draco/`).setWorkerLimit(1);
+  const manager = new THREE.LoadingManager();
+  let rendererDisposed = false;
+  const disposeRenderer = () => {
+    if (rendererDisposed) return;
+    rendererDisposed = true;
+    renderer.dispose(); renderer.forceContextLoss();
+  };
+  const abortLoad = () => { manager.abort(); disposeRenderer(); };
+  signal.addEventListener('abort', abortLoad, { once: true });
+  if (signal.aborted) abortLoad();
+  const draco = new DRACOLoader(manager).setDecoderPath(`${base}models/draco/`).setWorkerLimit(1);
   let model: THREE.Group;
   try {
-    model = (await new GLTFLoader().setDRACOLoader(draco).loadAsync(`${base}models/${file}`)).scene;
+    model = (await new GLTFLoader(manager).setDRACOLoader(draco).loadAsync(`${base}models/${file}`)).scene;
   } catch (error) {
-    renderer.dispose(); renderer.forceContextLoss(); throw error;
-  } finally { draco.dispose(); }
+    disposeRenderer(); throw error;
+  } finally { signal.removeEventListener('abort', abortLoad); draco.dispose(); }
   scene.add(model);
   const controls = new OrbitControls(camera, canvas);
   controls.enableZoom = false;
