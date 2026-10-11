@@ -34,15 +34,11 @@ The research page uses images from the four-wheel and six-wheel launcher, MKV fe
 
 No matching source CAD was located for the custom controller or exoskeleton; the historical controller image and authentic exoskeleton photograph remain the reference. The home page stays photographic and does not load these models.
 
-## Complete L4 and distal wrist
+## Retired wrist-only viewer assets
 
-`l4.glb` and `l4.json` replace the older transmission-only wrist selection in the Engineer exploded viewer. The source boundary is the complete `L4.2025.10.1` structural subassembly plus the `L6_v2` distal wrist subassembly, extracted from the existing SolidWorks-derived `arm_tagged.glb`. The structural source is `Robotic arm/Robotic arm v2/L4.2025.10.1.SLDASM` in the HKUST ENTERPRIZE RM2025 open-source CAD package. CAD assembly ancestry defines this selection: many L4 plates belong to the kinematic `link_3`, so selecting only `link_4` would omit them.
+The former `l4.glb`, `l4.json`, and `l4-assembled.*` assets served the wrist-only exploded viewer. The full-arm viewer now uses `arm-parts.glb` and `arm-parts.json`; its mobile and reduced-motion fallback is `materials/images/derived/site/cad-cutouts/arm-exploded.png`. The retired files were removed after their prior published copies were confirmed; per-file history locations are in `materials/cleanup.json`.
 
-The final asset has 20 exploded groups, 241,332 triangles and 865,668 bytes. Added groups cover the left/right longitudinal main plates, proximal/distal cross plates, motor and bearing mounts, proximal shaft and guards, central tube clamps and VT03 transmitter. They accompany the universal shaft drive, J4 output, slip ring, belt and bevel transmission, wrist motors, L6 frame, wheels, cup and air fittings. `l4.json` provides matching `ex_<key>` names, bilingual labels, explode vectors, distances, stagger order and surface anchors for every group.
-
-All principal structural components are retained at their CAD assembly transforms. Detailed motor internals, screws and bearing internals are omitted; motor exterior housings and interfaces remain. Coincident CAD face vertices are welded, triangle counts are reduced, normals are reconstructed and the result is Draco-compressed. No replacement or procedural frame geometry is used. The source selection asserts coverage of every retained non-motor-internal L4 component in the original mapping. The source node names prefixed `~$` for the distal upper/lower plates have real exported geometry and are retained.
-
-The compressed model passed glTF Validator with zero errors and warnings, and independently decoded as 20 mesh objects with finite normals. The current loading fallback is a processed native SolidWorks assembled capture. The earlier exploded still used an isolated output copy with 18 independently movable SolidWorks groups; it is no longer displayed and was removed. No source CAD was saved. Mappings and validation remain locally in `materials/documents/derived/audits/module-models/l4-*`; native capture and source audits are in `materials/documents/derived/audits/image-refresh/sw/`. The older transmission-focused `wrist.glb` and its JSON were removed from the current material library and remain in earlier website snapshots.
+The L4/L6 source mapping, CAD selection rationale and validation history remain in `materials/documents/derived/audits/module-models/l4-*` and `materials/documents/derived/audits/arm-explode/`. The external native CAD source remains read-only.
 
 ## Website image refresh
 
