@@ -1,0 +1,4767 @@
+{
+  "schema_version": 1,
+  "units": "metres",
+  "coordinate_frame": "Original output/sw-probe/arm.glb global frame, right handed, +Y up. Same orientation and origin as SW arm assembly; web GLB preserves it.",
+  "sources": [
+    {
+      "path": "materials\\models\\derived\\inputs\\codex\\arm_tagged.glb",
+      "sha256": "18b70600e740be304bba5459161d29b57adb29bde5f10260a0eb61c01e17ee3a"
+    },
+    {
+      "path": "materials\\models\\derived\\inputs\\codex\\base_tagged.glb",
+      "sha256": "e6f5e59361a4c1c43747065802d6713a4896e36a9c5a4be476aeb11fb842612c"
+    }
+  ],
+  "mapping_source": "materials/documents/derived/audits/codex/arm_source_mapping.json",
+  "joint_source": "arm-joints.json",
+  "motor_policy": "Complete source motor assemblies, stationary at CAD rest position.",
+  "belt_policy": "CAD tooth segments joined into one belt part per link and belt specification.",
+  "explosion_policy": "Straight translation along joint axes or orthogonal assembly directions; full endpoint clearance and no new AABB crossings for initially disjoint pairs.",
+  "parts": [
+    {
+      "key": "part_000",
+      "node_name": "L2_J1轴连接加固cnc-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 5,
+          "node_name": "L2_J1轴连接加固cnc-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.026267150416970253,
+          -0.03663524612784386,
+          0.1034703403711319
+        ],
+        "max": [
+          0.04626716300845146,
+          0.023768167942762375,
+          0.16005411744117737
+        ]
+      },
+      "explode_offset_m": [
+        0.25480203606153856,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_001",
+      "node_name": "L2_J3_铝通填充块-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 7,
+          "node_name": "L2_J3_铝通填充块-1"
+        }
+      ],
+      "triangles": 792,
+      "bounds": {
+        "min": [
+          0.02656714990735054,
+          0.09646859019994736,
+          -0.17000997066497803
+        ],
+        "max": [
+          0.0465671569108963,
+          0.16667011380195618,
+          -0.10483895987272263
+        ]
+      },
+      "explode_offset_m": [
+        0.2592490958767384,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_002",
+      "node_name": "L2_限位块cnc-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 9,
+          "node_name": "L2_限位块cnc-1"
+        }
+      ],
+      "triangles": 580,
+      "bounds": {
+        "min": [
+          0.016267146915197372,
+          -0.013985993340611458,
+          0.08177708089351654
+        ],
+        "max": [
+          0.021267149597406387,
+          0.037819571793079376,
+          0.11448170244693756
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.0,
+        -0.07151406719760282
+      ]
+    },
+    {
+      "key": "part_003",
+      "node_name": "L2_铝通内嵌加固-1/3mm_L2_竖直加固板-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 11,
+          "node_name": "L2_铝通内嵌加固-1/3mm_L2_竖直加固板-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.022967129945755005,
+          -0.03785137087106705,
+          -0.16917729377746582
+        ],
+        "max": [
+          0.025967178866267204,
+          0.16583402454853058,
+          0.1621251106262207
+        ]
+      },
+      "explode_offset_m": [
+        0.2361216658403148,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_004",
+      "node_name": "L2_铝通内嵌加固-1/3mm_L2_竖直加固板-2",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 12,
+          "node_name": "L2_铝通内嵌加固-1/3mm_L2_竖直加固板-2"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.04656713083386421,
+          -0.03785137087106705,
+          -0.1690049022436142
+        ],
+        "max": [
+          0.04956718161702156,
+          0.16582942008972168,
+          0.1621251255273819
+        ]
+      },
+      "explode_offset_m": [
+        0.2860694312652,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_005",
+      "node_name": "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 13,
+          "node_name": "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-1"
+        }
+      ],
+      "triangles": 748,
+      "bounds": {
+        "min": [
+          0.02296716347336769,
+          0.09915344417095184,
+          -0.12616874277591705
+        ],
+        "max": [
+          0.049567170441150665,
+          0.12444724887609482,
+          -0.07155787199735641
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.07303011737826648,
+        0.0
+      ]
+    },
+    {
+      "key": "part_006",
+      "node_name": "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-3",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 14,
+          "node_name": "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-3"
+        }
+      ],
+      "triangles": 748,
+      "bounds": {
+        "min": [
+          0.0229671411216259,
+          0.02311878837645054,
+          0.02214348502457142
+        ],
+        "max": [
+          0.049567148089408875,
+          0.04841259866952896,
+          0.07675434648990631
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0730301154247489,
+        0.0
+      ]
+    },
+    {
+      "key": "part_007",
+      "node_name": "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-2",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 15,
+          "node_name": "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-2"
+        }
+      ],
+      "triangles": 748,
+      "bounds": {
+        "min": [
+          0.022967156022787094,
+          0.061136119067668915,
+          -0.052012622356414795
+        ],
+        "max": [
+          0.04956716299057007,
+          0.08642992377281189,
+          0.0025982409715652466
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0730301152140079,
+        0.0
+      ]
+    },
+    {
+      "key": "part_008",
+      "node_name": "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-4",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 16,
+          "node_name": "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-4"
+        }
+      ],
+      "triangles": 748,
+      "bounds": {
+        "min": [
+          0.022967159748077393,
+          0.0641850084066391,
+          -0.06970083713531494
+        ],
+        "max": [
+          0.049567170441150665,
+          0.12139835953712463,
+          -0.05386965349316597
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.07276763987034016,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_009",
+      "node_name": "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-5",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 17,
+          "node_name": "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-5"
+        }
+      ],
+      "triangles": 748,
+      "bounds": {
+        "min": [
+          0.022967148572206497,
+          0.026167675852775574,
+          0.004455273505300283
+        ],
+        "max": [
+          0.04956715926527977,
+          0.0833810344338417,
+          0.020286455750465393
+        ]
+      },
+      "explode_offset_m": [
+        0.07276764204488291,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_010",
+      "node_name": "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-6",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 18,
+          "node_name": "L2_铝通内嵌加固-1/3mm_L2_交叉加固板-6"
+        }
+      ],
+      "triangles": 748,
+      "bounds": {
+        "min": [
+          0.022967137396335602,
+          -0.011849649250507355,
+          0.07861138135194778
+        ],
+        "max": [
+          0.049567148089408875,
+          0.04536370933055878,
+          0.09444256126880646
+        ]
+      },
+      "explode_offset_m": [
+        0.07276764184656064,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_011",
+      "node_name": "L2_主体30_60铝通-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 20,
+          "node_name": "L2_主体30_60铝通-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.021267153322696686,
+          -0.039516646414995193,
+          -0.17111435532569885
+        ],
+        "max": [
+          0.05126715824007988,
+          0.16853022575378418,
+          0.1648453027009964
+        ]
+      },
+      "explode_offset_m": [
+        0.1887044273234258,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_012",
+      "node_name": "J1_bearing61811外侧固定cnc-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 44,
+          "node_name": "J1_bearing61811外侧固定cnc-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.005766936112195253,
+          0.12152215093374252,
+          -0.2518327832221985
+        ],
+        "max": [
+          0.013767159543931484,
+          0.21237346529960632,
+          -0.16086159646511078
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.12008581717488401,
+        0.0
+      ]
+    },
+    {
+      "key": "part_013",
+      "node_name": "J3_lk8010固定2cnc-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 45,
+          "node_name": "J3_lk8010固定2cnc-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.05026715248823166,
+          0.09273971617221832,
+          -0.17209088802337646
+        ],
+        "max": [
+          0.06026716157793999,
+          0.17039893567562103,
+          -0.10275804251432419
+        ]
+      },
+      "explode_offset_m": [
+        0.3116047095016695,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_014",
+      "node_name": "J3_lk8010固定1cnc-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 48,
+          "node_name": "J3_lk8010固定1cnc-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.015267139300704002,
+          0.09273971617221832,
+          -0.25835123658180237
+        ],
+        "max": [
+          0.025267161428928375,
+          0.21893374621868134,
+          -0.10275803506374359
+        ]
+      },
+      "explode_offset_m": [
+        0.12020460674001421,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_015",
+      "node_name": "5mm_J3_lk8010固定背板-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 49,
+          "node_name": "5mm_J3_lk8010固定背板-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.0602671355009079,
+          0.08062303811311722,
+          -0.2535459101200104
+        ],
+        "max": [
+          0.07576747238636017,
+          0.21419911086559296,
+          -0.0768665075302124
+        ]
+      },
+      "explode_offset_m": [
+        0.32771138122560023,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_016",
+      "node_name": "6mm_J3_限位块-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 51,
+          "node_name": "6mm_J3_限位块-1"
+        }
+      ],
+      "triangles": 960,
+      "bounds": {
+        "min": [
+          0.004767147824168205,
+          0.1169261783361435,
+          -0.23333097994327545
+        ],
+        "max": [
+          0.010767154395580292,
+          0.13515238463878632,
+          -0.18969520926475525
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0,
+        0.09145077433205519
+      ]
+    },
+    {
+      "key": "part_017",
+      "node_name": "J1_lk8010输出轴1cnc_v2-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 99,
+          "node_name": "J1_lk8010输出轴1cnc_v2-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.007367071695625782,
+          0.14016351103782654,
+          -0.23316457867622375
+        ],
+        "max": [
+          0.01726715825498104,
+          0.19370037317276,
+          -0.17961139976978302
+        ]
+      },
+      "explode_offset_m": [
+        0.07672898072850981,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_018",
+      "node_name": "J1_lk8010输出轴2cnc_v2-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 102,
+          "node_name": "J1_lk8010输出轴2cnc_v2-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.0032671112567186356,
+          0.14018017053604126,
+          -0.2331390082836151
+        ],
+        "max": [
+          0.009167155250906944,
+          0.1936611384153366,
+          -0.1796661913394928
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0,
+        0.15155013951105437
+      ]
+    },
+    {
+      "key": "part_019",
+      "node_name": "MG8010E-i36-2",
+      "link": "link_2",
+      "motor": true,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 103,
+          "node_name": "MG8010E-i36-2"
+        }
+      ],
+      "triangles": 1800,
+      "bounds": {
+        "min": [
+          0.015712972730398178,
+          0.11748696863651276,
+          -0.25861987471580505
+        ],
+        "max": [
+          0.07290145754814148,
+          0.2167842835187912,
+          -0.15680165588855743
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_020",
+      "node_name": "J1_lk8010固定cnc-1",
+      "link": "link_1",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 117,
+          "node_name": "J1_lk8010固定cnc-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.010733622126281261,
+          -0.058433666825294495,
+          0.07976219058036804
+        ],
+        "max": [
+          0.009267156943678856,
+          0.045566461980342865,
+          0.18376219272613525
+        ]
+      },
+      "explode_offset_m": [
+        -0.10195119973745531,
+        -0.0,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_021",
+      "node_name": "J1_bearing61811外侧固定cnc-1",
+      "link": "link_1",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 118,
+          "node_name": "J1_bearing61811外侧固定cnc-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.01076714787632227,
+          -0.05040256679058075,
+          0.08575534075498581
+        ],
+        "max": [
+          0.018767373636364937,
+          0.03753548488020897,
+          0.17776905000209808
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0,
+        0.11963512446579022
+      ]
+    },
+    {
+      "key": "part_022",
+      "node_name": "8mm_J1_机械臂底座-1",
+      "link": "link_1",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 120,
+          "node_name": "8mm_J1_机械臂底座-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.09123360365629196,
+          -0.06655517965555191,
+          0.07724456489086151
+        ],
+        "max": [
+          0.009411117061972618,
+          0.046184055507183075,
+          0.18629688024520874
+        ]
+      },
+      "explode_offset_m": [
+        -0.2402277398705167,
+        -0.0,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_023",
+      "node_name": "6mm_J1_限位块-1",
+      "link": "link_1",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 121,
+          "node_name": "6mm_J1_限位块-1"
+        }
+      ],
+      "triangles": 1032,
+      "bounds": {
+        "min": [
+          0.013767150230705738,
+          -0.0564335398375988,
+          0.11096468567848206
+        ],
+        "max": [
+          0.0197671577334404,
+          -0.040742699056863785,
+          0.15255969762802124
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        -0.06570071909838499,
+        0.0
+      ]
+    },
+    {
+      "key": "part_024",
+      "node_name": "6mm_J1_8016后固定板-1",
+      "link": "link_1",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 123,
+          "node_name": "6mm_J1_8016后固定板-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.04173285886645317,
+          -0.06643354147672653,
+          0.08377932012081146
+        ],
+        "max": [
+          -0.03573232889175415,
+          0.04156646132469177,
+          0.17976219952106476
+        ]
+      },
+      "explode_offset_m": [
+        -0.10061430837839515,
+        -0.0,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_025",
+      "node_name": "J1_lk8010输出轴2cnc_v2-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 129,
+          "node_name": "J1_lk8010输出轴2cnc_v2-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.015367148444056511,
+          -0.03317467123270035,
+          0.10500398278236389
+        ],
+        "max": [
+          0.02126719243824482,
+          0.020345011726021767,
+          0.15854334831237793
+        ]
+      },
+      "explode_offset_m": [
+        0.07657611246872392,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_026",
+      "node_name": "MG8010E-i36-1",
+      "link": "link_1",
+      "motor": true,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 132,
+          "node_name": "MG8010E-i36-1"
+        }
+      ],
+      "triangles": 1800,
+      "bounds": {
+        "min": [
+          -0.04893835633993149,
+          -0.055933550000190735,
+          0.08167605102062225
+        ],
+        "max": [
+          0.008661326952278614,
+          0.04306647181510925,
+          0.18164454400539398
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_027",
+      "node_name": "J1_lk8010输出轴1cnc_v2-1",
+      "link": "link_2",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 134,
+          "node_name": "J1_lk8010输出轴1cnc_v2-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.0072671519592404366,
+          -0.0331738255918026,
+          0.1050214171409607
+        ],
+        "max": [
+          0.017167238518595695,
+          0.02031625807285309,
+          0.1585007607936859
+        ]
+      },
+      "explode_offset_m": [
+        -0.07669938234918472,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_028",
+      "node_name": "4mm_L4_lk4010输出轴cnc.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 181,
+          "node_name": "4mm_L4_lk4010输出轴cnc.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.06871828436851501,
+          0.11910272389650345,
+          -0.15269902348518372
+        ],
+        "max": [
+          -0.03274741768836975,
+          0.15127453207969666,
+          -0.1198681890964508
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0962654795516257,
+        0.0
+      ]
+    },
+    {
+      "key": "part_029",
+      "node_name": "L4_J5_连接板cnc.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 182,
+          "node_name": "L4_J5_连接板cnc.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.07873284816741943,
+          0.04388903081417084,
+          -0.0010781785240396857
+        ],
+        "max": [
+          -0.002732846885919571,
+          0.11833106726408005,
+          0.013027080334722996
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.2875603577705419,
+        0.0
+      ]
+    },
+    {
+      "key": "part_030",
+      "node_name": "ES712-MT0522-S12.step-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 183,
+          "node_name": "ES712-MT0522-S12.step-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.051732387393713,
+          0.0671873390674591,
+          -0.05175241082906723
+        ],
+        "max": [
+          -0.02973330393433571,
+          0.09080664068460464,
+          -0.006591136567294598
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.06942853680602248,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_031",
+      "node_name": "MG4010-i10.2025.10.1",
+      "link": "link_3",
+      "motor": true,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 186,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/M2X5-N.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 187,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-4"
+        },
+        {
+          "asset": "arm",
+          "index": 189,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 190,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-4"
+        },
+        {
+          "asset": "arm",
+          "index": 191,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 192,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-BC.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 193,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-CA.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 194,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/LM43N24A-J210C_1.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 195,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 196,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-5"
+        },
+        {
+          "asset": "arm",
+          "index": 197,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-6"
+        },
+        {
+          "asset": "arm",
+          "index": 198,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-15"
+        },
+        {
+          "asset": "arm",
+          "index": 199,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-18"
+        },
+        {
+          "asset": "arm",
+          "index": 200,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-8"
+        },
+        {
+          "asset": "arm",
+          "index": 201,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-9"
+        },
+        {
+          "asset": "arm",
+          "index": 202,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-10"
+        },
+        {
+          "asset": "arm",
+          "index": 203,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-13"
+        },
+        {
+          "asset": "arm",
+          "index": 204,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-14"
+        },
+        {
+          "asset": "arm",
+          "index": 205,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-16"
+        },
+        {
+          "asset": "arm",
+          "index": 206,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-7"
+        },
+        {
+          "asset": "arm",
+          "index": 207,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-11"
+        },
+        {
+          "asset": "arm",
+          "index": 208,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-12"
+        },
+        {
+          "asset": "arm",
+          "index": 209,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-17"
+        },
+        {
+          "asset": "arm",
+          "index": 210,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-24"
+        },
+        {
+          "asset": "arm",
+          "index": 211,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-28"
+        },
+        {
+          "asset": "arm",
+          "index": 212,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-20"
+        },
+        {
+          "asset": "arm",
+          "index": 213,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-23"
+        },
+        {
+          "asset": "arm",
+          "index": 214,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-22"
+        },
+        {
+          "asset": "arm",
+          "index": 215,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-25"
+        },
+        {
+          "asset": "arm",
+          "index": 216,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-26"
+        },
+        {
+          "asset": "arm",
+          "index": 217,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-19"
+        },
+        {
+          "asset": "arm",
+          "index": 218,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-21"
+        },
+        {
+          "asset": "arm",
+          "index": 219,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-27"
+        },
+        {
+          "asset": "arm",
+          "index": 220,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-FC.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 221,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 222,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 223,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-MC.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 224,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/PCB_AllCATPart.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 226,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 227,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 228,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 229,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 230,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 231,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 232,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 233,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/6707.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 234,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-5"
+        },
+        {
+          "asset": "arm",
+          "index": 235,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-BR ________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 237,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-6"
+        },
+        {
+          "asset": "arm",
+          "index": 238,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-4"
+        },
+        {
+          "asset": "arm",
+          "index": 239,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________12__0.4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 240,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PF __________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 241,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________108__0.4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 242,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 243,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 244,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-4"
+        },
+        {
+          "asset": "arm",
+          "index": 245,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-5"
+        },
+        {
+          "asset": "arm",
+          "index": 246,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-GW ________Pro.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 251,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PC ________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 254,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 255,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG8016-MAG  ____.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 256,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG8016-FMB ________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 257,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-5"
+        },
+        {
+          "asset": "arm",
+          "index": 258,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-6"
+        },
+        {
+          "asset": "arm",
+          "index": 261,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/________40__0.4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 262,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/MG8016-DMG  ______.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 263,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/_____C-EFL675ZZ.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 265,
+          "node_name": "MG4010-i10.2025.10.1-1/MG4010-i10 .STEP-1/________44__0.4.STEP-1"
+        }
+      ],
+      "triangles": 1800,
+      "bounds": {
+        "min": [
+          -0.07752299308776855,
+          0.11348055303096771,
+          -0.19076192378997803
+        ],
+        "max": [
+          -0.024013448506593704,
+          0.17894931137561798,
+          -0.13026590645313263
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_032",
+      "node_name": "4mm_L4_lk4010固定背板.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 266,
+          "node_name": "4mm_L4_lk4010固定背板.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08473285287618637,
+          0.1218966618180275,
+          -0.20359160006046295
+        ],
+        "max": [
+          0.003267154097557068,
+          0.18349243700504303,
+          -0.16329732537269592
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.6151535115750539,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_033",
+      "node_name": "L4_主动齿轮传动轴cnc.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 268,
+          "node_name": "L4_主动齿轮传动轴cnc.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.07295385003089905,
+          0.08977225422859192,
+          -0.0349678210914135
+        ],
+        "max": [
+          -0.050938256084918976,
+          0.11190158873796463,
+          -0.011224694550037384
+        ]
+      },
+      "explode_offset_m": [
+        -0.16372664964116407,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_034",
+      "node_name": "8mm_L4_左侧主板.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 269,
+          "node_name": "8mm_L4_左侧主板.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.0028532580472528934,
+          0.04020876809954643,
+          -0.25118160247802734
+        ],
+        "max": [
+          0.0033102764282375574,
+          0.21300837397575378,
+          0.013027064502239227
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.0,
+        -0.23551574231901234
+      ]
+    },
+    {
+      "key": "part_035",
+      "node_name": "L4_J3传动轴.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 270,
+          "node_name": "L4_J3传动轴.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.07873284816741943,
+          0.1469254493713379,
+          -0.22637969255447388
+        ],
+        "max": [
+          -0.0027328431606292725,
+          0.18691803514957428,
+          -0.1863986849784851
+        ]
+      },
+      "explode_offset_m": [
+        -0.2831557138215872,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_036",
+      "node_name": "L4_J5连接轴cnc1.2025.10.1-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 271,
+          "node_name": "L4_J5连接轴cnc1.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.06748271733522415,
+          0.05415262654423714,
+          -0.0037073171697556973
+        ],
+        "max": [
+          -0.013967047445476055,
+          0.10765136033296585,
+          0.008361347019672394
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.07681944307340684,
+        0.0
+      ]
+    },
+    {
+      "key": "part_037",
+      "node_name": "spur_gear_m1_30Teeth.2025.10.1-2",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 272,
+          "node_name": "spur_gear_m1_30Teeth.2025.10.1-2"
+        }
+      ],
+      "triangles": 2200,
+      "bounds": {
+        "min": [
+          -0.07794169336557388,
+          0.08554619550704956,
+          -0.01007548812776804
+        ],
+        "max": [
+          -0.045950405299663544,
+          0.11775276064872742,
+          -0.0033025280572474003
+        ]
+      },
+      "explode_offset_m": [
+        0.06606411673454575,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_038",
+      "node_name": "3mm_L4_主动齿轮固定轴承板.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 273,
+          "node_name": "3mm_L4_主动齿轮固定轴承板.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08473285287618637,
+          0.04289781302213669,
+          -0.019017629325389862
+        ],
+        "max": [
+          0.003267154097557068,
+          0.12011244893074036,
+          -0.008739103563129902
+        ]
+      },
+      "explode_offset_m": [
+        -0.09113318965775707,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_039",
+      "node_name": "4mm_L4_lk4010固定前板.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 275,
+          "node_name": "4mm_L4_lk4010固定前板.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08473285287618637,
+          0.09870552271604538,
+          -0.1661994904279709
+        ],
+        "max": [
+          0.003267154097557068,
+          0.1603012979030609,
+          -0.12590521574020386
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.14015351157505385,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_040",
+      "node_name": "4mm_L4_lk4010输出轴轴承板.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 276,
+          "node_name": "4mm_L4_lk4010输出轴轴承板.2025.10.1-1"
+        }
+      ],
+      "triangles": 1398,
+      "bounds": {
+        "min": [
+          -0.07748284935951233,
+          0.1112089529633522,
+          -0.1513843536376953
+        ],
+        "max": [
+          -0.02398284710943699,
+          0.15337051451206207,
+          -0.12314346432685852
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.0,
+        -0.10080854372879658
+      ]
+    },
+    {
+      "key": "part_041",
+      "node_name": "2mm_L4_J5连接轴承压板.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 282,
+          "node_name": "2mm_L4_J5连接轴承压板.2025.10.1-1"
+        }
+      ],
+      "triangles": 1376,
+      "bounds": {
+        "min": [
+          -0.07573284208774567,
+          0.04644278436899185,
+          0.009017672389745712
+        ],
+        "max": [
+          -0.005732845515012741,
+          0.11644553393125534,
+          0.014912601560354233
+        ]
+      },
+      "explode_offset_m": [
+        -0.08471028659356325,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_042",
+      "node_name": "L4_导电滑环夹持件.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 293,
+          "node_name": "L4_导电滑环夹持件.2025.10.1-1"
+        }
+      ],
+      "triangles": 924,
+      "bounds": {
+        "min": [
+          -0.060702256858348846,
+          0.05931796878576279,
+          -0.027886684983968735
+        ],
+        "max": [
+          -0.020736243575811386,
+          0.09977881610393524,
+          -0.015676647424697876
+        ]
+      },
+      "explode_offset_m": [
+        -0.34535859294189786,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_043",
+      "node_name": "滚针万向节.2025.10.1-2/滚针万向联轴器.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 297,
+          "node_name": "滚针万向节.2025.10.1-2/滚针万向联轴器.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.07535325735807419,
+          0.09094448387622833,
+          -0.0850871130824089
+        ],
+        "max": [
+          -0.04416251182556152,
+          0.11916962265968323,
+          -0.04393739625811577
+        ]
+      },
+      "explode_offset_m": [
+        -0.07059600645671385,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_044",
+      "node_name": "滚针万向节.2025.10.1-2/精密十字轴.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 298,
+          "node_name": "滚针万向节.2025.10.1-2/精密十字轴.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.0744427815079689,
+          0.08658994734287262,
+          -0.06210113316774368
+        ],
+        "max": [
+          -0.04944932460784912,
+          0.11158287525177002,
+          -0.04332025721669197
+        ]
+      },
+      "explode_offset_m": [
+        -0.1140089249323019,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_045",
+      "node_name": "滚针万向节.2025.10.1-2/滚针万向联轴器.2025.10.1-2",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 299,
+          "node_name": "滚针万向节.2025.10.1-2/滚针万向联轴器.2025.10.1-2"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.0744604840874672,
+          0.08628007769584656,
+          -0.06035563722252846
+        ],
+        "max": [
+          -0.04944058507680893,
+          0.11319290846586227,
+          -0.022079233080148697
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.06857105052971302,
+        0.0
+      ]
+    },
+    {
+      "key": "part_046",
+      "node_name": "L4_8mm传动轴2.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 300,
+          "node_name": "L4_8mm传动轴2.2025.10.1-1"
+        }
+      ],
+      "triangles": 652,
+      "bounds": {
+        "min": [
+          -0.06352002918720245,
+          0.09867903590202332,
+          -0.094448022544384
+        ],
+        "max": [
+          -0.050127968192100525,
+          0.1144704595208168,
+          -0.06348307430744171
+        ]
+      },
+      "explode_offset_m": [
+        0.08676239053138157,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_047",
+      "node_name": "RoboMaster裁判系统相机图传模块（发送端）VT03.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 301,
+          "node_name": "RoboMaster裁判系统相机图传模块（发送端）VT03.2025.10.1-1"
+        }
+      ],
+      "triangles": 5556,
+      "bounds": {
+        "min": [
+          -0.07007165253162384,
+          0.2081960141658783,
+          -0.3415967524051666
+        ],
+        "max": [
+          -0.009236388839781284,
+          0.26582658290863037,
+          -0.10180896520614624
+        ]
+      },
+      "explode_offset_m": [
+        -0.1639030277597692,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_048",
+      "node_name": "滚针万向节.2025.10.1-1/滚针万向联轴器.2025.10.1-2",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 305,
+          "node_name": "滚针万向节.2025.10.1-1/滚针万向联轴器.2025.10.1-2"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.06852184236049652,
+          0.09541352838277817,
+          -0.11888008564710617
+        ],
+        "max": [
+          -0.037338387221097946,
+          0.12375865131616592,
+          -0.07777568697929382
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.07060375253811353,
+        0.0
+      ]
+    },
+    {
+      "key": "part_049",
+      "node_name": "滚针万向节.2025.10.1-1/滚针万向联轴器.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 306,
+          "node_name": "滚针万向节.2025.10.1-1/滚针万向联轴器.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.06324929744005203,
+          0.10159770399332047,
+          -0.14213034510612488
+        ],
+        "max": [
+          -0.03823084011673927,
+          0.14177995920181274,
+          -0.09795863181352615
+        ]
+      },
+      "explode_offset_m": [
+        -0.07266010688900408,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_050",
+      "node_name": "滚针万向节.2025.10.1-1/精密十字轴.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 307,
+          "node_name": "滚针万向节.2025.10.1-1/精密十字轴.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.0632249116897583,
+          0.10319597274065018,
+          -0.12177732586860657
+        ],
+        "max": [
+          -0.038238123059272766,
+          0.1277516484260559,
+          -0.09853684157133102
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.06471433020182721,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_051",
+      "node_name": "联动限位用外螺纹轴承.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 311,
+          "node_name": "联动限位用外螺纹轴承.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.09173284471035004,
+          0.15040549635887146,
+          -0.16707034409046173
+        ],
+        "max": [
+          -0.07673284411430359,
+          0.1664023995399475,
+          -0.15107344090938568
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.08450043291012191,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_052",
+      "node_name": "L4_40mm中心板管夹块.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 322,
+          "node_name": "L4_40mm中心板管夹块.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.011232847347855568,
+          0.15417616069316864,
+          -0.23883050680160522
+        ],
+        "max": [
+          -0.004232844803482294,
+          0.20075757801532745,
+          -0.20794163644313812
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0,
+        0.06971513305698457
+      ]
+    },
+    {
+      "key": "part_053",
+      "node_name": "L4_40mm中心板管夹.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 326,
+          "node_name": "L4_40mm中心板管夹.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.012732846662402153,
+          0.1266598105430603,
+          -0.24439604580402374
+        ],
+        "max": [
+          -0.002732844790443778,
+          0.2071910798549652,
+          -0.16838325560092926
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.2639165213243483,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_054",
+      "node_name": "L4_40mm中心板管夹块.2025.10.1-2",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 327,
+          "node_name": "L4_40mm中心板管夹块.2025.10.1-2"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.07723284512758255,
+          0.15417616069316864,
+          -0.23883050680160522
+        ],
+        "max": [
+          -0.07023284584283829,
+          0.20075757801532745,
+          -0.20794163644313812
+        ]
+      },
+      "explode_offset_m": [
+        -0.06971513291520859,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_055",
+      "node_name": "L4_40mm中心板管夹.2025.10.1-2",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 331,
+          "node_name": "L4_40mm中心板管夹.2025.10.1-2"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.07873284071683884,
+          0.1266598105430603,
+          -0.24439604580402374
+        ],
+        "max": [
+          -0.0687328428030014,
+          0.2071910798549652,
+          -0.16838325560092926
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.0,
+        -0.11391652119975607
+      ]
+    },
+    {
+      "key": "part_056",
+      "node_name": "L4_J5连接轴cnc2.2025.10.1-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 332,
+          "node_name": "L4_J5连接轴cnc2.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.07572562247514725,
+          0.0467119999229908,
+          0.00558225205168128
+        ],
+        "max": [
+          -0.005688628647476435,
+          0.11666207015514374,
+          0.018905356526374817
+        ]
+      },
+      "explode_offset_m": [
+        -0.18495744553004595,
+        -0.0,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_057",
+      "node_name": "3mm_L4_基端下板.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 344,
+          "node_name": "3mm_L4_基端下板.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08473285287618637,
+          0.042921897023916245,
+          -0.2527637183666229
+        ],
+        "max": [
+          0.003267154097557068,
+          0.15352092683315277,
+          -0.0769682377576828
+        ]
+      },
+      "explode_offset_m": [
+        -0.17894823752953457,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_058",
+      "node_name": "3mm_L4_基端上板.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 346,
+          "node_name": "3mm_L4_基端上板.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08473285287618637,
+          0.12077096849679947,
+          -0.21357044577598572
+        ],
+        "max": [
+          0.003267154097557068,
+          0.24045760929584503,
+          -0.06556792557239532
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.22339462379472844,
+        0.0
+      ]
+    },
+    {
+      "key": "part_059",
+      "node_name": "~$3mm_L4_末端下板.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 347,
+          "node_name": "~$3mm_L4_末端下板.2025.10.1-1"
+        }
+      ],
+      "triangles": 540,
+      "bounds": {
+        "min": [
+          -0.08473284542560577,
+          0.037396594882011414,
+          -0.05965995043516159
+        ],
+        "max": [
+          0.003267154097557068,
+          0.04384448006749153,
+          0.002410896122455597
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.08775843917123799,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_060",
+      "node_name": "spur_gear_m1_30Teeth2.2025.10.1-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 348,
+          "node_name": "spur_gear_m1_30Teeth2.2025.10.1-1"
+        }
+      ],
+      "triangles": 2200,
+      "bounds": {
+        "min": [
+          -0.05672147497534752,
+          0.06435937434434891,
+          -0.00889457855373621
+        ],
+        "max": [
+          -0.02474421262741089,
+          0.09657861292362213,
+          -0.0021209102123975754
+        ]
+      },
+      "explode_offset_m": [
+        1.478965325276351e-17,
+        -0.003678843070027157,
+        -0.06596133570005912
+      ]
+    },
+    {
+      "key": "part_061",
+      "node_name": "8mm_L4_右侧主板.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 350,
+          "node_name": "8mm_L4_右侧主板.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08475235104560852,
+          0.04016951471567154,
+          -0.25118160247802734
+        ],
+        "max": [
+          -0.07873284816741943,
+          0.21300837397575378,
+          0.0130270691588521
+        ]
+      },
+      "explode_offset_m": [
+        -0.36052229034016414,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_062",
+      "node_name": "L4_基端保护罩.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 351,
+          "node_name": "L4_基端保护罩.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08472000807523727,
+          0.15102306008338928,
+          -0.2563905119895935
+        ],
+        "max": [
+          0.003247958142310381,
+          0.21625854074954987,
+          -0.2127382755279541
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.19305335639877697,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_063",
+      "node_name": "L4_限位块cnc.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 352,
+          "node_name": "L4_限位块cnc.2025.10.1-1"
+        }
+      ],
+      "triangles": 584,
+      "bounds": {
+        "min": [
+          0.00326715549454093,
+          0.12029509246349335,
+          -0.1931620091199875
+        ],
+        "max": [
+          0.008267157711088657,
+          0.1722097098827362,
+          -0.15639913082122803
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.07233328236586041,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_064",
+      "node_name": "~$3mm_L4_末端上板.2025.10.1-1",
+      "link": "link_3",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 353,
+          "node_name": "~$3mm_L4_末端上板.2025.10.1-1"
+        }
+      ],
+      "triangles": 784,
+      "bounds": {
+        "min": [
+          -0.08473284542560577,
+          0.11511240154504776,
+          -0.048971064388751984
+        ],
+        "max": [
+          0.003267154097557068,
+          0.12089205533266068,
+          0.0011184103786945343
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.11049759252493538,
+        0.0
+      ]
+    },
+    {
+      "key": "part_065",
+      "node_name": "spur_gear_m1.25_40Teeth_drive-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 500,
+          "node_name": "spur_gear_m1.25_40Teeth_drive-1"
+        }
+      ],
+      "triangles": 2200,
+      "bounds": {
+        "min": [
+          0.004680303391069174,
+          0.06301011890172958,
+          0.13154707849025726
+        ],
+        "max": [
+          0.013946839608252048,
+          0.11544319987297058,
+          0.183968186378479
+        ]
+      },
+      "explode_offset_m": [
+        0.07615197851337702,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_066",
+      "node_name": "6mm_L6_侧板-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 502,
+          "node_name": "6mm_L6_侧板-1"
+        }
+      ],
+      "triangles": 3420,
+      "bounds": {
+        "min": [
+          -0.1034943163394928,
+          0.03735283762216568,
+          0.020887834951281548
+        ],
+        "max": [
+          0.022062113508582115,
+          0.1282598227262497,
+          0.23928852379322052
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.19051883660020658,
+        0.0
+      ]
+    },
+    {
+      "key": "part_067",
+      "node_name": "spur_gear_m1_38Teeth_driven-2",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 505,
+          "node_name": "spur_gear_m1_38Teeth_driven-2"
+        }
+      ],
+      "triangles": 2200,
+      "bounds": {
+        "min": [
+          -0.008371295407414436,
+          0.06932605803012848,
+          0.1377781331539154
+        ],
+        "max": [
+          0.004752002190798521,
+          0.1093248724937439,
+          0.17772835493087769
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.07031250659078962,
+        0.0
+      ]
+    },
+    {
+      "key": "part_068",
+      "node_name": "6mm_J5_L6_Base-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 506,
+          "node_name": "6mm_J5_L6_Base-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08250099420547485,
+          0.04251185059547424,
+          0.014753524214029312
+        ],
+        "max": [
+          -0.0009646452963352203,
+          0.1212812289595604,
+          0.025134971365332603
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.08984556796892185,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_069",
+      "node_name": "spur_gear_m1_38Teeth_drive-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 507,
+          "node_name": "spur_gear_m1_38Teeth_drive-1"
+        }
+      ],
+      "triangles": 2200,
+      "bounds": {
+        "min": [
+          -0.008371635340154171,
+          0.0672050416469574,
+          0.09981663525104523
+        ],
+        "max": [
+          -0.0030957257840782404,
+          0.10722915828227997,
+          0.1398063451051712
+        ]
+      },
+      "explode_offset_m": [
+        1.5645835583868786e-17,
+        -0.003891813609744023,
+        -0.06977987892060025
+      ]
+    },
+    {
+      "key": "part_070",
+      "node_name": "直径80聚氨酯轮-1",
+      "link": "link_wheel",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 508,
+          "node_name": "直径80聚氨酯轮-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          0.014489815570414066,
+          0.051863979548215866,
+          0.16764071583747864
+        ],
+        "max": [
+          0.026938194409012794,
+          0.13197873532772064,
+          0.24772128462791443
+        ]
+      },
+      "explode_offset_m": [
+        0.11488226935516559,
+        -0.0007916026100432967,
+        4.414983027962365e-05
+      ]
+    },
+    {
+      "key": "part_071",
+      "node_name": "MG4010-i10.2025.10.1",
+      "link": "link_4",
+      "motor": true,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 512,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/M2X5-N.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 513,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-4"
+        },
+        {
+          "asset": "arm",
+          "index": 515,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 516,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-4"
+        },
+        {
+          "asset": "arm",
+          "index": 517,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 518,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-BC.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 519,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-CA.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 520,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/LM43N24A-J210C_1.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 521,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 522,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-5"
+        },
+        {
+          "asset": "arm",
+          "index": 523,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-6"
+        },
+        {
+          "asset": "arm",
+          "index": 524,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-15"
+        },
+        {
+          "asset": "arm",
+          "index": 525,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-18"
+        },
+        {
+          "asset": "arm",
+          "index": 526,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-8"
+        },
+        {
+          "asset": "arm",
+          "index": 527,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-9"
+        },
+        {
+          "asset": "arm",
+          "index": 528,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-10"
+        },
+        {
+          "asset": "arm",
+          "index": 529,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-13"
+        },
+        {
+          "asset": "arm",
+          "index": 530,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-14"
+        },
+        {
+          "asset": "arm",
+          "index": 531,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-16"
+        },
+        {
+          "asset": "arm",
+          "index": 532,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-7"
+        },
+        {
+          "asset": "arm",
+          "index": 533,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-11"
+        },
+        {
+          "asset": "arm",
+          "index": 534,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-12"
+        },
+        {
+          "asset": "arm",
+          "index": 535,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-17"
+        },
+        {
+          "asset": "arm",
+          "index": 536,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-24"
+        },
+        {
+          "asset": "arm",
+          "index": 537,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-28"
+        },
+        {
+          "asset": "arm",
+          "index": 538,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-20"
+        },
+        {
+          "asset": "arm",
+          "index": 539,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-23"
+        },
+        {
+          "asset": "arm",
+          "index": 540,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-22"
+        },
+        {
+          "asset": "arm",
+          "index": 541,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-25"
+        },
+        {
+          "asset": "arm",
+          "index": 542,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-26"
+        },
+        {
+          "asset": "arm",
+          "index": 543,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-19"
+        },
+        {
+          "asset": "arm",
+          "index": 544,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-21"
+        },
+        {
+          "asset": "arm",
+          "index": 545,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-27"
+        },
+        {
+          "asset": "arm",
+          "index": 546,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-FC.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 547,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 548,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 549,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-MC.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 550,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/PCB_AllCATPart.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 552,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 553,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 554,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 555,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 556,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 557,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 558,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 559,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/6707.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 560,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-5"
+        },
+        {
+          "asset": "arm",
+          "index": 561,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-BR ________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 563,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-6"
+        },
+        {
+          "asset": "arm",
+          "index": 564,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-4"
+        },
+        {
+          "asset": "arm",
+          "index": 565,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________12__0.4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 566,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PF __________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 567,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________108__0.4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 568,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 569,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 570,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-4"
+        },
+        {
+          "asset": "arm",
+          "index": 571,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-5"
+        },
+        {
+          "asset": "arm",
+          "index": 572,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-GW ________Pro.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 577,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PC ________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 580,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 581,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG8016-MAG  ____.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 582,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG8016-FMB ________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 583,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-5"
+        },
+        {
+          "asset": "arm",
+          "index": 584,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/______________M2.5X4.STEP-6"
+        },
+        {
+          "asset": "arm",
+          "index": 587,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/________40__0.4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 588,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/MG8016-DMG  ______.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 589,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/_____C-EFL675ZZ.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 591,
+          "node_name": "MG4010-i10-1/MG4010-i10 .STEP-1/________44__0.4.STEP-1"
+        }
+      ],
+      "triangles": 1800,
+      "bounds": {
+        "min": [
+          -0.049848198890686035,
+          0.0582612119615078,
+          0.09271608293056488
+        ],
+        "max": [
+          -0.007854912430047989,
+          0.11452968418598175,
+          0.14769595861434937
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_072",
+      "node_name": "J8_末端轴cnc-1",
+      "link": "link_6",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 592,
+          "node_name": "J8_末端轴cnc-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.0617305189371109,
+          0.07213883846998215,
+          0.22633536159992218
+        ],
+        "max": [
+          -0.01974392868578434,
+          0.11426226794719696,
+          0.23731322586536407
+        ]
+      },
+      "explode_offset_m": [
+        -1.1756598748360832e-05,
+        0.002261029138343591,
+        0.0711318999759764
+      ]
+    },
+    {
+      "key": "part_073",
+      "node_name": "spur_gear_m1.25_40Teeth_driven-1",
+      "link": "link_wheel",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 593,
+          "node_name": "spur_gear_m1.25_40Teeth_driven-1"
+        }
+      ],
+      "triangles": 2200,
+      "bounds": {
+        "min": [
+          0.003691917285323143,
+          0.06820135563611984,
+          0.18360473215579987
+        ],
+        "max": [
+          0.014899345114827156,
+          0.11590441316366196,
+          0.23270496726036072
+        ]
+      },
+      "explode_offset_m": [
+        0.09927669269648723,
+        -0.0006840715237966523,
+        3.815252917507922e-05
+      ]
+    },
+    {
+      "key": "part_074",
+      "node_name": "MG4010-i10.2025.10.1",
+      "link": "link_4",
+      "motor": true,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 596,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/M2X5-N.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 597,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-4"
+        },
+        {
+          "asset": "arm",
+          "index": 599,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 600,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-4"
+        },
+        {
+          "asset": "arm",
+          "index": 601,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 602,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-BC.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 603,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-CA.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 604,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/LM43N24A-J210C_1.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 605,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 606,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-5"
+        },
+        {
+          "asset": "arm",
+          "index": 607,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-6"
+        },
+        {
+          "asset": "arm",
+          "index": 608,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-15"
+        },
+        {
+          "asset": "arm",
+          "index": 609,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-18"
+        },
+        {
+          "asset": "arm",
+          "index": 610,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-8"
+        },
+        {
+          "asset": "arm",
+          "index": 611,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-9"
+        },
+        {
+          "asset": "arm",
+          "index": 612,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-10"
+        },
+        {
+          "asset": "arm",
+          "index": 613,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-13"
+        },
+        {
+          "asset": "arm",
+          "index": 614,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-14"
+        },
+        {
+          "asset": "arm",
+          "index": 615,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-16"
+        },
+        {
+          "asset": "arm",
+          "index": 616,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-7"
+        },
+        {
+          "asset": "arm",
+          "index": 617,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-11"
+        },
+        {
+          "asset": "arm",
+          "index": 618,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-12"
+        },
+        {
+          "asset": "arm",
+          "index": 619,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-17"
+        },
+        {
+          "asset": "arm",
+          "index": 620,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-24"
+        },
+        {
+          "asset": "arm",
+          "index": 621,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-28"
+        },
+        {
+          "asset": "arm",
+          "index": 622,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-20"
+        },
+        {
+          "asset": "arm",
+          "index": 623,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-23"
+        },
+        {
+          "asset": "arm",
+          "index": 624,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-22"
+        },
+        {
+          "asset": "arm",
+          "index": 625,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-25"
+        },
+        {
+          "asset": "arm",
+          "index": 626,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-26"
+        },
+        {
+          "asset": "arm",
+          "index": 627,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-19"
+        },
+        {
+          "asset": "arm",
+          "index": 628,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-21"
+        },
+        {
+          "asset": "arm",
+          "index": 629,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010.STEP-1/MG4010-MG.STEP-27"
+        },
+        {
+          "asset": "arm",
+          "index": 630,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-FC.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 631,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 632,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 633,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-MC.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 634,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/PCB_AllCATPart.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 636,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 637,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 638,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PP ____________.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 639,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 640,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 641,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 642,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 643,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/6707.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 644,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-5"
+        },
+        {
+          "asset": "arm",
+          "index": 645,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-BR ________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 647,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-6"
+        },
+        {
+          "asset": "arm",
+          "index": 648,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________4X0.2.STEP-4"
+        },
+        {
+          "asset": "arm",
+          "index": 649,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________12__0.4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 650,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PF __________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 651,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________108__0.4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 652,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 653,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-3"
+        },
+        {
+          "asset": "arm",
+          "index": 654,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-4"
+        },
+        {
+          "asset": "arm",
+          "index": 655,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/________48__0.4.STEP-5"
+        },
+        {
+          "asset": "arm",
+          "index": 656,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-GW ________Pro.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 661,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG4010-Reducer.STEP-1/MG4010-PC ________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 664,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-2"
+        },
+        {
+          "asset": "arm",
+          "index": 665,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG8016-MAG  ____.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 666,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG8016-FMB ________.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 667,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-5"
+        },
+        {
+          "asset": "arm",
+          "index": 668,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/______________M2.5X4.STEP-6"
+        },
+        {
+          "asset": "arm",
+          "index": 671,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/________40__0.4.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 672,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/MG8016-DMG  ______.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 673,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/_____C-EFL675ZZ.STEP-1"
+        },
+        {
+          "asset": "arm",
+          "index": 675,
+          "node_name": "MG4010-i10-2/MG4010-i10 .STEP-1/________44__0.4.STEP-1"
+        }
+      ],
+      "triangles": 1800,
+      "bounds": {
+        "min": [
+          -0.06655756384134293,
+          0.05791639909148216,
+          0.037500493228435516
+        ],
+        "max": [
+          -0.024971479550004005,
+          0.11096702516078949,
+          0.09164012968540192
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_075",
+      "node_name": "J7_从动包胶轮轴cnc-1",
+      "link": "link_wheel",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 677,
+          "node_name": "J7_从动包胶轮轴cnc-1"
+        }
+      ],
+      "triangles": 1216,
+      "bounds": {
+        "min": [
+          -0.10830006003379822,
+          0.0792103111743927,
+          0.19414804875850677
+        ],
+        "max": [
+          -0.09113851934671402,
+          0.10620979219675064,
+          0.22113479673862457
+        ]
+      },
+      "explode_offset_m": [
+        -0.06464743454945122,
+        0.00044545671154647793,
+        -2.484433219670738e-05
+      ]
+    },
+    {
+      "key": "part_076",
+      "node_name": "bevel_gear_m2.5_24Teeth_drive2-1",
+      "link": "link_wheel",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 678,
+          "node_name": "bevel_gear_m2.5_24Teeth_drive2-1"
+        }
+      ],
+      "triangles": 2200,
+      "bounds": {
+        "min": [
+          -0.019039278849959373,
+          0.06069166213274002,
+          0.17620062828063965
+        ],
+        "max": [
+          -0.0030782679095864296,
+          0.12363284826278687,
+          0.23914332687854767
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.2816515550303484,
+        0.0
+      ]
+    },
+    {
+      "key": "part_077",
+      "node_name": "bevel_gear_m2.5_24Teeth_driven-1",
+      "link": "link_6",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 679,
+          "node_name": "bevel_gear_m2.5_24Teeth_driven-1"
+        }
+      ],
+      "triangles": 2200,
+      "bounds": {
+        "min": [
+          -0.07217548042535782,
+          0.061831921339035034,
+          0.2287416011095047
+        ],
+        "max": [
+          -0.009299618192017078,
+          0.12468540668487549,
+          0.2410178780555725
+        ]
+      },
+      "explode_offset_m": [
+        -1.7578721610967764e-05,
+        0.003380739840489146,
+        0.10635796067389236
+      ]
+    },
+    {
+      "key": "part_078",
+      "node_name": "5M21T同步轮带螺纹-1",
+      "link": "link_5",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 680,
+          "node_name": "5M21T同步轮带螺纹-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08234923332929611,
+          0.0756245106458664,
+          0.19063185155391693
+        ],
+        "max": [
+          -0.07012142986059189,
+          0.10965090245008469,
+          0.22461895644664764
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.11736803478936034,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_079",
+      "node_name": "直径80聚氨酯轮带轴承板-1",
+      "link": "link_wheel",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 682,
+          "node_name": "直径80聚氨酯轮带轴承板-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.11040337383747101,
+          0.05270836874842644,
+          0.1674450933933258
+        ],
+        "max": [
+          -0.09707299619913101,
+          0.13259413838386536,
+          0.24780692160129547
+        ]
+      },
+      "explode_offset_m": [
+        -0.08993078567219161,
+        0.0006196730362390792,
+        -3.456085039603148e-05
+      ]
+    },
+    {
+      "key": "part_080",
+      "node_name": "5M21T同步轮-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 683,
+          "node_name": "5M21T同步轮-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08234906196594238,
+          0.06767532229423523,
+          0.0478672981262207
+        ],
+        "max": [
+          -0.07012101262807846,
+          0.10168074071407318,
+          0.08186740428209305
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0,
+        0.0673661411707722
+      ]
+    },
+    {
+      "key": "part_081",
+      "node_name": "spur_gear_m1.25_40Teeth_driven2-1",
+      "link": "link_wheel",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 684,
+          "node_name": "spur_gear_m1.25_40Teeth_driven2-1"
+        }
+      ],
+      "triangles": 2200,
+      "bounds": {
+        "min": [
+          -0.09741246700286865,
+          0.06646938621997833,
+          0.181394562125206
+        ],
+        "max": [
+          -0.09205064177513123,
+          0.11899207532405853,
+          0.2338859587907791
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0,
+        0.10105732667866954
+      ]
+    },
+    {
+      "key": "part_082",
+      "node_name": "L6_4010同步轮连接板cnc-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 685,
+          "node_name": "L6_4010同步轮连接板cnc-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.07035981118679047,
+          0.06608819216489792,
+          0.04637409746646881
+        ],
+        "max": [
+          -0.0661047026515007,
+          0.10309755802154541,
+          0.08336179703474045
+        ]
+      },
+      "explode_offset_m": [
+        -0.06837379672430546,
+        -0.0,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_083",
+      "node_name": "KSL06-M5-1",
+      "link": "link_5",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 688,
+          "node_name": "KSL06-M5-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.06377162039279938,
+          0.08536234498023987,
+          0.2012607455253601
+        ],
+        "max": [
+          -0.03374897688627243,
+          0.09962292015552521,
+          0.2287144660949707
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0650883286953565,
+        0.0
+      ]
+    },
+    {
+      "key": "part_084",
+      "node_name": "KSL06-M5-3",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 689,
+          "node_name": "KSL06-M5-3"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.1303730607032776,
+          0.0859290361404419,
+          0.18429793417453766
+        ],
+        "max": [
+          -0.10296734422445297,
+          0.10063377767801285,
+          0.2146327942609787
+        ]
+      },
+      "explode_offset_m": [
+        1.459758682668014e-17,
+        -0.0036310676267151476,
+        -0.06510472616425216
+      ]
+    },
+    {
+      "key": "part_085",
+      "node_name": "5M_10_Synchronousbelt-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 691,
+          "node_name": "5M_10_Synchronousbelt-1"
+        },
+        {
+          "asset": "arm",
+          "index": 693,
+          "node_name": "5M_10_Synchronousbelt-4"
+        },
+        {
+          "asset": "arm",
+          "index": 694,
+          "node_name": "5M_10_Synchronousbelt-2"
+        },
+        {
+          "asset": "arm",
+          "index": 695,
+          "node_name": "5M_10_Synchronousbelt-9"
+        },
+        {
+          "asset": "arm",
+          "index": 697,
+          "node_name": "5M_10_Synchronousbelt-3"
+        },
+        {
+          "asset": "arm",
+          "index": 699,
+          "node_name": "5M_10_Synchronousbelt-7"
+        },
+        {
+          "asset": "arm",
+          "index": 701,
+          "node_name": "5M_10_Synchronousbelt-6"
+        },
+        {
+          "asset": "arm",
+          "index": 703,
+          "node_name": "5M_10_Synchronousbelt-8"
+        },
+        {
+          "asset": "arm",
+          "index": 704,
+          "node_name": "5M_10_Synchronousbelt-5"
+        },
+        {
+          "asset": "arm",
+          "index": 705,
+          "node_name": "5M_10_Synchronousbelt-20"
+        },
+        {
+          "asset": "arm",
+          "index": 706,
+          "node_name": "5M_10_Synchronousbelt-10"
+        },
+        {
+          "asset": "arm",
+          "index": 707,
+          "node_name": "5M_10_Synchronousbelt-11"
+        },
+        {
+          "asset": "arm",
+          "index": 708,
+          "node_name": "5M_10_Synchronousbelt-12"
+        },
+        {
+          "asset": "arm",
+          "index": 709,
+          "node_name": "5M_10_Synchronousbelt-15"
+        },
+        {
+          "asset": "arm",
+          "index": 710,
+          "node_name": "5M_10_Synchronousbelt-16"
+        },
+        {
+          "asset": "arm",
+          "index": 711,
+          "node_name": "5M_10_Synchronousbelt-13"
+        },
+        {
+          "asset": "arm",
+          "index": 712,
+          "node_name": "5M_10_Synchronousbelt-14"
+        },
+        {
+          "asset": "arm",
+          "index": 713,
+          "node_name": "5M_10_Synchronousbelt-17"
+        },
+        {
+          "asset": "arm",
+          "index": 714,
+          "node_name": "5M_10_Synchronousbelt-18"
+        },
+        {
+          "asset": "arm",
+          "index": 715,
+          "node_name": "5M_10_Synchronousbelt-19"
+        },
+        {
+          "asset": "arm",
+          "index": 716,
+          "node_name": "5M_10_Synchronousbelt-27"
+        },
+        {
+          "asset": "arm",
+          "index": 717,
+          "node_name": "5M_10_Synchronousbelt-29"
+        },
+        {
+          "asset": "arm",
+          "index": 718,
+          "node_name": "5M_10_Synchronousbelt-22"
+        },
+        {
+          "asset": "arm",
+          "index": 719,
+          "node_name": "5M_10_Synchronousbelt-25"
+        },
+        {
+          "asset": "arm",
+          "index": 720,
+          "node_name": "5M_10_Synchronousbelt-35"
+        },
+        {
+          "asset": "arm",
+          "index": 721,
+          "node_name": "5M_10_Synchronousbelt-24"
+        },
+        {
+          "asset": "arm",
+          "index": 722,
+          "node_name": "5M_10_Synchronousbelt-23"
+        },
+        {
+          "asset": "arm",
+          "index": 723,
+          "node_name": "5M_10_Synchronousbelt-26"
+        },
+        {
+          "asset": "arm",
+          "index": 724,
+          "node_name": "5M_10_Synchronousbelt-30"
+        },
+        {
+          "asset": "arm",
+          "index": 725,
+          "node_name": "5M_10_Synchronousbelt-21"
+        },
+        {
+          "asset": "arm",
+          "index": 726,
+          "node_name": "5M_10_Synchronousbelt-28"
+        },
+        {
+          "asset": "arm",
+          "index": 727,
+          "node_name": "5M_10_Synchronousbelt-31"
+        },
+        {
+          "asset": "arm",
+          "index": 728,
+          "node_name": "5M_10_Synchronousbelt-32"
+        },
+        {
+          "asset": "arm",
+          "index": 729,
+          "node_name": "5M_10_Synchronousbelt-33"
+        },
+        {
+          "asset": "arm",
+          "index": 730,
+          "node_name": "5M_10_Synchronousbelt-34"
+        },
+        {
+          "asset": "arm",
+          "index": 731,
+          "node_name": "5M_10_Synchronousbelt-36"
+        },
+        {
+          "asset": "arm",
+          "index": 732,
+          "node_name": "5M_10_Synchronousbelt-37"
+        },
+        {
+          "asset": "arm",
+          "index": 783,
+          "node_name": "5M_10_Synchronousbelt-43"
+        },
+        {
+          "asset": "arm",
+          "index": 784,
+          "node_name": "5M_10_Synchronousbelt-48"
+        },
+        {
+          "asset": "arm",
+          "index": 785,
+          "node_name": "5M_10_Synchronousbelt-49"
+        },
+        {
+          "asset": "arm",
+          "index": 786,
+          "node_name": "5M_10_Synchronousbelt-45"
+        },
+        {
+          "asset": "arm",
+          "index": 787,
+          "node_name": "5M_10_Synchronousbelt-44"
+        },
+        {
+          "asset": "arm",
+          "index": 788,
+          "node_name": "5M_10_Synchronousbelt-38"
+        },
+        {
+          "asset": "arm",
+          "index": 789,
+          "node_name": "5M_10_Synchronousbelt-46"
+        },
+        {
+          "asset": "arm",
+          "index": 790,
+          "node_name": "5M_10_Synchronousbelt-41"
+        },
+        {
+          "asset": "arm",
+          "index": 791,
+          "node_name": "5M_10_Synchronousbelt-40"
+        },
+        {
+          "asset": "arm",
+          "index": 792,
+          "node_name": "5M_10_Synchronousbelt-39"
+        },
+        {
+          "asset": "arm",
+          "index": 793,
+          "node_name": "5M_10_Synchronousbelt-42"
+        },
+        {
+          "asset": "arm",
+          "index": 794,
+          "node_name": "5M_10_Synchronousbelt-47"
+        },
+        {
+          "asset": "arm",
+          "index": 795,
+          "node_name": "5M_10_Synchronousbelt-50"
+        },
+        {
+          "asset": "arm",
+          "index": 796,
+          "node_name": "5M_10_Synchronousbelt-58"
+        },
+        {
+          "asset": "arm",
+          "index": 797,
+          "node_name": "5M_10_Synchronousbelt-60"
+        },
+        {
+          "asset": "arm",
+          "index": 798,
+          "node_name": "5M_10_Synchronousbelt-63"
+        },
+        {
+          "asset": "arm",
+          "index": 799,
+          "node_name": "5M_10_Synchronousbelt-53"
+        },
+        {
+          "asset": "arm",
+          "index": 800,
+          "node_name": "5M_10_Synchronousbelt-62"
+        },
+        {
+          "asset": "arm",
+          "index": 801,
+          "node_name": "5M_10_Synchronousbelt-54"
+        },
+        {
+          "asset": "arm",
+          "index": 802,
+          "node_name": "5M_10_Synchronousbelt-56"
+        },
+        {
+          "asset": "arm",
+          "index": 803,
+          "node_name": "5M_10_Synchronousbelt-52"
+        },
+        {
+          "asset": "arm",
+          "index": 804,
+          "node_name": "5M_10_Synchronousbelt-51"
+        },
+        {
+          "asset": "arm",
+          "index": 805,
+          "node_name": "5M_10_Synchronousbelt-55"
+        },
+        {
+          "asset": "arm",
+          "index": 806,
+          "node_name": "5M_10_Synchronousbelt-57"
+        },
+        {
+          "asset": "arm",
+          "index": 807,
+          "node_name": "5M_10_Synchronousbelt-59"
+        },
+        {
+          "asset": "arm",
+          "index": 808,
+          "node_name": "5M_10_Synchronousbelt-61"
+        },
+        {
+          "asset": "arm",
+          "index": 809,
+          "node_name": "5M_10_Synchronousbelt-69"
+        },
+        {
+          "asset": "arm",
+          "index": 810,
+          "node_name": "5M_10_Synchronousbelt-70"
+        },
+        {
+          "asset": "arm",
+          "index": 811,
+          "node_name": "5M_10_Synchronousbelt-71"
+        },
+        {
+          "asset": "arm",
+          "index": 812,
+          "node_name": "5M_10_Synchronousbelt-76"
+        },
+        {
+          "asset": "arm",
+          "index": 813,
+          "node_name": "5M_10_Synchronousbelt-78"
+        },
+        {
+          "asset": "arm",
+          "index": 814,
+          "node_name": "5M_10_Synchronousbelt-64"
+        },
+        {
+          "asset": "arm",
+          "index": 815,
+          "node_name": "5M_10_Synchronousbelt-66"
+        },
+        {
+          "asset": "arm",
+          "index": 816,
+          "node_name": "5M_10_Synchronousbelt-74"
+        },
+        {
+          "asset": "arm",
+          "index": 817,
+          "node_name": "5M_10_Synchronousbelt-65"
+        },
+        {
+          "asset": "arm",
+          "index": 818,
+          "node_name": "5M_10_Synchronousbelt-67"
+        },
+        {
+          "asset": "arm",
+          "index": 819,
+          "node_name": "5M_10_Synchronousbelt-68"
+        },
+        {
+          "asset": "arm",
+          "index": 820,
+          "node_name": "5M_10_Synchronousbelt-73"
+        },
+        {
+          "asset": "arm",
+          "index": 821,
+          "node_name": "5M_10_Synchronousbelt-72"
+        },
+        {
+          "asset": "arm",
+          "index": 822,
+          "node_name": "5M_10_Synchronousbelt-75"
+        },
+        {
+          "asset": "arm",
+          "index": 823,
+          "node_name": "5M_10_Synchronousbelt-77"
+        },
+        {
+          "asset": "arm",
+          "index": 824,
+          "node_name": "5M_10_Synchronousbelt-79"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08035530149936676,
+          0.06721793860197067,
+          0.04853813722729683
+        ],
+        "max": [
+          -0.07010874152183533,
+          0.11002886295318604,
+          0.2240976095199585
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.26334796527505777,
+        0.0
+      ]
+    },
+    {
+      "key": "part_086",
+      "node_name": "spur_gear_m1.25_40Teeth_drive-2",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 696,
+          "node_name": "spur_gear_m1.25_40Teeth_drive-2"
+        }
+      ],
+      "triangles": 2200,
+      "bounds": {
+        "min": [
+          -0.0974126085639,
+          0.06373758614063263,
+          0.13151133060455322
+        ],
+        "max": [
+          -0.08814622461795807,
+          0.11616859585046768,
+          0.18392246961593628
+        ]
+      },
+      "explode_offset_m": [
+        2.2644138434074517e-17,
+        -0.005632602085472484,
+        -0.10099206461175875
+      ]
+    },
+    {
+      "key": "part_087",
+      "node_name": "6mm_L6涨紧块-2",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 751,
+          "node_name": "6mm_L6涨紧块-2"
+        }
+      ],
+      "triangles": 420,
+      "bounds": {
+        "min": [
+          -0.07647353410720825,
+          0.049055442214012146,
+          0.05436352640390396
+        ],
+        "max": [
+          -0.06840471178293228,
+          0.060041479766368866,
+          0.07472535967826843
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.05857609399518242,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_088",
+      "node_name": "ZP-80HB吸盘-1",
+      "link": "link_6",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 757,
+          "node_name": "ZP-80HB吸盘-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08320968598127365,
+          0.05162092670798302,
+          0.2421494424343109
+        ],
+        "max": [
+          0.0017157079419121146,
+          0.13658487796783447,
+          0.2794264853000641
+        ]
+      },
+      "explode_offset_m": [
+        -1.9662091902233107e-05,
+        0.0037814136267886986,
+        0.1189631443960866
+      ]
+    },
+    {
+      "key": "part_089",
+      "node_name": "J7锥齿轮同轴cnc-1",
+      "link": "link_wheel",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 759,
+          "node_name": "J7锥齿轮同轴cnc-1"
+        }
+      ],
+      "triangles": 1002,
+      "bounds": {
+        "min": [
+          -0.02426082454621792,
+          0.07215718179941177,
+          0.18768592178821564
+        ],
+        "max": [
+          -0.009095598943531513,
+          0.1121673583984375,
+          0.2276580035686493
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.19549388417464075,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_090",
+      "node_name": "J7锥齿轮侧轴cnc-1",
+      "link": "link_wheel",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 761,
+          "node_name": "J7锥齿轮侧轴cnc-1"
+        }
+      ],
+      "triangles": 1024,
+      "bounds": {
+        "min": [
+          -0.0033336556516587734,
+          0.07761775702238083,
+          0.19320636987686157
+        ],
+        "max": [
+          0.0036522196605801582,
+          0.10656896978616714,
+          0.22214525938034058
+        ]
+      },
+      "explode_offset_m": [
+        0.06453267208338248,
+        -0.0004446659344475841,
+        2.480022840742949e-05
+      ]
+    },
+    {
+      "key": "part_091",
+      "node_name": "L6_齿轮传动轴-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 762,
+          "node_name": "L6_齿轮传动轴-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08009842038154602,
+          0.0868518054485321,
+          0.15522417426109314
+        ],
+        "max": [
+          -0.008217103779315948,
+          0.09234406054019928,
+          0.16025039553642273
+        ]
+      },
+      "explode_offset_m": [
+        -2.804924013362908e-17,
+        0.006977090735095341,
+        0.125098628951302
+      ]
+    },
+    {
+      "key": "part_092",
+      "node_name": "吸盘保护cnc-1",
+      "link": "link_6",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 763,
+          "node_name": "吸盘保护cnc-1"
+        }
+      ],
+      "triangles": 1252,
+      "bounds": {
+        "min": [
+          -0.088725246489048,
+          0.04574936255812645,
+          0.23893789947032928
+        ],
+        "max": [
+          0.0072438642382621765,
+          0.14198610186576843,
+          0.26165875792503357
+        ]
+      },
+      "explode_offset_m": [
+        -2.8616587371051376e-05,
+        0.005503542246427658,
+        0.17314125233841324
+      ]
+    },
+    {
+      "key": "part_093",
+      "node_name": "L6_齿轮对轴夹紧cnc-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 766,
+          "node_name": "L6_齿轮对轴夹紧cnc-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08816777169704437,
+          0.07638052850961685,
+          0.14425784349441528
+        ],
+        "max": [
+          -0.07998888939619064,
+          0.10331730544567108,
+          0.17118875682353973
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.06363544552321301,
+        0.0
+      ]
+    },
+    {
+      "key": "part_094",
+      "node_name": "J7_同步轮轴承内垫块-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 767,
+          "node_name": "J7_同步轮轴承内垫块-1"
+        }
+      ],
+      "triangles": 832,
+      "bounds": {
+        "min": [
+          -0.09121774137020111,
+          0.08017119020223618,
+          0.19516795873641968
+        ],
+        "max": [
+          -0.08214575052261353,
+          0.1051793247461319,
+          0.22011877596378326
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.06276541259510075,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_095",
+      "node_name": "L6_4005baseCNC-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 768,
+          "node_name": "L6_4005baseCNC-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.08040425926446915,
+          0.05048251897096634,
+          0.036636002361774445
+        ],
+        "max": [
+          -0.06500474363565445,
+          0.11682110279798508,
+          0.09311658143997192
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.08096661191269017,
+        0.0
+      ]
+    },
+    {
+      "key": "part_096",
+      "node_name": "2mm_J7_轴卡板-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 770,
+          "node_name": "2mm_J7_轴卡板-1"
+        }
+      ],
+      "triangles": 856,
+      "bounds": {
+        "min": [
+          -0.11030355840921402,
+          0.08232418447732925,
+          0.19713960587978363
+        ],
+        "max": [
+          -0.10815876722335815,
+          0.10332641750574112,
+          0.21813303232192993
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.06042046974522141,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_097",
+      "node_name": "m5D10_12_气管铝柱-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 772,
+          "node_name": "m5D10_12_气管铝柱-1"
+        }
+      ],
+      "triangles": 360,
+      "bounds": {
+        "min": [
+          -0.10691577196121216,
+          0.08773954212665558,
+          0.20263560116291046
+        ],
+        "max": [
+          -0.09484704583883286,
+          0.0978066623210907,
+          0.212640181183815
+        ]
+      },
+      "explode_offset_m": [
+        -1.2653226308039723e-17,
+        0.003147418882732719,
+        0.05643294632600496
+      ]
+    },
+    {
+      "key": "part_098",
+      "node_name": "POC6-M5-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 774,
+          "node_name": "POC6-M5-1"
+        }
+      ],
+      "triangles": 1212,
+      "bounds": {
+        "min": [
+          -0.09829871356487274,
+          0.08763524144887924,
+          0.20264804363250732
+        ],
+        "max": [
+          -0.07969740778207779,
+          0.09772250056266785,
+          0.2126382738351822
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.058190045415785756,
+        0.0
+      ]
+    },
+    {
+      "key": "part_099",
+      "node_name": "6mm_L6涨紧块-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 776,
+          "node_name": "6mm_L6涨紧块-1"
+        }
+      ],
+      "triangles": 420,
+      "bounds": {
+        "min": [
+          -0.07605947554111481,
+          0.10896091163158417,
+          0.05102243646979332
+        ],
+        "max": [
+          -0.06799065321683884,
+          0.11994694918394089,
+          0.07138427346944809
+        ]
+      },
+      "explode_offset_m": [
+        -1.3113377331036896e-17,
+        0.003261878861826735,
+        0.05848520377801593
+      ]
+    },
+    {
+      "key": "part_100",
+      "node_name": "J7J8_差速器CNC-1",
+      "link": "link_5",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 778,
+          "node_name": "J7J8_差速器CNC-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.0703633651137352,
+          0.07354384660720825,
+          0.18863952159881592
+        ],
+        "max": [
+          -0.019136788323521614,
+          0.11159379780292511,
+          0.22922228276729584
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.10146824283576453,
+        0.0
+      ]
+    },
+    {
+      "key": "part_101",
+      "node_name": "L6_8mm六角轴联轴器cnc-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 779,
+          "node_name": "L6_8mm六角轴联轴器cnc-1"
+        }
+      ],
+      "triangles": 896,
+      "bounds": {
+        "min": [
+          -0.0801578164100647,
+          0.07883019745349884,
+          0.14673550426959991
+        ],
+        "max": [
+          -0.07600609958171844,
+          0.10083318501710892,
+          0.16871300339698792
+        ]
+      },
+      "explode_offset_m": [
+        -1.3651802271392833e-17,
+        0.003395809037653414,
+        0.06088656016096332
+      ]
+    },
+    {
+      "key": "part_102",
+      "node_name": "L6_8mm六角轴联轴器cnc-2",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 781,
+          "node_name": "L6_8mm六角轴联轴器cnc-2"
+        }
+      ],
+      "triangles": 896,
+      "bounds": {
+        "min": [
+          -0.01230943389236927,
+          0.07836268842220306,
+          0.14676158130168915
+        ],
+        "max": [
+          -0.008157714270055294,
+          0.10036567598581314,
+          0.16873908042907715
+        ]
+      },
+      "explode_offset_m": [
+        0.06098118351620288,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_103",
+      "node_name": "L6_71mm六角轴-1",
+      "link": "link_4",
+      "motor": false,
+      "members": [
+        {
+          "asset": "arm",
+          "index": 782,
+          "node_name": "L6_71mm六角轴-1"
+        }
+      ],
+      "triangles": 20,
+      "bounds": {
+        "min": [
+          -0.07925568521022797,
+          0.0859302431344986,
+          0.1544860452413559
+        ],
+        "max": [
+          -0.00820978730916977,
+          0.09326817095279694,
+          0.16096735000610352
+        ]
+      },
+      "explode_offset_m": [
+        -2.2409533022269887e-17,
+        0.005574245308700381,
+        0.0999457326889867
+      ]
+    },
+    {
+      "key": "part_104",
+      "node_name": "bearing_RA6008.2025.10.1-1",
+      "link": "link_base",
+      "motor": false,
+      "members": [
+        {
+          "asset": "gimbal",
+          "index": 3,
+          "node_name": "bearing_RA6008.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.07877769321203232,
+          -0.08041130006313324,
+          0.09382270276546478
+        ],
+        "max": [
+          -0.0028124882373958826,
+          -0.0724489763379097,
+          0.1698848009109497
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "key": "part_105",
+      "node_name": "04C_30teeth_从动轮.2025.10.1-1",
+      "link": "link_1",
+      "motor": false,
+      "members": [
+        {
+          "asset": "gimbal",
+          "index": 4,
+          "node_name": "04C_30teeth_从动轮.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.07302701473236084,
+          -0.09123888611793518,
+          0.09930666536092758
+        ],
+        "max": [
+          -0.008407995104789734,
+          -0.08842041343450546,
+          0.16421771049499512
+        ]
+      },
+      "explode_offset_m": [
+        -0.08207231119082073,
+        -0.0,
+        -0.0
+      ]
+    },
+    {
+      "key": "part_106",
+      "node_name": "J1_RA6008轴承内圈CNC.2025.10.1-1",
+      "link": "link_1",
+      "motor": false,
+      "members": [
+        {
+          "asset": "gimbal",
+          "index": 859,
+          "node_name": "J1_RA6008轴承内圈CNC.2025.10.1-1"
+        }
+      ],
+      "triangles": 3864,
+      "bounds": {
+        "min": [
+          -0.07304062694311142,
+          -0.08843354880809784,
+          0.10001221299171448
+        ],
+        "max": [
+          -0.008842868730425835,
+          -0.06643354147672653,
+          0.16390027105808258
+        ]
+      },
+      "explode_offset_m": [
+        -0.0,
+        -0.0,
+        -0.08262149543762196
+      ]
+    },
+    {
+      "key": "part_107",
+      "node_name": "J1_6706轴承内圈CNC.2025.10.1-1",
+      "link": "link_1",
+      "motor": false,
+      "members": [
+        {
+          "asset": "gimbal",
+          "index": 860,
+          "node_name": "J1_6706轴承内圈CNC.2025.10.1-1"
+        }
+      ],
+      "triangles": 1400,
+      "bounds": {
+        "min": [
+          -0.05671972036361694,
+          -0.0954335555434227,
+          0.11576128005981445
+        ],
+        "max": [
+          -0.024745969101786613,
+          -0.06743353605270386,
+          0.14776313304901123
+        ]
+      },
+      "explode_offset_m": [
+        0.0,
+        -0.0686206593829833,
+        0.0
+      ]
+    }
+  ],
+  "triangles": 152356,
+  "draco_bytes": 1104972
+}

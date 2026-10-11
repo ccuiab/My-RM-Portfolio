@@ -1,8 +1,8 @@
 # 素材总清单
 
-生成时间：2026-10-11T20:52:55.559+08:00（北京时间）。
+生成时间：2026-10-12T00:34:25.593+08:00（北京时间）。
 
-本地 materials/ 共 **741 个文件，11.55 GiB**。包含 Git 忽略的本地素材；本清单和 inventory.csv 不计入统计。每个文件均重新计算 SHA-256。
+本次清单覆盖逻辑 materials/ 库，共 **745 个文件，11.55 GiB**。以当前 worktree 的文件为准，缺失的 Git 忽略素材从主仓库只读核验，没有复制大型原片。本清单和 inventory.csv 不计入统计；每个文件均重新计算 SHA-256。
 
 原始输入与二级材料的定义、使用方式见 [README.md](README.md)。完整文件、层级、分类依据、来源和校验值见 [inventory.csv](inventory.csv)。
 
@@ -14,11 +14,11 @@
 | 原始输入 | 视频 | 34 | 9.94 GiB | [videos/source/](videos/source/) |
 | 原始输入 | 字体 | 1 | 2.51 MiB | [fonts/source/](fonts/source/) |
 | 原始输入 | 资料与审计 | 72 | 12.77 MiB | [documents/source/](documents/source/) |
-| 二级材料 | 图片 | 41 | 42.21 MiB | [images/derived/](images/derived/) |
-| 二级材料 | 模型 | 73 | 1.45 GiB | [models/derived/](models/derived/) |
+| 二级材料 | 图片 | 42 | 42.34 MiB | [images/derived/](images/derived/) |
+| 二级材料 | 模型 | 75 | 1.45 GiB | [models/derived/](models/derived/) |
 | 二级材料 | 视频 | 4 | 55.43 MiB | [videos/derived/](videos/derived/) |
-| 二级材料 | 字体 | 1 | 86.71 KiB | [fonts/derived/](fonts/derived/) |
-| 二级材料 | 资料与审计 | 457 | 32.08 MiB | [documents/derived/](documents/derived/) |
+| 二级材料 | 字体 | 1 | 87.11 KiB | [fonts/derived/](fonts/derived/) |
+| 二级材料 | 资料与审计 | 458 | 32.08 MiB | [documents/derived/](documents/derived/) |
 
 ## 当前展示与处理输入
 
@@ -36,11 +36,12 @@
 | 图片来源记录 | 3 | 1.68 MiB |
 | 字体原件 | 1 | 2.51 MiB |
 | 官方文章原图 | 5 | 671.09 KiB |
+| 当前网页展示 | 3 | 1.30 MiB |
 | 投稿原封面 | 36 | 9.05 MiB |
-| 来源与审计支撑 | 455 | 32.02 MiB |
+| 来源与审计支撑 | 456 | 32.02 MiB |
 | 模型处理输入 | 47 | 1.43 GiB |
 | 模型说明 | 1 | 6.78 KiB |
-| 目录索引 | 1 | 3.96 KiB |
+| 目录索引 | 1 | 3.99 KiB |
 | 网页使用 | 34 | 38.01 MiB |
 | 网页运行依赖 | 5 | 760.81 KiB |
 | 说明与索引 | 1 | 767.91 KiB |
@@ -51,6 +52,8 @@
 | 文件 | 用途 | 大小 |
 | --- | --- | ---: |
 | [arm-joints.json](models/derived/web/arm-joints.json) | 网页使用 | 100.03 KiB |
+| [arm-parts.glb](models/derived/web/arm-parts.glb) | 当前网页展示 | 1.05 MiB |
+| [arm-parts.json](models/derived/web/arm-parts.json) | 当前网页展示 | 119.48 KiB |
 | [arm.glb](models/derived/web/arm.glb) | 网页使用 | 1.03 MiB |
 | [engineer-pump.glb](models/derived/web/engineer-pump.glb) | 网页使用 | 141.18 KiB |
 | [engineer-swerve.glb](models/derived/web/engineer-swerve.glb) | 网页使用 | 336.78 KiB |
