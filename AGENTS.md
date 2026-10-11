@@ -26,14 +26,14 @@
 - 保持碳色深蓝底与唯一琥珀色强调色 `--amber`，配色定义位于 `src/styles/global.css`。红蓝只用于装甲灯条和实时状态。
 - 图号、章节字母、机器人编号和技能 BOM 表都应表达真实信息。白底 CAD 图片沿用 `--plate` 与 `mix-blend-mode: multiply`。
 - 工程页顶部保留工程标题和整车 3D；B 站介绍视频位于标题区下方、A/B 章节之前；工程页的 5.8 s 成绩只展示一次。
-- 预研部分统一使用图片。工程腕部视图支持爆炸、恢复和旋转，电机保持原装配状态，不拆解电机。
+- 预研部分统一使用图片。工程全臂视图支持爆炸、恢复和旋转，电机保持整体与原装配位置。
 - 网站事实须能追溯至 `materials/documents/source/CUIChuhanCV.md`、历史网站、官方转播或用户说明。新增且未经确认的事实标明待确认。
 
 ## 3D 与原始文件
 
 - 网站模型位于 `materials/models/derived/web/`，Draco 解码器在其 `draco/` 子目录；发布时仍使用 `models/` 网址。
 - `arm.glb` 的节点为 `link_base…link_6`，各原点位于关节轴，旋转轴记录在 `extras.web_axis`；单位姿态为 CAD 原始折叠姿态。相关交互在 `src/scripts/arm-scene.ts`。
-- 当前腕部爆炸图使用 `l4.glb`、`l4.json` 和 `src/scripts/wrist-scene.ts`；旧腕部素材随独立历史网站版本保存。
+- 当前全臂爆炸图使用 `arm-parts.glb`、`arm-parts.json`、`src/components/ArmExplode.astro` 和 `src/scripts/arm-explode-scene.ts`；手机端与减少动态效果模式使用 `materials/images/derived/site/cad-cutouts/arm-exploded.png`。旧 `l4.glb`、`l4.json` 资产保留，由主控统一决定清理。
 - 运动学推导、源文件映射和审计报告保存在 `materials/documents/derived/audits/`；当前模型处理需要的 CAD 导出、Blender 工程、URDF 和网格位于 `materials/models/derived/inputs/`。历史报告中的旧路径通过迁移清单和 `materials/cleanup.json` 定位。
 - `D:\RM2025` 和 OneDrive 中的源 CAD 对所有工具都只读。只在本仓库的派生文件上加工。
 - 视频原片在 `materials/videos/source/`，当前剪辑及其输入在 `materials/videos/derived/`，封面在 `materials/images/derived/video-posters/`；保留素材来源记录，重新剪辑沿用 `scripts/cut-record.ps1`。

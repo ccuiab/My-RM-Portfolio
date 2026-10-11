@@ -120,7 +120,6 @@ export const sceneCopy = {
     reset: { zh: '复位视角', en: 'Reset view' },
     follow: { zh: '跟随滚动', en: 'Follow scroll' },
     arm: { zh: '展开程度', en: 'Arm extension' },
-    wrist: { zh: '拆解程度', en: 'Exploded view' },
   },
   homeDescription: {
     zh: '崔楮焓的 RoboMaster 机械作品集：工程全明星。',
@@ -151,13 +150,20 @@ export const sceneCopy = {
     sketchAlt: { zh: '机械臂从收折到展开', en: 'Arm unfolding from folded to extended' },
     staticNote: { zh: '连杆比例示意；尺寸见本章规格。', en: 'Link proportions are schematic; see this chapter for dimensions.' },
   },
-  wristExplode: {
-    title: { zh: '完整 L4 与腕部拆解', en: 'Complete L4 and wrist exploded view' },
-    hint: { zh: '拖动旋转 · 方向键调整视角', en: 'Drag to rotate · Arrow keys adjust the view' },
+  armExplode: {
+    title: { zh: '整臂拆解', en: 'Arm exploded view' },
+    intro: { zh: '沿装配方向展开板件、轴承座与传动结构，查看从底座到末端的连接关系。电机保持整体与原装配位置。', en: 'Separate plates, bearing mounts and drivetrain parts along their assembly directions, from base to end effector. Motors stay intact at their assembled positions.' },
+    hint: { zh: '拖动旋转 · 滚轮缩放 · 悬停查看零件 · 方向键调整视角', en: 'Drag to rotate · Scroll to zoom · Hover to inspect · Arrow keys adjust the view' },
     assemble: { zh: '恢复装配', en: 'Assemble' },
     explode: { zh: '爆炸展开', en: 'Explode' },
-    parts: { zh: '查看部件清单', en: 'View parts list' },
-    alt: { zh: 'L4 段与腕部结构 CAD 渲染', en: 'CAD render of the L4 segment and wrist' },
+    rotate: { zh: '旋转', en: 'Rotate' },
+    pause: { zh: '暂停旋转', en: 'Pause rotation' },
+    controls: { zh: '全臂爆炸视图操作', en: 'Arm exploded view controls' },
+    progress: { zh: '爆炸程度', en: 'Separation' },
+    hover: { zh: '悬停零件，查看原始节点名与所属关节', en: 'Hover a part to see its source node name and joint' },
+    mount: { zh: '固定底座 · link_base', en: 'Fixed mount · link_base' },
+    staticNote: { zh: '全臂静态爆炸视图，电机保持完整。', en: 'Static exploded view of the arm, with motors kept intact.' },
+    alt: { zh: '机械臂从底座到末端的零件级爆炸视图', en: 'Part-level exploded view of the arm, from base to end effector' },
   },
   module: {
     photo: { zh: '设计视图', en: 'Design view' },
