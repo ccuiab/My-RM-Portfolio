@@ -97,6 +97,34 @@ export const pageCopy = {
 };
 
 export const sceneCopy = {
+  armExchange: {
+    play: { zh: '播放', en: 'Play' },
+    pause: { zh: '暂停', en: 'Pause' },
+    reset: { zh: '复位视角', en: 'Reset view' },
+    loading: { zh: '正在加载机械臂', en: 'Loading the arm' },
+    unavailable: { zh: '3D 暂不可用，显示 CAD 静态图', en: '3D unavailable; showing the CAD still' },
+    illustration: { zh: '示意动画，非实测轨迹', en: 'Illustrative motion, not a recorded trajectory' },
+    canvasAlt: { zh: '六轴机械臂兑矿示意动画，可拖动旋转与缩放', en: 'Interactive six-axis mineral exchange illustration; drag to orbit and zoom' },
+    staticAlt: { zh: '工程机器人整车 CAD 静态图', en: 'Static CAD view of the Engineer robot' },
+    staticNote: { zh: '静态 CAD 视图；桌面端且允许动态效果时可查看兑矿示意动画。', en: 'Static CAD view. The exchange illustration is available on desktop with motion enabled.' },
+    timeline: { zh: '兑矿动画进度', en: 'Exchange animation timeline' },
+    stages: { zh: '跳转到动作阶段', en: 'Jump to a motion stage' },
+    joints: { zh: '相对 CAD 折叠姿态的关节角度', en: 'Joint angles relative to the folded CAD pose' },
+    envelope: { zh: '设计包络示意', en: 'Illustrative design envelope' },
+    mineral: { zh: '矿石', en: 'Mineral' },
+    station: { zh: '兑换站示意', en: 'Exchange bay schematic' },
+    scope: { zh: '包络按设计端点插值，非实时外形测量；关节角相对 CAD 姿态，J1–J3 实机限位待确认。', en: 'Envelope interpolated between design endpoints, not a live geometry measurement. Angles are relative to the CAD pose; J1–J3 hardware limits remain unconfirmed.' },
+    hint: { zh: '拖动旋转 · 滚轮 / 双指缩放', en: 'Drag to orbit · Scroll / pinch to zoom' },
+    phases: [
+      { zh: '折叠', en: 'Folded' },
+      { zh: '展开', en: 'Unfold' },
+      { zh: '抓矿', en: 'Pick up' },
+      { zh: '翻腕对位', en: 'Reorient' },
+      { zh: '推入', en: 'Insert' },
+      { zh: '释放', en: 'Release' },
+      { zh: '收回', en: 'Retract' },
+    ],
+  },
   interaction: {
     hint: { zh: '拖动模型自由旋转', en: 'Drag the model to explore' },
     reset: { zh: '复位视角', en: 'Reset view' },
