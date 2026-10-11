@@ -65,8 +65,8 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       };
     },
     loading() { delete root.dataset.failedState; status.hidden = false; status.textContent = root.dataset.loading!; },
-    ready() { root.dataset.ready = 'true'; controls.hidden = false; status.hidden = true; },
-    reset() { holder.replaceChildren(); controls.hidden = true; label.hidden = true; root.dataset.ready = 'false'; status.hidden = root.dataset.failedState !== 'true'; },
+    ready() { root.dataset.ready = 'true'; controls.hidden = false; controls.inert = false; status.hidden = true; },
+    reset() { holder.replaceChildren(); controls.hidden = true; controls.inert = true; label.hidden = true; root.dataset.ready = 'false'; status.hidden = root.dataset.failedState !== 'true'; },
     failed(error) { root.dataset.failedState = 'true'; status.hidden = false; status.textContent = root.dataset.failed!; console.warn('Mechanism unavailable', error); },
   });
   sync();

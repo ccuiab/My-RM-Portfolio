@@ -17,7 +17,7 @@ interface Props {
 }
 const { lang, drawing, title, lede, cover, titleBlock = [], stats = [], statsSource } = Astro.props;
 ---
-<header class="ph" data-ph>
+<header class:list={['ph', { 'engineer-header': cover?.model === 'engineer.glb', 'engineer-en': cover?.model === 'engineer.glb' && lang === 'en' }]} data-ph data-engineer-header={cover?.model === 'engineer.glb' ? '' : undefined}>
     <div class:list={['wrap', 'ph-grid', { solo: !cover }]}>
     <div class="ph-copy">
       <span class="dwg num">{drawing}</span>
@@ -75,6 +75,7 @@ const { lang, drawing, title, lede, cover, titleBlock = [], stats = [], statsSou
   .dwg::before { content: ''; width: 2.4rem; height: 3px; background: var(--amber); }
   .title { font-size: clamp(2.8rem, 4.8vw, 4.8rem); line-height: .98; letter-spacing: -.035em; text-wrap: balance; }
   .lede { color: var(--ink-2); font-size: clamp(1.05rem, 1.45vw, 1.25rem); line-height: 1.8; max-width: 42ch; }
+  .engineer-en .title { font-size: clamp(2.8rem, 3.4vw, 3.6rem); line-height: 1.04; }
 
   .ph-pic {
     position: relative;

@@ -20,7 +20,7 @@ const L = sceneCopy[kind];
     {kind === 'swerve' && <>
       <div class="states" role="group" aria-label={t(sceneCopy.swerve.amount, lang)}>
         <button type="button" data-explode-to="0" aria-pressed="true">{t(sceneCopy.swerve.assemble, lang)}</button>
-        <button type="button" data-explode-to="1" aria-pressed="false">{t(sceneCopy.swerve.explode, lang)}</button>
+        <button type="button" data-explode-to="0.6" aria-pressed="false">{t(sceneCopy.swerve.explode, lang)}</button>
       </div>
       <label class="amount"><span>{t(sceneCopy.swerve.amount, lang)}</span><input type="range" min="0" max="100" step="1" value="0" data-explode-amount /><output data-explode-output>0%</output></label>
     </>}
@@ -50,7 +50,7 @@ const L = sceneCopy[kind];
   .status { position: absolute; bottom: 0; left: 0; right: 0; margin: 0; padding: .75rem; font-size: var(--t-xs); color: var(--ink-2); background: var(--panel); text-align: center; }
   .controls { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; padding: .8rem 1rem; }
   .states { display: flex; gap: .5rem; }
-  .controls button { border: 1px solid var(--rule); padding: .5rem .65rem; background: var(--ground); color: var(--ink-2); font: inherit; font-size: var(--t-xs); cursor: pointer; }
+  .controls button { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; border: 1px solid var(--rule); padding: .5rem .65rem; background: var(--ground); color: var(--ink-2); font: inherit; font-size: var(--t-xs); line-height: 1.2; cursor: pointer; }
   .controls button:hover, button[aria-pressed="true"] { color: var(--amber); border-color: var(--amber); }
   button:focus-visible, input:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
   .amount { display: flex; align-items: center; flex: 1 1 220px; gap: .6rem; color: var(--ink-3); font-size: var(--t-xs); }
@@ -61,5 +61,8 @@ const L = sceneCopy[kind];
   figcaption { padding: .8rem 1rem; border-top: 1px solid var(--rule); font-size: var(--t-sm); color: var(--ink); }
   small { display: block; margin-top: .3rem; font-size: var(--t-xs); color: var(--ink-3); line-height: 1.6; }
   [hidden] { display: none !important; }
-  @media (max-width: 900px), (prefers-reduced-motion: reduce) { .model, .badge, .controls { display: none; } .still { visibility: visible !important; } }
+  @media (min-width: 901px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .controls[hidden] { display: flex !important; visibility: hidden; pointer-events: none; }
+  }
+  @media (max-width: 900px), (prefers-reduced-motion: reduce) { .model, .badge, .controls { display: none !important; } .still { visibility: visible !important; } }
 </style>

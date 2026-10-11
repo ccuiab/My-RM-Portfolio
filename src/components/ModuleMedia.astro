@@ -21,7 +21,7 @@ if (!pic.model || !existsSync(join(process.cwd(), 'materials/models/derived/web'
   </div>
   <div class="controls" data-module-controls hidden>
     <span>{t(L.hint, lang)}</span>
-    <div><button type="button" data-module-spin data-resume={t(L.rotate, lang)} data-pause={t(L.pause, lang)} aria-pressed="true">{t(L.pause, lang)}</button>
+    <div class="actions"><button type="button" data-module-spin data-resume={t(L.rotate, lang)} data-pause={t(L.pause, lang)} aria-pressed="true">{t(L.pause, lang)}</button>
     <button type="button" data-module-reset>{t(sceneCopy.interaction.reset, lang)}</button>
     <button type="button" data-zoom={pic.src.src} data-alt={t(pic.alt, lang)}>{t(L.photo, lang)}</button></div>
   </div>
@@ -45,9 +45,18 @@ if (!pic.model || !existsSync(join(process.cwd(), 'materials/models/derived/web'
   [data-ready="true"] .photo { visibility: hidden; }
   .status { position: absolute; bottom: 0; left: 0; right: 0; margin: 0; padding: .8rem; text-align: center; color: var(--ink); background: var(--panel); font-size: var(--t-xs); pointer-events: none; }
   .controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; padding: .7rem 1rem; color: var(--ink-3); font-size: var(--t-xs); }
-  .controls button { border: 1px solid var(--rule); padding: .35rem .55rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .controls button { display: inline-flex; align-items: center; justify-content: center; min-height: 38px; border: 1px solid var(--rule); padding: .5rem .65rem; background: var(--ground); line-height: 1.2; }
+  .controls button:hover, .controls button[aria-pressed="true"] { color: var(--amber); border-color: var(--amber); }
   figcaption { padding: .8rem 1rem; font-size: var(--t-sm); color: var(--ink); border-top: 1px solid var(--rule); }
   small { display: block; margin-top: .25rem; color: var(--ink-3); font-size: var(--t-xs); }
   [hidden] { display: none !important; }
+  @media (min-width: 901px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+    .controls[hidden] { display: flex !important; visibility: hidden; pointer-events: none; }
+  }
+  @media (max-width: 900px), (prefers-reduced-motion: reduce) {
+    .model, .controls { display: none !important; }
+    .photo { visibility: visible !important; }
+  }
   @media(max-width: 640px) { .media-view { height: 320px; } }
 </style>
