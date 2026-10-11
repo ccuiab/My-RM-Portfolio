@@ -1,0 +1,175 @@
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+
+/** Shared part viewer. Its owner decides when rendering is allowed. */
+export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string, file: string, label: HTMLElement, canRender: () => boolean) {
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.25;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(30, 1, .001, 20);
+  const amber = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--amber').trim());
+  scene.add(new THREE.HemisphereLight(0xe5ecf5, 0x182438, 2.4));
+  const key = new THREE.DirectionalLight(0xffffff, 3.5);
+  key.position.set(1, 2, 2); scene.add(key);
+  const fill = new THREE.DirectionalLight(0xffffff, 1.6);
+  fill.position.set(-2, .5, 1); scene.add(fill);
+  const rim = new THREE.DirectionalLight(amber, 1.5);
+  rim.position.set(1, 1, -2); scene.add(rim);
+  const draco = new DRACOLoader().setDecoderPath(`${base}models/draco/`);
+  let model: THREE.Group;
+  try {
+    model = (await new GLTFLoader().setDRACOLoader(draco).loadAsync(`${base}models/${file}`)).scene;
+  } catch (error) {
+    renderer.dispose(); renderer.forceContextLoss(); throw error;
+  } finally { draco.dispose(); }
+  scene.add(model);
+  const controls = new OrbitControls(camera, canvas);
+  controls.enableZoom = false;
+  controls.enablePan = false;
+  controls.enableDamping = false;
+  controls.minPolarAngle = .1;
+  controls.maxPolarAngle = Math.PI - .1;
+  controls.rotateSpeed = .65;
+  canvas.tabIndex = 0;
+  const bounds = new THREE.Box3().setFromObject(model, true);
+  const sphere = bounds.getBoundingSphere(new THREE.Sphere());
+  const initialDirection = new THREE.Vector3(1, .8, 1.5).normalize();
+  let radius = sphere.radius * 1.13;
+  controls.target.copy(sphere.center);
+  const direction = initialDirection.clone();
+  const fit = () => {
+    direction.copy(camera.position).sub(controls.target);
+    if (!direction.lengthSq()) direction.copy(initialDirection);
+    direction.normalize();
+    const vertical = THREE.MathUtils.degToRad(camera.fov / 2);
+    const horizontal = Math.atan(Math.tan(vertical) * camera.aspect);
+    const right = new THREE.Vector3().crossVectors(camera.up, direction).normalize();
+    const up = new THREE.Vector3().crossVectors(direction, right).normalize();
+    let distance = .01;
+    // Fit the CAD box in the actual viewing direction, avoiding a tiny model in a large canvas.
+    for (const x of [bounds.min.x, bounds.max.x]) for (const y of [bounds.min.y, bounds.max.y]) for (const z of [bounds.min.z, bounds.max.z]) {
+      const p = new THREE.Vector3(x, y, z).sub(sphere.center).multiplyScalar(radius / sphere.radius);
+      const depth = p.dot(direction);
+      distance = Math.max(distance, depth + Math.abs(p.dot(right)) / (Math.tan(horizontal) * .92), depth + Math.abs(p.dot(up)) / (Math.tan(vertical) * .92));
+    }
+    camera.position.copy(controls.target).addScaledVector(direction, distance);
+    camera.lookAt(controls.target);
+  };
+  camera.position.copy(controls.target).add(initialDirection);
+
+  const meshes: THREE.Mesh[] = [];
+  model.traverse(object => {
+    if (!(object as THREE.Mesh).isMesh) return;
+    const mesh = object as THREE.Mesh;
+    // Hover changes only this part, even when the input shares materials.
+    mesh.material = Array.isArray(mesh.material) ? mesh.material.map(m => m.clone()) : mesh.material.clone();
+    for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      const std = mat as THREE.MeshStandardMaterial;
+      if (std.color) {
+        const hsl = { h: 0, s: 0, l: 0 };
+        if (std.color.getHSL(hsl).l < .07) std.color.offsetHSL(0, 0, .09);
+        std.roughness = Math.max(std.roughness, .42);
+      }
+    }
+    meshes.push(mesh);
+  });
+  const provenance = (object: THREE.Object3D) => {
+    let current: THREE.Object3D | null = object;
+    while (current && !current.userData.source_node_name) current = current.parent;
+    return current?.userData.source_node_name as string | undefined;
+  };
+  const raycaster = new THREE.Raycaster();
+  const pointer = new THREE.Vector2(2, 2);
+  let hovered: THREE.Mesh | undefined;
+  let saved: { material: THREE.MeshStandardMaterial; color: THREE.Color; intensity: number }[] = [];
+  let dragging = false;
+  const clearHover = () => {
+    saved.forEach(({ material, color, intensity }) => { material.emissive.copy(color); material.emissiveIntensity = intensity; });
+    saved = []; hovered = undefined; label.hidden = true; label.textContent = '';
+  };
+  const updateHover = () => {
+    if (dragging) return;
+    raycaster.setFromCamera(pointer, camera);
+    const hit = raycaster.intersectObjects(meshes, false)[0]?.object as THREE.Mesh | undefined;
+    if (hit === hovered) return;
+    clearHover();
+    if (!hit) return;
+    hovered = hit;
+    const source = provenance(hit);
+    const partMeshes = source ? meshes.filter(mesh => provenance(mesh) === source) : [hit];
+    for (const mesh of partMeshes) for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      const material = m as THREE.MeshStandardMaterial;
+      if (!material.emissive) continue;
+      saved.push({ material, color: material.emissive.clone(), intensity: material.emissiveIntensity });
+      material.emissive.copy(amber); material.emissiveIntensity = .85;
+    }
+    label.textContent = source?.split('/').pop() ?? hit.name;
+    label.hidden = false;
+  };
+  const render = () => {
+    if (!canRender()) return;
+    fit();
+    model.updateMatrixWorld(true);
+    updateHover();
+    renderer.render(scene, camera);
+  };
+  const resize = () => {
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix(); fit(); render();
+  };
+  const resizeObserver = new ResizeObserver(resize);
+  resizeObserver.observe(canvas); resize();
+  controls.addEventListener('change', render);
+  const events = new AbortController();
+  const options = { signal: events.signal };
+  canvas.addEventListener('pointermove', event => {
+    const bounds = canvas.getBoundingClientRect();
+    pointer.set((event.clientX - bounds.left) / bounds.width * 2 - 1, 1 - (event.clientY - bounds.top) / bounds.height * 2);
+    render();
+  }, options);
+  canvas.addEventListener('pointerleave', () => { pointer.set(2, 2); clearHover(); render(); }, options);
+  canvas.addEventListener('pointerdown', () => { dragging = true; clearHover(); }, options);
+  const endDrag = () => { dragging = false; render(); };
+  canvas.addEventListener('pointerup', endDrag, options);
+  canvas.addEventListener('pointercancel', endDrag, options);
+  canvas.addEventListener('lostpointercapture', endDrag, options);
+  canvas.addEventListener('keydown', event => {
+    const movement: Record<string, [number, number]> = { ArrowLeft: [-.1, 0], ArrowRight: [.1, 0], ArrowUp: [0, -.1], ArrowDown: [0, .1] };
+    if (!movement[event.key]) return;
+    event.preventDefault();
+    const s = new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
+    s.theta += movement[event.key][0]; s.phi = THREE.MathUtils.clamp(s.phi + movement[event.key][1], .1, Math.PI - .1);
+    camera.position.copy(controls.target).add(new THREE.Vector3().setFromSpherical(s)); controls.update(); render();
+  }, options);
+
+  return {
+    scene, model, camera, amber, sphere,
+    render,
+    setRadius(value: number) { radius = value; fit(); },
+    resetView() { camera.position.copy(controls.target).add(initialDirection); fit(); controls.update(); render(); },
+    dispose() {
+      events.abort(); resizeObserver.disconnect(); controls.dispose(); clearHover();
+      const geometries = new Set<THREE.BufferGeometry>();
+      const materials = new Set<THREE.Material>();
+      const textures = new Set<THREE.Texture>();
+      scene.traverse(o => {
+        const mesh = o as THREE.Mesh;
+        if (mesh.geometry) geometries.add(mesh.geometry);
+        if (mesh.material) for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+          materials.add(m);
+          for (const value of Object.values(m)) if (value instanceof THREE.Texture) textures.add(value);
+        }
+      });
+      geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); textures.forEach(t => t.dispose());
+      renderer.dispose(); renderer.forceContextLoss();
+    },
+  };
+}
+export type MechanismStage = Awaited<ReturnType<typeof loadMechanismStage>>;
