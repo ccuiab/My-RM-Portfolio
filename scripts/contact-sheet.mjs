@@ -1,10 +1,11 @@
 // Dev helper: tile every image in a folder into one PNG for quick visual review.
 // Usage: node scripts/contact-sheet.mjs <dir> <out.png>
 import sharp from 'sharp';
-import { readdirSync } from 'node:fs';
-import { join } from 'node:path';
+import { readdirSync, mkdirSync } from 'node:fs';
+import { join, dirname } from 'node:path';
 
-const [dir = 'src/assets/img', out = 'output/contact-images.png'] = process.argv.slice(2);
+const [dir = 'materials/images/site', out = 'materials/images/archive/contact-images.png'] = process.argv.slice(2);
+mkdirSync(dirname(out), {recursive: true});
 const files = readdirSync(dir).filter((f) => /\.(webp|jpe?g|png)$/i.test(f));
 const W = 300, H = 220, cols = 5, rows = Math.ceil(files.length / cols);
 

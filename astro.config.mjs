@@ -6,8 +6,7 @@ export default defineConfig({
   base: '/My-RM-Portfolio',
   trailingSlash: 'always',
   build: { format: 'directory' },
-  // docs/ is the legacy hand-written site; keep it out of the Astro build
   srcDir: './src',
-  publicDir: './public',
-  outDir: './dist',
+  publicDir: './.astro-public',
+  outDir: './publish/current',
 });

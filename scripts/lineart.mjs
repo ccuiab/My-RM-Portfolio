@@ -1,5 +1,5 @@
 // Generate amber edge-line versions of photos/renders for the "wireframe scan" reveal.
-// Usage: node scripts/lineart.mjs   → writes src/assets/gen/<name>-lines.webp (transparent)
+// Usage: node scripts/lineart.mjs → writes materials/images/generated/<name>-lines.webp
 import sharp from 'sharp';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -15,10 +15,10 @@ const jobs = [
   { src: 'launcher-dual-6.png', width: 1200, blur: 0.6, gain: 6, cut: 10 },
 ];
 
-await mkdir(join(root, 'src', 'assets', 'gen'), { recursive: true });
+await mkdir(join(root, 'materials', 'images', 'generated'), { recursive: true });
 
 for (const job of jobs) {
-  const input = join(root, 'src', 'assets', 'img', job.src);
+  const input = join(root, 'materials', 'images', 'site', job.src);
   const { data, info } = await sharp(input)
     .flatten({ background: '#ffffff' })
     .resize({ width: job.width, withoutEnlargement: true })
@@ -31,7 +31,7 @@ for (const job of jobs) {
     .raw()
     .toBuffer({ resolveWithObject: true });
 
-  const out = join(root, 'src', 'assets', 'gen', job.src.replace(/\.[a-z]+$/, '') + '-lines.webp');
+  const out = join(root, 'materials', 'images', 'generated', job.src.replace(/\.[a-z]+$/, '') + '-lines.webp');
   await sharp({ create: { width: info.width, height: info.height, channels: 3, background: AMBER } })
     .joinChannel(data, { raw: { width: info.width, height: info.height, channels: 1 } })
     .webp({ quality: 82, alphaQuality: 90 })

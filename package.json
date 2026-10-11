@@ -5,9 +5,10 @@
   "private": true,
   "scripts": {
     "fonts": "node scripts/subset-fonts.mjs",
-    "dev": "astro dev",
-    "build": "node scripts/subset-fonts.mjs && astro build",
-    "preview": "astro preview"
+    "dev": "node scripts/prepare-assets.mjs && astro dev",
+    "build": "node scripts/prepare-assets.mjs && node scripts/subset-fonts.mjs && astro build && node scripts/archive-current.mjs",
+    "preview": "astro preview",
+    "archive:history": "node scripts/archive-history.mjs"
   },
   "dependencies": {
     "@fontsource/chakra-petch": "5.3.0",

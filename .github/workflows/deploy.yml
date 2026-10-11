@@ -1,7 +1,6 @@
 name: Deploy to GitHub Pages
 
-# Manual only until Pages is switched from "branch main /docs" to "GitHub Actions".
-# After the switch, add `push: branches: [main]` here.
+# Manual production deployment from main.
 on:
   workflow_dispatch:
 
@@ -24,6 +23,7 @@ jobs:
         uses: withastro/action@v6
         with:
           node-version: 24
+          out-dir: publish/current
           # Includes the Smiley Sans subset step from package.json.
           build-cmd: npm run build
 

@@ -1,6 +1,6 @@
 // Complete L4 and distal wrist exploded view on the shared stage.
-// public/models/l4.glb: groups `ex_<key>`, origin at the J5/J6 axis intersection.
-// public/models/l4.json: per-group explode_dir / explode_dist_m / order / callout_anchor.
+// materials/models/web/l4.glb: groups `ex_<key>`, origin at the J5/J6 axis intersection.
+// materials/models/web/l4.json: per-group explode_dir / explode_dist_m / order / callout_anchor.
 import * as THREE from 'three';
 import { loadScanStage } from './scan-scene';
 

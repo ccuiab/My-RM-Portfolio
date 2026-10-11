@@ -4,8 +4,6 @@ tmp/
 .superpowers/
 plans/
 specs/
-CLAUDE.md
-README.md
 
 # Astro
 node_modules/
@@ -18,3 +16,18 @@ output/
 
 # local dev-only pages
 src/pages/dev-*/
+
+# Centralized local material archives and generated publication files
+.astro-public/
+.archive-work/
+materials/images/archive/
+materials/models/source/
+materials/videos/source/
+materials/documents/audits/
+materials/documents/pdf/
+scripts/asset-pipeline-archive/
+publish/current/
+publish/history/
+publish/versions.json
+publish/restored-versions.json
+publish/VERSIONS.md

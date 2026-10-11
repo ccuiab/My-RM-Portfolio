@@ -1,5 +1,5 @@
 // Solid CAD pose demonstration with a fixed camera frame across the complete pose sweep.
-// public/models/arm.glb (asset pipeline, see output/codex/report.md):
+// materials/models/web/arm.glb (asset pipeline, see materials/documents/audits/codex/report.md):
 //   link_base > link_1 > link_2 > link_3 > link_4 > { link_5 > link_6, link_wheel }
 //   every link origin sits on its joint axis; extras.web_axis is the local axis;
 //   identity quaternions = the CAD export pose. Metres, +Y up, the arm reaches toward +Z.

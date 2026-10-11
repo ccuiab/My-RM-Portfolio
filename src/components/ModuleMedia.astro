@@ -7,7 +7,7 @@ import { t, ui, type Lang } from '../data/i18n';
 interface Props { pic: Pic; lang: Lang }
 const { pic, lang } = Astro.props;
 const L = sceneCopy.module;
-if (!pic.model || !existsSync(join(process.cwd(), 'public/models', pic.model))) throw new Error(`Missing module model: ${pic.model}`);
+if (!pic.model || !existsSync(join(process.cwd(), 'materials/models/web', pic.model))) throw new Error(`Missing module model: ${pic.model}`);
 ---
 <figure class="module-media" data-module-media data-cutout={pic.cutout ? "true" : undefined} data-model={pic.model} data-failed={t(L.failed, lang)} data-loading={t(L.loading, lang)}>
   <div class="media-view">

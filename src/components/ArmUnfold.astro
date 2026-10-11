@@ -9,7 +9,7 @@ import { t, type Lang } from '../data/i18n';
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 // builds run from the project root; import.meta.url points into the bundle, not src/
-const hasModel = existsSync(join(process.cwd(), 'public', 'models', 'arm.glb'));
+const hasModel = existsSync(join(process.cwd(), 'materials', 'models', 'web', 'arm.glb'));
 const L = sceneCopy.armUnfold;
 ---
 <div class="unfold" data-unfold data-model={hasModel ? '1' : ''} data-labels={`${t(L.folded, lang)}|${t(L.extended, lang)}`}>
