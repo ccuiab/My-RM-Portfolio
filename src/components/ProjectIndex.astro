@@ -40,13 +40,13 @@ const sheets = [engineer, hero, research].map((p, i) => ({
 </section>
 
 <style>
-  .index { padding-top: clamp(2.5rem, 5vw, 4rem); scroll-margin-top: 6rem; }
-  .heading { font-size: clamp(2.2rem, 4vw, 3.5rem); margin-bottom: 1.8rem; }
+  .index { padding-top: var(--section-space); scroll-margin-top: 7rem; }
+  .heading { font-size: clamp(2.2rem, 4vw, 3.15rem); margin-bottom: var(--heading-space); }
   .sheets { list-style: none; margin: 0; padding: 0; display: grid; }
   .sheet { padding: 1.6rem 0; border-top: 1px solid var(--rule); }
   .sheet:last-child { border-bottom: 1px solid var(--rule); }
-  .sheet-link { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; color: inherit; text-decoration: none; }
-  .pic { position: relative; aspect-ratio: 8 / 5; overflow: hidden; background: var(--panel); }
+  .sheet-link { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: var(--column-gap); align-items: center; color: inherit; text-decoration: none; }
+  .pic { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--panel); }
   .pic :global(img) { width: 100%; height: 100%; object-fit: contain; transition: transform .6s ease; }
   .pic.light { background: var(--plate); }
   .pic.light :global(img) { padding: 3%; mix-blend-mode: multiply; }

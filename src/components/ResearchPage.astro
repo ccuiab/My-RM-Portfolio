@@ -56,22 +56,17 @@ const lines_: { id: string; mark: string; title: T; stages: Stage[]; after?: T }
 </Base>
 
 <style>
-  .line { padding-top: clamp(3.5rem, 6vw, 5.5rem); scroll-margin-top: 110px; }
-  .line-head { display: flex; align-items: center; gap: 1.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--rule); }
+  .line { padding-top: var(--section-space); scroll-margin-top: 112px; }
+  .line-head { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr); align-items: baseline; gap: 1rem; padding: var(--heading-space) 0 1.5rem; border-top: 1px solid var(--rule); }
   .mark {
-    display: grid;
-    place-items: center;
-    flex: none;
-    width: 2.5rem;
-    height: 2.5rem;
-    border: 0;
-    border-radius: 0;
+    display: block;
     font-family: var(--f-latin);
     font-weight: 700;
-    font-size: var(--t-lg);
+    font-size: 2.4rem;
+    line-height: 1;
     color: var(--amber);
   }
-  .line-title { font-size: clamp(1.8rem, 3.2vw, 2.8rem); line-height: 1.25; max-width: 100%; text-wrap: balance; }
+  .line-title { font-size: clamp(1.9rem, 2.6vw, 2.7rem); line-height: 1.08; max-width: 100%; text-wrap: balance; }
 
   .stages {
     list-style: none;
@@ -79,14 +74,14 @@ const lines_: { id: string; mark: string; title: T; stages: Stage[]; after?: T }
     padding: 0;
     display: grid;
     grid-template-columns: minmax(0, 1fr);
-    gap: 1.5rem;
+    gap: 0;
   }
   .stage {
     display: grid;
     grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
     grid-template-areas: 'copy visual';
     align-items: center;
-    gap: clamp(1.5rem, 4vw, 3.5rem);
+    gap: var(--column-gap);
     padding: 1.5rem 0;
     border-bottom: 1px solid var(--rule-soft);
     align-content: start;
@@ -99,7 +94,7 @@ const lines_: { id: string; mark: string; title: T; stages: Stage[]; after?: T }
   .pic {
     display: block;
     width: 100%;
-    aspect-ratio: 16 / 10;
+    aspect-ratio: 2 / 1;
     padding: 0;
     border: 1px solid var(--rule);
     background: var(--panel);
@@ -110,7 +105,7 @@ const lines_: { id: string; mark: string; title: T; stages: Stage[]; after?: T }
   .pic.light :global(img) { mix-blend-mode: multiply; filter: saturate(.6) contrast(1.04); }
   .stage-visual figcaption { padding-top: .75rem; color: var(--ink-2); font-size: var(--t-xs); }
   .pic:hover + figcaption { color: var(--ink); }
-  .stage-title { font-family: var(--f-cjk); font-size: clamp(1.5rem, 2.2vw, 2.1rem); font-weight: 400; line-height: 1.35; }
+  .stage-title { font-family: var(--f-cjk); font-size: clamp(1.5rem, 2vw, 1.9rem); font-weight: 400; line-height: 1.25; text-wrap: balance; }
   :global(html[lang="en"]) .stage-title { font-family: var(--f-latin); font-weight: 600; }
   .stage-body { margin: .75rem 0 0 3.5rem; color: var(--ink-2); font-size: var(--t-md); line-height: 1.9; max-width: 68ch; }
   .after {
@@ -122,10 +117,11 @@ const lines_: { id: string; mark: string; title: T; stages: Stage[]; after?: T }
   }
   @media (max-width: 900px) {
     .line-head { gap: 1rem; padding-bottom: 1.5rem; }
-    .mark { width: 2.8rem; height: 2.8rem; font-size: var(--t-lg); }
+    .mark { font-size: 2.25rem; }
     .stage { padding: 1.5rem 0; gap: 1.25rem; grid-template-columns: minmax(0, 1fr); grid-template-areas: 'copy' 'visual'; }
     .stage-heading { grid-template-columns: 2.5rem minmax(0, 1fr); }
     .stage-body { margin-top: .8rem; max-width: 60ch; }
+    .pic { aspect-ratio: 16 / 10; }
   }
   @media (max-width: 540px) {
     .after { margin-left: 0; }

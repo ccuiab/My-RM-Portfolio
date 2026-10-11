@@ -3,13 +3,11 @@
 import ModuleMedia from './ModuleMedia.astro';
 import { Image } from 'astro:assets';
 import { t, type Lang, type T } from '../data/i18n';
-import { pageCopy } from '../data/content';
 import type { Pic, Stat, TitleRow } from '../data/content';
 
 interface Props {
   lang: Lang;
   drawing: string;
-  robotNo?: string | null;
   title: T;
   lede?: T;
   cover?: Pic;
@@ -17,7 +15,7 @@ interface Props {
   stats?: Stat[];
   statsSource?: T;
 }
-const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [], statsSource } = Astro.props;
+const { lang, drawing, title, lede, cover, titleBlock = [], stats = [], statsSource } = Astro.props;
 ---
 <header class="ph" data-ph>
     <div class:list={['wrap', 'ph-grid', { solo: !cover }]}>
@@ -42,7 +40,6 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
         {titleBlock.map((r) => (
           <div class="tb-cell"><dt>{t(r.label, lang)}</dt><dd>{t(r.value, lang)}</dd></div>
         ))}
-        <div class="tb-cell"><dt>{t(pageCopy.drawing, lang)}</dt><dd class="num">{drawing}</dd></div>
       </dl>
     </div>
   )}
@@ -64,16 +61,16 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
 </header>
 
 <style>
-  .ph { padding-top: clamp(7rem, 9vw, 8.5rem); }
+  .ph { padding-top: clamp(7rem, 8vw, 7.5rem); }
   .ph-grid {
     display: grid;
     grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr);
-    gap: clamp(1.5rem, 3vw, 3rem);
+    gap: var(--column-gap);
     align-items: center;
   }
   .ph-grid.solo { grid-template-columns: minmax(0, 1fr); }
   .ph-grid.solo .ph-copy { max-width: 64rem; }
-  .ph-copy { display: grid; gap: 1.8rem; padding: 2rem 0; position: relative; z-index: 1; }
+  .ph-copy { display: grid; gap: 1.5rem; padding: 1.5rem 0; position: relative; z-index: 1; }
   .dwg { font-size: var(--t-sm); color: var(--amber); letter-spacing: .02em; display: flex; align-items: center; gap: .9rem; }
   .dwg::before { content: ''; width: 2.4rem; height: 3px; background: var(--amber); }
   .title { font-size: clamp(2.8rem, 4.8vw, 4.8rem); line-height: .98; letter-spacing: -.035em; text-wrap: balance; }
@@ -95,39 +92,16 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
 
 
 
-  .plate {
-    position: absolute;
-    right: 1.4rem;
-    bottom: 1.4rem;
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-  }
-  .plate-no {
-    font-family: var(--f-latin);
-    font-weight: 700;
-    font-size: clamp(4rem, 7vw, 6.5rem);
-    line-height: 1;
-    color: var(--ink);
-  }
-  .ph-pic.light .plate-no { color: var(--ground); }
-  .bar {
-    width: 6px;
-    height: 4.2rem;
-    background: var(--blue);
-    box-shadow: 0 0 14px 2px rgba(61, 139, 255, 0.7);
-  }
-
   .ph-visual { min-width: 0; }
   .ph-visual :global(.module-media) { background: transparent; }
-  .ph-visual :global(.media-view) { height: clamp(340px, 37vw, 500px); }
+  .ph-visual :global(.media-view) { height: clamp(340px, 32vw, 440px); }
   .ph-visual :global(figcaption) { display: none; }
   .ph-visual :global(.controls) { padding: .75rem 0; }
   .ph-visual :global(.controls > span) { display: none; }
   .tb {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    margin: 2.5rem 0 0;
+    margin: 2rem 0 0;
     padding-top: 1.3rem;
     gap: 1.25rem 2rem;
     border-top: 1px solid var(--rule);
@@ -140,7 +114,7 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
 
   .stats {
     list-style: none;
-    margin: 1.75rem 0 0;
+    margin: 1.5rem 0 0;
     padding: 0;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
@@ -177,12 +151,6 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
     .lede { max-width: 60ch; }
     .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2rem 1.25rem; }
     .v { font-size: clamp(2rem, 6vw, 3rem); }
-    .ph-visual { min-width: 0; }
-  .ph-visual :global(.module-media) { background: transparent; }
-  .ph-visual :global(.media-view) { height: clamp(340px, 37vw, 500px); }
-  .ph-visual :global(figcaption) { display: none; }
-  .ph-visual :global(.controls) { padding: .75rem 0; }
-  .ph-visual :global(.controls > span) { display: none; }
-  .tb { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tb { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
 </style>

@@ -84,7 +84,7 @@ const navItems = [
         <ul class="footer-links">
           <li><a href={`mailto:${person.email}`}>{person.email}</a></li>
           <li><a href={person.github} rel="noopener">{t(pageCopy.githubLabel, lang)}</a></li>
-          <li><a href="https://ccuiab.github.io/RM-Portfolio-Classic/" rel="noopener">{t(ui.classic, lang)}</a></li>
+          <li><a class="classic" href="https://ccuiab.github.io/RM-Portfolio-Classic/" rel="noopener">{t(ui.classic, lang)}</a></li>
         </ul>
         <p class="footer-note">{t(ui.footerNote, lang)}</p>
       </div>
@@ -162,7 +162,7 @@ const navItems = [
   main { display: block; }
 
   .footer {
-    margin-top: 4rem;
+    margin-top: var(--section-space);
     border-top: 1px solid var(--rule);
     background: var(--ground);
   }
@@ -188,6 +188,7 @@ const navItems = [
   }
   .footer-links a { color: var(--ink-2); text-decoration: none; }
   .footer-links a:hover { color: var(--amber); }
+  .footer-links .classic { color: var(--ink-3); font-size: var(--t-xs); }
   .footer-note {
     grid-column: 1 / -1;
     font-size: var(--t-xs);

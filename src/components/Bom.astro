@@ -19,8 +19,8 @@ const head = pageCopy.bomHead;
           <tr>
             <td class="num no">{row.no}</td>
             <th scope="row" class="item">{t(row.item, lang)}</th>
-            <td class="spec">{t(row.spec, lang)}</td>
-            <td class="used">{t(row.used, lang)}</td>
+            <td class="spec" data-label={t(head.spec, lang)}>{t(row.spec, lang)}</td>
+            <td class="used" data-label={t(head.used, lang)}>{t(row.used, lang)}</td>
           </tr>
         ))}
       </tbody>
@@ -29,8 +29,8 @@ const head = pageCopy.bomHead;
 </section>
 
 <style>
-  .bom { padding-top: clamp(3rem, 6vw, 5rem); }
-  .heading { font-size: clamp(2.2rem, 4vw, 3.15rem); margin-bottom: 1.6rem; }
+  .bom { padding-top: var(--section-space); }
+  .heading { font-size: clamp(2.2rem, 4vw, 3.15rem); margin-bottom: var(--heading-space); }
   .scroll { overflow-x: auto; }
   table {
     width: 100%;
@@ -58,9 +58,14 @@ const head = pageCopy.bomHead;
   .used { color: var(--ink-3); width: 13rem; }
   tbody tr:hover td, tbody tr:hover th { background: rgba(242, 181, 58, 0.04); }
   @media (max-width: 720px) {
-    table { min-width: 620px; }
-    .no { width: 3.5rem; }
-    .item { width: 9rem; }
-    .used { width: 11rem; }
+    .scroll { overflow: visible; }
+    table, tbody { display: block; min-width: 0; }
+    thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+    tbody { border-top: 1px solid var(--amber); }
+    tbody tr { display: grid; grid-template-columns: 3.5rem minmax(0, 1fr); gap: .5rem 1rem; padding: 1rem 0; border-bottom: 1px solid var(--rule); }
+    td, tbody th { width: auto; min-width: 0; padding: 0; border: 0; }
+    .no, .item, .used { width: auto; }
+    .spec, .used { grid-column: 2; }
+    .spec::before, .used::before { content: attr(data-label); display: block; margin-bottom: .2rem; color: var(--ink-3); font-size: var(--t-xs); }
   }
 </style>

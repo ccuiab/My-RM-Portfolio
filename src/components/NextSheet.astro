@@ -13,10 +13,10 @@ const { lang, slug, drawing, title } = Astro.props;
 </nav>
 
 <style>
-  .next { padding-top: 7rem; }
+  .next { padding-top: var(--section-space); }
   .next a {
     display: grid;
-    grid-template-columns: auto 1fr;
+    grid-template-columns: auto minmax(0, 1fr);
     align-items: baseline;
     gap: 0.3rem 1.5rem;
     padding: 2rem 0;
@@ -29,4 +29,8 @@ const { lang, slug, drawing, title } = Astro.props;
   .dwg { color: var(--amber); }
   .ttl { font-size: var(--t-2xl); transition: color 0.2s; }
   .next a:hover .ttl { color: var(--amber); }
+  @media (max-width: 760px) {
+    .next a { grid-template-columns: minmax(0, 1fr); gap: .5rem; padding: 1.5rem 0; }
+    .ttl { font-size: clamp(1.8rem, 6vw, 2.369rem); line-height: 1.2; }
+  }
 </style>
