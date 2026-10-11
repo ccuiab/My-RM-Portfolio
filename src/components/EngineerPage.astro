@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import ProjectHeader from './ProjectHeader.astro';
-import Record from './Record.astro';
 import Chapter from './Chapter.astro';
 import ArmUnfold from './ArmUnfold.astro';
 import BilibiliVideo from './BilibiliVideo.astro';
@@ -17,6 +16,16 @@ const { lang } = Astro.props;
 const p = engineer;
 ---
 <Base lang={lang} slug={p.slug} title={p.short} description={p.lede}>
+  <section class="wrap video-opening">
+    <BilibiliVideo
+      lang={lang}
+      label={sceneCopy.engineer.armFeature.label}
+      credit={sceneCopy.engineer.armFeature.credit}
+      href={sceneCopy.engineer.armFeature.href}
+      embed={sceneCopy.engineer.armFeature.embed}
+    />
+  </section>
+
   <ProjectHeader
     lang={lang}
     drawing={p.drawing}
@@ -29,24 +38,10 @@ const p = engineer;
     stats={p.stats}
     statsSource={p.statsSource}
   />
-
-
-  <Record lang={lang} compact />
-
   {p.chapters.map((c) => (
     <Chapter lang={lang} chapter={c} layout={c.id === 'layout' || c.id === 'arm' ? 'expanded' : 'standard'}>
       {c.scene === 'arm-unfold' && <ArmUnfold lang={lang} slot="wide" />}
       {c.id === 'arm' && <WristExplode lang={lang} slot="wide" />}
-      {c.id === 'arm' && (
-        <BilibiliVideo
-            slot="after-media"
-            lang={lang}
-            label={sceneCopy.engineer.armFeature.label}
-            credit={sceneCopy.engineer.armFeature.credit}
-            href={sceneCopy.engineer.armFeature.href}
-            embed={sceneCopy.engineer.armFeature.embed}
-        />
-      )}
     </Chapter>
   ))}
 
@@ -61,6 +56,9 @@ const p = engineer;
 </Base>
 
 <style>
+  .video-opening { padding-top: clamp(7rem, 9vw, 8.5rem); }
+  .video-opening :global(.bilibili-video) { margin: 0; padding-top: 0; border-top: 0; }
+  .video-opening + :global(.ph) { padding-top: clamp(3rem, 5vw, 5rem); }
   .links { padding-top: 5rem; }
   .links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; }
   .links a { color: var(--amber); text-underline-offset: 4px; }
