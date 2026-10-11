@@ -35,7 +35,7 @@ if (!pic.model || !existsSync(join(process.cwd(), 'materials/models/derived/web'
   button { color: var(--ink-2); background: transparent; font: inherit; font-size: var(--t-xs); cursor: pointer; }
   button:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
   .media-view { position: relative; height: clamp(300px, 40vw, 530px); overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #182438, var(--ground) 78%); }
-  .photo { visibility: hidden; position: absolute; inset: 0; width: 100%; height: 100%; padding: 2%; border: 0; cursor: zoom-in; background: var(--plate); }
+  .photo { visibility: visible; position: absolute; inset: 0; width: 100%; height: 100%; padding: 2%; border: 0; cursor: zoom-in; background: var(--plate); }
   .photo :global(img) { width: 100%; height: 100%; object-fit: contain; }
   .photo.light :global(img) { mix-blend-mode: multiply; }
   .model { position: absolute; inset: 0; pointer-events: none; }

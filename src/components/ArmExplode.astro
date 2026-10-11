@@ -16,6 +16,7 @@ const L = sceneCopy.armExplode;
   <div class="view">
     <div class="still"><Image src={fallback} alt={t(L.alt, lang)} widths={[900, 1600]} sizes="100vw" /></div>
     <canvas class="three" tabindex="0" role="img" aria-label={t(L.hint, lang)}></canvas>
+    <div class="link-labels" aria-hidden="true">{Array.from({ length: 6 }, (_, i) => <span data-link-label={i + 1}>L{i + 1}</span>)}</div>
     <div class="hud" data-part-hud data-idle={t(L.hover, lang)} data-mount={t(L.mount, lang)}>
       <span class="joint" data-part-joint></span><span data-part-name>{t(L.hover, lang)}</span>
     </div>
@@ -35,72 +36,22 @@ const L = sceneCopy.armExplode;
 </section>
 
 <script>
-  import type { ArmExplodeScene } from '../scripts/arm-explode-scene';
-
+  import { mountViewportScene } from '../scripts/lib/viewport-scene';
   document.querySelectorAll<HTMLElement>('[data-arm-explode][data-model="1"]').forEach(root => {
-    const staticMode = window.matchMedia('(max-width: 767px), (pointer: coarse), (prefers-reduced-motion: reduce)');
     const status = root.querySelector<HTMLElement>('[data-status]')!;
     const controls = root.querySelector<HTMLElement>('.controls')!;
-    let scene: ArmExplodeScene | undefined;
-    let loading = false;
-    let inView = false;
-    let generation = 0;
-    const visibility = () => scene?.setVisible(inView && !document.hidden && !staticMode.matches);
-    const start = async () => {
-      if (scene || loading || staticMode.matches || !inView) return;
-      loading = true;
-      const current = ++generation;
-      status.hidden = false;
-      status.textContent = status.dataset.loading!;
-      try {
-        const { loadArmExplodeScene } = await import('../scripts/arm-explode-scene');
-        const loaded = await loadArmExplodeScene(root, import.meta.env.BASE_URL);
-        if (current !== generation || staticMode.matches) { loaded.dispose(); return; }
-        scene = loaded;
-        root.classList.add('has-3d');
-        root.dataset.ready = 'true';
-        controls.hidden = false;
-        status.hidden = true;
-        visibility();
-      } catch (error) {
-        if (current === generation) { status.textContent = status.dataset.failed!; console.warn('Arm explode scene unavailable', error); }
-      } finally {
-        loading = false;
-        if (current !== generation && !staticMode.matches && inView) void start();
-      }
-    };
-    const modeChange = () => {
-      if (staticMode.matches) {
-        generation++;
-        scene?.dispose();
-        scene = undefined;
-        // A lost WebGL context belongs to its canvas. Re-entry gets a fresh one.
-        const canvas = root.querySelector('canvas')!;
-        canvas.replaceWith(canvas.cloneNode(false));
-        root.classList.remove('has-3d');
-        delete root.dataset.ready;
-        controls.hidden = true;
-        status.hidden = true;
-      } else void start();
-    };
-    const observer = new IntersectionObserver(([entry]) => {
-      inView = entry.isIntersecting;
-      visibility();
-      if (inView) void start();
-    });
-    observer.observe(root.querySelector('.view')!);
-    staticMode.addEventListener('change', modeChange);
-    document.addEventListener('visibilitychange', visibility);
-    const pageShow = () => { visibility(); if (!staticMode.matches) void start(); };
-    window.addEventListener('pageshow', pageShow);
-    window.addEventListener('pagehide', event => {
-      if (event.persisted) { scene?.setVisible(false); return; }
-      generation++;
-      scene?.dispose();
-      observer.disconnect();
-      staticMode.removeEventListener('change', modeChange);
-      document.removeEventListener('visibilitychange', visibility);
-      window.removeEventListener('pageshow', pageShow);
+    mountViewportScene({
+      root, view: root.querySelector<HTMLElement>('.view')!,
+      media: '(min-width: 768px) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
+      async load() { const { loadArmExplodeScene } = await import('../scripts/arm-explode-scene'); return loadArmExplodeScene(root, import.meta.env.BASE_URL); },
+      loading() { delete root.dataset.failedState; status.hidden = false; status.textContent = status.dataset.loading!; },
+      ready() { root.classList.add('has-3d'); root.dataset.ready = 'true'; controls.hidden = false; status.hidden = true; },
+      reset() {
+        root.classList.remove('has-3d'); delete root.dataset.ready; controls.hidden = true;
+        status.hidden = root.dataset.failedState !== 'true';
+        const canvas = root.querySelector('canvas')!; canvas.replaceWith(canvas.cloneNode(false));
+      },
+      failed(error) { root.dataset.failedState = 'true'; status.hidden = false; status.textContent = status.dataset.failed!; console.warn('Arm explode unavailable', error); },
     });
   });
 </script>
@@ -118,6 +69,9 @@ const L = sceneCopy.armExplode;
   .has-3d .still { visibility: hidden; }
   .has-3d .three { visibility: visible; pointer-events: auto; }
   .three:active { cursor: grabbing; }
+  .link-labels { display: none; position: absolute; inset: 0; pointer-events: none; }
+  .has-3d .link-labels { display: block; }
+  .link-labels span { position: absolute; top: 0; left: 0; padding: .2rem .4rem; color: var(--amber); border-left: 1px solid var(--amber); background: var(--ground); font: .7rem var(--f-mono); }
   .hud { position: absolute; bottom: 1rem; left: 1.25rem; right: 1.25rem; display: none; gap: .2rem; pointer-events: none; color: var(--ink-2); font-size: var(--t-xs); overflow-wrap: anywhere; }
   .has-3d .hud { display: grid; }
   [data-hover-part] .hud { color: var(--amber); }

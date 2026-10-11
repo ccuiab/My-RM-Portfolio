@@ -23,6 +23,22 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
       });
     }
   });
+  if (kind === 'swerve') {
+    let gearboxIndex = 0;
+    for (const part of parts) {
+      if (part.object.userData.web_motor_intact) continue;
+      part.offset.x *= 3.6;
+      part.offset.y *= 2.6;
+      part.offset.z *= 3.6;
+      // The gearbox covers share an export vector. Stagger them along the
+      // wheel axle, retaining the complete motor as the assembly anchor.
+      const name = part.object.userData.source_node_name ?? '';
+      if (name.includes('GEARBOX') && part.offset.lengthSq()) {
+        const spacing = gearboxIndex++ * .017;
+        part.offset.add(new THREE.Vector3(-.766, 0, .643).multiplyScalar(spacing));
+      }
+    }
+  }
   if (shell) shell.traverse(child => {
     const mesh = child as THREE.Mesh;
     if (!mesh.isMesh) return;
@@ -75,7 +91,7 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
         }
         particles.geometry.attributes.position.needsUpdate = true;
       }
-      const radius = stage.sphere.radius * (kind === 'swerve' ? 1.08 + explode * .48 : 1.12);
+      const radius = stage.sphere.radius * (kind === 'swerve' ? 1.04 : 1.05);
       if (Math.abs(radius - lastRadius) > .00001) { stage.setRadius(radius); lastRadius = radius; }
     },
   };

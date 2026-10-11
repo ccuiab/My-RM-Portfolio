@@ -60,7 +60,7 @@ export async function createArmExchange(root: HTMLElement, base: string) {
   const controls = new OrbitControls(camera, canvas);
   controls.enableDamping = false;
   controls.enablePan = false;
-  controls.minDistance = 1.2;
+  controls.minDistance = .65;
   controls.maxDistance = 4.5;
   controls.minPolarAngle = .1;
   controls.maxPolarAngle = Math.PI * .85;
@@ -77,6 +77,9 @@ export async function createArmExchange(root: HTMLElement, base: string) {
   const fill = new THREE.DirectionalLight(0xdde7f5, 1.4);
   fill.position.set(1, .5, 1.5);
   scene.add(fill);
+  const edgeLight = new THREE.DirectionalLight(0xe5ecf5, 3);
+  edgeLight.position.set(-1, .8, -2);
+  scene.add(edgeLight);
 
   const releaseResources = () => {
     const geometries = new Set<THREE.BufferGeometry>();
@@ -127,11 +130,13 @@ export async function createArmExchange(root: HTMLElement, base: string) {
         seen.add(material);
         const mat = material as THREE.MeshStandardMaterial;
         const hsl = { h: 0, s: 0, l: 0 };
-        if (mat.color?.getHSL(hsl).l < .09) mat.color.offsetHSL(0, 0, .055);
-        mat.roughness = Math.max(mat.roughness ?? .5, .4);
+        if (mat.color?.getHSL(hsl).l < .09) {
+          mat.color.offsetHSL(0, 0, .045);
+          mat.roughness = .46;
+          mat.metalness = .25;
+        } else mat.roughness = Math.max(mat.roughness ?? .5, .4);
       }
     });
-    const quaternion = new THREE.Quaternion();
     const applyPose = (angles: Angles) => {
       joints.forEach((joint, i) => joint.node.quaternion.setFromAxisAngle(joint.axis, THREE.MathUtils.degToRad(angles[i])));
       // Dependent wheel branch; this is a geometric coupling, not a motor command.
@@ -169,49 +174,80 @@ export async function createArmExchange(root: HTMLElement, base: string) {
     const picked = oreTransform();
     applyPose(inserted);
     const placed = oreTransform();
-    // A schematic receiving bay, not a claimed station CAD or official dimension drawing.
-    wireBox(new THREE.Vector3(.28, .28, .28), placed.position);
-    wireBox(new THREE.Vector3(.34, .025, .4), placed.position.clone().add(new THREE.Vector3(0, -.16, 0)), mutedWire);
-    wireBox(new THREE.Vector3(.025, .42, .025), new THREE.Vector3(placed.position.x - .16, .09, placed.position.z + .14), mutedWire);
-    wireBox(new THREE.Vector3(.025, .42, .025), new THREE.Vector3(placed.position.x + .16, .09, placed.position.z + .14), mutedWire);
+    // Open receiving slot: its tilted aperture follows the final tool orientation.
+    // 270 mm clearance around the 200 mm illustrative cube; no legs or front face.
+    const stationCenter = placed.position.clone().add(new THREE.Vector3(0, 0, .015).applyQuaternion(placed.rotation));
+    const station = wireBox(new THREE.Vector3(.27, .27, .24), stationCenter);
+    station.quaternion.copy(placed.rotation);
+    station.updateMatrixWorld(true);
+    const stationBounds = new THREE.Box3().setFromObject(station);
     wireBox(new THREE.Vector3(.24, .025, .24), picked.position.clone().add(new THREE.Vector3(0, -.15, 0)), mutedWire);
-    const grid = new THREE.GridHelper(2, 20, 0x1d3150, 0x12213a);
-    grid.position.set(0, -.12, .4);
+    // Only a small grounding patch remains. Clip and fade the grid radially.
+    const grid = new THREE.GridHelper(1.1, 16, 0x7b8ea8, 0x7b8ea8);
+    grid.material.dispose();
+    (grid as THREE.LineSegments<THREE.BufferGeometry, THREE.Material>).material = new THREE.ShaderMaterial({
+      transparent: true, depthWrite: false,
+      vertexShader: 'varying vec2 gridXZ;void main(){gridXZ=position.xz;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}',
+      fragmentShader: 'varying vec2 gridXZ;void main(){float a=(1.0-smoothstep(0.18,0.55,length(gridXZ)))*0.18;if(a<0.005)discard;gl_FragColor=vec4(0.48,0.56,0.66,a);}',
+    });
+    grid.position.set(0, -.12, .12);
     scene.add(grid);
     wireBox(new THREE.Vector3(.22, .055, .22), new THREE.Vector3(0, -.085, 0), mutedWire);
 
-    // Frame the complete motion once; playback never re-frames or overwrites OrbitControls.
-    const bounds = new THREE.Box3();
-    for (let i = 0; i <= 72; i++) {
-      applyPose(sampleExchange(i / 10).angles);
-      bounds.union(new THREE.Box3().setFromObject(model));
-    }
-    bounds.expandByPoint(picked.position.clone().addScalar(.14));
-    bounds.expandByPoint(picked.position.clone().addScalar(-.14));
-    bounds.expandByPoint(placed.position.clone().addScalar(.17));
-    bounds.expandByPoint(placed.position.clone().addScalar(-.17));
-    const target = bounds.getCenter(new THREE.Vector3());
-    const viewDirection = new THREE.Vector3(-1.5, .8, 1.3).normalize();
-    const resetView = () => {
+    const corners: { mesh: THREE.Mesh; point: THREE.Vector3 }[] = [];
+    model.traverse(object => {
+      const mesh = object as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      mesh.geometry.computeBoundingBox();
+      const { min, max } = mesh.geometry.boundingBox!;
+      for (const x of [min.x, max.x]) for (const y of [min.y, max.y]) for (const z of [min.z, max.z]) corners.push({ mesh, point: new THREE.Vector3(x, y, z) });
+    });
+    const rings = joints.map(({ node, axis }) => {
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(.049, .0018, 6, 48), new THREE.MeshBasicMaterial({ color: amber, transparent: true, opacity: .9, depthWrite: false, depthTest: false, toneMapped: false }));
+      ring.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), axis);
+      node.add(ring);
+      return ring;
+    });
+    const trailGeometry = new THREE.BufferGeometry();
+    const trailPositions = new Float32Array(30 * 2 * 3);
+    const trailColors = new Float32Array(trailPositions.length);
+    trailGeometry.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
+    trailGeometry.setAttribute('color', new THREE.BufferAttribute(trailColors, 3));
+    const trail = new THREE.LineSegments(trailGeometry, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: .8, depthWrite: false, depthTest: false, toneMapped: false, blending: THREE.AdditiveBlending }));
+    trail.frustumCulled = false;
+    scene.add(trail);
+    const history: { time: number; point: THREE.Vector3 }[] = [];
+    const viewDirection = new THREE.Vector3(-2.4, .65, 1).normalize();
+    let autoFrame = true;
+    let framing = false;
+    const fitPose = (instant = false) => {
+      const points = corners.map(({ mesh, point }) => point.clone().applyMatrix4(mesh.matrixWorld));
+      for (const x of [stationBounds.min.x, stationBounds.max.x]) for (const y of [stationBounds.min.y, stationBounds.max.y]) for (const z of [stationBounds.min.z, stationBounds.max.z]) points.push(new THREE.Vector3(x, y, z));
+      for (const x of [-.1, .1]) for (const y of [-.1, .1]) for (const z of [-.1, .1]) points.push(new THREE.Vector3(x, y, z).applyQuaternion(ore.quaternion).add(ore.position));
+      const target = new THREE.Box3().setFromPoints(points).getCenter(new THREE.Vector3());
       const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), viewDirection).normalize();
       const up = new THREE.Vector3().crossVectors(viewDirection, right).normalize();
       const vertical = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
       let distance = 0;
-      for (const x of [bounds.min.x, bounds.max.x]) for (const y of [bounds.min.y, bounds.max.y]) for (const z of [bounds.min.z, bounds.max.z]) {
-        const point = new THREE.Vector3(x, y, z).sub(target);
-        distance = Math.max(distance, point.dot(viewDirection) + Math.abs(point.dot(right)) / (vertical * camera.aspect * .9), point.dot(viewDirection) + Math.abs(point.dot(up)) / (vertical * .88));
+      for (const point of points) {
+        point.sub(target);
+        distance = Math.max(distance, point.dot(viewDirection) + Math.abs(point.dot(right)) / (vertical * camera.aspect * .76), point.dot(viewDirection) + Math.abs(point.dot(up)) / (vertical * .8));
       }
-      controls.target.copy(target);
-      camera.position.copy(target).addScaledVector(viewDirection, THREE.MathUtils.clamp(distance, controls.minDistance, controls.maxDistance));
+      const next = target.clone().addScaledVector(viewDirection, Math.max(distance, controls.minDistance));
+      controls.target.lerp(target, instant ? 1 : .18);
+      camera.position.lerp(next, instant ? 1 : .18);
+      framing = true;
       controls.update();
-      controls.saveState();
+      framing = false;
     };
+    const resetView = () => { autoFrame = true; fitPose(true); controls.saveState(); };
+    controls.addEventListener('start', () => { autoFrame = false; });
 
     const slider = $<HTMLInputElement>('[data-timeline]');
     const phaseButtons = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-keyframe]'));
     const jointOutputs = Array.from(root.querySelectorAll<HTMLElement>('[data-joint]'));
     const signals = new AbortController();
-    let visible = false, playing = true, disposed = false;
+    let visible = false, playing = root.dataset.playing !== 'false', disposed = false;
     let time = Number(slider.value), raf = 0, lastTick = 0, lastDraw = 0;
     let frameCount = 0, perfStart = 0;
     let phaseIndex = -1;
@@ -220,14 +256,52 @@ export async function createArmExchange(root: HTMLElement, base: string) {
     const stationLabel = $('[data-station-label]');
     const projectLabel = (label: HTMLElement, position: THREE.Vector3, lift: number) => {
       labelPoint.copy(position).add(new THREE.Vector3(0, lift, 0)).project(camera);
-      label.style.transform = `translate(${(labelPoint.x * .5 + .5) * canvas.clientWidth}px, ${(-labelPoint.y * .5 + .5) * canvas.clientHeight}px) translate(-50%, -100%)`;
+      const x = THREE.MathUtils.clamp((labelPoint.x * .5 + .5) * canvas.clientWidth, 75, canvas.clientWidth - 75);
+      const y = THREE.MathUtils.clamp((-labelPoint.y * .5 + .5) * canvas.clientHeight, 68, canvas.clientHeight - 30);
+      label.style.transform = `translate(${x}px, ${y}px) translate(-50%, -100%)`;
     };
-    const updatePose = () => {
+    const updatePose = (instant = false) => {
       const sample = sampleExchange(time);
+      // Rebuild the history only on seek. Playback records one TCP per frame.
+      if (instant || (history.length && time < history.at(-1)!.time)) {
+        history.length = 0;
+        for (let i = 0; i < 30; i++) {
+          const past = Math.max(0, time - 1 + i / 30);
+          applyPose(sampleExchange(past).angles);
+          history.push({ time: past, point: tool.localToWorld(joints[5].axis.clone().multiplyScalar(.0705)) });
+        }
+      }
       applyPose(sample.angles);
+      history.push({ time, point: tool.localToWorld(joints[5].axis.clone().multiplyScalar(.0705)) });
+      while (history.length > 31 || history[0].time < time - 1) history.shift();
+      history.slice(1).forEach((entry, i) => {
+        history[i].point.toArray(trailPositions, i * 6);
+        entry.point.toArray(trailPositions, i * 6 + 3);
+        const color = amber.clone().multiplyScalar(Math.max(0, 1 - (time - entry.time)) ** 1.8);
+        color.toArray(trailColors, i * 6); color.toArray(trailColors, i * 6 + 3);
+      });
+      trailGeometry.setDrawRange(0, Math.max(0, history.length - 1) * 2);
+      trailGeometry.attributes.position.needsUpdate = true;
+      trailGeometry.attributes.color.needsUpdate = true;
+      const before = sampleExchange(Math.max(0, time - .04)).angles;
+      const after = sampleExchange(Math.min(EXCHANGE_DURATION, time + .04)).angles;
+      const rates = after.map((angle, i) => Math.abs(angle - before[i]));
+      const activeJoint = rates.indexOf(Math.max(...rates));
+      rings.forEach((ring, i) => { ring.visible = i === activeJoint && rates[i] > .001; });
+      root.dataset.activeJoint = rates[activeJoint] > .001 ? `J${activeJoint + 1}` : '';
       const transform = time < 2.2 ? picked : time >= 5.2 ? placed : oreTransform();
       ore.position.copy(transform.position);
       ore.quaternion.copy(transform.rotation);
+      let clearance = .135;
+      let depth = Infinity;
+      for (const x of [-.1, .1]) for (const y of [-.1, .1]) for (const z of [-.1, .1]) {
+        const corner = station.worldToLocal(new THREE.Vector3(x, y, z).applyQuaternion(ore.quaternion).add(ore.position));
+        clearance = Math.min(clearance, .135 - Math.max(Math.abs(corner.x), Math.abs(corner.y)));
+        depth = Math.min(depth, corner.z);
+      }
+      root.dataset.slotClearance = clearance.toFixed(5);
+      root.dataset.slotDepth = depth.toFixed(5);
+      if (autoFrame) fitPose(instant);
       // Clear the received mineral near loop-end before the next illustrative cycle.
       const opacity = time > 6.8 ? 1 - (time - 6.8) / .4 : 1;
       oreMaterial.opacity = .12 * opacity;
@@ -250,7 +324,7 @@ export async function createArmExchange(root: HTMLElement, base: string) {
       }
     };
     const render = () => {
-      if (!visible || disposed) return;
+      if (!visible || disposed || framing) return;
       renderer.render(scene, camera);
       projectLabel(stationLabel, placed.position, .22);
       projectLabel(mineralLabel, ore.position, .14);
@@ -298,7 +372,7 @@ export async function createArmExchange(root: HTMLElement, base: string) {
     const seek = (value: number) => {
       setPlaying(false);
       time = THREE.MathUtils.clamp(value, 0, EXCHANGE_DURATION);
-      updatePose(); render();
+      updatePose(true); render();
     };
     slider.addEventListener('pointerdown', () => setPlaying(false), { signal: signals.signal });
     slider.addEventListener('input', () => seek(Number(slider.value)), { signal: signals.signal });
@@ -316,9 +390,9 @@ export async function createArmExchange(root: HTMLElement, base: string) {
     };
     const resizeObserver = new ResizeObserver(resize);
     resizeObserver.observe(canvas);
-    resize(); resetView(); updatePose();
+    resize(); updatePose(true); resetView();
     $<HTMLFieldSetElement>('fieldset').disabled = false;
-    root.dataset.playing = 'true';
+    setPlaying(playing);
     root.dataset.ready = 'true';
     const dispose = () => {
       if (disposed) return;

@@ -42,70 +42,23 @@ const times = [0, 1.4, 2.2, 3.7, 4.8, 5.2, 6.5];
 </div>
 
 <script>
-  document.querySelectorAll<HTMLElement>('[data-arm-exchange]').forEach((root) => {
-    const view = root.querySelector<HTMLElement>('[data-view]')!;
-    const eligible = window.matchMedia('(min-width: 761px) and (prefers-reduced-motion: no-preference)');
-    let visible = false;
-    let loading = false;
-    let generation = 0;
-    let controller: { setVisible: (value: boolean) => void; dispose: () => void } | undefined;
-    const fallback = () => {
-      root.classList.remove('is-ready', 'is-loading');
-      root.classList.add('is-static');
-    };
-    const start = async () => {
-      if (!eligible.matches || !visible || controller || loading) return;
-      loading = true;
-      const token = ++generation;
-      root.classList.remove('is-static', 'is-fallback');
-      root.classList.add('is-loading');
-      root.querySelector<HTMLElement>('[data-status]')!.textContent = root.dataset.loading!;
-      try {
-        const { createArmExchange } = await import('../scripts/arm-exchange-scene');
-        if (token !== generation) return;
-        const next = await createArmExchange(root, import.meta.env.BASE_URL);
-        if (token !== generation) { next.dispose(); return; }
-        controller = next;
-        root.classList.remove('is-loading');
-        root.classList.add('is-ready');
-        controller.setVisible(visible && !document.hidden);
-      } catch (error) {
-        if (token !== generation) return;
-        fallback();
-        root.classList.add('is-fallback');
-        root.querySelector<HTMLElement>('[data-status]')!.textContent = root.dataset.unavailable!;
-        console.warn('Arm exchange unavailable; displaying the CAD still.', error);
-      } finally { if (token === generation) loading = false; }
-    };
-    const sync = () => {
-      if (!eligible.matches) {
-        ++generation;
-        loading = false;
-        controller?.dispose();
-        controller = undefined;
-        fallback();
-      } else {
-        controller?.setVisible(visible && !document.hidden);
-        void start();
-      }
-    };
-    const observer = new IntersectionObserver(([entry]) => {
-      visible = entry.isIntersecting;
-      sync();
-    }, { threshold: 0 });
-    observer.observe(view);
-    eligible.addEventListener('change', sync);
-    document.addEventListener('visibilitychange', sync);
-    const cleanup = () => {
-      ++generation;
-      controller?.dispose();
-      observer.disconnect();
-      eligible.removeEventListener('change', sync);
-      document.removeEventListener('visibilitychange', sync);
-    };
-    window.addEventListener('pagehide', cleanup, { once: true });
-    document.addEventListener('astro:before-swap', cleanup, { once: true });
-    if (!eligible.matches) fallback();
+  import { mountViewportScene } from '../scripts/lib/viewport-scene';
+  document.querySelectorAll<HTMLElement>('[data-arm-exchange]').forEach(root => {
+    const status = root.querySelector<HTMLElement>('[data-status]')!;
+    mountViewportScene({
+      root, view: root.querySelector<HTMLElement>('[data-view]')!,
+      media: '(min-width: 761px) and (prefers-reduced-motion: no-preference)',
+      async load() { const { createArmExchange } = await import('../scripts/arm-exchange-scene'); return createArmExchange(root, import.meta.env.BASE_URL); },
+      loading() { root.classList.remove('is-static', 'is-fallback'); root.classList.add('is-loading'); status.textContent = root.dataset.loading!; },
+      ready() { root.classList.remove('is-loading'); root.classList.add('is-ready'); },
+      reset() {
+        root.classList.remove('is-ready', 'is-loading'); root.classList.add('is-static');
+        const canvas = root.querySelector('canvas')!; canvas.replaceWith(canvas.cloneNode(false));
+        root.querySelector<HTMLFieldSetElement>('fieldset')!.disabled = true;
+        delete root.dataset.ready;
+      },
+      failed(error) { root.classList.add('is-fallback'); status.textContent = root.dataset.unavailable!; console.warn('Arm exchange unavailable', error); },
+    });
   });
 </script>
 
