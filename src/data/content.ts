@@ -3,8 +3,6 @@ import type { T } from './i18n';
 
 import engReach from '../../materials/images/source/historical/eng-reach.webp';
 import engineerFull from '../../materials/images/derived/site/cad-cutouts/engineer-full.png';
-import engField from '../../materials/images/source/historical/eng-phtot2.jpg';
-import engField2 from '../../materials/images/source/historical/eng-photo1.jpg';
 import engStats from '../../materials/images/source/historical/eng-mvp.webp';
 import engAllstar from '../../materials/images/source/historical/eng-allstar.webp';
 import pump from '../../materials/images/derived/site/cad-cutouts/air-pump.png';
@@ -59,6 +57,7 @@ export const ui = {
     zh: '比赛画面来自 RoboMaster 机甲大师官方转播。网站代码与机械设计归作者所有。',
     en: 'Match footage from the official RoboMaster broadcast. Site code and mechanical design by the author.',
   },
+  classic: { zh: '经典版 / Classic', en: '经典版 / Classic' },
 } satisfies Record<string, T | Record<string, T>>;
 
 /* ---------------------------------------------------------- page and scene copy */
@@ -66,15 +65,6 @@ export const ui = {
 export const pageCopy = {
   homeProjects: { zh: '浏览项目', en: 'Explore projects' },
   homeEngineer: { zh: '查看工程机器人', en: 'View the Engineer' },
-  engineerModelTitle: { zh: '先看整车，再看机构', en: 'Explore the robot, then its mechanisms' },
-  engineerModelIntro: { zh: '从整车视角看底盘、机械臂与上装的空间关系，再向下了解比赛表现和各个机构。', en: 'Explore how the chassis, arm and upper structure fit together, then continue to match performance and individual mechanisms.' },
-  engineerModelAlt: { zh: '2025 工程机器人整车模型', en: '2025 Engineer robot assembly' },
-  engineerModelCaption: { zh: '工程整车总装视图；下方继续查看机械臂展开与腕部拆解。', en: 'Engineer assembly view. Continue below for the arm extension and wrist exploded view.' },
-  heroCta: { zh: '看工程机器人 2025', en: 'See the 2025 Engineer robot' },
-  heroModelAlt: { zh: 'RM2024 英雄机器人整车', en: 'RM2024 Hero robot, full assembly' },
-  heroModelTitle: { zh: '整车与机构，一起看清', en: 'Explore the assembly and its mechanisms' },
-  heroModelIntro: { zh: '先转动整车查看布局，再逐项对照发射、供弹与底盘的照片和模型。', en: 'Turn the full assembly to explore its layout, then compare the photos and models of the launcher, feed and chassis.' },
-  heroModelCaption: { zh: '2024-09 版本：底盘、云台、发射与供弹的主要机械系统，来自 SolidWorks 总装模型。', en: 'September 2024 version: the main chassis, gimbal, launcher and feed systems, from the SolidWorks assembly.' },
   bomTitle: { zh: '能力清单', en: 'Bill of skills' },
   bomHead: {
     no: { zh: '序号', en: 'No.' }, item: { zh: '能力', en: 'Skill' },
@@ -86,9 +76,9 @@ export const pageCopy = {
   drawing: { zh: '图号', en: 'Drawing' },
   projectTitle: { zh: '项目图纸', en: 'Project sheets' },
   projectFigures: [
-    { value: '5.8 s', label: { zh: '四级矿石最短兑换时长，第一', en: 'Fastest level-4 ore exchange, ranked first' } },
-    { value: '±0.1 m/s', label: { zh: '初速波动', en: 'Muzzle velocity spread' } },
-    { value: '>25 Hz', label: { zh: '小弹丸中心供弹，已上车', en: '17 mm centre feed, on robots' } },
+    { value: '1400 mm', label: { zh: '整车最大展开', en: 'Maximum robot envelope' } },
+    { value: '42 mm', label: { zh: '大弹丸口径', en: 'Large projectile size' } },
+    { value: '3', label: { zh: '采用中心供弹的机器人类型', en: 'Robot classes using the centre feed' } },
   ],
   mainNav: { zh: '主导航', en: 'Main' },
   githubLabel: { zh: 'github.com/ccuiab', en: 'github.com/ccuiab' },
@@ -105,8 +95,8 @@ export const sceneCopy = {
     wrist: { zh: '拆解程度', en: 'Exploded view' },
   },
   homeDescription: {
-    zh: '崔楮焓的 RoboMaster 机械作品集：2025 工程机器人（5.8 s 四级矿石兑换，工程全明星）、2024 英雄机器人与技术预研。',
-    en: 'Chuhan Cui’s RoboMaster mechanical portfolio: the 2025 Engineer robot (5.8 s level-4 exchange, Engineer All-Star), the 2024 Hero robot and module R&D.',
+    zh: '崔楮焓的 RoboMaster 机械作品集：工程全明星。',
+    en: 'Chuhan Cui’s RoboMaster portfolio: Engineer All-Star.',
   },
   engineer: {
     relatedLinks: { zh: '相关链接', en: 'Links' },
@@ -131,19 +121,15 @@ export const sceneCopy = {
       en: 'Interpolated CAD joint poses. Readouts locate the wrist relative to the shoulder; this is not a validated robot trajectory or reachable workspace.',
     },
     sketchAlt: { zh: '机械臂从收折到展开', en: 'Arm unfolding from folded to extended' },
-    staticNote: { zh: '静态连杆比例示意：上臂 380 mm，前臂 420 mm；整车最大展开尺寸来自设计说明，示意图不表示实际 CAD 姿态或可达空间。', en: 'Static link-proportion sketch: 380 mm upper arm and 420 mm forearm. The whole-robot envelope comes from the design notes; this sketch does not represent a measured CAD pose or reachable workspace.' },
+    staticNote: { zh: '连杆比例示意；尺寸见本章规格。', en: 'Link proportions are schematic; see this chapter for dimensions.' },
   },
   wristExplode: {
     title: { zh: '完整 L4 与腕部拆解', en: 'Complete L4 and wrist exploded view' },
-    intro: { zh: '切换爆炸与装配状态，查看板件、传动与末端的关系。电机保持完整并留在装配位置。', en: 'Switch between exploded and assembled views to explore the plates, drivetrain and end effector. Motors stay intact in their assembled positions.' },
     hint: { zh: '拖动旋转 · 方向键调整视角', en: 'Drag to rotate · Arrow keys adjust the view' },
     assemble: { zh: '恢复装配', en: 'Assemble' },
     explode: { zh: '爆炸展开', en: 'Explode' },
     parts: { zh: '查看部件清单', en: 'View parts list' },
     alt: { zh: 'L4 段与腕部结构 CAD 渲染', en: 'CAD render of the L4 segment and wrist' },
-  },
-  modelTurntable: {
-    hint: { zh: '拖动旋转', en: 'Drag to turn' },
   },
   module: {
     photo: { zh: '设计视图', en: 'Design view' },
@@ -164,7 +150,6 @@ export const person = {
   role: 'MECHANICAL LEAD // HKUST ENTERPRIZE',
   badge: 'RM2025 ENGINEER ALL-STAR',
   tagline: { zh: '我设计上赛场的机器人。', en: 'I design robots built for the arena.' },
-  subline: { zh: '工程、英雄与机构预研，从整车布局到机械细节。', en: 'Engineer, Hero and mechanism R&D, from whole-robot layout to mechanical detail.' },
   edu: {
     zh: '香港科技大学 CPEG 本科，AI / Robotics 辅修，2023–2027',
     en: 'BEng Computer Engineering (CPEG), HKUST, minor in AI / Robotics, 2023–2027',
@@ -176,18 +161,13 @@ export const person = {
   github: 'https://github.com/ccuiab',
   email: 'ccuiab@connect.ust.hk',
   heroPic: { src: engReach, alt: { zh: '2 号工程机器人，机械臂完全伸出', en: 'Engineer robot No. 2 with its arm fully extended' } } as Pic,
-  readouts: [
-    { value: '5.8', unit: 's', label: { zh: '四级矿石兑换', en: 'Level-4 ore exchange' } },
-    { value: '38', unit: 'kg', label: { zh: '整机质量', en: 'All-up mass' } },
-    { value: '1400', unit: 'mm', label: { zh: '整车展开包络', en: 'Robot envelope' } },
-  ] as Spec[],
 };
 
 /* ------------------------------------------------------------- the record */
 
 export const record = {
   value: '5.8',
-  title: { zh: '两颗矿石，5.8 秒。', en: 'Two ores. 5.8 seconds.' },
+  title: { zh: '两颗矿石，完成兑换。', en: 'Two ores, one exchange.' },
   resultLabel: { zh: '四级兑换 · 官方成绩', en: 'Level 4 · Official result' },
   timerLabel: { zh: '兑换计时', en: 'Exchange time' },
   matchLabel: { zh: '场次', en: 'Match' },
@@ -212,7 +192,7 @@ export const record = {
     { label: { zh: '机械设计', en: 'Mechanical design' }, value: { zh: '崔楮焓', en: 'Chuhan Cui' } },
   ] as TitleRow[],
   source: 'https://www.bilibili.com/video/BV1Py8vzNE74/?t=1918',
-  broadcast: { src: engStats, alt: { zh: '官方转播数据卡：四级矿石最短兑换时长 5.8 s，排名第一', en: 'Official broadcast stats card: fastest level-4 ore exchange 5.8 s, ranked first' } } as Pic,
+  broadcast: { src: engStats, alt: { zh: '官方转播数据卡', en: 'Official broadcast stats card' } } as Pic,
   allstar: { src: engAllstar, alt: { zh: 'RoboMaster 2025 全明星海报：香港科技大学 ENTERPRIZE 工程机器人', en: 'RoboMaster 2025 All-Star poster: HKUST ENTERPRIZE Engineer robot' } } as Pic,
 };
 
@@ -224,14 +204,13 @@ export const engineer = {
   robotNo: '2',
   title: { zh: 'RoboMaster 2025 工程机器人', en: 'RoboMaster 2025 Engineer Robot' },
   short: { zh: '工程机器人 2025', en: 'Engineer 2025' },
+  shortTag: { zh: '六轴机械臂与轮式末端', en: 'Six-axis + wheel' },
   lede: {
-    zh: '六轴机械臂、轮式末端的工程机器人。我独立主导整车结构设计，从 PUMA 构型、连杆参数到整车布局，3 个月从零到上赛场。',
-    en: 'An Engineer robot with a six-axis arm and a wheeled end effector. I led the whole-robot structural design, from the PUMA configuration and link lengths to the vehicle layout, and took it from nothing to the competition field in three months.',
+    zh: '六轴机械臂、轮式末端的工程机器人。我独立主导整车结构设计，从 PUMA 构型、连杆参数到整车布局。',
+    en: 'An Engineer robot with a six-axis arm and a wheeled end effector. I led the whole-robot structural design, from the PUMA configuration and link lengths to the vehicle layout.',
   },
-  cover: { src: engReach, alt: { zh: '工程机器人，机械臂完全伸出', en: 'The Engineer robot with its arm fully extended' } } as Pic,
+  cover: { src: engineerFull, cutout: true, alt: { zh: '工程机器人 SolidWorks 整车总装', en: 'Engineer robot, SolidWorks assembly' } } as Pic,
   assembly: { src: engineerFull, cutout: true, alt: { zh: '工程机器人 SolidWorks 整车总装', en: 'Engineer robot, SolidWorks assembly' } } as Pic,
-  field: { src: engField, alt: { zh: '赛场上的工程机器人', en: 'The Engineer robot on the field' } } as Pic,
-  cover2: { src: engField2, alt: { zh: '工程机器人在场地上移动', en: 'The Engineer robot driving across the field' } } as Pic,
   titleBlock: [
     { label: { zh: '赛季', en: 'Season' }, value: { zh: 'RMUC 2025', en: 'RMUC 2025' } },
     { label: { zh: '职责', en: 'Role' }, value: { zh: '整车结构设计负责人', en: 'Lead structural designer' } },
@@ -280,22 +259,8 @@ export const engineer = {
         { label: { zh: 'L3+L4 前臂', en: 'L3+L4 forearm' }, value: '420', unit: 'mm' },
       ],
       bullets: [
-        {
-          zh: 'J4 用电滑环嵌套中空旋转气动接头，连续旋转时供电和气路照常传输，腕部不用和线缆较劲。',
-          en: 'At J4 an electrical slip ring nests inside a hollow rotary air union, so power and air pass through unlimited rotation and the wrist never fights a cable loop.',
-        },
-        {
-          zh: '万向轴传动让电机可以后置在 L4 上，末端体积压到能伸进矿槽。',
-          en: 'A universal-joint driveshaft lets the motor sit back on L4, shrinking the wrist enough to reach inside an ore slot.',
-        },
-        {
-          zh: 'J5/J6 组合使用等速同步轮、齿轮组和锥齿轮，实测 J5 接近零背隙。',
-          en: 'J5/J6 combine constant-velocity timing pulleys, gear sets and bevel gears; J5 measured close to zero backlash.',
-        },
-        {
-          zh: '腕部集成 HB80 风琴吸盘、驱动轮、J5/J6 两轴传动和稳定气路，抓取和移动在同一个末端完成。',
-          en: 'The wrist packages an HB80 bellows suction cup, a drive wheel, the J5/J6 drivetrain and a stable air path, so gripping and driving happen at the same end effector.',
-        },
+        { zh: 'J4 将电滑环嵌入中空旋转气动接头，连续旋转时维持供电与气路。', en: 'At J4, an electrical slip ring nests inside a hollow rotary air union to carry power and air through continuous rotation.' },
+        { zh: 'J5/J6 采用等速同步轮、齿轮组与锥齿轮组合传动，J5 实测接近零背隙。', en: 'J5/J6 combine constant-velocity timing pulleys, gear sets and bevel gears; J5 measured close to zero backlash.' },
       ],
     },
     {
@@ -310,14 +275,6 @@ export const engineer = {
         {
           zh: '5 寸实心橡胶轮提供抓地力和耐磨性，支撑赛场脱困与快速返回补给。',
           en: 'Five-inch solid rubber tyres provide the grip and wear resistance to break free on the field and get back to supply quickly.',
-        },
-        {
-          zh: '3508 自制减速箱、MGN7 滑轨和气弹簧组成舵下悬挂，扛得住高载荷，小陀螺时也稳。',
-          en: 'A custom 3508 gearbox, MGN7 rails and gas springs form an under-module suspension that carries high load and stays stable in spin mode.',
-        },
-        {
-          zh: '单个舵轮模组按快拆设计，场间排障直接换模块。',
-          en: 'Each swerve module detaches on its own, so between-match fixes are a module swap.',
         },
       ],
       pics: [{ src: engWheel, model: 'engineer-swerve.glb', cutout: true, alt: { zh: '工程舵轮模组', en: 'Engineer swerve module' } }],
@@ -375,30 +332,62 @@ export const engineer = {
         en: 'The Engineer robot’s input device. Its topology mirrors the main arm with a 1:2 mapping, so the operator stops translating hand motion into robot pose.',
       },
       bullets: [
-        {
-          zh: '按操作手的手臂数据调整 L2 位置，操作姿态更自然，长时间操作也稳。',
-          en: 'L2 was placed from the operator’s own arm measurements, giving a more natural posture and steadier control over a long match.',
-        },
-        {
-          zh: '四级矿兑换时可以单手、不换姿势完成左右肘位切换，高压下少一次动作重置。',
-          en: 'During a level-4 exchange the operator switches between left and right elbow positions one-handed, without resetting posture, which removes a costly motion under pressure.',
-        },
-        {
-          zh: '桌面级尺寸、低运动惯量，手部动作到机械臂响应跟得更紧。',
-          en: 'Desk-scale and low in moving inertia, so the arm tracks the operator’s hand closely.',
-        },
-        {
-          zh: '关键受力件用 CNC，外壳和辅助结构 3D 打印，成本低，围绕操作反馈迭代也快。',
-          en: 'CNC for the load-bearing parts and 3D printing for the shell and brackets kept cost low and made iterating on operator feedback quick.',
-        },
+        { zh: '按操作手的手臂数据调整 L2 位置，操作姿态更自然。', en: 'L2 was positioned from the operator’s arm measurements for a more natural posture.' },
+        { zh: '四级矿兑换时可单手切换左右肘位，不必重置姿势。', en: 'During a level-4 exchange, the operator can switch elbow positions one-handed without resetting posture.' },
       ],
       pics: [{ src: controller, cutout: true, alt: { zh: '自定义控制器', en: 'Custom controller' } }],
     },
   ] as Chapter[],
   links: [
     { label: { zh: '机械开源（RoboMaster 论坛）', en: 'Open-source CAD (RoboMaster forum)' }, href: 'https://bbs.robomaster.com/article/803685?source=8' },
-    { label: { zh: '官方技术短片（Bilibili）', en: 'Official feature video (Bilibili)' }, href: 'https://www.bilibili.com/video/BV1Y482zjERP/' },
   ],
+  eggs: {
+    title: { zh: '彩蛋', en: 'Easter eggs' },
+    matchLabel: { zh: '场次', en: 'Match' },
+    opponentLabel: { zh: '对手', en: 'Opponent' },
+    actionLabel: { zh: '动作', en: 'Action' },
+    sourceLabel: { zh: '来源', en: 'Source' },
+    watch: { zh: '看 B 站原片', en: 'Watch on Bilibili' },
+    pending: { zh: '影像待补', en: 'Footage pending' },
+    items: [
+      {
+        index: '01',
+        match: { zh: 'RMUC 2025 · 复活赛', en: 'RMUC 2025 · Repechage' },
+        opponent: { zh: '待确认', en: 'To be confirmed' },
+        action: { zh: '上台阶', en: 'Climb the step' },
+        source: { zh: 'UP 主：star_Light星', en: 'Creator: star_Light星' },
+        href: 'https://www.bilibili.com/video/BV1MV8nzFEcb/',
+        file: 'egg-stairs.mp4',
+        poster: 'egg-stairs.jpg',
+        layout: 'portrait',
+        alt: { zh: '工程机器人上台阶的竖屏赛场片段', en: 'Portrait match clip of the Engineer robot climbing a step' },
+      },
+      {
+        index: '02',
+        match: { zh: 'RMUC 2025 · 复活赛第 26 场', en: 'RMUC 2025 · Repechage match 26' },
+        opponent: { zh: '华东理工大学', en: 'East China University of Science and Technology' },
+        action: { zh: '从对方银矿石资源岛取矿', en: 'Take ore from the opponent’s silver-ore island' },
+        source: { zh: 'RoboMaster 官方', en: 'RoboMaster official' },
+        href: 'https://www.bilibili.com/video/BV13T8ezrEwC/',
+        file: 'egg-steal.mp4',
+        poster: 'egg-steal.jpg',
+        layout: 'landscape',
+        alt: { zh: '复活赛对阵华东理工大学，从对方银矿石资源岛取矿', en: 'Taking ore from the opposing silver-ore island against ECUST in the repechage' },
+      },
+      {
+        index: '03',
+        match: { zh: 'RMUC 2025 · 全明星赛', en: 'RMUC 2025 · All-Star match' },
+        opponent: { zh: '待确认', en: 'To be confirmed' },
+        action: { zh: '从对方工程机器人身上取矿', en: 'Take ore directly from the opposing Engineer robot' },
+        source: { zh: 'RoboMaster 官方', en: 'RoboMaster official' },
+        href: 'https://www.bilibili.com/video/BV1Uvt3zKEt4/',
+        file: 'egg-grab.mp4',
+        poster: 'egg-grab.jpg',
+        layout: 'landscape',
+        alt: { zh: '全明星赛中从对方工程机器人身上取矿', en: 'Taking ore from the opposing Engineer robot in the All-Star match' },
+      },
+    ],
+  },
 };
 
 export const hero = {
@@ -407,9 +396,10 @@ export const hero = {
   robotNo: '1',
   title: { zh: 'RoboMaster 2024 英雄机器人', en: 'RoboMaster 2024 Hero Robot' },
   short: { zh: '英雄机器人 2024', en: 'Hero 2024' },
+  shortTag: { zh: '摩擦轮发射与自适应底盘', en: 'Launcher/chassis' },
   lede: {
-    zh: '我独立负责整车机械设计，覆盖云台、发射、42 mm 大弹丸侧供弹和自适应悬挂，补上了队里英雄机器人这一块能力。',
-    en: 'I was the sole mechanical designer for the whole robot, covering the gimbal, launcher, 42 mm side feed and adaptive suspension, and filled the gap the team had in its Hero lineup.',
+    zh: '我独立负责整车机械设计，覆盖云台、发射、大弹丸侧供弹和自适应悬挂，补上了队里英雄机器人这一块能力。',
+    en: 'I was the sole mechanical designer for the whole robot, covering the gimbal, launcher, large-projectile side feed and adaptive suspension, and filled the gap the team had in its Hero lineup.',
   },
   cover: { src: heroBot, model: 'hero.glb', cutout: true, alt: { zh: 'RM2024 英雄机器人整车', en: 'RM2024 Hero robot' } } as Pic,
   titleBlock: [
@@ -438,8 +428,8 @@ export const hero = {
           en: 'The structure was iterated against three faults one by one: friction-wheel vibration, speed droop and projectiles leaving before matching wheel speed.',
         },
         {
-          zh: '摩擦轮改为对轴支撑，两端都有轴承，再加一对预加速小轮。10 m 散布小于 25×25 cm，初速波动约 ±0.1 m/s。',
-          en: 'The friction wheels moved onto double-supported shafts, with bearings at both ends, and gained a pre-acceleration wheel pair. Dispersion at 10 m dropped under 25×25 cm with muzzle velocity holding to about ±0.1 m/s.',
+          zh: '对轴支撑、双端轴承和预加速轮组共同稳定发射结构。',
+          en: 'Double-supported shafts, bearings at both ends and a pre-acceleration wheel pair stabilize the launcher structure.',
         },
       ],
       pics: [
@@ -449,18 +439,18 @@ export const hero = {
     {
       id: 'feed',
       mark: 'B',
-      title: { zh: '42 mm 大弹丸侧供弹', en: '42 mm side feed' },
+      title: { zh: '大弹丸侧供弹', en: 'Large-projectile side feed' },
       lede: {
         zh: '面向类高尔夫球的大弹丸连续供弹，在队内已有的侧供弹方案上优化，先收敛可靠性和卡滞风险。',
-        en: 'Built to feed golf-ball-sized 42 mm projectiles continuously. It refines the team’s existing side-feed design and prioritises reliability and jam prevention over novelty.',
+        en: 'Built to feed golf-ball-sized projectiles continuously. It refines the team’s existing side-feed design and prioritises reliability and jam prevention over novelty.',
       },
       bullets: [
         {
-          zh: '针对弹丸尺寸公差优化防卡滞结构，2 Hz 稳定供弹不卡顿。',
-          en: 'Anti-jam geometry tuned around projectile size tolerance sustains a steady 2 Hz feed.',
+          zh: '针对弹丸尺寸公差优化防卡滞结构，保持供弹顺畅。',
+          en: 'Anti-jam geometry tuned around projectile size tolerance keeps the feed running smoothly.',
         },
       ],
-      pics: [{ src: feederLarge, model: 'hero-side-feed.glb', modelNote: { zh: '独立侧供弹总成：弹仓、拨弹机构与驱动。', en: 'Standalone side-feed assembly: hopper, feeding mechanism and drive.' }, cutout: true, alt: { zh: '大弹丸侧供弹', en: '42 mm side feed' } }],
+      pics: [{ src: feederLarge, model: 'hero-side-feed.glb', modelNote: { zh: '独立侧供弹总成：弹仓、拨弹机构与驱动。', en: 'Standalone side-feed assembly: hopper, feeding mechanism and drive.' }, cutout: true, alt: { zh: '大弹丸侧供弹', en: 'Large-projectile side feed' } }],
     },
     {
       id: 'chassis',
@@ -472,12 +462,12 @@ export const hero = {
       },
       bullets: [
         {
-          zh: '较大轮距加预紧压簧，抑制大弹丸发射后坐力带来的整车晃动。',
-          en: 'A wide track and preloaded compression springs damp the body roll that follows a 42 mm shot.',
+          zh: '较大轮距加预紧压簧，抑制发射后坐力带来的整车晃动。',
+          en: 'A wide track and preloaded compression springs damp body roll after firing.',
         },
         {
-          zh: '实测通过飞坡、15 cm 正向下台阶、8 cm 侧向下台阶和 30 cm 垂直跌落。',
-          en: 'Tested through ramp jumps, 15 cm forward step descents, 8 cm lateral step descents and a 30 cm vertical drop.',
+          zh: '实测通过飞坡、正向与侧向下台阶，以及垂直跌落测试。',
+          en: 'Tested through ramp jumps, forward and lateral step descents, and a vertical drop.',
         },
       ],
       pics: [{ src: heroChassis, model: 'hero-adaptive-chassis.glb', modelNote: { zh: '裸车架、四轮与联动悬挂，对照图中的底盘结构。', en: 'Bare frame, four wheels and linked suspension, matching the pictured chassis structure.' }, cutout: true, alt: { zh: '自适应悬挂底盘', en: 'Adaptive suspension chassis' } }],
@@ -492,11 +482,8 @@ export const research = {
   drawing: 'RND-2425',
   title: { zh: '2024–2025 技术预研', en: '2024–2025 R&D' },
   short: { zh: '技术预研', en: 'R&D' },
-  lede: {
-    zh: '比赛之外的模块预研。两条迭代线一路做到能上车，另外两种舵轮按不同兵种的需求分头验证。',
-    en: 'Module research outside the match calendar. Two lines iterated until they were ready for a robot, and two swerve designs were tested separately against the needs of different robot classes.',
-  },
-  cover: { src: launcher6, cutout: true, alt: { zh: '双级六摩擦轮发射机构', en: 'Dual-stage six-wheel launcher' } } as Pic,
+  shortTag: { zh: '发射、供弹与舵轮预研', en: 'Module R&D' },
+  cover: { src: launcher4, cutout: true, alt: { zh: '双级四摩擦轮样机', en: 'Dual-stage four-wheel prototype' } } as Pic,
   launcher: {
     title: { zh: '发射机构：从单级到双级六摩擦轮', en: 'Launcher: from single-stage to dual-stage six-wheel' },
     stages: [
@@ -522,7 +509,7 @@ export const research = {
     stages: [
       {
         title: { zh: '结构预研与迭代上车', en: 'From feed development to robots' },
-        body: { zh: '多层预制、整流罩、防剪切优先的设计思路。迭代后用于队内步兵、哨兵和无人机，17 mm 弹丸供弹频率 25 Hz 以上，结构小巧轻便。', en: 'Multi-layer staging, a fairing, and shear protection as the leading priority. The iterated version went onto the team’s infantry, sentry and aerial robots, feeding 17 mm projectiles at over 25 Hz in a small, light package.' },
+        body: { zh: '多层预制、整流罩与防剪切优先，迭代后用于多类队内机器人；供弹频率 >25 Hz。', en: 'Multi-layer staging, a fairing and shear protection guide the design. The iterated version feeds multiple robot classes at over 25 Hz.' },
         pic: { src: feederSmall, cutout: true, alt: { zh: '小弹丸中心供弹', en: '17 mm centre feed' } },
       },
     ] as Stage[],
@@ -533,10 +520,6 @@ export const research = {
   },
   swerve: {
     title: { zh: '两种舵轮模组，两种需求', en: 'Two swerve modules for two jobs' },
-    lede: {
-      zh: '同一个问题，按不同兵种的空间、载荷和机动需求分头验证。',
-      en: 'The same problem, tested separately against the space, load and mobility needs of different robot classes.',
-    },
     branches: [
       {
         title: { zh: '高负载：工程机器人', en: 'High load: Engineer' },
@@ -555,12 +538,7 @@ export const research = {
 export const exo = {
   title: { zh: '四自由度手臂外骨骼', en: '4-DOF arm exoskeleton' },
   kind: { zh: '课程项目', en: 'Course project' },
-  lede: {
-    zh: '面向上肢助力与人机协同的 4 自由度轻量化原型，用运动学建模和基础控制验证可行性。',
-    en: 'A lightweight 4-DOF prototype for upper-limb assistance, validated through kinematic modelling and basic closed-loop control.',
-  },
   bullets: [
-    { zh: '按大臂和肘部的主要自由度布置关节轴线，减少人机运动干涉。', en: 'Joint axes follow the dominant degrees of freedom of the upper arm and elbow to minimise interference with the wearer.' },
     { zh: '基于 DH 参数法建立运动学模型，在仿真中验证工作空间覆盖。', en: 'Built a Denavit–Hartenberg kinematic model and checked workspace coverage in simulation.' },
     { zh: '手背 IMU 预测手臂运动方向，驱动外骨骼跟随；助力模式下闭环保持姿态并输出辅助力。', en: 'An IMU on the back of the hand predicts motion and drives the exoskeleton to follow; in assist mode closed-loop control holds the pose and adds force.' },
   ],
@@ -612,7 +590,7 @@ export const bom = [
 
 export const honours = [
   { year: '2025', title: { zh: 'RoboMaster 2025 工程全明星', en: 'RoboMaster 2025 Engineer All-Star' } },
-  { year: '2025', title: { zh: 'RMUC 2025 四级矿石最短兑换时长 5.8 s，数据卡排名第一', en: 'RMUC 2025 fastest level-4 ore exchange, 5.8 s, ranked first on the stats card' } },
+  { year: '2025', title: { zh: 'RMUC 2025 四级矿石最短兑换', en: 'RMUC 2025 Fastest Level-4 Exchange' } },
   { year: '2024, 2025', title: { zh: 'HKSAR Government Scholarship Fund – Talent Development Scholarship', en: 'HKSAR Government Scholarship Fund – Talent Development Scholarship' } },
   { year: '2023', title: { zh: 'HKUST SENG Dean’s List（Fall 2023）', en: 'HKUST SENG Dean’s List, Fall 2023' } },
 ];

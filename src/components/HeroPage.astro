@@ -4,9 +4,8 @@ import ProjectHeader from './ProjectHeader.astro';
 import Chapter from './Chapter.astro';
 import Lightbox from './Lightbox.astro';
 import NextSheet from './NextSheet.astro';
-import { hero, research, pageCopy } from '../data/content';
-import { t, type Lang } from '../data/i18n';
-import lines from '../../materials/images/derived/generated/hero-bot-lines.webp';
+import { hero, research } from '../data/content';
+import type { Lang } from '../data/i18n';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -20,7 +19,6 @@ const p = hero;
     title={p.title}
     lede={p.lede}
     cover={p.cover}
-    lines={lines}
     titleBlock={p.titleBlock}
     stats={p.stats}
   />

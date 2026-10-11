@@ -26,7 +26,6 @@ const { lang } = Astro.props;
     <div class="exo-body">
       <span class="kind">{t(exo.kind, lang)}</span>
       <h2 id="exo-title" class="display exo-title">{t(exo.title, lang)}</h2>
-      <p class="lede">{t(exo.lede, lang)}</p>
       <ul>
         {exo.bullets.map((b) => <li>{t(b, lang)}</li>)}
       </ul>
