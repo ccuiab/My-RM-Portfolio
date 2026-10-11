@@ -30,6 +30,7 @@ export async function loadScanStage(
   base: string,
   file: string,
   scan: { axis: THREE.Vector3; range: [number, number]; solidOnly?: boolean },
+  signal: AbortSignal,
 ): Promise<ScanStage> {
   // preserveDrawingBuffer keeps the last frame visible between scroll-driven redraws
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
@@ -52,15 +53,25 @@ export async function loadScanStage(
   fill.position.set(0, -1, 1.5);
   scene.add(fill);
 
-  const draco = new DRACOLoader().setDecoderPath(`${base}models/draco/`);
-  let gltf;
-  try {
-    gltf = await new GLTFLoader().setDRACOLoader(draco).loadAsync(`${base}models/${file}`);
-  } catch (error) {
+  const manager = new THREE.LoadingManager();
+  let rendererDisposed = false;
+  const disposeRenderer = () => {
+    if (rendererDisposed) return;
+    rendererDisposed = true;
     renderer.dispose();
     renderer.forceContextLoss();
+  };
+  const abortLoad = () => { manager.abort(); disposeRenderer(); };
+  signal.addEventListener('abort', abortLoad, { once: true });
+  if (signal.aborted) abortLoad();
+  const draco = new DRACOLoader(manager).setDecoderPath(`${base}models/draco/`);
+  let gltf;
+  try {
+    gltf = await new GLTFLoader(manager).setDRACOLoader(draco).loadAsync(`${base}models/${file}`);
+  } catch (error) {
+    disposeRenderer();
     throw error;
-  } finally { draco.dispose(); }
+  } finally { signal.removeEventListener('abort', abortLoad); draco.dispose(); }
   const model = gltf.scene;
   const turntable = new THREE.Group();
   turntable.add(model);

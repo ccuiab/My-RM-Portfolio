@@ -46,7 +46,7 @@ export function sampleExchange(time: number) {
   return { angles, envelope: THREE.MathUtils.lerp(a.envelope, b.envelope, ease) };
 }
 
-export async function createArmExchange(root: HTMLElement, base: string) {
+export async function createArmExchange(root: HTMLElement, base: string, signal: AbortSignal) {
   const $ = <T extends HTMLElement>(selector: string) => root.querySelector<T>(selector)!;
   const canvas = $<HTMLCanvasElement>('[data-canvas]');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
@@ -81,7 +81,10 @@ export async function createArmExchange(root: HTMLElement, base: string) {
   edgeLight.position.set(-1, .8, -2);
   scene.add(edgeLight);
 
+  let resourcesReleased = false;
   const releaseResources = () => {
+    if (resourcesReleased) return;
+    resourcesReleased = true;
     const geometries = new Set<THREE.BufferGeometry>();
     const materials = new Set<THREE.Material>();
     const textures = new Set<THREE.Texture>();
@@ -100,14 +103,18 @@ export async function createArmExchange(root: HTMLElement, base: string) {
     renderer.dispose();
     renderer.forceContextLoss();
   };
-  const draco = new DRACOLoader().setDecoderPath(`${base}models/draco/`).setWorkerLimit(1);
+  const manager = new THREE.LoadingManager();
+  const abortLoad = () => { manager.abort(); releaseResources(); };
+  signal.addEventListener('abort', abortLoad, { once: true });
+  if (signal.aborted) abortLoad();
+  const draco = new DRACOLoader(manager).setDecoderPath(`${base}models/draco/`).setWorkerLimit(1);
   let model: THREE.Group;
   try {
-    const gltf = await new GLTFLoader().setDRACOLoader(draco).loadAsync(`${base}models/arm.glb`);
+    const gltf = await new GLTFLoader(manager).setDRACOLoader(draco).loadAsync(`${base}models/arm.glb`);
     model = gltf.scene;
     scene.add(model);
   } catch (error) { releaseResources(); throw error; }
-  finally { draco.dispose(); }
+  finally { signal.removeEventListener('abort', abortLoad); draco.dispose(); }
 
   try {
     const joints = Array.from({ length: 6 }, (_, i) => {

@@ -50,12 +50,13 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
   mountViewportScene({
     root, view: root.querySelector<HTMLElement>('[data-mechanism-view]')!,
     media: '(min-width: 901px) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
-    async load() {
+    async load(signal) {
       const [{ loadMechanismStage }, { createModuleMotion }] = await Promise.all([import('./lib/mechanism-stage'), import('./module-motion')]);
+      if (signal.aborted) return;
       const canvas = document.createElement('canvas');
       canvas.setAttribute('aria-label', root.querySelector<HTMLImageElement>('img')!.alt);
       canvas.setAttribute('role', 'img'); holder.replaceChildren(canvas);
-      const next = await loadMechanismStage(canvas, import.meta.env.BASE_URL, root.dataset.model!, label, () => visible);
+      const next = await loadMechanismStage(canvas, import.meta.env.BASE_URL, root.dataset.model!, label, () => visible, signal);
       try { stage = next; motion = createModuleMotion(stage, root.dataset.mechanism as 'pump' | 'swerve'); }
       catch (error) { next.dispose(); stage = undefined; throw error; }
       return {

@@ -29,10 +29,11 @@ document.querySelectorAll<HTMLElement>('[data-module-media]').forEach(root => {
   mountViewportScene({
     root, view: root.querySelector<HTMLElement>('.media-view')!,
     media: '(min-width: 901px) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
-    async load() {
+    async load(signal) {
       const { loadModuleStage } = await import('./lib/module-stage');
+      if (signal.aborted) return;
       const canvas = document.createElement('canvas'); canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', photo.dataset.alt!); view.replaceChildren(canvas);
-      const next = await loadModuleStage(canvas, import.meta.env.BASE_URL, root.dataset.model!);
+      const next = await loadModuleStage(canvas, import.meta.env.BASE_URL, root.dataset.model!, signal);
       try {
         stage = next;
         stage.setScan(rotating ? 0 : 1);

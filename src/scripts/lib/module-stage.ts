@@ -2,9 +2,9 @@ import { Box3, Sphere, Vector3 } from 'three';
 import { loadScanStage } from '../scan-scene';
 
 /** Imported only in the viewport; named imports keep unused Three exports out. */
-export async function loadModuleStage(canvas: HTMLCanvasElement, base: string, model: string) {
+export async function loadModuleStage(canvas: HTMLCanvasElement, base: string, model: string, signal: AbortSignal) {
   const range: [number, number] = [1, -1];
-  const stage = await loadScanStage(canvas, base, model, { axis: new Vector3(0, 0, 1), range });
+  const stage = await loadScanStage(canvas, base, model, { axis: new Vector3(0, 0, 1), range }, signal);
   try {
     const sphere = new Box3().setFromObject(stage.model).getBoundingSphere(new Sphere());
     stage.model.position.sub(sphere.center); sphere.center.set(0, 0, 0);

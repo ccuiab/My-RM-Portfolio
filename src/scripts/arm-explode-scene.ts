@@ -19,7 +19,7 @@ export type ArmExplodeScene = {
   dispose: () => void;
 };
 
-export async function loadArmExplodeScene(root: HTMLElement, base: string): Promise<ArmExplodeScene> {
+export async function loadArmExplodeScene(root: HTMLElement, base: string, signal: AbortSignal): Promise<ArmExplodeScene> {
   const canvas = root.querySelector<HTMLCanvasElement>('canvas')!;
   const slider = root.querySelector<HTMLInputElement>('[data-explode-range]')!;
   const output = root.querySelector<HTMLOutputElement>('[data-progress]')!;
@@ -30,18 +30,23 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string): Prom
   const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-explode-to]')];
   const abort = new AbortController();
   const events = { signal: abort.signal };
-  const draco = new DRACOLoader().setDecoderPath(`${base}models/draco/`).setWorkerLimit(1);
+  const manager = new THREE.LoadingManager();
+  const abortLoad = () => manager.abort();
+  signal.addEventListener('abort', abortLoad, { once: true });
+  if (signal.aborted) abortLoad();
+  const draco = new DRACOLoader(manager).setDecoderPath(`${base}models/draco/`).setWorkerLimit(1);
   let model: THREE.Group;
   let meta: Metadata;
   try {
     [meta, model] = await Promise.all([
-      fetch(`${base}models/arm-parts.json`).then(response => {
+      fetch(`${base}models/arm-parts.json`, { signal }).then(response => {
         if (!response.ok) throw new Error('Arm part metadata unavailable');
         return response.json() as Promise<Metadata>;
       }),
-      new GLTFLoader().setDRACOLoader(draco).loadAsync(`${base}models/arm-parts.glb`).then(gltf => gltf.scene),
+      new GLTFLoader(manager).setDRACOLoader(draco).loadAsync(`${base}models/arm-parts.glb`).then(gltf => gltf.scene),
     ]);
   } finally {
+    signal.removeEventListener('abort', abortLoad);
     draco.dispose();
   }
   const nodes = new Map<string, THREE.Object3D>();
