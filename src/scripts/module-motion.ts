@@ -39,6 +39,20 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
       }
     }
   }
+  // A few amber assembly axes echo the arm viewer without tracing fasteners.
+  // Only the widest separated groups get guides; motors stay at their CAD pose.
+  const guided = kind === 'swerve' ? parts.filter(part => !part.object.userData.web_motor_intact && part.offset.length() > .025)
+    .sort((a, b) => b.offset.lengthSq() - a.offset.lengthSq()).slice(0, 4) : [];
+  let guides: THREE.LineSegments | undefined;
+  const guidePositions = new Float32Array(guided.length * 6);
+  const assemblyPoint = new THREE.Vector3(), separatedPoint = new THREE.Vector3();
+  if (guided.length) {
+    const geometry = new THREE.BufferGeometry();
+    geometry.setAttribute('position', new THREE.BufferAttribute(guidePositions, 3));
+    guides = new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({ color: stage.amber, transparent: true, opacity: .16, depthWrite: false }));
+    guides.frustumCulled = false;
+    stage.scene.add(guides);
+  }
   if (shell) shell.traverse(child => {
     const mesh = child as THREE.Mesh;
     if (!mesh.isMesh) return;
@@ -73,11 +87,29 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
       // Hold the assembled wheel still. Movement starts smoothly as parts separate.
       const steering = Math.sin(time * .85) * .55 * explode;
       for (const p of parts) {
-        p.object.position.copy(p.position).addScaledVector(p.offset, explode);
+        p.object.position.copy(p.position);
         p.object.quaternion.copy(p.quaternion);
+        if (p.object.userData.web_motor_intact) continue;
+        p.object.position.addScaledVector(p.offset, explode);
         const angle = p.motion === 'crank' ? time * 2.8 : p.motion === 'roll' ? time * 1.5 * explode : p.motion === 'steer' ? steering : 0;
         if (angle) p.object.quaternion.multiply(rotation.setFromAxisAngle(p.axis, angle));
         if (p.motion === 'piston') p.object.position.addScaledVector(p.axis.clone().applyQuaternion(p.quaternion), Math.sin(time * 2.8) * .0035);
+      }
+      if (guides) {
+        stage.model.updateMatrixWorld(true);
+        guided.forEach((part, index) => {
+          assemblyPoint.copy(part.position);
+          separatedPoint.copy(part.object.position);
+          if (part.object.parent) {
+            part.object.parent.localToWorld(assemblyPoint);
+            part.object.parent.localToWorld(separatedPoint);
+          }
+          assemblyPoint.toArray(guidePositions, index * 6);
+          separatedPoint.toArray(guidePositions, index * 6 + 3);
+        });
+        guides.visible = explode > .01;
+        guides.geometry.attributes.position.needsUpdate = true;
+        (guides.material as THREE.LineBasicMaterial).opacity = .16 * explode;
       }
       if (particles) {
         for (let i = 0; i < count; i++) {

@@ -127,8 +127,8 @@ export const sceneCopy = {
     amount: { zh: '拆解程度', en: 'Exploded view' },
     play: { zh: '播放运动', en: 'Play motion' },
     pause: { zh: '暂停运动', en: 'Pause motion' },
-    hint: { zh: '拖动旋转 · 悬停查看节点名 · 方向键调整视角', en: 'Drag to rotate · Hover for node names · Arrow keys adjust the view' },
-    note: { zh: '爆炸态演示滚动与转向；电机保持整体，运动为视觉示意。', en: 'The exploded view demonstrates rolling and steering. Motors remain intact; motion is illustrative.' },
+    hint: { zh: '拖动旋转 · 滚轮 / 双指缩放 · 悬停查看零件 · 方向键调整视角', en: 'Drag to orbit · Scroll / pinch to zoom · Hover to inspect · Arrow keys adjust the view' },
+    note: { zh: '引导线连接装配与展开位置；爆炸态演示滚动与转向，电机保持整体，运动为视觉示意。', en: 'Guides connect assembled and separated positions. Rolling and steering are illustrative; motors remain intact.' },
     static: { zh: '静态装配视图', en: 'Static assembly view' },
   },
   interaction: {

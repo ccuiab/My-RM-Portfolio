@@ -33,7 +33,7 @@ document.querySelectorAll<HTMLElement>('[data-module-media]').forEach(root => {
       const { loadModuleStage } = await import('./lib/module-stage');
       if (signal.aborted) return;
       const canvas = document.createElement('canvas'); canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', photo.dataset.alt!); view.replaceChildren(canvas);
-      const next = await loadModuleStage(canvas, import.meta.env.BASE_URL, root.dataset.model!, signal);
+      const next = await loadModuleStage(canvas, import.meta.env.BASE_URL, root.dataset.model!, signal, root.closest('[data-engineer-header]') !== null);
       try {
         stage = next;
         stage.setScan(rotating ? 0 : 1);
@@ -46,8 +46,8 @@ document.querySelectorAll<HTMLElement>('[data-module-media]').forEach(root => {
       };
     },
     loading() { root.dataset.failedState = 'false'; status.hidden = false; status.textContent = root.dataset.loading!; },
-    ready() { root.dataset.ready = 'true'; controls.hidden = false; status.hidden = true; },
-    reset() { view.replaceChildren(); controls.hidden = true; root.dataset.ready = 'false'; status.hidden = root.dataset.failedState !== 'true'; },
+    ready() { root.dataset.ready = 'true'; controls.hidden = false; controls.inert = false; status.hidden = true; },
+    reset() { view.replaceChildren(); controls.hidden = true; controls.inert = true; root.dataset.ready = 'false'; status.hidden = root.dataset.failedState !== 'true'; },
     failed(error) { root.dataset.failedState = 'true'; status.hidden = false; status.textContent = root.dataset.failed!; console.warn('Module unavailable', error); },
   });
   sync();

@@ -40,7 +40,9 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   } finally { signal.removeEventListener('abort', abortLoad); draco.dispose(); }
   scene.add(model);
   const controls = new OrbitControls(camera, canvas);
-  controls.enableZoom = false;
+  controls.enableZoom = file === 'engineer-swerve.glb';
+  controls.zoomSpeed = .6;
+  if (controls.enableZoom) canvas.setAttribute('data-lenis-prevent-wheel', '');
   controls.enablePan = false;
   controls.enableDamping = false;
   controls.minPolarAngle = .1;
@@ -53,6 +55,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   let radius = sphere.radius * 1.13;
   controls.target.copy(sphere.center);
   const direction = initialDirection.clone();
+  let fitDistance = 0;
   const corners: { mesh: THREE.Mesh; point: THREE.Vector3 }[] = [];
   model.traverse(object => {
     const mesh = object as THREE.Mesh;
@@ -61,7 +64,8 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     const { min, max } = mesh.geometry.boundingBox!;
     for (const x of [min.x, max.x]) for (const y of [min.y, max.y]) for (const z of [min.z, max.z]) corners.push({ mesh, point: new THREE.Vector3(x, y, z) });
   });
-  const fit = () => {
+  const fit = (reset = false) => {
+    const zoom = reset || !fitDistance ? 1 : camera.position.distanceTo(controls.target) / fitDistance;
     direction.copy(camera.position).sub(controls.target);
     if (!direction.lengthSq()) direction.copy(initialDirection);
     direction.normalize();
@@ -81,7 +85,10 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       const depth = p.dot(direction);
       distance = Math.max(distance, depth + Math.abs(p.dot(right)) / (Math.tan(horizontal) * .86), depth + Math.abs(p.dot(up)) / (Math.tan(vertical) * .8));
     }
-    camera.position.copy(controls.target).addScaledVector(direction, distance);
+    fitDistance = distance;
+    controls.minDistance = fitDistance * .65;
+    controls.maxDistance = fitDistance * 1.65;
+    camera.position.copy(controls.target).addScaledVector(direction, fitDistance * THREE.MathUtils.clamp(zoom, .65, 1.65));
     camera.lookAt(controls.target);
   };
   camera.position.copy(controls.target).add(initialDirection);
@@ -174,10 +181,10 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   }, options);
 
   return {
-    scene, model, camera, amber, sphere,
+    scene, model, camera, controls, amber, sphere,
     render,
     setRadius(value: number) { radius = value; fit(); },
-    resetView() { camera.position.copy(controls.target).add(initialDirection); fit(); controls.update(); render(); },
+    resetView() { camera.position.copy(controls.target).add(initialDirection); fit(true); controls.update(); render(); },
     dispose() {
       events.abort(); resizeObserver.disconnect(); controls.dispose(); clearHover();
       const geometries = new Set<THREE.BufferGeometry>();
