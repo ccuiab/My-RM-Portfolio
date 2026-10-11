@@ -6,12 +6,12 @@ import { t, ui, type Lang } from '../data/i18n';
 import type { Chapter } from '../data/content';
 import ModuleMedia from './ModuleMedia.astro';
 
-interface Props { lang: Lang; chapter: Chapter }
-const { lang, chapter: c } = Astro.props;
+interface Props { lang: Lang; chapter: Chapter; layout?: 'standard' | 'expanded' }
+const { lang, chapter: c, layout = 'standard' } = Astro.props;
 const pics = c.pics ?? [];
 ---
 <section class="ch" id={c.id} aria-labelledby={`${c.id}-title`}>
-  <div class:list={["wrap ch-grid", { "with-media": pics.length > 0 || Astro.slots.has("wide") }]} >
+  <div class:list={["wrap ch-grid", { "with-media": pics.length > 0 || Astro.slots.has("wide"), expanded: layout === 'expanded' }]} >
     <div class="ch-copy">
     <div class="ch-head">
       <span class="mark" aria-hidden="true">{c.mark}</span>
@@ -77,6 +77,13 @@ const pics = c.pics ?? [];
     position: relative;
   }
   .ch-copy { display: grid; gap: 1.5rem; min-width: 0; }
+  .ch-grid.expanded { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .expanded .ch-copy { display: contents; }
+  .expanded .ch-head { grid-column: 1 / -1; align-items: baseline; }
+  .expanded .ch-body { grid-column: 1; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 1.5rem clamp(1.5rem, 4vw, 3.5rem); }
+  .expanded .ch-lede, .expanded .specs { grid-column: 1; }
+  .expanded .bullets { grid-column: 2; grid-row: 1 / span 2; }
+  .expanded .ch-media { grid-column: 1; }
   .ch-media { min-width: 0; display: grid; gap: 1rem; }
   .ch-grid:not(.with-media) { grid-template-columns: 1fr; }
   .ch-grid:not(.with-media) .ch-copy { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 3rem; }
@@ -191,6 +198,8 @@ const pics = c.pics ?? [];
     .pics.n4 { --cols: 2; }
     .ch-title { font-size: clamp(1.8rem, 4vw, 2.5rem); }
     .pics { gap: 1.5rem; }
+    .expanded .ch-body { grid-template-columns: minmax(0, 1fr); }
+    .expanded .ch-body > *, .expanded .ch-media { grid-column: 1; grid-row: auto; }
   }
   @media (max-width: 560px) {
     .pics { --cols: 1 !important; }

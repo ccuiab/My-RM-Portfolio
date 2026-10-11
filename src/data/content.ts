@@ -7,11 +7,6 @@ import engField from '../assets/img/eng-phtot2.jpg';
 import engField2 from '../assets/img/eng-photo1.jpg';
 import engStats from '../assets/img/eng-mvp.webp';
 import engAllstar from '../assets/img/eng-allstar.webp';
-import armOverview from '../assets/img/cad-cutouts/eng-arm-overview.png';
-import armRig from '../assets/img/eng-arm.webp';
-import armL3 from '../assets/img/cad-cutouts/arm-l3.png';
-import armL4 from '../assets/img/cad-cutouts/l4-assembled.png';
-import armL4Exploded from '../assets/img/cad-cutouts/l4-exploded.png';
 import pump from '../assets/img/cad-cutouts/air-pump.png';
 import engWheel from '../assets/img/cad-cutouts/eng-wheel.png';
 import controller from '../assets/img/cad-cutouts/controller.png';
@@ -116,8 +111,10 @@ export const sceneCopy = {
   engineer: {
     relatedLinks: { zh: '相关链接', en: 'Links' },
     armFeature: {
-      label: { zh: '机械臂实车动作', en: 'The arm in motion on the real robot' },
-      credit: { zh: '画面：RoboMaster 机甲大师官方技术短片', en: 'Footage: official RoboMaster feature' },
+      label: { zh: '工程机器人介绍', en: 'Engineer robot introduction' },
+      credit: { zh: 'RoboMaster 机甲大师 · B 站完整视频', en: 'RoboMaster · Full video on Bilibili' },
+      href: 'https://www.bilibili.com/video/BV1Y482zjERP/',
+      embed: 'https://player.bilibili.com/player.html?isOutside=true&bvid=BV1Y482zjERP&p=1&autoplay=0',
     },
   },
   armUnfold: {
@@ -138,8 +135,11 @@ export const sceneCopy = {
   },
   wristExplode: {
     title: { zh: '完整 L4 与腕部拆解', en: 'Complete L4 and wrist exploded view' },
-    intro: { zh: '从 L4 两侧长主板、连接板和电机安装结构，到内部传动与腕部末端，查看完整的装配关系。拖动模型换角度，用滑杆切换装配与拆解状态。', en: 'Explore the full assembly, from the L4 longitudinal plates, cross plates and motor mounts to the internal drivetrain and wrist. Drag to change the viewpoint and use the slider to move between assembled and exploded views.' },
-    hint: { zh: '拖动旋转；滑动调节拆解程度', en: 'Drag to rotate; use the slider to explode' },
+    intro: { zh: '切换爆炸与装配状态，查看板件、传动与末端的关系。电机保持完整并留在装配位置。', en: 'Switch between exploded and assembled views to explore the plates, drivetrain and end effector. Motors stay intact in their assembled positions.' },
+    hint: { zh: '拖动旋转 · 方向键调整视角', en: 'Drag to rotate · Arrow keys adjust the view' },
+    assemble: { zh: '恢复装配', en: 'Assemble' },
+    explode: { zh: '爆炸展开', en: 'Explode' },
+    parts: { zh: '查看部件清单', en: 'View parts list' },
     alt: { zh: 'L4 段与腕部结构 CAD 渲染', en: 'CAD render of the L4 segment and wrist' },
   },
   modelTurntable: {
@@ -264,10 +264,6 @@ export const engineer = {
           zh: '机械臂工作空间、图传视野、UWB 布局和操作链路一起作为整机约束，先排布再出结构，碰撞风险和联调难度在设计阶段就压下来。',
           en: 'Arm workspace, FPV sight lines, UWB placement and the operator loop were treated as whole-robot constraints and laid out before any structure was drawn, so collision risk and integration effort came down at the design stage.',
         },
-        {
-          zh: '整车收折包络为 590×590×540 mm，满足起始尺寸限制；完全展开的整车包络达到 1400×1400×1200 mm。',
-          en: 'The whole robot folds into a 590×590×540 mm envelope to meet the starting-size limit and expands to a 1400×1400×1200 mm envelope.',
-        },
       ],
       scene: 'arm-unfold',
     },
@@ -276,8 +272,8 @@ export const engineer = {
       mark: 'B',
       title: { zh: '六轴机械臂与腕部', en: 'Six-axis arm and wrist' },
       lede: {
-        zh: 'L2 上臂 380 mm，L3+L4 前臂 420 mm。臂展、兑矿灵活性和末端刚度在这两个数字里取平衡。',
-        en: 'A 380 mm L2 upper arm and a 420 mm L3+L4 forearm. Those two numbers balance reach and exchange dexterity against wrist stiffness.',
+        zh: '在臂展、兑矿灵活性与末端刚度之间取平衡，把传动与气路集成在有限的腕部空间里。',
+        en: 'Balance reach and exchange dexterity against stiffness, integrating the drivetrain and air path into the limited wrist space.',
       },
       specs: [
         { label: { zh: 'L2 上臂', en: 'L2 upper arm' }, value: '380', unit: 'mm' },
@@ -300,13 +296,6 @@ export const engineer = {
           zh: '腕部集成 HB80 风琴吸盘、驱动轮、J5/J6 两轴传动和稳定气路，抓取和移动在同一个末端完成。',
           en: 'The wrist packages an HB80 bellows suction cup, a drive wheel, the J5/J6 drivetrain and a stable air path, so gripping and driving happen at the same end effector.',
         },
-      ],
-      pics: [
-        { src: armOverview, cutout: true, alt: { zh: '六轴机械臂 CAD 总览', en: 'Six-axis arm, CAD overview' } },
-        { src: armL3, cutout: true, alt: { zh: '万向轴传动与后置电机', en: 'Universal-joint drive and rear-mounted motor' } },
-        { src: armL4, cutout: true, alt: { zh: '完整 L4 与腕部总装', en: 'Complete L4 and wrist assembly' } },
-        { src: armL4Exploded, cutout: true, alt: { zh: '完整 L4 与腕部爆炸图', en: 'Complete L4 and wrist exploded view' } },
-        { src: armRig, alt: { zh: '机械臂装配实物', en: 'The assembled arm on the bench' } },
       ],
     },
     {
@@ -496,7 +485,7 @@ export const hero = {
   ] as Chapter[],
 };
 
-export type Stage = { title: T; body: T; pic?: Pic; verdict?: T };
+export type Stage = { title: T; body: T; pic: Omit<Pic, 'model' | 'modelNote'> };
 
 export const research = {
   slug: 'research',
@@ -514,7 +503,7 @@ export const research = {
       {
         title: { zh: 'RM2024 英雄单级发射', en: 'RM2024 Hero, single stage' },
         body: { zh: '对轴摩擦轮加预加速小轮，是后面所有多级方案的起点。', en: 'Double-supported friction wheels with a pre-acceleration pair: the starting point for every multi-stage design that followed.' },
-        pic: { src: heroLauncher, model: 'hero-launcher.glb', modelNote: { zh: '2024-09 总装中的发射模块，图片与交互模型取自同一 CAD 装配。', en: 'Launcher from the September 2024 assembly; image and interactive model share the same CAD source.' }, cutout: true, alt: { zh: 'RM2024 英雄发射机构', en: 'RM2024 Hero launcher' } },
+        pic: { src: heroLauncher, cutout: true, alt: { zh: 'RM2024 英雄发射机构', en: 'RM2024 Hero launcher' } },
       },
       {
         title: { zh: '双级四摩擦轮样机', en: 'Dual-stage, four wheels' },
@@ -532,13 +521,9 @@ export const research = {
     title: { zh: '小弹丸中心供弹：从初版到上车', en: '17 mm centre feed: from first pass to robots' },
     stages: [
       {
-        title: { zh: '结构预研', en: 'Feed development' },
-        body: { zh: '多层预制、整流罩、防剪切优先的设计思路。', en: 'Multi-layer staging, a fairing, and shear protection as the leading priority.' },
+        title: { zh: '结构预研与迭代上车', en: 'From feed development to robots' },
+        body: { zh: '多层预制、整流罩、防剪切优先的设计思路。迭代后用于队内步兵、哨兵和无人机，17 mm 弹丸供弹频率 25 Hz 以上，结构小巧轻便。', en: 'Multi-layer staging, a fairing, and shear protection as the leading priority. The iterated version went onto the team’s infantry, sentry and aerial robots, feeding 17 mm projectiles at over 25 Hz in a small, light package.' },
         pic: { src: feederSmall, cutout: true, alt: { zh: '小弹丸中心供弹', en: '17 mm centre feed' } },
-      },
-      {
-        title: { zh: '迭代上车', en: 'On the robots' },
-        body: { zh: '迭代后用于队内步兵、哨兵和无人机，17 mm 弹丸供弹频率 25 Hz 以上，结构小巧轻便。', en: 'The iterated version went onto the team’s infantry, sentry and aerial robots, feeding 17 mm projectiles at over 25 Hz in a small, light package.' },
       },
     ] as Stage[],
     mentor: {
@@ -556,7 +541,7 @@ export const research = {
       {
         title: { zh: '高负载：工程机器人', en: 'High load: Engineer' },
         body: { zh: '宽橡胶胎提供抓地力和一定减震，四个 MGN7 滑块加气弹簧组成舵下悬挂，扛得住高载荷，底盘姿态稳。', en: 'Wide rubber tyres for grip and some damping; four MGN7 carriages and gas springs form an under-module suspension that carries high load and keeps the chassis level.' },
-        pic: { src: engWheel, model: 'engineer-swerve.glb', cutout: true, alt: { zh: '高负载工程舵轮', en: 'High-load Engineer swerve module' } },
+        pic: { src: engWheel, cutout: true, alt: { zh: '高负载工程舵轮', en: 'High-load Engineer swerve module' } },
       },
       {
         title: { zh: '轻量化：2025 英雄预研', en: 'Lightweight: 2025 Hero study' },

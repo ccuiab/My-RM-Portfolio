@@ -154,7 +154,7 @@
         0.0,
         0.0
       ],
-      "explode_dist_m": 0.12,
+      "explode_dist_m": 0,
       "order": 3,
       "callout_anchor": [
         -0.006676474120467901,
@@ -341,7 +341,7 @@
         1.0,
         0.0
       ],
-      "explode_dist_m": 0.09,
+      "explode_dist_m": 0,
       "order": 8,
       "callout_anchor": [
         0.014504986815154552,
@@ -372,14 +372,14 @@
   },
   "exploded_bbox_m": {
     "min": [
-      -0.2396361529827118,
-      -0.23495951294898987,
-      -0.6040508151054382
+      -0.23963612943840204,
+      -0.2349595020711422,
+      -0.6040507996082306
     ],
     "max": [
-      0.21766869723796844,
-      0.32012778520584106,
-      0.22169487178325653
+      0.2176674741501826,
+      0.32012778226511374,
+      0.22169436574650422
     ]
   },
   "source_scope": "Complete L4.2025.10.1 structural assembly plus L6_v2 distal wrist assembly; source CAD ancestry, not kinematic link labels."

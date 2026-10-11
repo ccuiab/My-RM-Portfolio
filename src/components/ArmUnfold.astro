@@ -148,7 +148,7 @@ const L = sceneCopy.armUnfold;
 <style>
   .unfold { margin-top: .5rem; border: 1px solid var(--rule); background: var(--ground); }
   .pin { display: grid; }
-  .view { position: relative; height: clamp(320px, 30vw, 420px); border: 0; }
+  .view { position: relative; height: clamp(380px, 38vw, 520px); border: 0; }
   .view > svg, .view > canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
   .three, .marks { opacity: 0; }
   .three { cursor: grab; touch-action: none; pointer-events: none; }
@@ -170,7 +170,7 @@ const L = sceneCopy.armUnfold;
   button:hover { color: var(--amber); border-color: var(--amber); }
   button:focus-visible, input:focus-visible, .three:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
   .drag-hint { color: var(--ink-3); }
-  .metrics { display: grid; grid-template-columns: 1fr; gap: 1.5rem; border-top: 1px solid var(--rule); padding: 1rem 1.2rem; }
+  .metrics { display: grid; grid-template-columns: 1.35fr .65fr; gap: 2rem; border-top: 1px solid var(--rule); padding: 1rem 1.2rem; }
   .envelopes { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: .5rem 1rem; }
   .envelope-label, .readout dt { font-size: var(--t-xs); color: var(--ink-3); }
   .envelopes p { font-size: .85rem; margin: .3rem 0; }
@@ -180,7 +180,7 @@ const L = sceneCopy.armUnfold;
   .readout dd { margin: .3rem 0 0; font-size: var(--t-lg); }
   .readout [data-r], .readout [data-h] { color: var(--amber); min-width: 4ch; display: inline-block; }
   .readout .u { font-size: var(--t-xs); color: var(--ink-3); }
-  .note, .static-note { padding: 0 1.2rem; font-size: var(--t-xs); color: var(--ink-3); line-height: 1.6; }
+  .note, .static-note { padding: 0 1.2rem 1rem; font-size: var(--t-xs); color: var(--ink-3); line-height: 1.6; max-width: none; }
   .static-note { display: none; }
   .fallback .static-note { display: block; }
   .unfold:not(.has-3d) .note, .unfold:not(.has-3d) .readout { visibility: hidden; }

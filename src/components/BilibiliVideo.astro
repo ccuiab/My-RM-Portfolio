@@ -1,0 +1,30 @@
+---
+import { t, type Lang, type T } from '../data/i18n';
+
+interface Props { lang: Lang; embed: string; href: string; label: T; credit: T }
+const { lang, embed, href, label, credit } = Astro.props;
+---
+<figure class="bilibili-video">
+  <figcaption>
+    <h3>{t(label, lang)}</h3>
+    <a href={href} target="_blank" rel="noopener noreferrer">{t(credit, lang)}</a>
+  </figcaption>
+  <iframe
+    src={embed}
+    title={t(label, lang)}
+    loading="lazy"
+    allow="autoplay; fullscreen; picture-in-picture; encrypted-media"
+    allowfullscreen
+    referrerpolicy="strict-origin-when-cross-origin"
+  ></iframe>
+</figure>
+
+<style>
+  .bilibili-video { margin: 1.5rem 0 0; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+  figcaption { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .75rem 1.5rem; padding-bottom: 1.25rem; }
+  h3 { font-family: var(--f-cjk); font-size: var(--t-lg); }
+  :global(html[lang="en"]) h3 { font-family: var(--f-latin); font-weight: 600; }
+  a { color: var(--ink-2); font-size: var(--t-sm); text-underline-offset: 4px; }
+  a:hover { color: var(--amber); }
+  iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 0; background: #000; }
+</style>
