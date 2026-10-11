@@ -1,11 +1,11 @@
-// Build materials/images/web/og.jpg (1200x630 share card) from the hero photo.
+// Build materials/images/derived/web/og.jpg (1200x630 share card) from the hero photo.
 import sharp from 'sharp';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const W = 1200, H = 630;
-const photo = await sharp(join(root, 'materials/images/site/eng-reach.webp'))
+const photo = await sharp(join(root, 'materials/images/source/historical/eng-reach.webp'))
   .resize(W, H, { fit: 'cover', position: 'right' })
   .modulate({ saturation: 0.85 })
   .toBuffer();
@@ -20,5 +20,5 @@ const overlay = Buffer.from(`
   <text x="56" y="470" font-family="Consolas, monospace" font-size="72" fill="#f2b53a">5.8<tspan font-size="34" fill="#9fb0c6"> s</tspan></text>
   <text x="56" y="520" font-family="Microsoft YaHei, sans-serif" font-size="26" fill="#9fb0c6">RMUC 2025 四级矿兑换 · 工程全明星</text>
 </svg>`);
-await sharp(photo).composite([{ input: overlay }]).jpeg({ quality: 84, mozjpeg: true }).toFile(join(root, 'materials/images/web/og.jpg'));
-console.log('wrote materials/images/web/og.jpg');
+await sharp(photo).composite([{ input: overlay }]).jpeg({ quality: 84, mozjpeg: true }).toFile(join(root, 'materials/images/derived/web/og.jpg'));
+console.log('wrote materials/images/derived/web/og.jpg');

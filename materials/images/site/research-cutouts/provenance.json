@@ -1,7 +1,0 @@
-{
-  "method": "Built-in image_gen transparent-background edit",
-  "prompt": "Remove only the white/light grey background and ground shadow. Preserve mechanical parts, holes, outlines, original colors, viewpoint and proportions; retain silver faces. No redesign or added details.",
-  "source_directory": "../research-originals",
-  "presentation_grading": "CSS saturate(.42) brightness(1.28) contrast(.92); transparent PNG alpha preserved.",
-  "note": "AI-assisted cutouts for presentation; original CAD screenshots retained."
-}

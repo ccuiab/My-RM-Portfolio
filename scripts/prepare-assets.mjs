@@ -10,10 +10,10 @@ await rm(staging, {recursive: true, force: true});
 await mkdir(staging, {recursive: true});
 for (const [source, target] of [
   ['src/static', '.'],
-  ['materials/models/web', 'models'],
-  ['materials/videos/web', 'video'],
-  ['materials/images/video-posters', 'video'],
-  ['materials/images/web', '.'],
+  ['materials/models/derived/web', 'models'],
+  ['materials/videos/derived/web', 'video'],
+  ['materials/images/derived/video-posters', 'video'],
+  ['materials/images/derived/web', '.'],
 ]) {
   await cp(join(root, source), join(staging, target), {recursive: true});
 }

@@ -1,5 +1,5 @@
 // Subset Smiley Sans (CJK display face) to the characters the site actually uses.
-// Source text: every .astro / .ts file under src/. Output: materials/fonts/subsets/smiley-sans.woff2
+// Source text: every .astro / .ts file under src/. Output: materials/fonts/derived/subsets/smiley-sans.woff2
 import { readFile, writeFile, readdir, mkdir } from 'node:fs/promises';
 import { join, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -29,6 +29,6 @@ for (const f of files) {
 
 const font = await readFile(join(root, 'materials', 'fonts', 'source', 'SmileySans-Oblique.ttf'));
 const woff2 = await subsetFont(font, [...chars].join(''), { targetFormat: 'woff2' });
-await mkdir(join(root, 'materials', 'fonts', 'subsets'), { recursive: true });
-await writeFile(join(root, 'materials', 'fonts', 'subsets', 'smiley-sans.woff2'), woff2);
+await mkdir(join(root, 'materials', 'fonts', 'derived', 'subsets'), { recursive: true });
+await writeFile(join(root, 'materials', 'fonts', 'derived', 'subsets', 'smiley-sans.woff2'), woff2);
 console.log(`smiley-sans.woff2: ${chars.size} chars, ${(woff2.length / 1024).toFixed(1)} KB`);

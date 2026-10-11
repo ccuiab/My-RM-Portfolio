@@ -4,11 +4,11 @@ import { join } from 'node:path';
 import { Image } from 'astro:assets';
 import { t, type Lang } from '../data/i18n';
 import { sceneCopy } from '../data/content';
-import fallback from '../../materials/images/site/cad-cutouts/l4-assembled.png';
+import fallback from '../../materials/images/derived/site/cad-cutouts/l4-assembled.png';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
-const hasModel = existsSync(join(process.cwd(), 'materials', 'models', 'web', 'l4.glb'));
+const hasModel = existsSync(join(process.cwd(), 'materials', 'models', 'derived', 'web', 'l4.glb'));
 const L = sceneCopy.wristExplode;
 ---
 <section class="explode" data-explode data-model={hasModel ? '1' : ''} data-lang={lang} data-state="assembled">

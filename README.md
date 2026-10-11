@@ -7,24 +7,26 @@
 ```text
 materials/                    素材总目录
   images/
-    site/                     网页图片与 CAD 配图
-    generated/                生成的线稿
-    video-posters/            视频封面
-    web/                      分享图与网站图标
-    archive/                  历史图片、原生截图和审阅预览（本地）
+    source/                   收到的历史图片、官方原图与投稿封面
+    derived/                  网页抠图、线稿、封面与处理输入
   models/
-    web/                      网页 GLB、JSON 与 Draco 解码器
-    source/                   原始导出、Blender、URDF 与网格（本地）
+    source/README.md           外部只读 CAD 原件说明
+    derived/web/              网页 GLB、JSON 与 Draco 解码器
+    derived/inputs/           当前处理输入、Blender、URDF 与网格（本地）
   videos/
-    web/                      网页视频与来源说明
-    source/                   视频原片和素材片段（本地）
+    source/bilibili/           完整下载原片与公开投稿（本地）
+    derived/web/              当前网页剪辑与来源说明
+    derived/inputs/           当前剪辑输入（本地）
   fonts/
     source/                   源字体
-    subsets/                  网页使用的字体子集
+    derived/subsets/          网页使用的字体子集
   documents/
-    CUIChuhanCV.md             网站事实来源
-    pdf/                      已生成的作品集 PDF（本地）
-    audits/                   素材来源、技术报告和迁移清单（本地）
+    source/                   原始事实资料、归档与来源页面
+    derived/                  视频索引与来源、工程审计（审计在本地）
+  README.md                   素材分层、来源和维护方式
+  INVENTORY.md                素材总清单
+  inventory.csv               完整文件清单与 SHA-256
+  cleanup.json                本轮迁移和删除记录
 publish/                      发布总目录
   current/                    当前完整网页（本地构建或 CI 生成）
   history/                    按版本保存的完整旧网页（本地）
@@ -36,7 +38,7 @@ AGENTS.md                     中文项目指引
 CLAUDE.md                     指向 AGENTS.md 的相对软链接
 ```
 
-`.astro-public/` 为构建时生成的静态资源缓存，素材源文件只维护在 `materials/`。已移除不参与当前网站的旧 PDF 工具、浏览器日志和临时缓存；已生成的 PDF、CAD 来源及历史网页仍有归档。
+`.astro-public/` 为构建时生成的静态资源缓存，素材只维护在 `materials/`。分层说明见 [素材库](materials/README.md)：原始输入按收到的内容保存；二级材料保留当前展示、复现和溯源所需部分。
 
 ## 开发与发布
 
@@ -49,7 +51,7 @@ npm run preview
 
 `npm run build` 会准备静态资源、生成得意黑字体子集，输出到 `publish/current/`，并自动保存到 `publish/history/<时间与提交>/`。部署工作流只上传 `publish/current/`，历史网页不会混入线上站点。模型与视频的网址仍分别为 `models/`、`video/`，站点 base 为 `/My-RM-Portfolio`。
 
-`materials/models/web/` 或 `materials/videos/web/` 修改后，重新执行开发或构建命令即可刷新临时静态目录。全部网站文案位于 `src/data/content.ts`。
+`materials/models/derived/web/` 或 `materials/videos/derived/web/` 修改后，重新执行开发或构建命令刷新临时静态目录。全部网站文案位于 `src/data/content.ts`。`npm run materials:inventory` 扫描完整本地素材库、计算 SHA-256，并更新 Markdown 和 CSV 索引。
 
 ## 历史版本
 
@@ -65,12 +67,12 @@ npm run archive:history
 npm run preview -- --outDir publish/history/<版本目录>
 ```
 
-历史网页和大型原始素材只保存在本地，不重复提交进 Git。源码历史保留在 Git 中；自动归档不会覆盖之前的版本。目录整理的文件去向、大小及 SHA-256 位于 `materials/documents/audits/reorganization/migration.json`。
+历史网页和大型原始素材只保存在本地，不重复提交进 Git。源码历史保留在 Git 中；自动归档不会覆盖之前的版本。早期目录迁移记录位于 `materials/documents/derived/audits/reorganization/migration.json`；本轮分类、去向与删除记录见 [cleanup.json](materials/cleanup.json)。
 
 Windows 克隆时启用 `git -c core.symlinks=true clone ...`，并确保系统支持符号链接。项目规则以中文 `AGENTS.md` 为准。
 
 ## 2025 工程视频档案
 
-已核实的视频按官方比赛、全明星、工程及监控视角、实车演示、精彩回顾和花絮分目录保存到 `materials/videos/source/bilibili/`。可读清单在 [Bilibili 视频索引](materials/documents/bilibili-video-catalog.md)，机器可读清单记录原链接、UP 主、分 P、分辨率、时长和 SHA256。
+已核实的视频按官方比赛、全明星、工程及监控视角、实车演示、精彩回顾和花絮分目录保存到 `materials/videos/source/bilibili/`。可读清单在 [Bilibili 视频索引](materials/documents/derived/bilibili-video-catalog.md)，机器可读清单记录原链接、UP 主、分 P、分辨率、时长和 SHA256。
 
 下载工具为 `scripts/download-bilibili.py`，使用 `.venv` 中的 `yt-dlp` 和 `C:/ffmpeg/bin/ffmpeg.exe`；分段下载可断点续传，不需要浏览器 Cookie。下载结束后运行 `scripts/catalog-bilibili.py` 校验文件并刷新索引。原片保留在本地素材库，网站继续使用 Bilibili 介绍视频。

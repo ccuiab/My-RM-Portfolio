@@ -4,7 +4,7 @@ import sharp from 'sharp';
 import { readdirSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 
-const [dir = 'materials/images/site', out = 'materials/images/archive/contact-images.png'] = process.argv.slice(2);
+const [dir = 'materials/images/derived/site/cad-cutouts', out = 'tmp/contact-images.png'] = process.argv.slice(2);
 mkdirSync(dirname(out), {recursive: true});
 const files = readdirSync(dir).filter((f) => /\.(webp|jpe?g|png)$/i.test(f));
 const W = 300, H = 220, cols = 5, rows = Math.ceil(files.length / cols);

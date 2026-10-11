@@ -6,11 +6,13 @@ from pathlib import Path
 import yt_dlp
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / 'materials/documents/audits/bilibili'
+OUT = ROOT / 'materials/documents/derived/audits/bilibili'
+RAW = ROOT / 'materials/documents/source/bilibili'
 parser = argparse.ArgumentParser()
 parser.add_argument('bvid', nargs='+')
 args = parser.parse_args()
 OUT.mkdir(parents=True, exist_ok=True)
+RAW.mkdir(parents=True, exist_ok=True)
 catalog = OUT / 'page-catalog.json'
 state = json.loads(catalog.read_text(encoding='utf-8')) if catalog.exists() else {'videos': {}, 'collections': {}, 'failures': {}}
 
@@ -32,7 +34,7 @@ with yt_dlp.YoutubeDL({'quiet': True, 'socket_timeout': 30}) as ydl:
         try:
             raw = ydl.urlopen('https://www.bilibili.com/video/' + bvid + '/').read().decode('utf-8')
             data = json.JSONDecoder().raw_decode(raw.split('window.__INITIAL_STATE__=', 1)[1])[0]['videoData']
-            (OUT / (bvid + '.page.json')).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
+            (RAW / (bvid + '.page.json')).write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding='utf-8')
             add(data)
             season = data.get('ugc_season', {})
             if season:

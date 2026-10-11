@@ -1,0 +1,51 @@
+{
+  "method": "Built-in image_gen transparent background editing",
+  "prompt": "Remove only pale background and shadow. Preserve all mechanical parts, viewpoint, colors and proportions; keep silver and white metal opaque; include detached exploded parts. No redesign or invented details.",
+  "images": [
+    {
+      "original": "../../inputs/site/engineer-full.webp",
+      "cutout": "engineer-full.png",
+      "previous_original": "../../img/engineer-full.webp"
+    },
+    {
+      "original": "../../generated/l4-assembled.webp",
+      "cutout": "l4-assembled.png",
+      "previous_original": "../../gen/l4-assembled.webp"
+    },
+    {
+      "original": "../../inputs/site/air-pump.webp",
+      "cutout": "air-pump.png",
+      "previous_original": "../../img/air-pump.webp"
+    },
+    {
+      "original": "../../inputs/site/eng-wheel.webp",
+      "cutout": "eng-wheel.png",
+      "previous_original": "../../img/eng-wheel.webp"
+    },
+    {
+      "original": "../../../source/historical/controller.webp",
+      "cutout": "controller.png",
+      "previous_original": "../../img/controller.webp"
+    },
+    {
+      "original": "../../inputs/site/hero-bot.webp",
+      "cutout": "hero-bot.png",
+      "previous_original": "../../img/hero-bot.webp"
+    },
+    {
+      "original": "../../inputs/site/hero-chassis-adaptive.webp",
+      "cutout": "hero-chassis-adaptive.png",
+      "previous_original": "../../img/hero-chassis-adaptive.webp"
+    },
+    {
+      "original": "../../inputs/site/hero-launcher-2024.png",
+      "cutout": "hero-launcher-2024.png",
+      "previous_original": "../../img/hero-launcher-2024.png"
+    },
+    {
+      "original": "../../inputs/site/feeder-large.webp",
+      "cutout": "feeder-large.png",
+      "previous_original": "../../img/feeder-large.webp"
+    }
+  ]
+}

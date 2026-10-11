@@ -11,7 +11,8 @@
 
 ## 目录与构建
 
-- `materials/` 是唯一素材总目录：`images/` 存图片，`models/` 存 3D 模型，`videos/` 存视频，`fonts/` 存字体，`documents/` 存事实资料和审计报告。
+- `materials/` 是唯一素材总目录，各类 `images/`、`models/`、`videos/`、`fonts/`、`documents/` 下统一用 `source/` 保存收到的原始输入、`derived/` 保存提取、剪辑、编辑和生成的二级材料。CAD 原生文件在外部只读目录，本仓库的 CAD 导出与截图均归二级材料。
+- 整理素材时先核对页面引用、加工依赖和来源证据，再清理未使用的二级材料；路径、来源与删除记录见 `materials/README.md`、`materials/cleanup.json`。运行 `npm run materials:inventory` 刷新清单。
 - `src/` 只放网页源码。全部中英文文案保存在 `src/data/content.ts` 的 `{ zh, en }` 字段中；页面组件从数据文件取文案。
 - `npm run dev` 启动开发服务器；`npm run build` 准备静态资源、生成中文字体子集并构建网页；`npm run preview` 预览当前构建。
 - 当前网页输出到 `publish/current/`。每次成功构建自动在 `publish/history/` 保存独立版本。历史目录、版本标识和保存方式见 `publish/VERSIONS.md`、`publish/versions.json`。
@@ -26,15 +27,16 @@
 - 图号、章节字母、机器人编号和技能 BOM 表都应表达真实信息。白底 CAD 图片沿用 `--plate` 与 `mix-blend-mode: multiply`。
 - 工程页顶部保留工程标题和整车 3D；B 站介绍视频位于标题区下方、A/B 章节之前；工程页的 5.8 s 成绩只展示一次。
 - 预研部分统一使用图片。工程腕部视图支持爆炸、恢复和旋转，电机保持原装配状态，不拆解电机。
-- 网站事实须能追溯至 `materials/documents/CUIChuhanCV.md`、历史网站、官方转播或用户说明。新增且未经确认的事实标明待确认。
+- 网站事实须能追溯至 `materials/documents/source/CUIChuhanCV.md`、历史网站、官方转播或用户说明。新增且未经确认的事实标明待确认。
 
 ## 3D 与原始文件
 
-- 网站模型位于 `materials/models/web/`，Draco 解码器在其 `draco/` 子目录；发布时仍使用 `models/` 网址。
+- 网站模型位于 `materials/models/derived/web/`，Draco 解码器在其 `draco/` 子目录；发布时仍使用 `models/` 网址。
 - `arm.glb` 的节点为 `link_base…link_6`，各原点位于关节轴，旋转轴记录在 `extras.web_axis`；单位姿态为 CAD 原始折叠姿态。相关交互在 `src/scripts/arm-scene.ts`。
-- 当前腕部爆炸图使用 `l4.glb`、`l4.json` 和 `src/scripts/wrist-scene.ts`；旧的 `wrist.glb`、`wrist.json` 保留为历史素材。
-- 运动学推导、源文件映射和审计报告保存在 `materials/documents/audits/`；原始导出、Blender 工程、URDF 和网格位于 `materials/models/source/`。历史报告中的旧路径可通过迁移清单定位。
+- 当前腕部爆炸图使用 `l4.glb`、`l4.json` 和 `src/scripts/wrist-scene.ts`；旧腕部素材随独立历史网站版本保存。
+- 运动学推导、源文件映射和审计报告保存在 `materials/documents/derived/audits/`；当前模型处理需要的 CAD 导出、Blender 工程、URDF 和网格位于 `materials/models/derived/inputs/`。历史报告中的旧路径通过迁移清单和 `materials/cleanup.json` 定位。
 - `D:\RM2025` 和 OneDrive 中的源 CAD 对所有工具都只读。只在本仓库的派生文件上加工。
-- 视频在 `materials/videos/`，封面在 `materials/images/video-posters/`；保留素材来源记录，重新剪辑沿用 `scripts/cut-record.ps1`。
+- 视频原片在 `materials/videos/source/`，当前剪辑及其输入在 `materials/videos/derived/`，封面在 `materials/images/derived/video-posters/`；保留素材来源记录，重新剪辑沿用 `scripts/cut-record.ps1`。
 
 `CLAUDE.md` 是指向本文件的相对软链接；项目规则只维护这一份。
+~

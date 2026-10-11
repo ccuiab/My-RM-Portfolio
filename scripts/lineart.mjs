@@ -1,5 +1,5 @@
 // Generate amber edge-line versions of photos/renders for the "wireframe scan" reveal.
-// Usage: node scripts/lineart.mjs → writes materials/images/generated/<name>-lines.webp
+// Usage: node scripts/lineart.mjs → writes materials/images/derived/generated/<name>-lines.webp
 import sharp from 'sharp';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -10,15 +10,14 @@ const AMBER = { r: 242, g: 181, b: 58 };
 
 // blur suppresses texture noise; gain/cut set how many edges survive (tuned by eye)
 const jobs = [
-  { src: 'eng-reach.webp', width: 1920, blur: 0.9, gain: 7, cut: 9 },
-  { src: 'hero-bot.webp', width: 1920, blur: 0.6, gain: 6, cut: 10 },
-  { src: 'launcher-dual-6.png', width: 1200, blur: 0.6, gain: 6, cut: 10 },
+  { src: 'source/historical/eng-reach.webp', width: 1920, blur: 0.9, gain: 7, cut: 9 },
+  { src: 'derived/inputs/site/hero-bot.webp', width: 1920, blur: 0.6, gain: 6, cut: 10 },
 ];
 
-await mkdir(join(root, 'materials', 'images', 'generated'), { recursive: true });
+await mkdir(join(root, 'materials', 'images', 'derived', 'generated'), { recursive: true });
 
 for (const job of jobs) {
-  const input = join(root, 'materials', 'images', 'site', job.src);
+  const input = join(root, 'materials', 'images', job.src);
   const { data, info } = await sharp(input)
     .flatten({ background: '#ffffff' })
     .resize({ width: job.width, withoutEnlargement: true })
@@ -31,7 +30,7 @@ for (const job of jobs) {
     .raw()
     .toBuffer({ resolveWithObject: true });
 
-  const out = join(root, 'materials', 'images', 'generated', job.src.replace(/\.[a-z]+$/, '') + '-lines.webp');
+  const out = join(root, 'materials', 'images', 'derived', 'generated', job.src.split('/').at(-1).replace(/\.[a-z]+$/, '') + '-lines.webp');
   await sharp({ create: { width: info.width, height: info.height, channels: 3, background: AMBER } })
     .joinChannel(data, { raw: { width: info.width, height: info.height, channels: 1 } })
     .webp({ quality: 82, alphaQuality: 90 })

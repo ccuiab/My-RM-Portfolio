@@ -13,7 +13,7 @@ const { lang, compact = false } = Astro.props;
 const clip = 'video/exchange-58.mp4';
 const poster = 'video/exchange-58.jpg';
 // builds run from the project root; import.meta.url points into the bundle, not src/
-const hasClip = existsSync(join(process.cwd(), 'materials', 'videos', 'web', 'exchange-58.mp4'));
+const hasClip = existsSync(join(process.cwd(), 'materials', 'videos', 'derived', 'web', 'exchange-58.mp4'));
 const base = import.meta.env.BASE_URL;
 ---
 <section class:list={['record', { compact }]} data-record aria-labelledby="record-title">

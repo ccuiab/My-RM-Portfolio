@@ -11,7 +11,7 @@
   "downloadQuality": "保留公开可用的最佳音视频流，合并为 MP4；具体编码、分辨率、时长与 SHA256 逐文件记录。",
   "identification": {
     "allStarEngineer": "香港科技大学 ENTERPRIZE 工程属于创新者 INNOVATOR；全明星工程视角为 R2。",
-    "evidence": "materials/images/site/eng-allstar.webp：官方全明星工程卡片标有 INNOVATOR。"
+    "evidence": "materials/images/source/historical/eng-allstar.webp：官方全明星工程卡片标有 INNOVATOR。"
   },
   "sources": [
     {

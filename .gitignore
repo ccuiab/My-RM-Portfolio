@@ -21,11 +21,15 @@ src/pages/dev-*/
 # Centralized local material archives and generated publication files
 .astro-public/
 .archive-work/
-materials/images/archive/
-materials/models/source/
+materials/images/source/bilibili/
+materials/images/source/official-article/
+materials/images/derived/inputs/cad-captures/
+materials/models/derived/inputs/
 materials/videos/source/
-materials/documents/audits/
-materials/documents/pdf/
+materials/videos/derived/inputs/
+materials/documents/source/bilibili/
+materials/documents/source/photos/
+materials/documents/derived/audits/
 scripts/asset-pipeline-archive/
 publish/current/
 publish/history/

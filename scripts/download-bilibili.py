@@ -15,9 +15,10 @@ from yt_dlp.extractor.bilibili import BilibiliBaseIE
 from yt_dlp.networking import Request
 
 ROOT = Path(__file__).resolve().parents[1]
-AUDITS = ROOT / 'materials/documents/audits/bilibili'
+AUDITS = ROOT / 'materials/documents/derived/audits/bilibili'
+METADATA = ROOT / 'materials/documents/source/bilibili/metadata'
 VIDEOS = ROOT / 'materials/videos/source/bilibili'
-COVERS = ROOT / 'materials/images/archive/bilibili/covers'
+COVERS = ROOT / 'materials/images/source/bilibili/covers'
 parser = argparse.ArgumentParser()
 parser.add_argument('--group')
 parser.add_argument('--jobs', type=int, default=2)
@@ -34,7 +35,7 @@ if not FFMPEG.is_file() or not FFPROBE.is_file():
     parser.error('找不到 ffmpeg / ffprobe，请用 --ffmpeg 指定 ffmpeg.exe')
 plan_path = args.plan or AUDITS / 'download-plan.json'
 if not plan_path.exists():
-    plan_path = ROOT / 'materials/documents/bilibili-video-catalog.json'
+    plan_path = ROOT / 'materials/documents/derived/bilibili-video-catalog.json'
 plan = json.loads(plan_path.read_text(encoding='utf-8'))
 tasks = [t for t in plan['videos'] if not args.group or t['group'] == args.group]
 for task in tasks:
@@ -151,8 +152,8 @@ def download(task):
         print('Starting ' + key + ' ' + task['title'], flush=True)
         with yt_dlp.YoutubeDL({'quiet': True, 'no_warnings': True, 'noplaylist': True, 'socket_timeout': 20, 'format': 'bestvideo+bestaudio/best'}) as ydl:
             info = ydl.extract_info(url, download=False)
-        (AUDITS / 'metadata').mkdir(parents=True, exist_ok=True)
-        (AUDITS / 'metadata' / (key + '.info.json')).write_text(json.dumps(info, ensure_ascii=False, indent=2), encoding='utf-8')
+        METADATA.mkdir(parents=True, exist_ok=True)
+        (METADATA / (key + '.info.json')).write_text(json.dumps(info, ensure_ascii=False, indent=2), encoding='utf-8')
         name = key + ' - ' + safe_name(task['title']) + '.mp4'
         destination = output_dir / name
         work = VIDEOS / '.download-parts' / key

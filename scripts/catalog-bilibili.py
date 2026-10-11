@@ -8,8 +8,8 @@ from pathlib import Path
 from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
-AUDITS = ROOT / 'materials/documents/audits/bilibili'
-DOCUMENTS = ROOT / 'materials/documents'
+AUDITS = ROOT / 'materials/documents/derived/audits/bilibili'
+DOCUMENTS = ROOT / 'materials/documents/derived'
 VIDEOS = ROOT / 'materials/videos/source/bilibili'
 FFPROBE = Path('C:/ffmpeg/bin/ffprobe.exe')
 plan_path = AUDITS / 'download-plan.json'
@@ -107,7 +107,7 @@ catalog = {
     'downloadQuality': '保留公开可用的最佳音视频流，合并为 MP4；具体编码、分辨率、时长与 SHA256 逐文件记录。',
     'identification': {
         'allStarEngineer': '香港科技大学 ENTERPRIZE 工程属于创新者 INNOVATOR；全明星工程视角为 R2。',
-        'evidence': 'materials/images/site/eng-allstar.webp：官方全明星工程卡片标有 INNOVATOR。',
+        'evidence': 'materials/images/source/historical/eng-allstar.webp：官方全明星工程卡片标有 INNOVATOR。',
     },
     'sources': [
         {'name': 'RoboMaster 机甲大师官方', 'url': 'https://space.bilibili.com/20554233/'},
@@ -141,7 +141,7 @@ for group, label in names.items():
     for record in subset:
         video_stream = next(s for s in record['streams'] if s['codec_type'] == 'video')
         minutes, seconds = divmod(round(record['duration']), 60)
-        local_link = quote('../' + record['file'].removeprefix('materials/'), safe='/')
+        local_link = quote('../../' + record['file'].removeprefix('materials/'), safe='/')
         title = record['title'].replace('|', '｜')
         label = record.get('viewLabel', '')
         if label:
@@ -150,10 +150,10 @@ for group, label in names.items():
     lines.append('')
 lines += [
     '## 校验与再次下载', '',
-    '机器可读清单 `materials/documents/bilibili-video-catalog.json` 记录原链接、UP 主、分 P、文件大小、音视频编码、时长和 SHA256。', '',
-    '本地审计位于 `materials/documents/audits/bilibili/`，封面在 `materials/images/archive/bilibili/covers/`。原始媒体和包含临时下载地址的审计文件不纳入 Git。', '',
+    '机器可读清单 `materials/documents/derived/bilibili-video-catalog.json` 记录原链接、UP 主、分 P、文件大小、音视频编码、时长和 SHA256。', '',
+    '本地审计位于 `materials/documents/derived/audits/bilibili/`，封面在 `materials/images/source/bilibili/covers/`。原始媒体和包含临时下载地址的审计文件不纳入 Git。', '',
     '使用 `.venv/Scripts/python.exe scripts/download-bilibili.py` 可按已审核清单断点续传；默认使用 `C:/ffmpeg/bin/ffmpeg.exe` 合并音视频。原片下载完成后再运行 `scripts/catalog-bilibili.py` 更新校验和索引。', '',
 ]
 (DOCUMENTS / 'bilibili-video-catalog.md').write_text('\n'.join(lines), encoding='utf-8')
-(VIDEOS / 'README.md').write_text('# 2025 工程视频素材\n\n完整清单与来源说明见 `materials/documents/bilibili-video-catalog.md`。\n\n' + '\n'.join(f'- `{group}/`：{label}' for group, label in names.items()) + '\n', encoding='utf-8')
+(VIDEOS / 'README.md').write_text('# 2025 工程视频素材\n\n完整清单与来源说明见 `materials/documents/derived/bilibili-video-catalog.md`。\n\n' + '\n'.join(f'- `{group}/`：{label}' for group, label in names.items()) + '\n', encoding='utf-8')
 print(f"Cataloged {len(records)} videos, {catalog['summary']['bytes']/1024**3:.2f} GiB.")
