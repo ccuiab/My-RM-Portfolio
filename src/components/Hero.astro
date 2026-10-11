@@ -19,13 +19,12 @@ const { lang } = Astro.props;
         <span class="name-latin latin">{person.nameEn}</span>
       </h1>
       <p class="tagline">{t(person.tagline, lang)}</p>
-      <p class="subline">{t(person.subline, lang)}</p>
       <div class="actions">
         <a class="cta" href={`${href(lang)}#projects`}>{t(pageCopy.homeProjects, lang)}</a>
         <a class="secondary" href={href(lang, 'engineer')}>{t(pageCopy.homeEngineer, lang)}</a>
       </div>
     </div>
-    <div class="hero-footer"><span class="latin">{person.badge}</span><span>{t(person.subline, lang)}</span></div>
+    <div class="hero-footer"><span class="latin">{person.badge}</span></div>
   </div>
 </section>
 
@@ -60,7 +59,6 @@ const { lang } = Astro.props;
   .name-latin { font-size: clamp(1.3rem, 2vw, 2rem); color: var(--ink-2); letter-spacing: -.025em; }
   .tagline { font-family: var(--f-cjk); font-size: clamp(1.65rem, 2.2vw, 2.25rem); line-height: 1.35; margin-top: .5rem; max-width: 16em; }
   :lang(en) .tagline { font-family: var(--f-latin); font-weight: 700; letter-spacing: -.01em; }
-  .subline { display: none; }
   .hero-footer { position: absolute; bottom: 1.6rem; left: max(var(--gutter), calc((100vw - var(--maxw)) / 2 + var(--gutter))); right: max(var(--gutter), calc((100vw - var(--maxw)) / 2 + var(--gutter))); display: flex; justify-content: space-between; gap: 2rem; padding-top: 1rem; border-top: 1px solid rgba(231,238,246,.18); color: var(--ink-3); font-size: var(--t-xs); }
   .hero-footer .latin { color: var(--ink-2); }
   .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 1rem 1.5rem; margin-top: 1.3rem; }

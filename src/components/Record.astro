@@ -1,6 +1,6 @@
 ---
 // Continuous real-time operator footage, then the official WR result.
-// 5.8 s is the broadcast result, not a stopwatch inferred from camera cuts.
+// The displayed result comes from the official broadcast record.
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { Image } from 'astro:assets';
@@ -16,7 +16,7 @@ const poster = 'video/exchange-58.jpg';
 const hasClip = existsSync(join(process.cwd(), 'materials', 'videos', 'derived', 'web', 'exchange-58.mp4'));
 const base = import.meta.env.BASE_URL;
 ---
-<section class:list={['record', { compact }]} data-record aria-labelledby="record-title">
+<section class:list={['record', { compact }]} data-record data-record-duration={record.value} aria-labelledby="record-title">
   <div class="wrap grid">
     <div class="screen panel">
       {hasClip ? (
@@ -85,7 +85,7 @@ const base = import.meta.env.BASE_URL;
       if (duration && Number.isFinite(video.duration)) duration.textContent = video.duration.toFixed(1);
       toggle.textContent = video.paused ? toggle.dataset.play! : toggle.dataset.pause!;
       view.textContent = video.currentTime >= 17.2 ? view.dataset.broadcast! : view.dataset.pov!;
-      const exchange = exchangeAt(video.currentTime);
+      const exchange = exchangeAt(video.currentTime, Number(root.dataset.recordDuration));
       if (exchangeTime) exchangeTime.textContent = exchange.seconds.toFixed(1);
 
     };

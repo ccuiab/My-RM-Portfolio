@@ -12,7 +12,7 @@ const hasModel = existsSync(join(process.cwd(), 'materials', 'models', 'derived'
 const L = sceneCopy.wristExplode;
 ---
 <section class="explode" data-explode data-model={hasModel ? '1' : ''} data-lang={lang} data-state="assembled">
-  <header class="intro"><h3>{t(L.title, lang)}</h3><p>{t(L.intro, lang)}</p></header>
+  <header class="intro"><h3>{t(L.title, lang)}</h3></header>
   <div class="view">
     <div class="still cutout"><Image src={fallback} alt={t(L.alt, lang)} widths={[900, 1600, 2400]} sizes="100vw" /></div>
     <canvas class="three" tabindex="-1" role="img" aria-label={t(L.hint, lang)}></canvas>

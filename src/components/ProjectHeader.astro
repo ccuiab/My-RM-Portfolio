@@ -1,6 +1,5 @@
 ---
 // Project page opener: big robot ID plate, title, lede, and a drawing title block.
-import type { ImageMetadata } from 'astro';
 import ModuleMedia from './ModuleMedia.astro';
 import { Image } from 'astro:assets';
 import { t, type Lang, type T } from '../data/i18n';
@@ -12,30 +11,29 @@ interface Props {
   drawing: string;
   robotNo?: string | null;
   title: T;
-  lede: T;
-  cover: Pic;
+  lede?: T;
+  cover?: Pic;
   titleBlock?: TitleRow[];
   stats?: Stat[];
   statsSource?: T;
-  lines?: ImageMetadata;
 }
-const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [], statsSource, lines } = Astro.props;
+const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [], statsSource } = Astro.props;
 ---
 <header class="ph" data-ph>
-  <div class="wrap ph-grid">
+    <div class:list={['wrap', 'ph-grid', { solo: !cover }]}>
     <div class="ph-copy">
       <span class="dwg num">{drawing}</span>
       <h1 class="display title">{t(title, lang)}</h1>
-      <p class="lede">{t(lede, lang)}</p>
+      {lede && <p class="lede">{t(lede, lang)}</p>}
     </div>
 
-    <div class="ph-visual">
+    {cover && <div class="ph-visual">
       {cover.model ? <ModuleMedia pic={cover} lang={lang} /> : (
         <figure class:list={['ph-pic', { light: cover.light, cutout: cover.cutout }]}>
           <Image src={cover.src} alt={t(cover.alt, lang)} widths={[720, 1200, 1620, 2400]} sizes="(max-width: 900px) 100vw, 58vw" loading="eager" />
         </figure>
       )}
-    </div>
+    </div>}
   </div>
 
   {titleBlock.length > 0 && (
@@ -73,6 +71,8 @@ const { lang, drawing, robotNo, title, lede, cover, titleBlock = [], stats = [],
     gap: clamp(1.5rem, 3vw, 3rem);
     align-items: center;
   }
+  .ph-grid.solo { grid-template-columns: minmax(0, 1fr); }
+  .ph-grid.solo .ph-copy { max-width: 64rem; }
   .ph-copy { display: grid; gap: 1.8rem; padding: 2rem 0; position: relative; z-index: 1; }
   .dwg { font-size: var(--t-sm); color: var(--amber); letter-spacing: .02em; display: flex; align-items: center; gap: .9rem; }
   .dwg::before { content: ''; width: 2.4rem; height: 3px; background: var(--amber); }

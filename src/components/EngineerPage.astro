@@ -4,12 +4,12 @@ import ProjectHeader from './ProjectHeader.astro';
 import Chapter from './Chapter.astro';
 import ArmUnfold from './ArmUnfold.astro';
 import BilibiliVideo from './BilibiliVideo.astro';
+import EasterEggs from './EasterEggs.astro';
 import WristExplode from './WristExplode.astro';
 import Lightbox from './Lightbox.astro';
 import NextSheet from './NextSheet.astro';
-import { engineer, hero, sceneCopy, pageCopy } from '../data/content';
+import { engineer, hero, sceneCopy } from '../data/content';
 import { t, type Lang } from '../data/i18n';
-import lines from '../../materials/images/derived/generated/eng-reach-lines.webp';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
@@ -23,7 +23,6 @@ const p = engineer;
     title={p.title}
     lede={p.lede}
     cover={{ ...p.assembly, model: 'engineer.glb' }}
-    lines={lines}
     titleBlock={p.titleBlock}
     stats={p.stats}
     statsSource={p.statsSource}
@@ -45,6 +44,8 @@ const p = engineer;
       {c.id === 'arm' && <WristExplode lang={lang} slot="wide" />}
     </Chapter>
   ))}
+
+  <EasterEggs lang={lang} />
 
   <section class="wrap links" aria-label={t(sceneCopy.engineer.relatedLinks, lang)}>
     <ul>

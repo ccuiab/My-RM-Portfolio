@@ -26,7 +26,7 @@ const sheets = [engineer, hero, research].map((p, i) => ({
           <div class="block">
             <span class="dwg num">{p.drawing}</span>
             <h3 class="display name">{t(p.short, lang)}</h3>
-            <p class="lede">{t(p.lede, lang)}</p>
+            <p class="tag">{t(p.shortTag, lang)}</p>
             <div class="figure">
               <span class="num fig">{figure}</span>
               <span class="fig-label">{t(figureLabel, lang)}</span>
@@ -56,7 +56,7 @@ const sheets = [engineer, hero, research].map((p, i) => ({
   .block { display: grid; gap: .85rem; padding: .5rem 0; }
   .dwg { font-size: var(--t-xs); color: var(--amber); }
   .name { font-size: clamp(2rem, 3vw, 3rem); line-height: 1.12; max-width: 17ch; }
-  .lede { color: var(--ink-2); font-size: var(--t-sm); max-width: 43ch; line-height: 1.75; }
+  .tag { color: var(--ink-2); font-size: var(--t-sm); max-width: 43ch; line-height: 1.5; }
   .figure { display: flex; align-items: center; gap: 1rem; padding-top: .85rem; border-top: 1px solid var(--rule); }
   .fig { font-size: clamp(1.5rem, 2vw, 2rem); color: var(--ink); white-space: nowrap; }
   .fig-label { font-size: var(--t-xs); color: var(--ink-3); max-width: 19ch; }
@@ -69,7 +69,7 @@ const sheets = [engineer, hero, research].map((p, i) => ({
     .sheet { padding: 1.35rem 0; }
     .block { gap: 1.1rem; padding: 0; }
     .name { max-width: none; font-size: clamp(2rem, 6vw, 2.6rem); }
-    .lede { max-width: 60ch; }
+    .tag { max-width: 60ch; }
     .figure { padding-top: 1.2rem; }
     .heading { margin-bottom: 2rem; }
   }
