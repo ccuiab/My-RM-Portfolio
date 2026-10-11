@@ -19,7 +19,6 @@ const p = engineer;
   <ProjectHeader
     lang={lang}
     drawing={p.drawing}
-    robotNo={p.robotNo}
     title={p.title}
     lede={p.lede}
     cover={{ ...p.assembly, model: 'engineer.glb' }}
@@ -39,7 +38,12 @@ const p = engineer;
   </section>
 
   {p.chapters.map((c) => (
-    <Chapter lang={lang} chapter={c} layout={c.id === 'layout' || c.id === 'arm' ? 'expanded' : 'standard'}>
+    <Chapter
+      lang={lang}
+      chapter={c}
+      layout={c.id === 'layout' || c.id === 'arm' ? 'expanded' : 'standard'}
+      hasWideMedia={c.scene === 'arm-unfold' || c.id === 'arm'}
+    >
       {c.scene === 'arm-unfold' && <ArmExchange lang={lang} slot="wide" />}
       {c.id === 'arm' && <ArmExplode lang={lang} slot="wide" />}
     </Chapter>
@@ -58,9 +62,9 @@ const p = engineer;
 </Base>
 
 <style>
-  .video-intro { padding-top: clamp(2.5rem, 5vw, 4rem); }
+  .video-intro { padding-top: 3rem; }
   .video-intro :global(.bilibili-video) { margin: 0; }
-  .links { padding-top: 5rem; }
+  .links { padding-top: 2rem; }
   .links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; }
   .links a { color: var(--amber); text-underline-offset: 4px; }
 </style>

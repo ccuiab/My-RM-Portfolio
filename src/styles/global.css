@@ -45,6 +45,9 @@
   --gutter: clamp(1.25rem, 4vw, 3.5rem);
   --maxw: 1280px;
   --chamfer: 14px;
+  --section-space: clamp(3rem, 5vw, 4.5rem);
+  --column-gap: clamp(1.5rem, 3.4vw, 3rem);
+  --heading-space: 1.75rem;
 }
 
 *,
@@ -68,6 +71,7 @@ body {
 }
 
 img { max-width: 100%; height: auto; display: block; }
+video, iframe { max-width: 100%; }
 a { color: inherit; }
 ::selection { background: var(--amber); color: var(--ground); }
 

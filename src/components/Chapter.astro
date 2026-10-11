@@ -6,12 +6,12 @@ import { t, ui, type Lang } from '../data/i18n';
 import type { Chapter } from '../data/content';
 import ModuleMedia from './ModuleMedia.astro';
 
-interface Props { lang: Lang; chapter: Chapter; layout?: 'standard' | 'expanded' }
-const { lang, chapter: c, layout = 'standard' } = Astro.props;
+interface Props { lang: Lang; chapter: Chapter; layout?: 'standard' | 'expanded'; hasWideMedia?: boolean }
+const { lang, chapter: c, layout = 'standard', hasWideMedia = Astro.slots.has('wide') } = Astro.props;
 const pics = c.pics ?? [];
 ---
 <section class="ch" id={c.id} aria-labelledby={`${c.id}-title`}>
-  <div class:list={["wrap ch-grid", { "with-media": pics.length > 0 || Astro.slots.has("wide"), expanded: layout === 'expanded' }]} >
+  <div class:list={["wrap ch-grid", { "with-media": pics.length > 0 || hasWideMedia, expanded: layout === 'expanded' }]} >
     <div class="ch-copy">
     <div class="ch-head">
       <span class="mark" aria-hidden="true">{c.mark}</span>
@@ -42,8 +42,8 @@ const pics = c.pics ?? [];
     </div>
     </div>
 
-  <div class="ch-media">
-  {Astro.slots.has('wide') && <div class="wide"><slot name="wide" /></div>}
+  {(pics.length > 0 || hasWideMedia) && <div class="ch-media">
+  {hasWideMedia && <div class="wide"><slot name="wide" /></div>}
 
   {pics.length > 0 && (
     <div>
@@ -61,61 +61,61 @@ const pics = c.pics ?? [];
       </ul>
     </div>
   )}
-  </div>
+  </div>}
   </div>
   {Astro.slots.has('after-media') && <div class="wrap wide"><slot name="after-media" /></div>}
 </section>
 
 <style>
-  .ch { padding-top: clamp(3.5rem, 6vw, 5.5rem); scroll-margin-top: 80px; }
+  .ch { padding-top: var(--section-space); scroll-margin-top: 96px; }
   .ch-grid {
     display: grid;
     grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
     align-items: start;
-    gap: clamp(1.5rem, 4vw, 3.5rem);
-    padding-top: 2rem;
+    gap: var(--column-gap);
+    padding-top: var(--heading-space);
     position: relative;
   }
-  .ch-copy { display: grid; gap: 1.5rem; min-width: 0; }
-  .ch-grid.expanded { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
+  .ch-copy { display: grid; gap: 1.25rem; min-width: 0; }
+  .ch-grid.expanded { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
   .expanded .ch-copy { display: contents; }
   .expanded .ch-head { grid-column: 1 / -1; align-items: baseline; }
-  .expanded .ch-body { grid-column: 1; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 1.5rem clamp(1.5rem, 4vw, 3.5rem); }
+  .expanded .ch-body { grid-column: 1; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 1.25rem var(--column-gap); }
   .expanded .ch-lede, .expanded .specs { grid-column: 1; }
   .expanded .bullets { grid-column: 2; grid-row: 1 / span 2; }
   .expanded .ch-media { grid-column: 1; }
   .ch-media { min-width: 0; display: grid; gap: 1rem; }
   .ch-grid:not(.with-media) { grid-template-columns: 1fr; }
-  .ch-grid:not(.with-media) .ch-copy { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 3rem; }
+  .ch-grid:not(.with-media) .ch-copy { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: var(--column-gap); }
   .ch-media .wide, .ch-media .pics { margin-top: 0; }
-  .ch-media :global(.media-view) { height: clamp(300px, 29vw, 410px); }
+  .ch-media :global(.media-view) { height: clamp(300px, 25vw, 360px); }
   .ch-grid::before { content: ''; position: absolute; top: 0; left: var(--gutter); right: var(--gutter); height: 1px; background: var(--rule); }
   .ch-head {
     position: static;
-    top: 90px;
     align-self: start;
     display: grid;
     grid-template-columns: 2.5rem minmax(0, 1fr);
     gap: 1rem;
+    align-items: baseline;
   }
   .mark {
     display: block;
     font-family: var(--f-latin);
     font-weight: 700;
     font-size: 2.4rem;
-    line-height: .85;
+    line-height: 1;
     letter-spacing: -.05em;
     color: var(--amber);
   }
   .ch-title { font-size: clamp(1.9rem, 2.6vw, 2.7rem); line-height: 1.08; text-wrap: balance; }
-  .ch-body { display: grid; gap: 1.2rem; padding-top: .15rem; }
+  .ch-body { display: grid; gap: 1.1rem; }
   .ch-lede { font-size: clamp(1.1rem, 1.4vw, 1.3rem); line-height: 1.65; color: var(--ink); max-width: 42ch; }
 
   .specs {
     display: flex;
     flex-wrap: wrap;
     margin: 0;
-    gap: 1.25rem 2.5rem;
+    gap: 1.25rem 2rem;
   }
   .specs div { padding: 0; }
   .specs dt { font-size: var(--t-xs); color: var(--ink-3); }
@@ -146,7 +146,7 @@ const pics = c.pics ?? [];
     background: var(--amber);
   }
 
-  .wide { margin-top: 1.75rem; display: grid; gap: 1.5rem; }
+  .wide { margin-top: 1.5rem; display: grid; gap: 1.5rem; }
 
   .pics {
     list-style: none;
@@ -192,7 +192,7 @@ const pics = c.pics ?? [];
   .pic:hover .cap { color: var(--ink); }
 
   @media (max-width: 900px) {
-    .ch-grid, .ch-grid:not(.with-media) .ch-copy { grid-template-columns: 1fr; gap: 1.8rem; }
+    .ch-grid, .ch-grid:not(.with-media) .ch-copy { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
     .ch-head { position: static; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 1.25rem; align-items: start; }
     .mark { font-size: 2.25rem; }
     .pics.n4 { --cols: 2; }
@@ -200,6 +200,7 @@ const pics = c.pics ?? [];
     .pics { gap: 1.5rem; }
     .expanded .ch-body { grid-template-columns: minmax(0, 1fr); }
     .expanded .ch-body > *, .expanded .ch-media { grid-column: 1; grid-row: auto; }
+    .ch { scroll-margin-top: 112px; }
   }
   @media (max-width: 560px) {
     .pics { --cols: 1 !important; }

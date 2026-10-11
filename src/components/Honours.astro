@@ -47,11 +47,11 @@ const { lang } = Astro.props;
   .split {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    gap: clamp(1.5rem, 4vw, 3rem);
-    padding-top: clamp(3rem, 6vw, 5rem);
+    gap: var(--column-gap);
+    padding-top: var(--section-space);
     align-items: start;
   }
-  .heading { font-size: clamp(2.2rem, 4vw, 3.15rem); margin-bottom: 1.4rem; }
+  .heading { font-size: clamp(2.2rem, 4vw, 3.15rem); margin-bottom: var(--heading-space); }
   .honours { display: grid; grid-template-columns: minmax(0, 1fr) minmax(110px, .55fr); gap: 0 1.25rem; }
   .honours .heading { grid-column: 1 / -1; }
   .honours ul {
@@ -61,7 +61,7 @@ const { lang } = Astro.props;
   }
   .honours li {
     display: grid;
-    grid-template-columns: 3.3rem 1fr;
+    grid-template-columns: 3.5rem minmax(0, 1fr);
     gap: .7rem;
     padding: 0.75rem 0;
     border-bottom: 1px solid var(--rule);
@@ -83,7 +83,7 @@ const { lang } = Astro.props;
   .exo li { margin-bottom: 0.4rem; }
   .exo li::marker { color: var(--amber); }
 
-  .about { padding-top: clamp(3rem, 6vw, 5rem); display: grid; grid-template-columns: .7fr 1.3fr; gap: .55rem 3rem; }
+  .about { padding-top: var(--section-space); display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: .55rem var(--column-gap); }
   .about .heading { grid-row: 1 / 4; }
   .about p { color: var(--ink-2); font-size: var(--t-md); }
   .contact { display: flex; flex-wrap: wrap; gap: 0.5rem 2rem; margin-top: 0.8rem; }
