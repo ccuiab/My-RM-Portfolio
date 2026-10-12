@@ -13,7 +13,8 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   renderer.toneMappingExposure = 1.25;
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(30, 1, .008, 8);
-  if (file === 'engineer-pump.glb') camera.up.set(0, 0, 1);
+  const isPump = file === 'engineer-pump.glb';
+  if (isPump) camera.up.set(0, 0, 1);
   const amber = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--amber').trim());
   scene.add(new THREE.HemisphereLight(0xe5ecf5, 0x182438, 2.4));
   const key = new THREE.DirectionalLight(0xffffff, 3.5);
@@ -52,9 +53,22 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   canvas.tabIndex = 0;
   const bounds = new THREE.Box3().setFromObject(model, true);
   const sphere = bounds.getBoundingSphere(new THREE.Sphere());
-  const initialDirection = (file === 'engineer-pump.glb' ? new THREE.Vector3(-1, -1, .65) : new THREE.Vector3(1, .55, 1.6)).normalize();
+  // View the linkage across the transparent pump head, with both ports at right.
+  const initialDirection = (isPump ? new THREE.Vector3(.2, -1, .35) : new THREE.Vector3(1, .55, 1.6)).normalize();
   let radius = sphere.radius * 1.13;
   controls.target.copy(sphere.center);
+  // Spherical uses Y up. Match OrbitControls' Z-up frame for the pump only.
+  const pumpOrbitFrame = new THREE.Quaternion().setFromUnitVectors(camera.up, new THREE.Vector3(0, 1, 0));
+  const pumpWorldFrame = pumpOrbitFrame.clone().invert();
+  const orbitOffset = () => {
+    const offset = camera.position.clone().sub(controls.target);
+    return isPump ? offset.applyQuaternion(pumpOrbitFrame) : offset;
+  };
+  const placeOrbit = (s: THREE.Spherical) => {
+    const offset = new THREE.Vector3().setFromSpherical(s);
+    if (isPump) offset.applyQuaternion(pumpWorldFrame);
+    camera.position.copy(controls.target).add(offset);
+  };
   const direction = initialDirection.clone();
   let fitDistance = 0;
   const corners: { mesh: THREE.Mesh; point: THREE.Vector3 }[] = [];
@@ -176,9 +190,9 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     const movement: Record<string, [number, number]> = { ArrowLeft: [-.1, 0], ArrowRight: [.1, 0], ArrowUp: [0, -.1], ArrowDown: [0, .1] };
     if (!movement[event.key]) return;
     event.preventDefault();
-    const s = new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
+    const s = new THREE.Spherical().setFromVector3(orbitOffset());
     s.theta += movement[event.key][0]; s.phi = THREE.MathUtils.clamp(s.phi + movement[event.key][1], .1, Math.PI - .1);
-    camera.position.copy(controls.target).add(new THREE.Vector3().setFromSpherical(s)); controls.update(); render();
+    placeOrbit(s); controls.update(); render();
   }, options);
 
   return {
@@ -190,13 +204,13 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     },
     setRadius(value: number) { radius = value; fit(); },
     autoOrbit(dt: number, time: number, weight: number) {
-      const s = new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
+      const s = new THREE.Spherical().setFromVector3(orbitOffset());
       s.theta += dt * Math.PI * 2 / 40 * weight;
-      const goal = Math.acos(initialDirection.y) + Math.sin(time * Math.PI * 2 / 24) * THREE.MathUtils.degToRad(8);
+      const goal = Math.acos(isPump ? initialDirection.z : initialDirection.y) + Math.sin(time * Math.PI * 2 / 24) * THREE.MathUtils.degToRad(8);
       s.phi += (goal - s.phi) * (1 - Math.exp(-dt * weight * 1.5));
       // Restore a complete view gradually after a user's close inspection.
       s.radius += (fitDistance - s.radius) * (1 - Math.exp(-dt * weight * 2));
-      camera.position.copy(controls.target).add(new THREE.Vector3().setFromSpherical(s));
+      placeOrbit(s);
       camera.lookAt(controls.target);
     },
     resetView() { camera.position.copy(controls.target).add(initialDirection); fit(true); controls.update(); render(); },
