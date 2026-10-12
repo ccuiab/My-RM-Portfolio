@@ -542,7 +542,7 @@ export const research = {
     stages: [
       {
         title: { zh: 'RM2024 英雄单级发射', en: 'RM2024 Hero, single stage' },
-        body: { zh: '对轴摩擦轮加预加速小轮，是后面所有多级方案的起点。', en: 'Double-supported friction wheels with a pre-acceleration pair: the starting point for every multi-stage design that followed.' },
+        body: { zh: '对轴摩擦轮加预加速小轮，是后面所有多级方案的起点。', en: 'Two double-supported friction wheels plus a small pre-acceleration wheel: the starting point for every multi-stage design that followed.' },
         pic: { src: heroLauncherCore, cutout: true, alt: { zh: 'RM2024 英雄发射机构内部：两个大摩擦轮与一个预加速小轮', en: 'RM2024 Hero launcher core: two large friction wheels and one small pre-acceleration wheel' } },
       },
       {
