@@ -535,7 +535,7 @@ export const research = {
   title: { zh: '2024–2025 技术预研', en: '2024–2025 R&D' },
   short: { zh: '技术预研', en: 'R&D' },
   shortTag: { zh: '发射、供弹与舵轮预研', en: 'Module R&D' },
-  cover: { src: launcher4, cutout: true, alt: { zh: '双级四摩擦轮样机', en: 'Dual-stage four-wheel prototype' } } as Pic,
+  cover: { src: launcher6, cutout: true, alt: { zh: '双级六摩擦轮方案', en: 'Dual-stage six-wheel design' } } as Pic,
   launcher: {
     title: { zh: '发射机构：从单级到双级六摩擦轮', en: 'Launcher: from single-stage to dual-stage six-wheel' },
     stages: [
@@ -557,12 +557,17 @@ export const research = {
     ] as Stage[],
   },
   feeder: {
-    title: { zh: '小弹丸中心供弹：从初版到上车', en: '17 mm centre feed: from first pass to robots' },
+    title: { zh: '供弹：小弹丸中心供弹与大弹丸侧供弹', en: 'Feeding: 17 mm centre feed and large-projectile side feed' },
     stages: [
       {
         title: { zh: '结构预研与迭代上车', en: 'From feed development to robots' },
         body: { zh: '多层预制、整流罩与防剪切优先，迭代后用于多类队内机器人；供弹频率 >25 Hz。', en: 'Multi-layer staging, a fairing and shear protection guide the design. The iterated version feeds multiple robot classes at over 25 Hz.' },
         pic: { src: feederSmall, cutout: true, alt: { zh: '小弹丸中心供弹', en: '17 mm centre feed' } },
+      },
+      {
+        title: { zh: '大弹丸侧供弹', en: 'Large-projectile side feed' },
+        body: { zh: '在队内已有侧供弹方案上优化，针对弹丸尺寸公差做防卡滞结构，用于 RM2024 英雄。', en: 'A refinement of the team’s existing side feed, with anti-jam geometry tuned to projectile size tolerance, used on the RM2024 Hero.' },
+        pic: { src: feederLarge, cutout: true, alt: { zh: '大弹丸侧供弹', en: 'Large-projectile side feed' } },
       },
     ] as Stage[],
     mentor: {
