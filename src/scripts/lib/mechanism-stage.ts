@@ -256,6 +256,11 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       model.updateMatrixWorld(true); camera.updateMatrixWorld(true);
       return swerveAnchors.map(anchor => {
         if (!anchor) return { x: 0, y: 0, visible: false };
+        if (inspection && inspectionBlend > .5) {
+          let selected = false;
+          anchor.part.traverse(child => { if (inspection!.has(child as THREE.Mesh)) selected = true; });
+          if (!selected) return { x: 0, y: 0, visible: false };
+        }
         const point = anchor.part.localToWorld(anchor.point.clone()).project(camera);
         return { x: (point.x + 1) * 50, y: (1 - point.y) * 50, visible: point.z > -1 && point.z < 1 };
       });
@@ -302,7 +307,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       if (groups.length === 2 && (!isSwerve || (transmissions.includes('steering-input') && transmissions.includes('steering-output')))) {
         // Look from the large-gear side, keeping the intact motor behind it.
         const side = groups[1].getWorldPosition(new THREE.Vector3()).sub(groups[0].getWorldPosition(new THREE.Vector3()));
-        side.addScaledVector(camera.up, -side.dot(camera.up)).normalize().addScaledVector(camera.up, .8).normalize();
+        side.addScaledVector(camera.up, -side.dot(camera.up)).normalize().addScaledVector(camera.up, isSwerve ? 2.2 : .8).normalize();
         camera.position.copy(controls.target).add(side);
       }
       fit(true); render();

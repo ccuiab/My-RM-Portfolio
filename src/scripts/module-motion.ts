@@ -181,6 +181,7 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
   const steeringInput = kind === 'swerve' ? parts.find(p => p.object.userData.web_transmission === 'steering-input') : undefined;
   const steeringOutput = kind === 'swerve' ? parts.find(p => p.object.userData.web_transmission === 'steering-output') : undefined;
   const steeringRatio = steeringInput && steeringOutput ? steeringOutput.object.userData.web_gear_teeth / steeringInput.object.userData.web_gear_teeth : 0;
+  if (kind === 'swerve' && (!Number.isFinite(steeringRatio) || steeringRatio <= 0)) throw new Error('Missing CAD steering tooth counts');
   const a = new THREE.Vector3(), b = new THREE.Vector3();
   const project = (point: THREE.Vector3) => {
     const ndc = stage.model.localToWorld(point.clone()).project(stage.camera);
@@ -249,12 +250,7 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
     diagnostics: () => diagnostics,
     annotations() {
       if (kind === 'pump') return ports.map((port: THREE.Vector3) => project(port));
-      return ['steering-input', 'steering-output', 'rail', 'gas-spring', 'drive-input', 'drive-compound', 'drive-output'].map(name => {
-        const part = parts.find(p => p.object.userData.web_transmission === name);
-        if (!part) return { x: 0, y: 0, visible: false };
-        const ndc = new THREE.Box3().setFromObject(part.object).getCenter(new THREE.Vector3()).project(stage.camera);
-        return { x: (ndc.x + 1) * 50, y: (1 - ndc.y) * 50, visible: ndc.z > -1 && ndc.z < 1 };
-      });
+      return stage.swerveAnchors();
     },
   };
 }
