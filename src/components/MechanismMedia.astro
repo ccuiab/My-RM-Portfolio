@@ -29,6 +29,7 @@ const L = sceneCopy[kind];
       <div class="states" role="group" aria-label={t(sceneCopy.swerve.amount, lang)}>
         <button type="button" data-explode-to="0" aria-pressed="true">{t(sceneCopy.swerve.assemble, lang)}</button>
         <button type="button" data-explode-to="1" aria-pressed="false">{t(sceneCopy.swerve.explode, lang)}</button>
+        <button type="button" data-steering-detail aria-pressed="false">{t(sceneCopy.swerve.detail, lang)}</button>
       </div>
       <label class="amount"><span>{t(sceneCopy.swerve.amount, lang)}</span><input type="range" min="0" max="100" step="1" value="0" data-explode-amount /><output data-explode-output>0%</output></label>
     </>}

@@ -11,6 +11,11 @@ export function explosionCycle(time: number) {
   if (t < 4.5) return { amount: 1, phase: 'exploded' };
   return { amount: 1 - ease((t - 4.5) / 1.8), phase: 'closing' };
 }
+/** Bounded, periodic demonstration: closing never unwinds accumulated turns. */
+export function swerveAngles(time: number, explode: number) {
+  const phase = ((time % CYCLE_DURATION) + CYCLE_DURATION) % CYCLE_DURATION / CYCLE_DURATION * TAU;
+  return { roll: Math.sin(phase) * .48 * explode, steer: Math.sin(phase) * .18 * explode };
+}
 /** Invert the eased leg, so an idle resume starts at the user's current amount. */
 export function cycleAtAmount(amount: number, closing: boolean) {
   let lo = 0, hi = 1;
@@ -22,14 +27,18 @@ export function cycleAtAmount(amount: number, closing: boolean) {
   return (closing ? 4.5 : 1.2) + 1.8 * (lo + hi) / 2;
 }
 
-/** Offset slider-crank in the measured CAD plane; the rod length is invariant. */
+/** Wobble piston in the CAD XZ plane. The head's reference centre stays on
+ * the cylinder axis, while the entire piston/rod swings about the bearing. */
 export function sliderCrank(angle: number, origin: THREE.Vector3, big: THREE.Vector3, small: THREE.Vector3) {
   const rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
   const a = big.clone().sub(origin).applyQuaternion(rotation).add(origin);
-  const length = big.distanceTo(small);
-  const dy = small.y - a.y, dz = small.z - a.z;
-  const c = new THREE.Vector3(a.x + Math.sqrt(Math.max(0, length * length - dy * dy - dz * dz)), small.y, small.z);
-  return { big: a, small: c, rodLength: length };
+  const length = Math.hypot(small.x - big.x, small.z - big.z);
+  const dz = small.z - a.z;
+  const c = new THREE.Vector3(a.x + Math.sqrt(Math.max(0, length * length - dz * dz)), small.y, small.z);
+  const rodAngle = Math.atan2(c.z - a.z, c.x - a.x);
+  const referenceAngle = Math.atan2(small.z - big.z, small.x - big.x);
+  return { big: a, small: c, rodLength: big.distanceTo(small), planarLength: length,
+    swing: referenceAngle - rodAngle, rodAngle };
 }
 
 export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve') {
@@ -62,7 +71,7 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
           m.color.lerp(stage.amber, .28); m.emissive.copy(stage.amber); m.emissiveIntensity = .06;
         }
         if (data.web_structure) {
-          m.transparent = true; m.opacity = .36; m.depthWrite = false;
+          m.transparent = true; m.opacity = .36; m.depthWrite = false; m.needsUpdate = true;
         }
       }
     });
@@ -72,7 +81,7 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
     if (!mesh.isMesh) return;
     for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
       material.transparent = true; material.opacity = kind === 'pump' ? .12 : .16; material.depthWrite = false;
-      material.side = THREE.FrontSide;
+      material.side = THREE.FrontSide; material.needsUpdate = true;
     }
   });
   const guided = kind === 'swerve' ? parts.filter(p => p.object.userData.web_guide) : [];
@@ -88,12 +97,13 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
   const origin = crank ? from('web_crank_origin') : new THREE.Vector3();
   const big = crank ? from('web_big_end') : new THREE.Vector3();
   const small = crank ? from('web_small_end') : new THREE.Vector3();
-  const rodDirection = small.clone().sub(big).normalize();
   const rod = parts.find(p => p.motion === 'rod');
-  const piston = parts.find(p => p.motion === 'piston');
+  const bearingInner = parts.find(p => p.motion === 'bearing-inner');
+  const bearingOuter = parts.find(p => p.motion === 'bearing-outer');
   stage.model.updateMatrixWorld(true);
   const localPin = (part: typeof rod, point: THREE.Vector3) => part?.object.worldToLocal(stage.model.localToWorld(point.clone()));
-  const rodBig = localPin(rod, big), rodSmall = localPin(rod, small), pistonSmall = localPin(piston, small);
+  const rodBig = localPin(rod, big), rodSmall = localPin(rod, small);
+  const innerPin = localPin(bearingInner, big), outerPin = localPin(bearingOuter, big);
   // The exporter supplies measured port centres in the same centred web frame.
   const ports: THREE.Vector3[] = shell ? (shell.userData.web_ports ?? []).map((p: number[]) => new THREE.Vector3().fromArray(p)) : [];
   const portAxis = new THREE.Vector3().fromArray(shell?.userData.web_port_axis ?? [1, 0, 0]);
@@ -149,32 +159,34 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
     const ndc = stage.model.localToWorld(point.clone()).project(stage.camera);
     return { x: (ndc.x + 1) * 50, y: (1 - ndc.y) * 50, visible: ndc.z > -1 && ndc.z < 1 };
   };
-  let diagnostics = { stroke: 'intake', inletOpen: true, outletOpen: false, rodError: 0, sliderError: 0, pins: [] as number[][] };
+  let diagnostics = { stroke: 'intake', inletOpen: true, outletOpen: false, rodError: 0, sliderError: 0,
+    bearingError: 0, swing: 0, rodAngle: 0, pins: [] as number[][] };
   return {
     update(time: number, explode: number) {
       const angle = (time * 2.8) % TAU;
+      const swerve = swerveAngles(time, explode);
       const pose = sliderCrank(angle, origin, big, small);
       const next = sliderCrank(angle + .0001, origin, big, small);
       // Positive travel toward the pump head reduces chamber volume.
       const intake = next.small.x < pose.small.x;
       for (const p of parts) {
         p.object.position.copy(p.position); p.object.quaternion.copy(p.quaternion);
-        if (p.object.userData.web_motor_intact) continue;
         p.object.position.addScaledVector(p.offset, explode);
         if (kind === 'swerve') {
-          const value = p.motion === 'roll' ? time * 1.1 * explode : p.motion === 'steer' ? Math.sin(time * .5) * .26 * explode : 0;
+          const value = p.motion === 'roll' ? swerve.roll : p.motion === 'steer' ? swerve.steer :
+            p.motion === 'steering-pinion' ? -swerve.steer * p.object.userData.web_gear_ratio : 0;
           // Axes are expressed in the part parent's frame, not the mesh frame.
           if (value) p.object.quaternion.premultiply(rotation.setFromAxisAngle(p.axis, value));
-        } else if (p.motion === 'crank' || p.motion === 'big-end-bearing') {
+        } else if (p.motion === 'crank' || p.motion === 'bearing-inner') {
           rotation.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
           p.object.position.sub(origin).applyQuaternion(rotation).add(origin);
           p.object.quaternion.premultiply(rotation);
-        } else if (p.motion === 'rod') {
-          swing.setFromUnitVectors(rodDirection, pose.small.clone().sub(pose.big).normalize());
+        } else if (p.motion === 'rod' || p.motion === 'bearing-outer') {
+          // Pure rotation in the crank plane preserves the CAD's axial bearing
+          // offset; a 3D shortest-arc rotation would introduce unwanted twist.
+          swing.setFromAxisAngle(new THREE.Vector3(0, 1, 0), pose.swing);
           p.object.position.sub(big).applyQuaternion(swing).add(pose.big);
           p.object.quaternion.premultiply(swing);
-        } else if (p.motion === 'piston') {
-          p.object.position.add(pose.small.clone().sub(small));
         }
       }
       stage.model.updateMatrixWorld(true);
@@ -198,16 +210,19 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
         part && pin ? stage.model.worldToLocal(part.object.localToWorld(pin.clone())) : fallback;
       const measuredBig = measured(rod, rodBig, pose.big);
       const measuredSmall = measured(rod, rodSmall, pose.small);
-      const measuredPiston = measured(piston, pistonSmall, pose.small);
+      const innerCenter = measured(bearingInner, innerPin, pose.big);
+      const outerCenter = measured(bearingOuter, outerPin, pose.big);
       diagnostics = { stroke: intake ? 'intake' : 'exhaust', inletOpen: intake, outletOpen: !intake,
-        rodError: Math.max(Math.abs(measuredBig.distanceTo(measuredSmall) - pose.rodLength), measuredBig.distanceTo(pose.big), measuredSmall.distanceTo(measuredPiston)),
-        sliderError: Math.hypot(measuredPiston.y - small.y, measuredPiston.z - small.z),
-        pins: [measuredBig.toArray(), measuredPiston.toArray()] };
+        rodError: Math.max(Math.abs(measuredBig.distanceTo(measuredSmall) - pose.rodLength), measuredBig.distanceTo(pose.big), measuredSmall.distanceTo(pose.small)),
+        sliderError: Math.hypot(measuredSmall.y - small.y, measuredSmall.z - small.z),
+        bearingError: Math.max(innerCenter.distanceTo(outerCenter), innerCenter.distanceTo(measuredBig)),
+        swing: pose.swing, rodAngle: pose.rodAngle,
+        pins: [measuredBig.toArray(), measuredSmall.toArray(), innerCenter.toArray(), outerCenter.toArray()] };
     },
     diagnostics: () => diagnostics,
     annotations() {
       if (kind === 'pump') return ports.map((port: THREE.Vector3) => project(port.clone().addScaledVector(portAxis, .031)));
-      return ['drive-input', 'drive-compound', 'drive-output', 'steering-output'].map(name => {
+      return ['drive-input', 'drive-compound', 'drive-output', 'steering-input', 'steering-output'].map(name => {
         const part = parts.find(p => p.object.userData.web_transmission === name);
         if (!part) return { x: 0, y: 0, visible: false };
         const ndc = new THREE.Box3().setFromObject(part.object).getCenter(new THREE.Vector3()).project(stage.camera);

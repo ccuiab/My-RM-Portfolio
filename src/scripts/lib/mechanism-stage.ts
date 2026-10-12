@@ -71,6 +71,10 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   };
   const direction = initialDirection.clone();
   let fitDistance = 0;
+  let zoomFactor = 1;
+  let inspection: Set<THREE.Mesh> | undefined;
+  let inspectionBlend = 0;
+  const inspectionMaterials = new Map<THREE.Material, { opacity: number; transparent: boolean; depthWrite: boolean }>();
   const corners: { mesh: THREE.Mesh; point: THREE.Vector3 }[] = [];
   model.traverse(object => {
     const mesh = object as THREE.Mesh;
@@ -80,30 +84,38 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     for (const x of [min.x, max.x]) for (const y of [min.y, max.y]) for (const z of [min.z, max.z]) corners.push({ mesh, point: new THREE.Vector3(x, y, z) });
   });
   const fit = (reset = false) => {
-    const zoom = reset || !fitDistance ? 1 : camera.position.distanceTo(controls.target) / fitDistance;
+    if (reset) zoomFactor = 1;
     direction.copy(camera.position).sub(controls.target);
     if (!direction.lengthSq()) direction.copy(initialDirection);
     direction.normalize();
     model.updateMatrixWorld(true);
     const points = corners.map(({ mesh, point }) => point.clone().applyMatrix4(mesh.matrixWorld));
     const center = new THREE.Box3().setFromPoints(points).getCenter(new THREE.Vector3());
-    controls.target.copy(center);
     const vertical = THREE.MathUtils.degToRad(camera.fov / 2);
     const horizontal = Math.atan(Math.tan(vertical) * camera.aspect);
     const right = new THREE.Vector3().crossVectors(camera.up, direction).normalize();
     const up = new THREE.Vector3().crossVectors(direction, right).normalize();
-    let distance = .01;
-    // Use occupied part corners at the current explosion amount, rather than
-    // enlarging an empty sphere and cancelling the visible separation.
-    for (const point of points) {
-      const p = point.sub(center).multiplyScalar(radius / sphere.radius);
-      const depth = p.dot(direction);
-      distance = Math.max(distance, depth + Math.abs(p.dot(right)) / (Math.tan(horizontal) * .86), depth + Math.abs(p.dot(up)) / (Math.tan(vertical) * .8));
+    const distanceFor = (occupied: THREE.Vector3[], origin: THREE.Vector3) => {
+      let distance = .01;
+      // Fit occupied corners rather than an unnecessarily large empty sphere.
+      for (const point of occupied) {
+        const p = point.clone().sub(origin).multiplyScalar(radius / sphere.radius);
+        const depth = p.dot(direction);
+        distance = Math.max(distance, depth + Math.abs(p.dot(right)) / (Math.tan(horizontal) * .86), depth + Math.abs(p.dot(up)) / (Math.tan(vertical) * .8));
+      }
+      return distance;
+    };
+    fitDistance = distanceFor(points, center);
+    if (inspection && inspectionBlend > .0001) {
+      const detailPoints = points.filter((_, index) => inspection!.has(corners[index].mesh));
+      const detailCenter = new THREE.Box3().setFromPoints(detailPoints).getCenter(new THREE.Vector3());
+      fitDistance = THREE.MathUtils.lerp(fitDistance, distanceFor(detailPoints, detailCenter), inspectionBlend);
+      center.lerp(detailCenter, inspectionBlend);
     }
-    fitDistance = distance;
+    controls.target.copy(center);
     controls.minDistance = fitDistance * .65;
     controls.maxDistance = fitDistance * 1.65;
-    camera.position.copy(controls.target).addScaledVector(direction, fitDistance * THREE.MathUtils.clamp(zoom, .65, 1.65));
+    camera.position.copy(controls.target).addScaledVector(direction, fitDistance * zoomFactor);
     camera.lookAt(controls.target);
   };
   camera.position.copy(controls.target).add(initialDirection);
@@ -124,6 +136,18 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     }
     meshes.push(mesh);
   });
+  const restoreInspectionMaterials = () => {
+    for (const [material, saved] of inspectionMaterials) { Object.assign(material, saved); material.needsUpdate = true; }
+    inspectionMaterials.clear();
+  };
+  const updateInspectionMaterials = () => {
+    if (inspectionBlend < .0001) { restoreInspectionMaterials(); return; }
+    for (const [material, saved] of inspectionMaterials) {
+      material.opacity = THREE.MathUtils.lerp(saved.opacity, .025, inspectionBlend);
+      if (!material.transparent) { material.transparent = true; material.needsUpdate = true; }
+      material.depthWrite = false;
+    }
+  };
   const provenance = (object: THREE.Object3D) => {
     let current: THREE.Object3D | null = object;
     while (current && !current.userData.source_node_name) current = current.parent;
@@ -141,13 +165,14 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   const updateHover = () => {
     if (dragging) return;
     raycaster.setFromCamera(pointer, camera);
-    const hit = raycaster.intersectObjects(meshes, false)[0]?.object as THREE.Mesh | undefined;
+    const selectable = inspection && inspectionBlend > .5 ? meshes.filter(mesh => inspection!.has(mesh)) : meshes;
+    const hit = raycaster.intersectObjects(selectable, false)[0]?.object as THREE.Mesh | undefined;
     if (hit === hovered) return;
     clearHover();
     if (!hit) return;
     hovered = hit;
     const source = provenance(hit);
-    const partMeshes = source ? meshes.filter(mesh => provenance(mesh) === source) : [hit];
+    const partMeshes = source ? selectable.filter(mesh => provenance(mesh) === source) : [hit];
     for (const mesh of partMeshes) for (const m of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
       const material = m as THREE.MeshStandardMaterial;
       if (!material.emissive) continue;
@@ -157,9 +182,10 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     label.textContent = cleanPartName(source?.split('/').pop() ?? hit.name);
     label.hidden = false;
   };
-  const render = () => {
+  const render = (fitView = true) => {
     if (!canRender()) return;
-    fit();
+    if (fitView) fit();
+    updateInspectionMaterials();
     model.updateMatrixWorld(true);
     updateHover();
     renderer.render(scene, camera);
@@ -172,7 +198,10 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   };
   const resizeObserver = new ResizeObserver(resize);
   resizeObserver.observe(canvas); resize();
-  controls.addEventListener('change', render);
+  controls.addEventListener('change', () => {
+    if (fitDistance) zoomFactor = THREE.MathUtils.clamp(camera.position.distanceTo(controls.target) / fitDistance, .65, 1.65);
+    render();
+  });
   const events = new AbortController();
   const options = { signal: events.signal };
   canvas.addEventListener('pointermove', event => {
@@ -197,23 +226,51 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
 
   return {
     scene, model, camera, controls, amber, sphere,
-    render,
+    render, fitView: fit,
     screenBounds() {
       const points = corners.map(({ mesh, point }) => point.clone().applyMatrix4(mesh.matrixWorld).project(camera));
       return [Math.min(...points.map(p => p.x)), Math.max(...points.map(p => p.x)), Math.min(...points.map(p => p.y)), Math.max(...points.map(p => p.y))];
     },
     setRadius(value: number) { radius = value; fit(); },
+    inspect(transmissions: string[]) {
+      clearHover(); restoreInspectionMaterials();
+      const groups: THREE.Object3D[] = [];
+      inspection = new Set();
+      model.traverse(object => {
+        if (!transmissions.includes(object.userData.web_transmission)) return;
+        groups.push(object);
+        object.traverse(child => { if ((child as THREE.Mesh).isMesh) inspection!.add(child as THREE.Mesh); });
+      });
+      if (!inspection.size) { inspection = undefined; return; }
+      inspectionBlend = 1; zoomFactor = 1;
+      for (const mesh of meshes) {
+        if (inspection.has(mesh)) continue;
+        for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+          inspectionMaterials.set(material, { opacity: material.opacity, transparent: material.transparent, depthWrite: material.depthWrite });
+        }
+      }
+      groups.sort((a, b) => transmissions.indexOf(a.userData.web_transmission) - transmissions.indexOf(b.userData.web_transmission));
+      if (groups.length === 2) {
+        // Look from the large-gear side, keeping the intact motor behind it.
+        const side = groups[1].getWorldPosition(new THREE.Vector3()).sub(groups[0].getWorldPosition(new THREE.Vector3()));
+        side.addScaledVector(camera.up, -side.dot(camera.up)).normalize().addScaledVector(camera.up, .8).normalize();
+        camera.position.copy(controls.target).add(side);
+      }
+      fit(true); render();
+    },
+    isInspecting: () => inspectionBlend > .5,
     autoOrbit(dt: number, time: number, weight: number) {
       const s = new THREE.Spherical().setFromVector3(orbitOffset());
       s.theta += dt * Math.PI * 2 / 40 * weight;
       const goal = Math.acos(isPump ? initialDirection.z : initialDirection.y) + Math.sin(time * Math.PI * 2 / 24) * THREE.MathUtils.degToRad(8);
       s.phi += (goal - s.phi) * (1 - Math.exp(-dt * weight * 1.5));
       // Restore a complete view gradually after a user's close inspection.
-      s.radius += (fitDistance - s.radius) * (1 - Math.exp(-dt * weight * 2));
+      zoomFactor += (1 - zoomFactor) * (1 - Math.exp(-dt * weight * 2));
+      inspectionBlend *= Math.exp(-dt * weight * 2);
       placeOrbit(s);
       camera.lookAt(controls.target);
     },
-    resetView() { camera.position.copy(controls.target).add(initialDirection); fit(true); controls.update(); render(); },
+    resetView() { inspection = undefined; inspectionBlend = 0; restoreInspectionMaterials(); camera.position.copy(controls.target).add(initialDirection); fit(true); controls.update(); render(); },
     dispose() {
       events.abort(); resizeObserver.disconnect(); controls.dispose(); clearHover();
       const geometries = new Set<THREE.BufferGeometry>();
