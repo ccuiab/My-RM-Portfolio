@@ -33,6 +33,10 @@ const base = import.meta.env.BASE_URL;
           <span class="corner br" aria-hidden="true"></span>
           <span class="pending" data-pending hidden>{t(L.pending, lang)}</span>
         </div>
+        <div class="playback">
+          <button type="button" data-playback data-play={t(L.play, lang)} data-pause={t(L.pause, lang)} aria-label={t(L.pause, lang)}>{t(L.pause, lang)}</button>
+          <input data-seek type="range" min="0" max="100" step="0.1" value="0" aria-label={t(L.seek, lang)} disabled />
+        </div>
         <div class="hud">
           <span class="index num">{egg.index}</span>
           <dl class="details">
@@ -68,14 +72,40 @@ const base = import.meta.env.BASE_URL;
 
   const loadVideo = (video: HTMLVideoElement) => {
     if (!video.src) video.src = video.dataset.src!;
-    if (!reducedMotion) video.play().catch(() => {});
+    if (!reducedMotion && video.dataset.userPaused !== 'true' && !document.hidden) video.play().catch(() => {});
   };
 
   videos.forEach((video) => {
+    const egg = video.closest('.egg')!;
+    const button = egg.querySelector<HTMLButtonElement>('[data-playback]')!;
+    const seek = egg.querySelector<HTMLInputElement>('[data-seek]')!;
+    const updatePlayback = () => {
+      button.textContent = video.paused ? button.dataset.play! : button.dataset.pause!;
+      button.setAttribute('aria-label', button.textContent);
+    };
+    button.addEventListener('click', () => {
+      if (video.paused) {
+        video.dataset.userPaused = 'false';
+        if (!video.src) video.src = video.dataset.src!;
+        video.play().catch(() => {});
+      } else {
+        video.dataset.userPaused = 'true';
+        video.pause();
+      }
+    });
+    video.addEventListener('play', updatePlayback);
+    video.addEventListener('pause', updatePlayback);
+    video.addEventListener('loadedmetadata', () => { seek.disabled = false; });
+    video.addEventListener('timeupdate', () => {
+      if (Number.isFinite(video.duration)) seek.value = String(video.currentTime / video.duration * 100);
+    });
+    seek.addEventListener('input', () => {
+      if (Number.isFinite(video.duration)) video.currentTime = Number(seek.value) / 100 * video.duration;
+    });
     if (reducedMotion) {
-      video.controls = true;
       video.removeAttribute('autoplay');
     }
+    updatePlayback();
     video.addEventListener('error', () => {
       video.dataset.failed = 'true';
       const pending = video.closest('.frame')?.querySelector<HTMLElement>('[data-pending]');
@@ -91,6 +121,7 @@ const base = import.meta.env.BASE_URL;
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(({ target, isIntersecting }) => {
         const video = target as HTMLVideoElement;
+        video.dataset.inView = String(isIntersecting);
         if (isIntersecting && video.dataset.failed !== 'true') loadVideo(video);
         else video.pause();
       });
@@ -98,10 +129,17 @@ const base = import.meta.env.BASE_URL;
     videos.forEach((video) => observer.observe(video));
   } else {
     videos.forEach((video) => {
+      video.dataset.inView = 'true';
       if (!reducedMotion) loadVideo(video);
       else video.src = video.dataset.src!;
     });
   }
+  document.addEventListener('visibilitychange', () => {
+    videos.forEach((video) => {
+      if (document.hidden) video.pause();
+      else if (video.dataset.inView === 'true' && video.dataset.failed !== 'true') loadVideo(video);
+    });
+  });
 </script>
 
 <style>
@@ -115,7 +153,7 @@ const base = import.meta.env.BASE_URL;
     align-items: stretch;
     gap: 1.25rem;
   }
-  .egg { min-width: 0; display: grid; grid-template-rows: clamp(16rem, 22.3vw, 20rem) 1fr; }
+  .egg { min-width: 0; display: grid; grid-template-rows: clamp(16rem, 22.3vw, 20rem) auto 1fr; }
   .will-reveal .egg { opacity: 0; clip-path: inset(0 0 100% 0); transition: clip-path .65s ease, opacity .4s ease; transition-delay: var(--reveal-delay); }
   .will-reveal.is-visible .egg { opacity: 1; clip-path: inset(0); }
   .frame {
@@ -132,6 +170,10 @@ const base = import.meta.env.BASE_URL;
   .corner.tl { top: 9px; left: 9px; border-right: 0; border-bottom: 0; }
   .corner.br { right: 9px; bottom: 9px; border-left: 0; border-top: 0; }
   .pending { position: absolute; top: .8rem; right: .8rem; padding: .25rem .45rem; border-left: 2px solid var(--amber); color: var(--ink-2); background: rgba(7, 13, 23, .82); font-size: var(--t-xs); }
+  .playback { display: flex; align-items: center; gap: .8rem; min-width: 0; padding-top: .7rem; }
+  .playback button { flex: none; min-width: 3.6rem; min-height: 2rem; padding: .2rem .5rem; border: 1px solid var(--rule); color: var(--amber); background: var(--panel); font: inherit; font-size: var(--t-xs); cursor: pointer; }
+  .playback input { width: 0; min-width: 0; flex: 1; accent-color: var(--amber); cursor: pointer; }
+  .playback :is(button, input):focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
   .hud { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: 1fr auto; gap: 1rem .75rem; padding: 1.25rem 0 0; }
   .index { align-self: start; color: var(--amber); font-size: 1.8rem; line-height: 1; }
   .details { display: grid; align-content: start; gap: .4rem; min-width: 0; margin: 0; }
@@ -149,7 +191,7 @@ const base = import.meta.env.BASE_URL;
     .eggs { scroll-margin-top: 7rem; }
     .eggs-head { margin-bottom: 1.75rem; }
     .egg-grid { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
-    .egg { grid-template-rows: auto auto; }
+    .egg { grid-template-rows: auto auto 1fr; }
     .portrait .frame { width: min(100%, 16rem); aspect-ratio: 384 / 854; justify-self: center; }
     .landscape .frame { aspect-ratio: 16 / 9; }
     .details div { grid-template-columns: 3rem minmax(0, 1fr); }
