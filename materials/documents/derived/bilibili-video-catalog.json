@@ -1,6 +1,6 @@
 {
   "scope": "2025工程赛季；用户明确不含2024英雄，不含没有工程机器人的联盟赛",
-  "verifiedAt": "2026-10-11T11:15:04.217221Z",
+  "verifiedAt": "2026-10-12T07:51:27Z",
   "coverage": "官方赛事与公开投稿合集内已找到并核实的 2025 工程相关素材；分 P 各自保存。",
   "excluded": [
     "2024 英雄赛季",
@@ -11,7 +11,22 @@
   "downloadQuality": "保留公开可用的最佳音视频流，合并为 MP4；具体编码、分辨率、时长与 SHA256 逐文件记录。",
   "identification": {
     "allStarEngineer": "香港科技大学 ENTERPRIZE 工程属于创新者 INNOVATOR；全明星工程视角为 R2。",
-    "evidence": "materials/images/source/historical/eng-allstar.webp：官方全明星工程卡片标有 INNOVATOR。"
+    "evidence": "materials/images/source/historical/eng-allstar.webp：官方全明星工程卡片标有 INNOVATOR。",
+    "finalRepechage": {
+      "team": "香港科技大学 ENTERPRIZE",
+      "side": "blue",
+      "engineer": {
+        "bvid": "BV1Aw8gzoEZd",
+        "page": 3,
+        "part": "B2SuqqreProject_0"
+      },
+      "hero": {
+        "bvid": "BV1Aw8gzoEZd",
+        "page": 2,
+        "part": "B1Hero_0"
+      },
+      "evidence": "官方 BV1QW8gzrETq 最后一局记分栏右侧蓝方为港科大；工程 POV 蓝色队标和蓝方 1 号灯条与官方一致。英雄 POV 与工程 POV 的比赛计时器逐秒对齐。"
+    }
   },
   "sources": [
     {
@@ -33,14 +48,14 @@
   ],
   "summary": {
     "posts": 14,
-    "files": 34,
-    "bytes": 10674739752,
+    "files": 35,
+    "bytes": 10780312895,
     "groups": {
       "official-matches": 3,
       "all-star": 3,
       "robot-demo": 2,
       "highlights": 1,
-      "engineer-pov": 17,
+      "engineer-pov": 18,
       "clips": 8
     }
   },
@@ -1104,6 +1119,123 @@
       "sourcePart": "mmexport1753719353019",
       "sourceDurationSeconds": 144,
       "publishedAt": "2025-07-28T16:19:09+00:00"
+    },
+    {
+      "bvid": "BV1Aw8gzoEZd",
+      "page": 2,
+      "group": "engineer-pov",
+      "title": "[RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - B1Hero_0",
+      "status": "complete",
+      "file": "materials/videos/source/bilibili/engineer-pov/BV1Aw8gzoEZd-P02 - [RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - B1Hero_0.mp4",
+      "url": "https://www.bilibili.com/video/BV1Aw8gzoEZd/?p=2",
+      "bytes": 105573143,
+      "sha256": "0bdfe839199d51255d6be53292b06a18f9d41c60a39ba6769df3967f867b246d",
+      "duration": 1310.061361,
+      "streams": [
+        {
+          "codec_name": "h264",
+          "codec_type": "video",
+          "width": 852,
+          "height": 480
+        },
+        {
+          "codec_name": "aac",
+          "codec_type": "audio"
+        }
+      ],
+      "uploader": "翔林魔主",
+      "completedAt": "2026-10-12T07:51:27Z",
+      "uploaderId": 1568334988,
+      "sourcePart": "B1Hero_0",
+      "sourceDurationSeconds": 1311,
+      "qualityNote": "2026-10-12 无账号公开 playurl 接口可用最高 480p；852×480 H.264 视频与 AAC 音频合并，保留完整分 P。",
+      "identification": "第 33 场最后一局港科大蓝方 1 号英雄第一视角；用于与蓝方工程扶正动作交叉核验。"
     }
-  ]
+  ],
+  "eggs2PageVerification": {
+    "bvid": "BV1Aw8gzoEZd",
+    "queriedAt": "2026-10-12",
+    "method": "通过 yt-dlp HTTP 客户端读取 B 站当前投稿页 window.__INITIAL_STATE__.videoData.pages；无需登录。",
+    "url": "https://www.bilibili.com/video/BV1Aw8gzoEZd/?p=2",
+    "pages": [
+      {
+        "page": 1,
+        "cid": 31319589321,
+        "part": "main_0",
+        "duration": 1313
+      },
+      {
+        "page": 2,
+        "cid": 31319592064,
+        "part": "B1Hero_0",
+        "duration": 1311
+      },
+      {
+        "page": 3,
+        "cid": 31319592250,
+        "part": "B2SuqqreProject_0",
+        "duration": 1281
+      },
+      {
+        "page": 4,
+        "cid": 31319592826,
+        "part": "B3Infantry_0",
+        "duration": 1311
+      },
+      {
+        "page": 5,
+        "cid": 31319654813,
+        "part": "B4Infantry_0",
+        "duration": 1316
+      },
+      {
+        "page": 6,
+        "cid": 31319655405,
+        "part": "B6Drone_0",
+        "duration": 1311
+      },
+      {
+        "page": 7,
+        "cid": 31319655541,
+        "part": "R1Hero_0",
+        "duration": 1311
+      },
+      {
+        "page": 8,
+        "cid": 31319655894,
+        "part": "R2SuqqreProject_0",
+        "duration": 1311
+      },
+      {
+        "page": 9,
+        "cid": 31319656480,
+        "part": "R3Infantry_0",
+        "duration": 1316
+      },
+      {
+        "page": 10,
+        "cid": 31319656858,
+        "part": "R4Infantry_0",
+        "duration": 1311
+      },
+      {
+        "page": 11,
+        "cid": 31319657319,
+        "part": "R6Drone_0",
+        "duration": 1311
+      },
+      {
+        "page": 12,
+        "cid": 31319657552,
+        "part": "ControlRoom_0",
+        "duration": 1313
+      },
+      {
+        "page": 13,
+        "cid": 31319721641,
+        "part": "OtherArea_0",
+        "duration": 1313
+      }
+    ]
+  }
 }

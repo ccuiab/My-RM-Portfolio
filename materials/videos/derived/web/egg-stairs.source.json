@@ -3,7 +3,7 @@
   "match": "港科大工程机器人上台阶（作者演示）",
   "verifiedAt": "2026-10-12",
   "catalog": "materials/documents/derived/bilibili-video-catalog.json",
-  "evidence": "第四轮重新按源时间逐秒抽帧与关键位置精确 seek 核验。关键帧、页面截图和 02 的 1 fps 跟踪接触表位于 C:/Users/cch20/AppData/Local/Temp/rm-shots/eggs/。",
+  "evidence": "第五轮：逐秒精确抽帧和比赛倒计时核对；接触表与中英文页面截图：C:/Users/cch20/AppData/Local/Temp/rm-shots/eggs2/。",
   "segments": [
     {
       "source": "https://www.bilibili.com/video/BV1MV8nzFEcb/",
@@ -22,34 +22,93 @@
       "role": "作者竖屏演示：接近台阶、登上第一级、伸臂支撑登上第二级、在上层平台停稳",
       "inputFile": "materials/videos/derived/inputs/egg-stairs-demo.mp4",
       "evidence": "00:05.50 留出接近第一台阶的余量；约 00:07 前轮接触第一台阶，00:10–00:15 登上第一级；00:20–00:35 伸臂支撑，00:36–00:38 底盘越过第二级台阶；00:42–00:43 镜头能确认底盘完全在上层平台停稳。旧出点 00:14.24 尚未展示第二级，原先“00:16 后下行”的判断撤回。",
-      "copyrightOwner": "star_Light星（原投稿画面）"
+      "copyrightOwner": "star_Light星（原投稿画面）",
+      "rotation": "cclock",
+      "dynamicCrop": {
+        "width": 672,
+        "height": 378,
+        "y": 3,
+        "coordinateSpace": {
+          "width": 854,
+          "height": 384,
+          "afterRotation": true
+        },
+        "method": "逆时针转正后按人工锚点 smoothstep 连续移动 16:9 裁剪窗口，去掉左侧水印与无关边缘；不跟随逐帧噪声。",
+        "keyframes": [
+          {
+            "seconds": 0,
+            "x": 86
+          },
+          {
+            "seconds": 1,
+            "x": 182
+          },
+          {
+            "seconds": 2,
+            "x": 182
+          },
+          {
+            "seconds": 4,
+            "x": 64
+          },
+          {
+            "seconds": 6,
+            "x": 40
+          },
+          {
+            "seconds": 12,
+            "x": 76
+          },
+          {
+            "seconds": 18,
+            "x": 40
+          },
+          {
+            "seconds": 24,
+            "x": 40
+          },
+          {
+            "seconds": 30,
+            "x": 104
+          },
+          {
+            "seconds": 36,
+            "x": 90
+          },
+          {
+            "seconds": 37.5,
+            "x": 90
+          }
+        ]
+      }
     }
   ],
   "transitionSeconds": 0,
   "loop": {
-    "seamSeconds": 0,
-    "method": "动作按原速连续保留，片尾停稳/回收后直接回到片头循环；不裁掉首尾帧，不混合跟踪框。",
-    "expectedDurationSeconds": 37.5
+    "seamSeconds": 0.32,
+    "method": "尾段与片头重叠淡化 0.32 s，循环时间线从原片头 0.32 s 开始；接缝最后一帧接回同一源时间的下一帧。动作原速，所有源时段均在循环中呈现。",
+    "expectedDurationSeconds": 37.18
   },
   "playbackRate": 1,
   "output": {
     "video": "materials/videos/derived/web/egg-stairs.mp4",
     "poster": "materials/images/derived/video-posters/egg-stairs.jpg",
-    "width": 384,
-    "height": 854,
+    "width": 960,
+    "height": 540,
     "fps": 25,
     "codec": "h264",
     "pixelFormat": "yuv420p",
-    "crf": 24,
+    "crf": 25,
     "audio": false,
     "faststart": true,
     "maxBytes": 6000000,
-    "posterSeconds": 24
+    "posterSeconds": 24,
+    "maxBitrateKbps": 1100
   },
   "copyright": {
-    "attribution": "保留原投稿与赛事转播水印，原画面版权归对应原投稿作者或赛事制作方；本项目仅制作静音节选与封面。",
-    "permissionStatus": "公开来源及署名已记录，未额外核实转载授权。"
+    "attribution": "页面与本来源记录保留原投稿者和官方赛事署名，画面权利归对应原作者或赛事制作方；裁剪等加工说明见各段记录。",
+    "permissionStatus": "公开来源及归属已记录；未将公开可访问视为已核实的转载授权。"
   },
-  "note": "保留 384×854 原像素、倾斜构图和水印。上层停稳画面在末尾镜头移回后可见；43 s 后镜头明显转移，故在 43 s 出点。",
+  "note": "原片侧向拍摄：逆时针 90° 后地面朝下，原始像素变为 854×384；动态裁为 672×378，再输出 960×540 横屏。原摄影在部分帧已切到机器人上边缘，裁剪不补造原画面外的内容。",
   "referenceViews": []
 }

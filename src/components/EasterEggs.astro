@@ -25,7 +25,6 @@ const base = import.meta.env.BASE_URL;
             muted
             loop
             playsinline
-            autoplay
             preload="none"
             aria-label={t(egg.alt, lang)}
           ></video>
@@ -39,14 +38,18 @@ const base = import.meta.env.BASE_URL;
         </div>
         <div class="hud">
           <span class="index num">{egg.index}</span>
-          <dl class="details">
-            <div><dt>{t(L.matchLabel, lang)}</dt><dd>{t(egg.match, lang)}</dd></div>
-            {egg.opponent && <div><dt>{t(L.opponentLabel, lang)}</dt><dd>{t(egg.opponent, lang)}</dd></div>}
-            <div><dt>{t(L.actionLabel, lang)}</dt><dd>{t(egg.action, lang)}</dd></div>
-          </dl>
+          <div class="caption">
+            <h3>{t(egg.title, lang)}</h3>
+            <dl class="details">
+              <div><dt>{t(L.matchLabel, lang)}</dt><dd>{t(egg.match, lang)}</dd></div>
+              {egg.opponent && <div><dt>{t(L.opponentLabel, lang)}</dt><dd>{t(egg.opponent, lang)}</dd></div>}
+              <div><dt>{t(L.actionLabel, lang)}</dt><dd>{t(egg.action, lang)}</dd></div>
+            </dl>
+          </div>
           <div class="source-row">
             <span>{t(L.sourceLabel, lang)}：{t(egg.source, lang)}</span>
-            <a href={egg.href} target="_blank" rel="noopener noreferrer">{t(L.watch, lang)}</a>
+            <a href={egg.href} target="_blank" rel="noopener noreferrer">{t('heroHref' in egg ? L.engineerWatch : L.watch, lang)}</a>
+            {'heroHref' in egg && <a href={egg.heroHref} target="_blank" rel="noopener noreferrer">{t(L.heroWatch, lang)}</a>}
           </div>
         </div>
       </article>
@@ -59,7 +62,7 @@ const base = import.meta.env.BASE_URL;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const section = document.querySelector<HTMLElement>('.eggs');
 
-  // Open the three frames in one HUD shutter sequence when the ending enters view.
+  // Open the frames in one HUD shutter sequence when the ending enters view.
   if (section && !reducedMotion && 'IntersectionObserver' in window) {
     section.classList.add('will-reveal');
     const reveal = new IntersectionObserver(([entry]) => {
@@ -83,6 +86,7 @@ const base = import.meta.env.BASE_URL;
       button.textContent = video.paused ? button.dataset.play! : button.dataset.pause!;
       button.setAttribute('aria-label', button.textContent);
     };
+    updatePlayback();
     button.addEventListener('click', () => {
       if (video.paused) {
         video.dataset.userPaused = 'false';
@@ -149,23 +153,22 @@ const base = import.meta.env.BASE_URL;
   .head-rule { width: 2.4rem; height: 3px; flex: none; align-self: center; background: var(--amber); }
   .egg-grid {
     display: grid;
-    grid-template-columns: minmax(0, .75fr) repeat(2, minmax(0, 1.125fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     align-items: stretch;
-    gap: 1.25rem;
+    gap: 2.5rem 1.25rem;
   }
-  .egg { min-width: 0; display: grid; grid-template-rows: clamp(16rem, 22.3vw, 20rem) auto 1fr; }
+  .egg { min-width: 0; display: grid; grid-template-rows: auto auto 1fr; }
   .will-reveal .egg { opacity: 0; clip-path: inset(0 0 100% 0); transition: clip-path .65s ease, opacity .4s ease; transition-delay: var(--reveal-delay); }
   .will-reveal.is-visible .egg { opacity: 1; clip-path: inset(0); }
   .frame {
     position: relative;
-    height: 100%;
+    aspect-ratio: 16 / 9;
     overflow: hidden;
     isolation: isolate;
     border: 1px solid var(--rule);
     background: var(--panel);
   }
   video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: var(--ground); }
-  .portrait video { object-position: center; }
   .corner { position: absolute; width: 18px; height: 18px; border: 2px solid var(--amber); pointer-events: none; }
   .corner.tl { top: 9px; left: 9px; border-right: 0; border-bottom: 0; }
   .corner.br { right: 9px; bottom: 9px; border-left: 0; border-top: 0; }
@@ -176,6 +179,8 @@ const base = import.meta.env.BASE_URL;
   .playback :is(button, input):focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
   .hud { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: 1fr auto; gap: 1rem .75rem; padding: 1.25rem 0 0; }
   .index { align-self: start; color: var(--amber); font-size: 1.8rem; line-height: 1; }
+  .caption { min-width: 0; }
+  .caption h3 { margin: 0 0 .8rem; color: var(--ink); font-size: clamp(1.2rem, 1.65vw, 1.5rem); line-height: 1.2; }
   .details { display: grid; align-content: start; gap: .4rem; min-width: 0; margin: 0; }
   .details div { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); gap: .5rem; align-items: baseline; }
   :global(html[lang="en"]) .details div { grid-template-columns: 4.6rem minmax(0, 1fr); }
@@ -192,8 +197,6 @@ const base = import.meta.env.BASE_URL;
     .eggs-head { margin-bottom: 1.75rem; }
     .egg-grid { grid-template-columns: minmax(0, 1fr); gap: 2rem; }
     .egg { grid-template-rows: auto auto 1fr; }
-    .portrait .frame { width: min(100%, 16rem); aspect-ratio: 384 / 854; justify-self: center; }
-    .landscape .frame { aspect-ratio: 16 / 9; }
     .details div { grid-template-columns: 3rem minmax(0, 1fr); }
     .hud { gap: 1rem; }
   }
