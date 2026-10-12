@@ -1,9 +1,9 @@
 param(
   [string]$InputGlb = 'D:\AI_playground\My-RM-Portfolio\materials\models\derived\inputs\codex\task3_hero_raw.glb',
   [string]$Blender = 'D:\Blender Foundation\Blender 5.1\blender.exe',
-  [string]$Audit = "$env:LOCALAPPDATA\Temp\rm-shots\launcher\side\render-audit.json",
+  [string]$Audit = "$env:LOCALAPPDATA\Temp\rm-shots\launcher\fourth\render-audit.json",
   [int]$Samples = 16,
-  [ValidateSet('a','b')][string]$Candidate = 'b',
+  [ValidateSet('a','b')][string]$Candidate = 'a',
   [string]$Output = '',
   [double[]]$View = @()
 )

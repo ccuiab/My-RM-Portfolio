@@ -14,6 +14,7 @@ import itertools
 import math
 import random
 import collections
+import gc
 import struct
 import sys
 import tempfile
@@ -25,13 +26,18 @@ from bpy_extras.object_utils import world_to_camera_view
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 CORE = {803, 804, 805, 806, 809, 810, 811, 812, 819, 820, 821, 822}
-FRAME = {791, 796, 800, 801, 802, 807, 813, 814, 815, 816, 823, 830, 914, 916}
+FRAME = {781, 791, 796, 800, 801, 802, 807, 813, 814, 815, 816, 823, 830, 916, 919}
 FUNCTIONAL = {808, 817, 831}
-GUARDS = {771, 774, 777, 781, 915, 919, 923, 926, 927, 931, 946}
-# Low side views from the feeding side clear the muzzle's occlusion of the far wheel.
+GUARDS = {771, 774, 777, 915, 923, 926, 927, 931, 946}
+# Roof and its dedicated fittings: their CAD bounds lie on / connect to node 914.
+# The small-wheel shaft supports 796/800 are anchored on 816 and remain intact.
+TOP_ONLY = {770, 775, 779, 782, 785, 787, 788, 789, 790, 846, 850, 851,
+            855, 863, 864, 877, 886, 892, 893, 894, 895, 901, 913, 914}
+TRANSLUCENT = {791, 796, 800, 816, 916, 781, 919}
+# Both opacity candidates use the third revision's B side view.
 CANDIDATES = {
-    'a': {'azimuth': 45, 'elevation': 3},
-    'b': {'azimuth': 57, 'elevation': 5},
+    'a': {'azimuth': 57, 'elevation': 5, 'alpha': .18},
+    'b': {'azimuth': 57, 'elevation': 5, 'alpha': .28},
 }
 # Reference A2 alpha>=128: 1488 px subject width / 969 px canvas height.
 # A2/A3 solid-alpha bounding-box centres average to y=0.536 of the canvas.
@@ -59,6 +65,9 @@ def selection_plan(data):
     reasons = {}
     for index in world:
         node = data['nodes'][index]
+        if index in TOP_ONLY:
+            reasons[index] = 'Top horizontal plate or roof-only fitting; removed to avoid floating supports'
+            continue
         if index in selected or 'mesh' not in node:
             continue
         if index in GUARDS:
@@ -238,7 +247,7 @@ def hide_external_cable(obj):
             'faces_before': before, 'faces_after': len(obj.data.polygons)}
 
 
-def presentation_materials(objects):
+def presentation_materials(objects, alpha):
     """Native SW colours and weave; soften speculars rather than replacing the assembly palette."""
     for mat in list(bpy.data.materials):
         shader = mat.node_tree.nodes.get('Principled BSDF') if mat.use_nodes else None
@@ -280,10 +289,29 @@ def presentation_materials(objects):
         elif any(k in obj['source_node_name'] for k in ('STD_', '衬套', 'MF', 'Pin_', 'MSM-')):
             for slot in obj.material_slots:
                 slot.material = fittings
+        if index in TRANSLUCENT:
+            # Isolate the material slots even if a native mesh is instanced elsewhere.
+            obj.data = obj.data.copy()
+            obj.visible_shadow = False
+            for slot in obj.material_slots:
+                ghost = slot.material.copy()
+                ghost.name = f'frame_ghost_{index}_{alpha:.2f}'
+                graph = ghost.node_tree
+                graph.nodes['Principled BSDF'].inputs['Alpha'].default_value = alpha
+                output = next(n for n in graph.nodes if n.type == 'OUTPUT_MATERIAL')
+                original = output.inputs['Surface'].links[0].from_socket
+                backface = graph.nodes.new('ShaderNodeNewGeometry')
+                transparent = graph.nodes.new('ShaderNodeBsdfTransparent')
+                mix = graph.nodes.new('ShaderNodeMixShader')
+                graph.links.new(backface.outputs['Backfacing'], mix.inputs[0])
+                graph.links.new(original, mix.inputs[1])
+                graph.links.new(transparent.outputs[0], mix.inputs[2])
+                graph.links.new(mix.outputs[0], output.inputs['Surface'])
+                slot.material = ghost
 
 
-def wheel_visibility(nodes, direction):
-    """Ray-check opaque geometry instead of assuming retained wheels are visible."""
+def wheel_visibility(nodes, direction, alpha):
+    """Ray-check wheel exposure, attenuating once per transparent plate encountered."""
     deps = bpy.context.evaluated_depsgraph_get()
     rows = {}
     for target in (805, 821, 810):
@@ -292,7 +320,7 @@ def wheel_visibility(nodes, direction):
         normal_matrix = matrix.to_3x3().inverted().transposed()
         polys = [p for p in obj.data.polygons if p.area > 1e-12]
         chosen = random.Random(target).choices(polys, weights=[p.area for p in polys], k=800)
-        total = visible = 0.
+        total = visible = clear = 0.
         occluders = collections.Counter()
         for poly in chosen:
             p = matrix @ poly.center
@@ -301,13 +329,25 @@ def wheel_visibility(nodes, direction):
             if weight < 1e-5:
                 continue
             total += weight
-            hit = bpy.context.scene.ray_cast(deps, p + direction, -direction, distance=1.005)
-            index = hit[4].original.get('source_node_index', -1) if hit[0] else -1
-            if index == target:
-                visible += weight
-            else:
-                occluders[index] += weight
-        rows[target] = {'visible_fraction': visible / max(total, 1e-9),
+            origin = p + direction
+            tint, crossed = 1., set()
+            for _ in range(40):
+                hit = bpy.context.scene.ray_cast(deps, origin, -direction, distance=1.005)
+                index = hit[4].original.get('source_node_index', -1) if hit[0] else -1
+                if index == target:
+                    visible += weight * tint
+                    if not crossed:
+                        clear += weight
+                    break
+                if index not in TRANSLUCENT:
+                    occluders[index] += weight
+                    break
+                if index not in crossed:
+                    tint *= 1 - alpha
+                    crossed.add(index)
+                origin = hit[1] - direction * 1e-5
+        rows[target] = {'transmission_weighted_visible_fraction': visible / max(total, 1e-9),
+                        'opaque_line_of_sight_fraction': clear / max(total, 1e-9),
                         'occluders': occluders.most_common(5), 'samples': 800}
     return rows
 
@@ -334,7 +374,9 @@ def render(args):
              'imported_buffer_bytes': buffer_bytes, 'selected_nodes': [],
              'wheel_count': counts,
              'hidden_nodes': hidden, 'hidden_cable': cable,
-             'translucent_nodes': [],
+             'translucent_nodes': [{'index': i, 'name': data['nodes'][i]['name'], 'alpha': args.alpha,
+                                     'reason': 'Preserved middle-level / outer side plate; faint native-colour fill and opaque contour'}
+                                    for i in sorted(TRANSLUCENT)],
              'geometry': 'Native cage, guide, muzzle/speed module, fittings and wheel/motor assemblies; unchanged internal transforms',
              'axis_frame': 'Local launcher frame, glTF Y-up converted to Blender Z-up',
              'animation': 'Static image; no animation cycle or changed WebGL code'}
@@ -352,19 +394,24 @@ def render(args):
             item['materials'] = [m.name for m in obj.data.materials]
         item['assembly_origin_m'] = list(obj.matrix_world.translation)
         audit['selected_nodes'].append(item)
-    presentation_materials(objects)
+    presentation_materials(objects, args.alpha)
     audit['material_alpha_check'] = [
         {'index': obj['source_node_index'], 'alphas': [
             slot.material.node_tree.nodes['Principled BSDF'].inputs['Alpha'].default_value
             for slot in obj.material_slots]}
         for obj in objects]
-    if any(min(row['alphas']) < 1 for row in audit['material_alpha_check']):
-        raise RuntimeError('Opaque candidate contains a translucent material')
+    for row in audit['material_alpha_check']:
+        expected = args.alpha if row['index'] in TRANSLUCENT else 1
+        if any(abs(value - expected) > 1e-6 for value in row['alphas']):
+            raise RuntimeError(f"Unexpected material alpha on node {row['index']}")
     scene = bpy.context.scene
     scene.render.engine = 'CYCLES'
     scene.cycles.device = 'CPU'
     scene.cycles.samples = args.samples
     scene.cycles.use_denoising = True
+    scene.cycles.use_auto_tile = True
+    scene.cycles.tile_size = 512
+    scene.render.use_persistent_data = False
     scene.render.threads_mode = 'FIXED'
     scene.render.threads = 2
     scene.render.film_transparent = True
@@ -391,9 +438,9 @@ def render(args):
     points = [o.matrix_world @ p.co for o in objects for p in o.data.vertices]
     centre = Vector([(max(p[i] for p in points) + min(p[i] for p in points)) / 2 for i in range(3)])
     direction = Vector(args.view).normalized()
-    audit['wheel_visibility'] = wheel_visibility(nodes, direction)
-    if min(row['visible_fraction'] for row in audit['wheel_visibility'].values()) < .2:
-        raise RuntimeError('A wheel is too occluded in the selected opaque side view')
+    audit['wheel_visibility'] = wheel_visibility(nodes, direction, args.alpha)
+    if min(row['transmission_weighted_visible_fraction'] for row in audit['wheel_visibility'].values()) < .2:
+        raise RuntimeError('A wheel is too occluded in the selected translucent side view')
     camera_data = bpy.data.cameras.new('core_three_quarter')
     camera_data.type = 'ORTHO'
     camera = bpy.data.objects.new('core_three_quarter', camera_data)
@@ -427,6 +474,8 @@ def render(args):
     audit['normalized_projected_bounds'] = bounds
     audit['composition_target'] = {'subject_width_fraction': TARGET_SUBJECT_WIDTH,
                                    'image_y_centre': TARGET_SUBJECT_Y, 'reference': 'A2/A3 solid alpha bounds'}
+    audit['camera_calibration'] = {'location': list(camera.location), 'rotation_euler': list(camera.rotation_euler),
+                                 'ortho_scale': camera_data.ortho_scale, 'light_centre': list(centre), 'direction': list(direction)}
     def geometry_centre(index):
         obj = nodes[index]
         bounds = [obj.matrix_world @ vertex.co for vertex in obj.data.vertices]
@@ -450,10 +499,12 @@ def render(args):
         obj.rotation_euler = (centre - obj.location).to_track_quat('-Z', 'Y').to_euler()
     output.parent.mkdir(parents=True, exist_ok=True)
     scene.render.filepath = str(output)
+    del points, projected, normalized, pts
+    gc.collect()
     bpy.ops.render.render(write_still=True)
     audit.update({'image': str(output.relative_to(ROOT)), 'resolution': [args.width, args.height],
                   'samples': args.samples, 'threads': scene.render.threads,
-                  'candidate': args.candidate, 'frame_alpha': 1.0,
+                  'candidate': args.candidate, 'frame_alpha': args.alpha, 'tile_size': scene.cycles.tile_size,
                   'camera_direction': list(direction),
                   'image_sha256': hashlib.sha256(output.read_bytes()).hexdigest()})
     if args.audit:
@@ -470,10 +521,11 @@ if __name__ == '__main__':
     parser.add_argument('--width', type=int, default=2400)
     parser.add_argument('--height', type=int, default=1400)
     parser.add_argument('--samples', type=int, default=16)
-    parser.add_argument('--candidate', choices=['a', 'b'], default='b')
+    parser.add_argument('--candidate', choices=['a', 'b'], default='a')
     parser.add_argument('--view', nargs=3, type=float)
     args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])
     profile = CANDIDATES[args.candidate]
+    args.alpha = profile['alpha']
     az, elev = math.radians(profile['azimuth']), math.radians(profile['elevation'])
     args.view = args.view or [math.cos(az) * math.cos(elev), math.sin(az) * math.cos(elev), math.sin(elev)]
     render(args)
