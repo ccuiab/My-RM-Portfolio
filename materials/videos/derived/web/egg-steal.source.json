@@ -3,8 +3,528 @@
   "match": "RMUC 2025 复活赛第26场，香港科技大学 vs 华东理工大学，第二局",
   "verifiedAt": "2026-10-12",
   "catalog": "materials/documents/derived/bilibili-video-catalog.json",
-  "evidence": "按源文件时间逐帧/1 fps 抽帧目视核实，关键帧与比赛倒计时见各 segment.evidence。精确定位以单帧 seek 结果为准。",
+  "evidence": "第四轮重新按源时间逐秒抽帧与关键位置精确 seek 核验。关键帧、页面截图和 02 的 1 fps 跟踪接触表位于 C:/Users/cch20/AppData/Local/Temp/rm-shots/eggs/。",
   "segments": [
+    {
+      "source": "https://www.bilibili.com/video/BV13T8ezrEwC/?p=1",
+      "bvid": "BV13T8ezrEwC",
+      "page": 1,
+      "title": "复活赛 第26场 香港科技大学 ENTERPRIZE战队 VS 华东理工大学 起源战队 RMUC 2025",
+      "uploader": "RoboMaster机甲大师",
+      "uploaderId": null,
+      "sourceFile": "materials/videos/source/bilibili/official-matches/BV13T8ezrEwC-P01 - 复活赛 第26场 香港科技大学 ENTERPRIZE战队 VS 华东理工大学 起源战队 RMUC 2025.mp4",
+      "sourceSha256FromCatalog": "41e26a89cf90940df4cba96cf3d9bb4418a85ad3cff6b7ff90f1a34a588fe626",
+      "startSeconds": 1004.0,
+      "durationSeconds": 39.0,
+      "endSeconds": 1043.0,
+      "startTimecode": "00:16:44.00",
+      "endTimecode": "00:17:23.00",
+      "role": "官方第三视角连续时间线：红方 2 号从中央通道接近蓝方银矿石岛，取矿后完整撤回红方基地一侧",
+      "inputFile": "materials/videos/derived/inputs/egg-steal-official.mp4",
+      "evidence": "16:44.00 红方 2 号进入中央通道；16:47–16:48 抵达蓝方银矿石岛；16:52–16:58 机械臂在岛上取矿；16:59–17:00 开始离岛，17:02–17:07 经过中央通道，17:08–17:15 回到红方场地，17:16–17:18 经过红方基地边缘，17:22 在红方基地左侧再次可见。16:44–17:23 连续保留官方第三视角，不剪掉任何撤离区间。",
+      "copyrightOwner": "RoboMaster赛事画面制作方；投稿与视角编排署名见 uploader",
+      "tracking": {
+        "color": "0xf2b53a",
+        "lineWidth": 2,
+        "coordinateSpace": {
+          "width": 1280,
+          "height": 720
+        },
+        "method": "按 0.5–1 s 手动标定，输出每帧线性插值坐标，以 ffmpeg sendcmd + drawbox 叠加琥珀细框；不烧入文字。",
+        "identity": {
+          "team": "香港科技大学 ENTERPRIZE，红方",
+          "robot": "转播标注红方 2 号工程",
+          "evidence": "官方 16:56 精确帧：比分条左侧红方为香港科技大学，岛上机械臂底盘上方为红色 2 号血条；16:44 的红色 2 号、后续白色吸取物和六轴臂车型轮廓沿连续路线一致。排除岛旁红方 3/4 号步兵及右上蓝方 2 号。",
+          "keyFrames": [
+            "key-steal-1004.jpg",
+            "key-steal-1016.jpg",
+            "key-steal-1022.jpg",
+            "key-steal-1028.jpg",
+            "key-steal-1034.jpg",
+            "key-steal-1042.jpg"
+          ]
+        },
+        "keyframes": [
+          {
+            "seconds": 0,
+            "x": 505,
+            "y": 500,
+            "w": 65,
+            "h": 66,
+            "opacity": 1
+          },
+          {
+            "seconds": 0.5,
+            "x": 546,
+            "y": 470,
+            "w": 70,
+            "h": 70,
+            "opacity": 1
+          },
+          {
+            "seconds": 1,
+            "x": 590,
+            "y": 457,
+            "w": 70,
+            "h": 68,
+            "opacity": 1
+          },
+          {
+            "seconds": 1.5,
+            "x": 629,
+            "y": 422,
+            "w": 75,
+            "h": 70,
+            "opacity": 1
+          },
+          {
+            "seconds": 2,
+            "x": 674,
+            "y": 410,
+            "w": 75,
+            "h": 70,
+            "opacity": 1
+          },
+          {
+            "seconds": 2.5,
+            "x": 714,
+            "y": 394,
+            "w": 83,
+            "h": 82,
+            "opacity": 1
+          },
+          {
+            "seconds": 3,
+            "x": 738,
+            "y": 413,
+            "w": 72,
+            "h": 70,
+            "opacity": 1
+          },
+          {
+            "seconds": 4,
+            "x": 750,
+            "y": 410,
+            "w": 84,
+            "h": 72,
+            "opacity": 1
+          },
+          {
+            "seconds": 5,
+            "x": 756,
+            "y": 411,
+            "w": 82,
+            "h": 70,
+            "opacity": 1
+          },
+          {
+            "seconds": 6,
+            "x": 760,
+            "y": 406,
+            "w": 82,
+            "h": 72,
+            "opacity": 1
+          },
+          {
+            "seconds": 7,
+            "x": 765,
+            "y": 407,
+            "w": 83,
+            "h": 72,
+            "opacity": 1
+          },
+          {
+            "seconds": 8,
+            "x": 771,
+            "y": 407,
+            "w": 80,
+            "h": 73,
+            "opacity": 1
+          },
+          {
+            "seconds": 9,
+            "x": 777,
+            "y": 408,
+            "w": 75,
+            "h": 72,
+            "opacity": 1
+          },
+          {
+            "seconds": 10,
+            "x": 779,
+            "y": 404,
+            "w": 74,
+            "h": 74,
+            "opacity": 1
+          },
+          {
+            "seconds": 11,
+            "x": 780,
+            "y": 404,
+            "w": 75,
+            "h": 74,
+            "opacity": 1
+          },
+          {
+            "seconds": 12,
+            "x": 780,
+            "y": 403,
+            "w": 77,
+            "h": 76,
+            "opacity": 1
+          },
+          {
+            "seconds": 13,
+            "x": 778,
+            "y": 403,
+            "w": 80,
+            "h": 76,
+            "opacity": 1
+          },
+          {
+            "seconds": 14,
+            "x": 777,
+            "y": 405,
+            "w": 78,
+            "h": 76,
+            "opacity": 1
+          },
+          {
+            "seconds": 15,
+            "x": 776,
+            "y": 405,
+            "w": 75,
+            "h": 76,
+            "opacity": 1
+          },
+          {
+            "seconds": 16,
+            "x": 709,
+            "y": 407,
+            "w": 85,
+            "h": 80,
+            "opacity": 1
+          },
+          {
+            "seconds": 17,
+            "x": 708,
+            "y": 407,
+            "w": 85,
+            "h": 80,
+            "opacity": 1
+          },
+          {
+            "seconds": 18,
+            "x": 711,
+            "y": 416,
+            "w": 76,
+            "h": 74,
+            "opacity": 1
+          },
+          {
+            "seconds": 19,
+            "x": 700,
+            "y": 407,
+            "w": 80,
+            "h": 77,
+            "opacity": 1
+          },
+          {
+            "seconds": 20,
+            "x": 665,
+            "y": 405,
+            "w": 78,
+            "h": 80,
+            "opacity": 1
+          },
+          {
+            "seconds": 21,
+            "x": 660,
+            "y": 415,
+            "w": 77,
+            "h": 81,
+            "opacity": 1
+          },
+          {
+            "seconds": 21.5,
+            "x": 649,
+            "y": 421,
+            "w": 62,
+            "h": 82,
+            "opacity": 1
+          },
+          {
+            "seconds": 22,
+            "x": 630,
+            "y": 449,
+            "w": 70,
+            "h": 76,
+            "opacity": 1
+          },
+          {
+            "seconds": 22.5,
+            "x": 586,
+            "y": 460,
+            "w": 70,
+            "h": 80,
+            "opacity": 1
+          },
+          {
+            "seconds": 23,
+            "x": 540,
+            "y": 480,
+            "w": 80,
+            "h": 85,
+            "opacity": 1
+          },
+          {
+            "seconds": 23.5,
+            "x": 466,
+            "y": 515,
+            "w": 78,
+            "h": 84,
+            "opacity": 1
+          },
+          {
+            "seconds": 24,
+            "x": 398,
+            "y": 525,
+            "w": 95,
+            "h": 89,
+            "opacity": 1
+          },
+          {
+            "seconds": 24.5,
+            "x": 314,
+            "y": 530,
+            "w": 90,
+            "h": 83,
+            "opacity": 1
+          },
+          {
+            "seconds": 25,
+            "x": 270,
+            "y": 531,
+            "w": 55,
+            "h": 88,
+            "opacity": 1
+          },
+          {
+            "seconds": 25.5,
+            "x": 270,
+            "y": 531,
+            "w": 55,
+            "h": 88,
+            "opacity": 0
+          },
+          {
+            "seconds": 26,
+            "x": 270,
+            "y": 531,
+            "w": 55,
+            "h": 88,
+            "opacity": 0
+          },
+          {
+            "seconds": 27,
+            "x": 270,
+            "y": 531,
+            "w": 55,
+            "h": 88,
+            "opacity": 0
+          },
+          {
+            "seconds": 28,
+            "x": 270,
+            "y": 531,
+            "w": 55,
+            "h": 88,
+            "opacity": 0
+          },
+          {
+            "seconds": 29,
+            "x": 270,
+            "y": 531,
+            "w": 55,
+            "h": 88,
+            "opacity": 0
+          },
+          {
+            "seconds": 29.7,
+            "x": 270,
+            "y": 531,
+            "w": 55,
+            "h": 88,
+            "opacity": 0
+          },
+          {
+            "seconds": 29.9,
+            "x": 319,
+            "y": 491,
+            "w": 85,
+            "h": 87,
+            "opacity": 0
+          },
+          {
+            "seconds": 30,
+            "x": 319,
+            "y": 491,
+            "w": 85,
+            "h": 87,
+            "opacity": 1
+          },
+          {
+            "seconds": 31,
+            "x": 350,
+            "y": 447,
+            "w": 70,
+            "h": 75,
+            "opacity": 1
+          },
+          {
+            "seconds": 32,
+            "x": 213,
+            "y": 451,
+            "w": 80,
+            "h": 78,
+            "opacity": 1
+          },
+          {
+            "seconds": 32.5,
+            "x": 160,
+            "y": 465,
+            "w": 85,
+            "h": 74,
+            "opacity": 1
+          },
+          {
+            "seconds": 33,
+            "x": 106,
+            "y": 467,
+            "w": 80,
+            "h": 66,
+            "opacity": 1
+          },
+          {
+            "seconds": 33.5,
+            "x": 57,
+            "y": 474,
+            "w": 80,
+            "h": 63,
+            "opacity": 1
+          },
+          {
+            "seconds": 34,
+            "x": 47,
+            "y": 462,
+            "w": 83,
+            "h": 77,
+            "opacity": 1
+          },
+          {
+            "seconds": 34.5,
+            "x": 17,
+            "y": 461,
+            "w": 70,
+            "h": 77,
+            "opacity": 1
+          },
+          {
+            "seconds": 35,
+            "x": 17,
+            "y": 461,
+            "w": 70,
+            "h": 77,
+            "opacity": 0
+          },
+          {
+            "seconds": 36,
+            "x": 17,
+            "y": 461,
+            "w": 70,
+            "h": 77,
+            "opacity": 0
+          },
+          {
+            "seconds": 37,
+            "x": 17,
+            "y": 461,
+            "w": 70,
+            "h": 77,
+            "opacity": 0
+          },
+          {
+            "seconds": 37.9,
+            "x": 17,
+            "y": 461,
+            "w": 70,
+            "h": 77,
+            "opacity": 0
+          },
+          {
+            "seconds": 37.96,
+            "x": 0,
+            "y": 541,
+            "w": 80,
+            "h": 89,
+            "opacity": 0
+          },
+          {
+            "seconds": 38,
+            "x": 0,
+            "y": 541,
+            "w": 80,
+            "h": 89,
+            "opacity": 1
+          },
+          {
+            "seconds": 38.5,
+            "x": 0,
+            "y": 541,
+            "w": 66,
+            "h": 89,
+            "opacity": 1
+          },
+          {
+            "seconds": 39,
+            "x": 0,
+            "y": 541,
+            "w": 66,
+            "h": 89,
+            "opacity": 1
+          }
+        ],
+        "occlusionNotes": "17:09.5–17:13.9 和 17:19–17:21.96，官方左下角画中画遮挡底盘。框停在最后可见位置并淡出；隐藏期间不猜测机器人位置；重新可见时淡入。17:22 画中画消失，红方 2 号在红方基地左侧再次可见。"
+      }
+    }
+  ],
+  "transitionSeconds": 0,
+  "loop": {
+    "seamSeconds": 0,
+    "method": "动作按原速连续保留，片尾停稳/回收后直接回到片头循环；不裁掉首尾帧，不混合跟踪框。",
+    "expectedDurationSeconds": 39.0
+  },
+  "playbackRate": 1,
+  "output": {
+    "video": "materials/videos/derived/web/egg-steal.mp4",
+    "poster": "materials/images/derived/video-posters/egg-steal.jpg",
+    "width": 1280,
+    "height": 720,
+    "fps": 25,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "crf": 24,
+    "audio": false,
+    "faststart": true,
+    "maxBytes": 14000000,
+    "posterSeconds": 12
+  },
+  "copyright": {
+    "attribution": "保留原投稿与赛事转播水印，原画面版权归对应原投稿作者或赛事制作方；本项目仅制作静音节选与封面。",
+    "permissionStatus": "公开来源及署名已记录，未额外核实转载授权。"
+  },
+  "note": "只使用第三视角连续画面，不切回/插入第一视角。原 POV 作为核对取矿细节的来源保存在 referenceViews；倒计时 5:01：官方 16:56 与 POV 21:57 对齐。安全区域按画面中的红方基地一侧判定，不宣称全程无攻击。",
+  "referenceViews": [
     {
       "source": "https://www.bilibili.com/video/BV1YN83zCEUy/?p=8",
       "bvid": "BV1YN83zCEUy",
@@ -23,51 +543,6 @@
       "inputFile": "materials/videos/derived/inputs/egg-steal-pov.mp4",
       "evidence": "21:52–21:57 末端向蓝色边界资源岛的白色矿石下降并吸取；21:59–22:01 白色矿石随末端抬起并转离。精确抽帧 21:57.00 的第二局比赛倒计时为 5:01。",
       "copyrightOwner": "RoboMaster赛事画面制作方；投稿与视角编排署名见 uploader"
-    },
-    {
-      "source": "https://www.bilibili.com/video/BV13T8ezrEwC/?p=1",
-      "bvid": "BV13T8ezrEwC",
-      "page": 1,
-      "title": "复活赛 第26场 香港科技大学 ENTERPRIZE战队 VS 华东理工大学 起源战队 RMUC 2025",
-      "uploader": "RoboMaster机甲大师",
-      "uploaderId": null,
-      "sourceFile": "materials/videos/source/bilibili/official-matches/BV13T8ezrEwC-P01 - 复活赛 第26场 香港科技大学 ENTERPRIZE战队 VS 华东理工大学 起源战队 RMUC 2025.mp4",
-      "sourceSha256FromCatalog": "41e26a89cf90940df4cba96cf3d9bb4418a85ad3cff6b7ff90f1a34a588fe626",
-      "startSeconds": 1019.6,
-      "durationSeconds": 4.8,
-      "endSeconds": 1024.4,
-      "startTimecode": "00:16:59.60",
-      "endTimecode": "00:17:04.40",
-      "role": "官方全场：取矿后的离岛动作，接续第一视角",
-      "inputFile": "materials/videos/derived/inputs/egg-steal-official.mp4",
-      "evidence": "官方 16:56.00 的第二局倒计时同为 5:01，红方 2 号工程位于蓝方银矿石资源岛，与 POV 21:57.00 相差 301 秒。选段 16:59.60–17:04.40 中可见红方 2 号离岛；官方为全景，没有近距离吸盘特写。",
-      "copyrightOwner": "RoboMaster赛事画面制作方；投稿与视角编排署名见 uploader"
     }
-  ],
-  "transitionSeconds": 0.24,
-  "loop": {
-    "seamSeconds": 0.24,
-    "method": "片尾与片头交叉淡化 6 帧；输出从原片头后 0.24 秒开始，片头六帧用在末尾接缝",
-    "expectedDurationSeconds": 13.52
-  },
-  "playbackRate": 1,
-  "output": {
-    "video": "materials/videos/derived/web/egg-steal.mp4",
-    "poster": "materials/images/derived/video-posters/egg-steal.jpg",
-    "width": 1280,
-    "height": 720,
-    "fps": 25,
-    "codec": "h264",
-    "pixelFormat": "yuv420p",
-    "crf": 24,
-    "audio": false,
-    "faststart": true,
-    "maxBytes": 6000000,
-    "posterSeconds": 5.0
-  },
-  "copyright": {
-    "attribution": "保留原投稿与赛事转播水印，原画面版权归对应原投稿作者或赛事制作方；本项目仅制作静音节选与封面。",
-    "permissionStatus": "公开来源及署名已记录，未额外核实转载授权。"
-  },
-  "note": "两机位按第二局倒计时 5:01 与红方 2 号的位置对齐；官方选段延续取矿后的离岛，不补造近景。"
+  ]
 }

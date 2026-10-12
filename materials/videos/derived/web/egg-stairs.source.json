@@ -3,7 +3,7 @@
   "match": "港科大工程机器人上台阶（作者演示）",
   "verifiedAt": "2026-10-12",
   "catalog": "materials/documents/derived/bilibili-video-catalog.json",
-  "evidence": "按源文件时间逐帧/1 fps 抽帧目视核实，关键帧与比赛倒计时见各 segment.evidence。精确定位以单帧 seek 结果为准。",
+  "evidence": "第四轮重新按源时间逐秒抽帧与关键位置精确 seek 核验。关键帧、页面截图和 02 的 1 fps 跟踪接触表位于 C:/Users/cch20/AppData/Local/Temp/rm-shots/eggs/。",
   "segments": [
     {
       "source": "https://www.bilibili.com/video/BV1MV8nzFEcb/",
@@ -14,22 +14,22 @@
       "uploaderId": 319349289,
       "sourceFile": "materials/videos/source/bilibili/robot-demo/BV1MV8nzFEcb - 复活赛寄了，可以发了.mp4",
       "sourceSha256FromCatalog": "d007be571e3a76cc3406b445663f2a3af46e65e5c2b3eea3256f9a8a36469127",
-      "startSeconds": 6.24,
-      "durationSeconds": 8.0,
-      "endSeconds": 14.24,
-      "startTimecode": "00:00:06.24",
-      "endTimecode": "00:00:14.24",
-      "role": "竖屏原投稿，完整上台阶动作",
+      "startSeconds": 5.5,
+      "durationSeconds": 37.5,
+      "endSeconds": 43.0,
+      "startTimecode": "00:00:05.50",
+      "endTimecode": "00:00:43.00",
+      "role": "作者竖屏演示：接近台阶、登上第一级、伸臂支撑登上第二级、在上层平台停稳",
       "inputFile": "materials/videos/derived/inputs/egg-stairs-demo.mp4",
-      "evidence": "约 00:07 前轮开始攀上台阶，00:09–00:11 车身抬升，00:12–00:14 到达上层平台。约 00:16 后开始下行，本剪辑在此之前结束。",
+      "evidence": "00:05.50 留出接近第一台阶的余量；约 00:07 前轮接触第一台阶，00:10–00:15 登上第一级；00:20–00:35 伸臂支撑，00:36–00:38 底盘越过第二级台阶；00:42–00:43 镜头能确认底盘完全在上层平台停稳。旧出点 00:14.24 尚未展示第二级，原先“00:16 后下行”的判断撤回。",
       "copyrightOwner": "star_Light星（原投稿画面）"
     }
   ],
   "transitionSeconds": 0,
   "loop": {
-    "seamSeconds": 0.24,
-    "method": "片尾与片头交叉淡化 6 帧；输出从原片头后 0.24 秒开始，片头六帧用在末尾接缝",
-    "expectedDurationSeconds": 7.76
+    "seamSeconds": 0,
+    "method": "动作按原速连续保留，片尾停稳/回收后直接回到片头循环；不裁掉首尾帧，不混合跟踪框。",
+    "expectedDurationSeconds": 37.5
   },
   "playbackRate": 1,
   "output": {
@@ -44,11 +44,12 @@
     "audio": false,
     "faststart": true,
     "maxBytes": 6000000,
-    "posterSeconds": 3.6
+    "posterSeconds": 24
   },
   "copyright": {
     "attribution": "保留原投稿与赛事转播水印，原画面版权归对应原投稿作者或赛事制作方；本项目仅制作静音节选与封面。",
     "permissionStatus": "公开来源及署名已记录，未额外核实转载授权。"
   },
-  "note": "原片 384×854，拍摄画面有横向倾斜；保留原像素与构图，不放大、不旋转、不裁水印。"
+  "note": "保留 384×854 原像素、倾斜构图和水印。上层停稳画面在末尾镜头移回后可见；43 s 后镜头明显转移，故在 43 s 出点。",
+  "referenceViews": []
 }
