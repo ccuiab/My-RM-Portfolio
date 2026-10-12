@@ -118,7 +118,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
     root.dataset.autoState = automatic ? 'playing' : playing ? 'interaction' : 'paused';
     if (automatic) {
       if (reconnect) {
-        phaseTime = explode < .0001 ? 0 : explode > .9999 ? 3 : cycle.cycleAtAmount(explode, phase === 'closing');
+        phaseTime = explode < .0001 ? 0 : explode > .9999 ? cycle.EXPLODED_START : cycle.cycleAtAmount(explode, phase === 'closing');
         reconnect = false; blend = 0;
       }
       blend = Math.min(1, blend + dt);

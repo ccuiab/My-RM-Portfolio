@@ -10,7 +10,7 @@ type CadGroup = { id: number; node_name: string; center_m: [number, number, numb
 type Metadata = { parts: Part[]; groups: CadGroup[] };
 export type ArmExplodeScene = { setVisible: (visible: boolean) => void; dispose: () => void };
 
-const ASSEMBLED = 1.2, GROUP_OPEN = 1.4, GROUP_HOLD = .4, LOCAL_OPEN = 1, EXPLODED = 1.5, LOCAL_CLOSE = 1, GROUP_CLOSE = 1.4;
+const ASSEMBLED = 2, GROUP_OPEN = 3, GROUP_HOLD = .8, LOCAL_OPEN = 2.2, EXPLODED = 3, LOCAL_CLOSE = 2.2, GROUP_CLOSE = 3;
 const FULL_OPEN = ASSEMBLED + GROUP_OPEN + GROUP_HOLD + LOCAL_OPEN;
 const PERIOD = FULL_OPEN + EXPLODED + LOCAL_CLOSE + GROUP_CLOSE;
 const IDLE = 5000;

@@ -2,14 +2,18 @@ import * as THREE from 'three';
 import type { MechanismStage } from './lib/mechanism-stage';
 
 const TAU = Math.PI * 2;
-export const CYCLE_DURATION = 6.3;
-const ease = (x: number) => x * x * (3 - 2 * x);
+// Assembled hold, slow open, long exploded hold, slow close (seconds).
+const HOLD_ASSEMBLED = 2, OPEN = 3.4, HOLD_EXPLODED = 3.2, CLOSE = 3.4;
+export const CYCLE_DURATION = HOLD_ASSEMBLED + OPEN + HOLD_EXPLODED + CLOSE;
+/** Cycle time at which the exploded hold begins. */
+export const EXPLODED_START = HOLD_ASSEMBLED + OPEN;
+const ease = (x: number) => x * x * x * (x * (x * 6 - 15) + 10);
 export function explosionCycle(time: number) {
   const t = ((time % CYCLE_DURATION) + CYCLE_DURATION) % CYCLE_DURATION;
-  if (t < 1.2) return { amount: 0, phase: 'assembled' };
-  if (t < 3) return { amount: ease((t - 1.2) / 1.8), phase: 'opening' };
-  if (t < 4.5) return { amount: 1, phase: 'exploded' };
-  return { amount: 1 - ease((t - 4.5) / 1.8), phase: 'closing' };
+  if (t < HOLD_ASSEMBLED) return { amount: 0, phase: 'assembled' };
+  if (t < EXPLODED_START) return { amount: ease((t - HOLD_ASSEMBLED) / OPEN), phase: 'opening' };
+  if (t < EXPLODED_START + HOLD_EXPLODED) return { amount: 1, phase: 'exploded' };
+  return { amount: 1 - ease((t - EXPLODED_START - HOLD_EXPLODED) / CLOSE), phase: 'closing' };
 }
 /** Bounded, periodic demonstration: closing never unwinds accumulated turns. */
 export function swerveAngles(time: number, explode: number) {
@@ -24,7 +28,7 @@ export function cycleAtAmount(amount: number, closing: boolean) {
     const mid = (lo + hi) / 2;
     if (ease(mid) < value) lo = mid; else hi = mid;
   }
-  return (closing ? 4.5 : 1.2) + 1.8 * (lo + hi) / 2;
+  return (closing ? EXPLODED_START + HOLD_EXPLODED : HOLD_ASSEMBLED) + (closing ? CLOSE : OPEN) * (lo + hi) / 2;
 }
 
 /** Wobble piston in the CAD XZ plane. The head's reference centre stays on
