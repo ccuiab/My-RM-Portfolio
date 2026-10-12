@@ -37,6 +37,16 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
   let shell: THREE.Object3D | undefined, crank: THREE.Object3D | undefined;
   stage.model.traverse(object => {
     const data = object.userData;
+    if (kind === 'pump' && data.web_motor_intact) object.traverse(child => {
+      const mesh = child as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+        // Keep the complete motor in its CAD position, with the linkage visible
+        // even when the user orbits onto the motor side.
+        material.transparent = true; material.opacity = .08; material.depthWrite = false;
+        material.side = THREE.FrontSide; material.needsUpdate = true;
+      }
+    });
     if (data.web_shell) shell = object;
     if (data.web_motion === 'crank') crank = object;
     if (!data.web_motion && !data.web_explode) return;
@@ -61,7 +71,7 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
     const mesh = child as THREE.Mesh;
     if (!mesh.isMesh) return;
     for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-      material.transparent = true; material.opacity = .16; material.depthWrite = false;
+      material.transparent = true; material.opacity = kind === 'pump' ? .12 : .16; material.depthWrite = false;
       material.side = THREE.FrontSide;
     }
   });
@@ -87,6 +97,37 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
   // The exporter supplies measured port centres in the same centred web frame.
   const ports: THREE.Vector3[] = shell ? (shell.userData.web_ports ?? []).map((p: number[]) => new THREE.Vector3().fromArray(p)) : [];
   const portAxis = new THREE.Vector3().fromArray(shell?.userData.web_port_axis ?? [1, 0, 0]);
+  if (kind === 'pump' && shell && ports.length === 2) {
+    // Keep the actual CAD tube surfaces legible through the ghosted housing.
+    // Reuse their triangles, rather than drawing a replacement pipe shape.
+    const details: { parent: THREE.Mesh; mesh: THREE.Mesh }[] = [];
+    shell.traverse(object => {
+      const mesh = object as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      const source = mesh.geometry, positions = source.attributes.position;
+      const index = source.index;
+      const toModel = stage.model.matrixWorld.clone().invert().multiply(mesh.matrixWorld);
+      const points = Array.from({ length: positions.count }, (_, i) => new THREE.Vector3().fromBufferAttribute(positions, i).applyMatrix4(toModel));
+      for (const port of ports) {
+        const onTube = points.map(point => {
+          const offset = point.clone().sub(port), axial = offset.dot(portAxis);
+          // Port centres are at the tube mouths; the CAD walls extend inward.
+          return axial >= -.008 && axial <= .00005 && offset.addScaledVector(portAxis, -axial).length() < .0045;
+        });
+        const triangles: number[] = [];
+        for (let i = 0; i < (index?.count ?? positions.count); i += 3) {
+          const ids = [0, 1, 2].map(j => index ? index.getX(i + j) : i + j);
+          if (ids.every(id => onTube[id])) triangles.push(...ids);
+        }
+        if (!triangles.length) continue;
+        const geometry = source.clone(); geometry.setIndex(triangles); geometry.clearGroups();
+        const material = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material).clone();
+        material.opacity = .55;
+        details.push({ parent: mesh, mesh: new THREE.Mesh(geometry, material) });
+      }
+    });
+    details.forEach(({ parent, mesh }) => parent.add(mesh));
+  }
   const count = 9, positions = new Float32Array(count * 3);
   let particles: THREE.Points | undefined;
   const arrows: THREE.ArrowHelper[] = [];
@@ -124,7 +165,7 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
           const value = p.motion === 'roll' ? time * 1.1 * explode : p.motion === 'steer' ? Math.sin(time * .5) * .26 * explode : 0;
           // Axes are expressed in the part parent's frame, not the mesh frame.
           if (value) p.object.quaternion.premultiply(rotation.setFromAxisAngle(p.axis, value));
-        } else if (p.motion === 'crank') {
+        } else if (p.motion === 'crank' || p.motion === 'big-end-bearing') {
           rotation.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
           p.object.position.sub(origin).applyQuaternion(rotation).add(origin);
           p.object.quaternion.premultiply(rotation);
@@ -134,8 +175,6 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
           p.object.quaternion.premultiply(swing);
         } else if (p.motion === 'piston') {
           p.object.position.add(pose.small.clone().sub(small));
-        } else if (p.motion === 'big-end-bearing') {
-          p.object.position.add(pose.big.clone().sub(big));
         }
       }
       stage.model.updateMatrixWorld(true);
