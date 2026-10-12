@@ -45,9 +45,9 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   } finally { signal.removeEventListener('abort', abortLoad); draco.dispose(); }
   scene.add(model);
   const controls = new OrbitControls(camera, canvas);
-  controls.enableZoom = file === 'engineer-swerve.glb';
+  controls.enableZoom = true;
   controls.zoomSpeed = .6;
-  if (controls.enableZoom) canvas.setAttribute('data-lenis-prevent-wheel', '');
+  canvas.setAttribute('data-lenis-prevent-wheel', '');
   controls.enablePan = false;
   controls.enableDamping = false;
   controls.minPolarAngle = .1;
