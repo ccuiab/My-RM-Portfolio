@@ -1,0 +1,147 @@
+{
+  "status": "blocked by user-required memory gate; native screenshots not attempted",
+  "memory_gate": {
+    "required_available_MB": 2000,
+    "samples": [
+      {
+        "availableMB": 1366,
+        "utc": "2026-10-12T17:53:38.0419585Z"
+      },
+      {
+        "availableMB": 1345,
+        "utc": "2026-10-12T17:54:09.0977659Z"
+      },
+      {
+        "availableMB": 1328,
+        "utc": "2026-10-12T17:54:40.1184343Z"
+      },
+      {
+        "availableMB": 1292,
+        "utc": "2026-10-12T17:55:11.1368897Z"
+      },
+      {
+        "availableMB": 1320,
+        "utc": "2026-10-12T17:55:42.1565225Z"
+      },
+      {
+        "availableMB": 1367,
+        "utc": "2026-10-12T17:56:13.1872204Z"
+      },
+      {
+        "availableMB": 1146,
+        "utc": "2026-10-12T17:56:44.2170683Z"
+      },
+      {
+        "availableMB": 1241,
+        "utc": "2026-10-12T17:57:15.2276065Z"
+      },
+      {
+        "availableMB": 1340,
+        "utc": "2026-10-12T17:57:46.2479739Z"
+      },
+      {
+        "availableMB": 1350,
+        "utc": "2026-10-12T17:58:17.2715692Z"
+      },
+      {
+        "availableMB": 1322,
+        "utc": "2026-10-12T17:58:48.2941859Z"
+      },
+      {
+        "availableMB": 1326,
+        "utc": "2026-10-12T17:59:19.3118420Z"
+      },
+      {
+        "availableMB": 1321,
+        "utc": "2026-10-12T17:59:50.3306009Z"
+      },
+      {
+        "availableMB": 1333,
+        "utc": "2026-10-12T18:00:21.3516867Z"
+      },
+      {
+        "availableMB": 1337,
+        "utc": "2026-10-12T18:00:52.3687794Z"
+      },
+      {
+        "availableMB": 1348,
+        "utc": "2026-10-12T18:01:23.3943875Z"
+      },
+      {
+        "availableMB": 1338,
+        "utc": "2026-10-12T18:01:54.4237271Z"
+      },
+      {
+        "availableMB": 1292,
+        "utc": "2026-10-12T18:02:25.4445633Z"
+      },
+      {
+        "availableMB": 1331,
+        "utc": "2026-10-12T18:02:56.4603046Z"
+      },
+      {
+        "availableMB": 1303,
+        "utc": "2026-10-12T18:03:27.4807942Z"
+      },
+      {
+        "availableMB": 1366,
+        "utc": "2026-10-12T18:03:58.4938244Z"
+      }
+    ],
+    "min_MB": 1146,
+    "max_MB": 1367,
+    "start_utc": "2026-10-12T17:53:38.0419585Z",
+    "last_utc": "2026-10-12T18:03:58.4938244Z"
+  },
+  "source_snapshot_comparison": {
+    "before": "D:\\AI_playground\\rm-wt\\shared-inputs\\swimg\\source-20261012T175744Z.json",
+    "after": "D:\\AI_playground\\rm-wt\\shared-inputs\\swimg\\source-20261012T180525Z.json",
+    "before_file_count": 854,
+    "after_file_count": 854,
+    "before_total_bytes": 1628575184,
+    "after_total_bytes": 1628575184,
+    "added": [],
+    "removed": [],
+    "changed_length_or_mtime": [],
+    "top_level_SHA256_unchanged": true,
+    "top_level_assemblies": [
+      {
+        "path": "D:\\RM2025\\New_Hero_gimbal_2.0\\Main_assembly\\发机_4310pitch.SLDASM",
+        "bytes": 109134016,
+        "sha256": "564BAFB94A2BE2BE67D37EEE3DF23B4893C2096EE20E6E63929ACF7691BB9E60"
+      },
+      {
+        "path": "D:\\RM2025\\【RM2025-轮式六轴机械臂工程机械结构开源】香港科技大学-ENTERPRIZE\\chassis\\3508_3508舵轮模组\\3508_3508_Swerve_drive_v2.2025.10.1.SLDASM",
+        "bytes": 10128154,
+        "sha256": "7365110A387F236D3D0699D99616BEC419506B61E0394F70590F2F1290A04E56"
+      }
+    ]
+  },
+  "synthetic_matte_check": {
+    "kind": "synthetic mathematical check, not native SW validation",
+    "tested_alpha": [
+      0,
+      0.18,
+      0.25,
+      1
+    ],
+    "max_alpha_error": 0.003529418917263244,
+    "max_RGB_error_8bit": 6.0,
+    "max_white_reconstruction_error_8bit": 1.117647058823536,
+    "opaque_RGB_exact": true,
+    "partial_alpha_preserved": true
+  },
+  "native_capture_completed": false,
+  "native_reflection_check_completed": false,
+  "camera_matrix_verified": false,
+  "page_screenshots_completed": false,
+  "new_or_replaced_native_PNGs": [],
+  "website_content_changed": false,
+  "build": {
+    "passed": true,
+    "pages": 10,
+    "version": "20261012-180211290-local-d0d9b3c",
+    "log": "C:\\Users\\cch20\\AppData\\Local\\Temp\\rm-shots\\swimg\\build.log"
+  },
+  "dependency_changes": []
+}
