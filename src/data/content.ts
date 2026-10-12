@@ -165,9 +165,10 @@ export const sceneCopy = {
     },
   },
   armExplode: {
-    caption: { zh: 'L1–L6 分级展开，紧固件随所属构件移动，电机保持整体。', en: 'L1–L6 separate in order. Fasteners follow their mounting parts; motors remain intact.' },
+    caption: { zh: '先向外分开各段与侧部机构，再小幅展开组内构件；合拢按相反顺序进行。电机与安装小件保持整体。', en: 'Arm sections and the side mechanism separate outward, then their mounting bundles open slightly. Closing reverses the stages; motors and mounting hardware remain intact.' },
     hint: { zh: '拖动 / 缩放 / 滑块暂停演示 · 空闲后自动继续 · 悬停查看零件', en: 'Drag / zoom / slider pauses the presentation · Resumes after inactivity · Hover to inspect' },
     assemble: { zh: '恢复装配', en: 'Assemble' },
+    groups: { zh: '组级展开', en: 'Separate groups' },
     explode: { zh: '爆炸展开', en: 'Explode' },
     rotate: { zh: '播放演示', en: 'Play presentation' },
     pause: { zh: '暂停演示', en: 'Pause presentation' },

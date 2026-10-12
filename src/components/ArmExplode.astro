@@ -14,8 +14,8 @@ const L = sceneCopy.armExplode;
 <section class="explode" data-arm-explode data-model={hasModel ? '1' : ''} data-state="assembled">
   <div class="view">
     <div class="still"><Image src={fallback} alt={t(L.alt, lang)} widths={[900, 1600]} sizes="100vw" /></div>
-    <canvas class="three" tabindex="0" role="img" aria-label={t(L.hint, lang)}></canvas>
-    <div class="link-labels" aria-hidden="true">{Array.from({ length: 6 }, (_, i) => <span data-link-label={i + 1}>L{i + 1}</span>)}</div>
+    <canvas class="three" data-lenis-prevent-wheel tabindex="0" role="img" aria-label={t(L.hint, lang)}></canvas>
+    <div class="link-labels" aria-hidden="true">{Array.from({ length: 5 }, (_, i) => <span data-link-label={i}></span>)}</div>
     <div class="hud" data-part-hud data-idle={t(L.hover, lang)} data-mount={t(L.mount, lang)}>
       <span class="joint" data-part-joint></span><span data-part-name>{t(L.hover, lang)}</span>
     </div>
@@ -27,6 +27,7 @@ const L = sceneCopy.armExplode;
     <legend class="sr-only">{t(L.controls, lang)}</legend>
     <div class="states" role="group" aria-label={t(L.controls, lang)}>
       <button type="button" data-explode-to="0" aria-pressed="true">{t(L.assemble, lang)}</button>
+      <button type="button" data-explode-to="0.5" aria-pressed="false">{t(L.groups, lang)}</button>
       <button type="button" data-explode-to="1" aria-pressed="false">{t(L.explode, lang)}</button>
       <button type="button" data-cycle aria-pressed="true" data-play={t(L.rotate, lang)} data-pause={t(L.pause, lang)}>{t(L.pause, lang)}</button>
       <button type="button" data-reset-view>{t(sceneCopy.interaction.reset, lang)}</button>
@@ -72,7 +73,7 @@ const L = sceneCopy.armExplode;
   .three:active { cursor: grabbing; }
   .link-labels { display: none; position: absolute; inset: 0; pointer-events: none; }
   .has-3d .link-labels { display: block; }
-  .link-labels span { position: absolute; top: 0; left: 0; padding: .2rem .4rem; color: var(--amber); border-left: 1px solid var(--amber); background: var(--ground); font: .7rem var(--f-mono); }
+  .link-labels span { position: absolute; top: 0; left: 0; max-width: 190px; padding: .2rem .4rem; opacity: 0; color: var(--amber); border-left: 1px solid var(--amber); background: var(--ground); font: .7rem var(--f-mono); }
   .hud { position: absolute; bottom: 1rem; left: var(--scene-inset); right: var(--scene-inset); display: none; gap: .2rem; pointer-events: none; color: var(--ink-2); font-size: var(--t-xs); overflow-wrap: anywhere; }
   .has-3d .hud { display: grid; }
   [data-hover-part] .hud { color: var(--amber); }
