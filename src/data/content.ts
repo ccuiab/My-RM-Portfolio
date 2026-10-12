@@ -117,7 +117,11 @@ export const sceneCopy = {
     play: { zh: '播放运动', en: 'Play motion' },
     pause: { zh: '暂停运动', en: 'Pause motion' },
     hint: { zh: '拖动旋转 · 方向键调整视角', en: 'Drag to rotate · Arrow keys adjust the view' },
-    note: { zh: '半透明泵头显示曲柄与活塞；转速与进出口气流仅作视觉示意。', en: 'A translucent pump head reveals the crank and piston. Speed and port airflow are illustrative.' },
+    note: { zh: '上管吸气、下管排气，随活塞行程交替开启。端口附近的阀门标记为示意；转速为演示速度。', en: 'The upper inlet and lower outlet alternate with the piston stroke. Valve markers near the ports are schematic; speed is for demonstration.' },
+    inletOpen: { zh: '进气 → 阀开', en: 'INLET → OPEN' },
+    inletClosed: { zh: '进气 · 阀闭', en: 'INLET · CLOSED' },
+    outletOpen: { zh: '排气 → 阀开', en: 'OUTLET → OPEN' },
+    outletClosed: { zh: '排气 · 阀闭', en: 'OUTLET · CLOSED' },
     static: { zh: '静态设计视图', en: 'Static design view' },
   },
   swerve: {
@@ -125,10 +129,22 @@ export const sceneCopy = {
     assemble: { zh: '恢复装配', en: 'Assemble' },
     explode: { zh: '爆炸展开', en: 'Explode' },
     amount: { zh: '拆解程度', en: 'Exploded view' },
-    play: { zh: '播放运动', en: 'Play motion' },
-    pause: { zh: '暂停运动', en: 'Pause motion' },
+    play: { zh: '播放循环', en: 'Play cycle' },
+    pause: { zh: '暂停循环', en: 'Pause cycle' },
     hint: { zh: '拖动旋转 · 滚轮 / 双指缩放 · 悬停查看零件 · 方向键调整视角', en: 'Drag to orbit · Scroll / pinch to zoom · Hover to inspect · Arrow keys adjust the view' },
-    note: { zh: '引导线连接装配与展开位置；爆炸态演示滚动与转向，电机保持整体，运动为视觉示意。', en: 'Guides connect assembled and separated positions. Rolling and steering are illustrative; motors remain intact.' },
+    note: { zh: '沿轮轴展开输入齿轮、复合齿轮与内齿圈；上方显示转向齿轮。电机保持整体。操作后空闲 5 秒续播，转向与滚动为示意。', en: 'Input, compound gears and the internal ring separate along the wheel axle; steering gears sit above. Motors remain intact. Playback resumes after 5 seconds idle. Steering and rolling are illustrative.' },
+    phases: {
+      assembled: { zh: '装配态', en: 'ASSEMBLED' },
+      opening: { zh: '展开中', en: 'OPENING' },
+      exploded: { zh: '爆炸态', en: 'EXPLODED' },
+      closing: { zh: '合拢中', en: 'CLOSING' },
+    },
+    stages: [
+      { zh: '驱动 · 输入', en: 'DRIVE · INPUT' },
+      { zh: '驱动 · 复合齿轮', en: 'DRIVE · COMPOUND' },
+      { zh: '驱动 · 内齿圈', en: 'DRIVE · RING' },
+      { zh: '转向 · 直齿轮', en: 'STEERING · SPUR' },
+    ],
     static: { zh: '静态装配视图', en: 'Static assembly view' },
   },
   interaction: {
@@ -302,8 +318,12 @@ export const engineer = {
       },
       bullets: [
         {
-          zh: '5 寸实心橡胶轮提供抓地力和耐磨性，支撑赛场脱困与快速返回补给。',
-          en: 'Five-inch solid rubber tyres provide grip and wear resistance for field recovery and quick returns for resupply.',
+          zh: '驱动电机经输入直齿轮、复合齿轮与内齿圈带动车轮，把减速机构收进轮侧；宽橡胶胎与舵下悬挂承担高负载。',
+          en: 'The drive motor powers the wheel through an input spur gear, compound gears and an internal ring, packaging reduction beside the wheel. Wide rubber tyres and under-module suspension carry high loads.',
+        },
+        {
+          zh: '转向电机经小齿轮啮合舵组大直齿轮，驱动舵组整体回转；驱动与转向分别布置，便于独立控制。',
+          en: 'The steering motor drives a pinion meshing with the large spur gear to turn the complete inner module. Separate drive and steering paths allow independent control.',
         },
       ],
       pics: [{ src: engWheel, model: 'engineer-swerve.glb', cutout: true, alt: { zh: '工程舵轮模组', en: 'Engineer swerve module' } }],
@@ -322,6 +342,10 @@ export const engineer = {
         { label: { zh: '整泵质量', en: 'Pump mass' }, value: '<300', unit: 'g' },
       ],
       bullets: [
+        {
+          zh: '泵头内两个单向阀，吸气、排气交替进行；曲柄旋转带动连杆与活塞往复。',
+          en: 'Two check valves inside the pump head alternate intake and exhaust as the rotating crank drives the connecting rod and piston.',
+        },
         {
           zh: '用电机电流反馈判断吸附状态，几乎零成本得到类似气压计的检测，掉矿风险可以提前发现。',
           en: 'Motor current feedback reads the suction state, giving barometer-like sensing at almost no cost and early warning of a dropped ore.',

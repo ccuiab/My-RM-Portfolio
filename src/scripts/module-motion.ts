@@ -1,130 +1,179 @@
 import * as THREE from 'three';
 import type { MechanismStage } from './lib/mechanism-stage';
 
+const TAU = Math.PI * 2;
+export const CYCLE_DURATION = 6.3;
+const ease = (x: number) => x * x * (3 - 2 * x);
+export function explosionCycle(time: number) {
+  const t = ((time % CYCLE_DURATION) + CYCLE_DURATION) % CYCLE_DURATION;
+  if (t < 1.2) return { amount: 0, phase: 'assembled' };
+  if (t < 3) return { amount: ease((t - 1.2) / 1.8), phase: 'opening' };
+  if (t < 4.5) return { amount: 1, phase: 'exploded' };
+  return { amount: 1 - ease((t - 4.5) / 1.8), phase: 'closing' };
+}
+/** Invert the eased leg, so an idle resume starts at the user's current amount. */
+export function cycleAtAmount(amount: number, closing: boolean) {
+  let lo = 0, hi = 1;
+  const value = closing ? 1 - amount : amount;
+  for (let i = 0; i < 24; i++) {
+    const mid = (lo + hi) / 2;
+    if (ease(mid) < value) lo = mid; else hi = mid;
+  }
+  return (closing ? 4.5 : 1.2) + 1.8 * (lo + hi) / 2;
+}
+
+/** Offset slider-crank in the measured CAD plane; the rod length is invariant. */
+export function sliderCrank(angle: number, origin: THREE.Vector3, big: THREE.Vector3, small: THREE.Vector3) {
+  const rotation = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
+  const a = big.clone().sub(origin).applyQuaternion(rotation).add(origin);
+  const length = big.distanceTo(small);
+  const dy = small.y - a.y, dz = small.z - a.z;
+  const c = new THREE.Vector3(a.x + Math.sqrt(Math.max(0, length * length - dy * dy - dz * dz)), small.y, small.z);
+  return { big: a, small: c, rodLength: length };
+}
+
 export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve') {
   const parts: { object: THREE.Object3D; position: THREE.Vector3; quaternion: THREE.Quaternion; axis: THREE.Vector3; offset: THREE.Vector3; motion?: string }[] = [];
-  let shell: THREE.Object3D | undefined;
-  const rotation = new THREE.Quaternion();
+  let shell: THREE.Object3D | undefined, crank: THREE.Object3D | undefined;
   stage.model.traverse(object => {
     const data = object.userData;
     if (data.web_shell) shell = object;
+    if (data.web_motion === 'crank') crank = object;
     if (!data.web_motion && !data.web_explode) return;
     parts.push({ object, position: object.position.clone(), quaternion: object.quaternion.clone(),
       axis: new THREE.Vector3().fromArray(data.web_axis ?? [0, 1, 0]).normalize(),
       offset: new THREE.Vector3().fromArray(data.web_explode ?? [0, 0, 0]), motion: data.web_motion });
-    if (data.web_motion === 'crank' || data.web_shell) {
-      object.traverse(child => {
-        const mesh = child as THREE.Mesh;
-        if (!mesh.isMesh) return;
-        for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-          const m = mat as THREE.MeshStandardMaterial;
-          m.color.lerp(stage.amber, .55); m.emissive.copy(stage.amber); m.emissiveIntensity = .22;
+    object.traverse(child => {
+      const mesh = child as THREE.Mesh;
+      if (!mesh.isMesh) return;
+      for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+        const m = material as THREE.MeshStandardMaterial;
+        if (data.web_transmission || data.web_motion === 'crank' || data.web_motion === 'rod') {
+          m.color.lerp(stage.amber, .28); m.emissive.copy(stage.amber); m.emissiveIntensity = .06;
         }
-      });
+        if (data.web_structure) {
+          m.transparent = true; m.opacity = .36; m.depthWrite = false;
+        }
+      }
+    });
+  });
+  if (shell) shell.traverse(child => {
+    const mesh = child as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      material.transparent = true; material.opacity = .16; material.depthWrite = false;
+      material.side = THREE.FrontSide;
     }
   });
-  if (kind === 'swerve') {
-    let gearboxIndex = 0;
-    for (const part of parts) {
-      if (part.object.userData.web_motor_intact) continue;
-      part.offset.x *= 3.6;
-      part.offset.y *= 2.6;
-      part.offset.z *= 3.6;
-      // The gearbox covers share an export vector. Stagger them along the
-      // wheel axle, retaining the complete motor as the assembly anchor.
-      const name = part.object.userData.source_node_name ?? '';
-      if (name.includes('GEARBOX') && part.offset.lengthSq()) {
-        const spacing = gearboxIndex++ * .017;
-        part.offset.add(new THREE.Vector3(-.766, 0, .643).multiplyScalar(spacing));
-      }
-    }
-  }
-  // A few amber assembly axes echo the arm viewer without tracing fasteners.
-  // Only the widest separated groups get guides; motors stay at their CAD pose.
-  const guided = kind === 'swerve' ? parts.filter(part => !part.object.userData.web_motor_intact && part.offset.length() > .025)
-    .sort((a, b) => b.offset.lengthSq() - a.offset.lengthSq()).slice(0, 4) : [];
-  let guides: THREE.LineSegments | undefined;
+  const guided = kind === 'swerve' ? parts.filter(p => p.object.userData.web_guide) : [];
   const guidePositions = new Float32Array(guided.length * 6);
-  const assemblyPoint = new THREE.Vector3(), separatedPoint = new THREE.Vector3();
+  let guides: THREE.LineSegments | undefined;
   if (guided.length) {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.BufferAttribute(guidePositions, 3));
     guides = new THREE.LineSegments(geometry, new THREE.LineBasicMaterial({ color: stage.amber, transparent: true, opacity: .16, depthWrite: false }));
-    guides.frustumCulled = false;
-    stage.scene.add(guides);
+    guides.frustumCulled = false; stage.scene.add(guides);
   }
-  if (shell) shell.traverse(child => {
-    const mesh = child as THREE.Mesh;
-    if (!mesh.isMesh) return;
-    for (const mat of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-      mat.transparent = true; mat.opacity = .20; mat.depthWrite = false; mat.side = THREE.DoubleSide;
-    }
-  });
-
-  // No cup exists in this selection. Keep sparse visual flow at the pump head only.
-  const count = 14;
+  const from = (key: string) => new THREE.Vector3().fromArray(crank!.userData[key]);
+  const origin = crank ? from('web_crank_origin') : new THREE.Vector3();
+  const big = crank ? from('web_big_end') : new THREE.Vector3();
+  const small = crank ? from('web_small_end') : new THREE.Vector3();
+  const rodDirection = small.clone().sub(big).normalize();
+  const rod = parts.find(p => p.motion === 'rod');
+  const piston = parts.find(p => p.motion === 'piston');
+  stage.model.updateMatrixWorld(true);
+  const localPin = (part: typeof rod, point: THREE.Vector3) => part?.object.worldToLocal(stage.model.localToWorld(point.clone()));
+  const rodBig = localPin(rod, big), rodSmall = localPin(rod, small), pistonSmall = localPin(piston, small);
+  // The exporter supplies measured port centres in the same centred web frame.
+  const ports: THREE.Vector3[] = shell ? (shell.userData.web_ports ?? []).map((p: number[]) => new THREE.Vector3().fromArray(p)) : [];
+  const portAxis = new THREE.Vector3().fromArray(shell?.userData.web_port_axis ?? [1, 0, 0]);
+  const count = 9, positions = new Float32Array(count * 3);
   let particles: THREE.Points | undefined;
-  const ports: THREE.Vector3[] = [];
-  const positions = new Float32Array(count * 3);
-  if (kind === 'pump' && shell) {
-    const endpoints = shell.userData.web_ports as number[][];
-    endpoints.forEach(p => ports.push(new THREE.Vector3().fromArray(p)));
+  const arrows: THREE.ArrowHelper[] = [];
+  if (kind === 'pump' && ports.length === 2) {
     const geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    const material = new THREE.ShaderMaterial({
-      uniforms: { color: { value: stage.amber } },
-      vertexShader: 'void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);gl_PointSize=5.0;}',
-      fragmentShader: 'uniform vec3 color;void main(){float d=length(gl_PointCoord-0.5);if(d>0.5)discard;gl_FragColor=vec4(color,(1.0-smoothstep(0.2,0.5,d))*0.85);}',
-      transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    particles = new THREE.Points(geometry, new THREE.PointsMaterial({ color: stage.amber, size: .0018, transparent: true, opacity: .9, depthWrite: false }));
+    particles.frustumCulled = false; stage.model.add(particles);
+    ports.forEach((port: THREE.Vector3, index: number) => {
+      const outward = portAxis.clone();
+      const arrow = new THREE.ArrowHelper(index === 0 ? outward.clone().negate() : outward,
+        port.clone().addScaledVector(outward, index === 0 ? .028 : .004), .023, stage.amber, .0045, .0024);
+      stage.model.add(arrow); arrows.push(arrow);
     });
-    particles = new THREE.Points(geometry, material);
-    particles.frustumCulled = false;
-    shell.add(particles);
   }
-  let lastRadius = -1;
+  const rotation = new THREE.Quaternion(), swing = new THREE.Quaternion();
+  const a = new THREE.Vector3(), b = new THREE.Vector3();
+  const project = (point: THREE.Vector3) => {
+    const ndc = stage.model.localToWorld(point.clone()).project(stage.camera);
+    return { x: (ndc.x + 1) * 50, y: (1 - ndc.y) * 50, visible: ndc.z > -1 && ndc.z < 1 };
+  };
+  let diagnostics = { stroke: 'intake', inletOpen: true, outletOpen: false, rodError: 0, sliderError: 0, pins: [] as number[][] };
   return {
     update(time: number, explode: number) {
-      // Hold the assembled wheel still. Movement starts smoothly as parts separate.
-      const steering = Math.sin(time * .85) * .55 * explode;
+      const angle = (time * 2.8) % TAU;
+      const pose = sliderCrank(angle, origin, big, small);
+      const next = sliderCrank(angle + .0001, origin, big, small);
+      // Positive travel toward the pump head reduces chamber volume.
+      const intake = next.small.x < pose.small.x;
       for (const p of parts) {
-        p.object.position.copy(p.position);
-        p.object.quaternion.copy(p.quaternion);
+        p.object.position.copy(p.position); p.object.quaternion.copy(p.quaternion);
         if (p.object.userData.web_motor_intact) continue;
         p.object.position.addScaledVector(p.offset, explode);
-        const angle = p.motion === 'crank' ? time * 2.8 : p.motion === 'roll' ? time * 1.5 * explode : p.motion === 'steer' ? steering : 0;
-        if (angle) p.object.quaternion.multiply(rotation.setFromAxisAngle(p.axis, angle));
-        if (p.motion === 'piston') p.object.position.addScaledVector(p.axis.clone().applyQuaternion(p.quaternion), Math.sin(time * 2.8) * .0035);
+        if (kind === 'swerve') {
+          const value = p.motion === 'roll' ? time * 1.1 * explode : p.motion === 'steer' ? Math.sin(time * .5) * .26 * explode : 0;
+          // Axes are expressed in the part parent's frame, not the mesh frame.
+          if (value) p.object.quaternion.premultiply(rotation.setFromAxisAngle(p.axis, value));
+        } else if (p.motion === 'crank') {
+          rotation.setFromAxisAngle(new THREE.Vector3(0, 1, 0), angle);
+          p.object.position.sub(origin).applyQuaternion(rotation).add(origin);
+          p.object.quaternion.premultiply(rotation);
+        } else if (p.motion === 'rod') {
+          swing.setFromUnitVectors(rodDirection, pose.small.clone().sub(pose.big).normalize());
+          p.object.position.sub(big).applyQuaternion(swing).add(pose.big);
+          p.object.quaternion.premultiply(swing);
+        } else if (p.motion === 'piston') {
+          p.object.position.add(pose.small.clone().sub(small));
+        } else if (p.motion === 'big-end-bearing') {
+          p.object.position.add(pose.big.clone().sub(big));
+        }
       }
-      if (guides) {
-        stage.model.updateMatrixWorld(true);
-        guided.forEach((part, index) => {
-          assemblyPoint.copy(part.position);
-          separatedPoint.copy(part.object.position);
-          if (part.object.parent) {
-            part.object.parent.localToWorld(assemblyPoint);
-            part.object.parent.localToWorld(separatedPoint);
-          }
-          assemblyPoint.toArray(guidePositions, index * 6);
-          separatedPoint.toArray(guidePositions, index * 6 + 3);
-        });
-        guides.visible = explode > .01;
-        guides.geometry.attributes.position.needsUpdate = true;
-        (guides.material as THREE.LineBasicMaterial).opacity = .16 * explode;
-      }
+      stage.model.updateMatrixWorld(true);
+      guided.forEach((p, index) => {
+        a.copy(p.position); b.copy(p.object.position);
+        p.object.parent?.localToWorld(a); p.object.parent?.localToWorld(b);
+        a.toArray(guidePositions, index * 6); b.toArray(guidePositions, index * 6 + 3);
+      });
+      if (guides) { guides.visible = explode > .02; guides.geometry.attributes.position.needsUpdate = true; }
       if (particles) {
+        const port = ports[intake ? 0 : 1];
         for (let i = 0; i < count; i++) {
-          const port = ports[i % 2];
-          const t = (time * .4 + i / count) % 1;
-          // Opposed short paths show intake/exhaust near the lateral head openings.
-          const direction = i % 2 ? 1 : -1;
-          positions[i * 3] = port.x + direction * .024 * (i % 2 ? t : 1 - t);
-          positions[i * 3 + 1] = port.y + Math.sin(i * 2.4) * .0015;
-          positions[i * 3 + 2] = port.z + Math.cos(i * 2.4) * .0015;
+          const t = (time * 1.4 + i / count) % 1;
+          a.copy(port).addScaledVector(portAxis, .004 + .033 * (intake ? 1 - t : t));
+          a.toArray(positions, i * 3);
         }
         particles.geometry.attributes.position.needsUpdate = true;
+        arrows[0].visible = intake; arrows[1].visible = !intake;
       }
-      const radius = stage.sphere.radius * (kind === 'swerve' ? 1.04 : 1.05);
-      if (Math.abs(radius - lastRadius) > .00001) { stage.setRadius(radius); lastRadius = radius; }
+      const measured = (part: typeof rod, pin: THREE.Vector3 | undefined, fallback: THREE.Vector3) =>
+        part && pin ? stage.model.worldToLocal(part.object.localToWorld(pin.clone())) : fallback;
+      const measuredBig = measured(rod, rodBig, pose.big);
+      const measuredSmall = measured(rod, rodSmall, pose.small);
+      const measuredPiston = measured(piston, pistonSmall, pose.small);
+      diagnostics = { stroke: intake ? 'intake' : 'exhaust', inletOpen: intake, outletOpen: !intake,
+        rodError: Math.max(Math.abs(measuredBig.distanceTo(measuredSmall) - pose.rodLength), measuredBig.distanceTo(pose.big), measuredSmall.distanceTo(measuredPiston)),
+        sliderError: Math.hypot(measuredPiston.y - small.y, measuredPiston.z - small.z),
+        pins: [measuredBig.toArray(), measuredPiston.toArray()] };
+    },
+    diagnostics: () => diagnostics,
+    annotations() {
+      if (kind === 'pump') return ports.map((port: THREE.Vector3) => project(port.clone().addScaledVector(portAxis, .031)));
+      return ['drive-input', 'drive-compound', 'drive-output', 'steering-output'].map(name => {
+        const part = parts.find(p => p.object.userData.web_transmission === name);
+        if (!part) return { x: 0, y: 0, visible: false };
+        const ndc = new THREE.Box3().setFromObject(part.object).getCenter(new THREE.Vector3()).project(stage.camera);
+        return { x: (ndc.x + 1) * 50, y: (1 - ndc.y) * 50, visible: ndc.z > -1 && ndc.z < 1 };
+      });
     },
   };
 }
