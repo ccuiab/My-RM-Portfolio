@@ -1,8 +1,8 @@
 param(
   [string]$InputGlb = 'D:\AI_playground\My-RM-Portfolio\materials\models\derived\inputs\codex\task3_hero_raw.glb',
   [string]$Blender = 'D:\Blender Foundation\Blender 5.1\blender.exe',
-  [string]$Audit = "$env:LOCALAPPDATA\Temp\rm-shots\launcher\revision\render-audit.json",
-  [int]$Samples = 24,
+  [string]$Audit = "$env:LOCALAPPDATA\Temp\rm-shots\launcher\side\render-audit.json",
+  [int]$Samples = 16,
   [ValidateSet('a','b')][string]$Candidate = 'b',
   [string]$Output = '',
   [double[]]$View = @()
@@ -20,7 +20,7 @@ $renderProcess = $null
 try {
   New-Item -ItemType Directory (Split-Path -Parent $Audit) -Force | Out-Null
   $pythonScript = Join-Path $PSScriptRoot 'render-launcher-core.py'
-  $renderArgs = @('--background', '--factory-startup', '--python-exit-code', '1', '--python', ('"' + $pythonScript + '"'),
+  $renderArgs = @('--background', '--factory-startup', '--threads', '2', '--python-exit-code', '1', '--python', ('"' + $pythonScript + '"'),
     '--', '--input', ('"' + $InputGlb + '"'), '--audit', ('"' + $Audit + '"'), '--samples', $Samples, '--candidate', $Candidate)
   if ($Output) { $renderArgs += @('--output', ('"' + $Output + '"')) }
   if ($View.Count) { $renderArgs += @('--view') + @($View | ForEach-Object { $_.ToString([System.Globalization.CultureInfo]::InvariantCulture) }) }

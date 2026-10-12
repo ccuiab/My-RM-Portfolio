@@ -11,6 +11,9 @@ import hashlib
 import json
 import pathlib
 import itertools
+import math
+import random
+import collections
 import struct
 import sys
 import tempfile
@@ -25,11 +28,15 @@ CORE = {803, 804, 805, 806, 809, 810, 811, 812, 819, 820, 821, 822}
 FRAME = {791, 796, 800, 801, 802, 807, 813, 814, 815, 816, 823, 830, 914, 916}
 FUNCTIONAL = {808, 817, 831}
 GUARDS = {771, 774, 777, 781, 915, 919, 923, 926, 927, 931, 946}
-GHOST = {791, 796, 816, 914}
+# Low side views from the feeding side clear the muzzle's occlusion of the far wheel.
 CANDIDATES = {
-    'a': {'view': [1.3, -1.0, .35], 'frame_alpha': .30},
-    'b': {'view': [1.3, -1.0, .60], 'frame_alpha': .24},
+    'a': {'azimuth': 45, 'elevation': 3},
+    'b': {'azimuth': 57, 'elevation': 5},
 }
+# Reference A2 alpha>=128: 1488 px subject width / 969 px canvas height.
+# A2/A3 solid-alpha bounding-box centres average to y=0.536 of the canvas.
+TARGET_SUBJECT_WIDTH = .896
+TARGET_SUBJECT_Y = .536
 
 
 def selection_plan(data):
@@ -231,7 +238,7 @@ def hide_external_cable(obj):
             'faces_before': before, 'faces_after': len(obj.data.polygons)}
 
 
-def presentation_materials(objects, alpha):
+def presentation_materials(objects):
     """Native SW colours and weave; soften speculars rather than replacing the assembly palette."""
     for mat in list(bpy.data.materials):
         shader = mat.node_tree.nodes.get('Principled BSDF') if mat.use_nodes else None
@@ -239,6 +246,14 @@ def presentation_materials(objects, alpha):
             continue
         shader.inputs['Roughness'].default_value = max(.5, shader.inputs['Roughness'].default_value)
         shader.inputs['Metallic'].default_value = min(.18, shader.inputs['Metallic'].default_value)
+        for link in list(shader.inputs['Alpha'].links):
+            mat.node_tree.links.remove(link)
+        shader.inputs['Alpha'].default_value = 1
+        shader.inputs['Specular IOR Level'].default_value = .2
+        if any(k in mat.name.lower() for k in ('steel', 'aluminum')):
+            shader.inputs['Base Color'].default_value = (.23, .25, .29, 1)
+            shader.inputs['Metallic'].default_value = .45
+            shader.inputs['Roughness'].default_value = .66
         if 'carbonfiberepoxy' in mat.name:
             base = shader.inputs['Base Color']
             if base.is_linked:
@@ -246,13 +261,14 @@ def presentation_materials(objects, alpha):
                 tint = mat.node_tree.nodes.new('ShaderNodeMixRGB')
                 tint.blend_type = 'MULTIPLY'
                 tint.inputs[0].default_value = 1
-                tint.inputs[2].default_value = (.14, .13, .16, 1)
+                tint.inputs[2].default_value = (.055, .050, .064, 1)
                 mat.node_tree.links.new(original, tint.inputs[1])
                 mat.node_tree.links.new(tint.outputs[0], base)
             else:
-                base.default_value = (.14, .13, .16, 1)
+                base.default_value = (.055, .050, .064, 1)
     rubber = material('launcher_rubber', (.033, .035, .044), 0, .8)
     motor = material('M2006_satin_motor', (.34, .37, .43), .18, .55)
+    fittings = material('matte_grey_frame_fittings', (.21, .23, .27), .45, .68)
     for obj in objects:
         index = obj['source_node_index']
         if index in (805, 810, 821):
@@ -261,12 +277,39 @@ def presentation_materials(objects, alpha):
         elif index == 811:
             for slot in obj.material_slots:
                 slot.material = motor
-        if index in GHOST:
+        elif any(k in obj['source_node_name'] for k in ('STD_', '衬套', 'MF', 'Pin_', 'MSM-')):
             for slot in obj.material_slots:
-                ghost = slot.material.copy()
-                ghost.name = f'frame_ghost_{index}_{alpha:.2f}'
-                ghost.node_tree.nodes['Principled BSDF'].inputs['Alpha'].default_value = alpha
-                slot.material = ghost
+                slot.material = fittings
+
+
+def wheel_visibility(nodes, direction):
+    """Ray-check opaque geometry instead of assuming retained wheels are visible."""
+    deps = bpy.context.evaluated_depsgraph_get()
+    rows = {}
+    for target in (805, 821, 810):
+        obj = nodes[target]
+        matrix = obj.matrix_world
+        normal_matrix = matrix.to_3x3().inverted().transposed()
+        polys = [p for p in obj.data.polygons if p.area > 1e-12]
+        chosen = random.Random(target).choices(polys, weights=[p.area for p in polys], k=800)
+        total = visible = 0.
+        occluders = collections.Counter()
+        for poly in chosen:
+            p = matrix @ poly.center
+            normal = (normal_matrix @ poly.normal).normalized()
+            weight = max(0., normal.dot(direction))
+            if weight < 1e-5:
+                continue
+            total += weight
+            hit = bpy.context.scene.ray_cast(deps, p + direction, -direction, distance=1.005)
+            index = hit[4].original.get('source_node_index', -1) if hit[0] else -1
+            if index == target:
+                visible += weight
+            else:
+                occluders[index] += weight
+        rows[target] = {'visible_fraction': visible / max(total, 1e-9),
+                        'occluders': occluders.most_common(5), 'samples': 800}
+    return rows
 
 
 def render(args):
@@ -291,8 +334,7 @@ def render(args):
              'imported_buffer_bytes': buffer_bytes, 'selected_nodes': [],
              'wheel_count': counts,
              'hidden_nodes': hidden, 'hidden_cable': cable,
-             'translucent_nodes': [{'index': i, 'name': data['nodes'][i]['name'], 'alpha': args.frame_alpha,
-                                    'reason': 'Load-bearing frame preserved; translucency reveals the wheels behind it'} for i in sorted(GHOST)],
+             'translucent_nodes': [],
              'geometry': 'Native cage, guide, muzzle/speed module, fittings and wheel/motor assemblies; unchanged internal transforms',
              'axis_frame': 'Local launcher frame, glTF Y-up converted to Blender Z-up',
              'animation': 'Static image; no animation cycle or changed WebGL code'}
@@ -310,14 +352,21 @@ def render(args):
             item['materials'] = [m.name for m in obj.data.materials]
         item['assembly_origin_m'] = list(obj.matrix_world.translation)
         audit['selected_nodes'].append(item)
-    presentation_materials(objects, args.frame_alpha)
+    presentation_materials(objects)
+    audit['material_alpha_check'] = [
+        {'index': obj['source_node_index'], 'alphas': [
+            slot.material.node_tree.nodes['Principled BSDF'].inputs['Alpha'].default_value
+            for slot in obj.material_slots]}
+        for obj in objects]
+    if any(min(row['alphas']) < 1 for row in audit['material_alpha_check']):
+        raise RuntimeError('Opaque candidate contains a translucent material')
     scene = bpy.context.scene
     scene.render.engine = 'CYCLES'
     scene.cycles.device = 'CPU'
     scene.cycles.samples = args.samples
     scene.cycles.use_denoising = True
     scene.render.threads_mode = 'FIXED'
-    scene.render.threads = 6
+    scene.render.threads = 2
     scene.render.film_transparent = True
     scene.render.resolution_x = args.width
     scene.render.resolution_y = args.height
@@ -342,6 +391,9 @@ def render(args):
     points = [o.matrix_world @ p.co for o in objects for p in o.data.vertices]
     centre = Vector([(max(p[i] for p in points) + min(p[i] for p in points)) / 2 for i in range(3)])
     direction = Vector(args.view).normalized()
+    audit['wheel_visibility'] = wheel_visibility(nodes, direction)
+    if min(row['visible_fraction'] for row in audit['wheel_visibility'].values()) < .2:
+        raise RuntimeError('A wheel is too occluded in the selected opaque side view')
     camera_data = bpy.data.cameras.new('core_three_quarter')
     camera_data.type = 'ORTHO'
     camera = bpy.data.objects.new('core_three_quarter', camera_data)
@@ -359,13 +411,22 @@ def render(args):
     scene.camera = camera
     bpy.context.view_layer.update()
     normalized = [world_to_camera_view(scene, camera, p) for p in points]
-    camera_data.ortho_scale *= max(max(abs((p.x - .5) * 2), abs((p.y - .5) * 2)) for p in normalized) * 1.09
+    projected_width = max(p.x for p in normalized) - min(p.x for p in normalized)
+    projected_height = max(p.y for p in normalized) - min(p.y for p in normalized)
+    camera_data.ortho_scale *= max(projected_width / TARGET_SUBJECT_WIDTH,
+                                   projected_height / .876)
+    frame = camera_data.view_frame(scene=scene)
+    frame_height = max(p.y for p in frame) - min(p.y for p in frame)
+    camera.location += camera.rotation_euler.to_matrix() @ Vector((0, (TARGET_SUBJECT_Y - .5) * frame_height, 0))
+    bpy.context.view_layer.update()
     normalized = [world_to_camera_view(scene, camera, p) for p in points]
     bounds = [min(p.x for p in normalized), min(p.y for p in normalized),
               max(p.x for p in normalized), max(p.y for p in normalized)]
-    if min(bounds[:2]) < .04 or max(bounds[2:]) > .96:
+    if min(bounds[:2]) < .02 or max(bounds[2:]) > .98:
         raise RuntimeError(f'Framing would clip the native assembly: {bounds}')
     audit['normalized_projected_bounds'] = bounds
+    audit['composition_target'] = {'subject_width_fraction': TARGET_SUBJECT_WIDTH,
+                                   'image_y_centre': TARGET_SUBJECT_Y, 'reference': 'A2/A3 solid alpha bounds'}
     def geometry_centre(index):
         obj = nodes[index]
         bounds = [obj.matrix_world @ vertex.co for vertex in obj.data.vertices]
@@ -391,7 +452,8 @@ def render(args):
     scene.render.filepath = str(output)
     bpy.ops.render.render(write_still=True)
     audit.update({'image': str(output.relative_to(ROOT)), 'resolution': [args.width, args.height],
-                  'samples': args.samples, 'candidate': args.candidate, 'frame_alpha': args.frame_alpha,
+                  'samples': args.samples, 'threads': scene.render.threads,
+                  'candidate': args.candidate, 'frame_alpha': 1.0,
                   'camera_direction': list(direction),
                   'image_sha256': hashlib.sha256(output.read_bytes()).hexdigest()})
     if args.audit:
@@ -407,11 +469,11 @@ if __name__ == '__main__':
     parser.add_argument('--audit')
     parser.add_argument('--width', type=int, default=2400)
     parser.add_argument('--height', type=int, default=1400)
-    parser.add_argument('--samples', type=int, default=24)
+    parser.add_argument('--samples', type=int, default=16)
     parser.add_argument('--candidate', choices=['a', 'b'], default='b')
     parser.add_argument('--view', nargs=3, type=float)
-    parser.add_argument('--frame-alpha', type=float)
     args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])
-    args.view = args.view or CANDIDATES[args.candidate]['view']
-    args.frame_alpha = args.frame_alpha if args.frame_alpha is not None else CANDIDATES[args.candidate]['frame_alpha']
+    profile = CANDIDATES[args.candidate]
+    az, elev = math.radians(profile['azimuth']), math.radians(profile['elevation'])
+    args.view = args.view or [math.cos(az) * math.cos(elev), math.sin(az) * math.cos(elev), math.sin(elev)]
     render(args)
