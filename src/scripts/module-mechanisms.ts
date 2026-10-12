@@ -25,6 +25,9 @@ function layoutMechanismAnnotations(root: HTMLElement, points: { x: number; y: n
   const middle = Math.ceil(rows.length / 2);
   for (const [side, group] of [['left', rows.slice(0, middle)], ['right', rows.slice(middle)]] as const) {
     group.sort((a, b) => a.y - b.y || a.index - b.index);
+    // A shared inner lane preserves endpoint order before the final horizontal
+    // legs. Different anchor depths can otherwise make diagonal leaders cross.
+    const innerLane = side === 'left' ? Math.min(...group.map(row => row.x)) - 4 : Math.max(...group.map(row => row.x)) + 4;
     const heights = group.map(row => row.item.getBoundingClientRect().height);
     const gap = 8, top = 48, bottom = frame.height - 42;
     let next = top;
@@ -39,7 +42,9 @@ function layoutMechanismAnnotations(root: HTMLElement, points: { x: number; y: n
       const center = y + heights[index] / 2;
       const leader = leaders[row.index];
       leader?.removeAttribute('hidden');
-      leader?.querySelector('path')?.setAttribute('d', `M ${edge} ${center} H ${elbow} L ${row.x} ${row.y}`);
+      leader?.querySelector('path')?.setAttribute('d', root.dataset.mechanism === 'swerve'
+        ? `M ${edge} ${center} H ${elbow} L ${innerLane} ${row.y} H ${row.x}`
+        : `M ${edge} ${center} H ${elbow} L ${row.x} ${row.y}`);
       const dot = leader?.querySelector('circle'); dot?.setAttribute('cx', String(row.x)); dot?.setAttribute('cy', String(row.y));
       next = y + heights[index] + gap;
     });
