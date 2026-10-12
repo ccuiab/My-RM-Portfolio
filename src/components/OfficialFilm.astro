@@ -57,6 +57,14 @@ const assetBase = import.meta.env.BASE_URL;
   </div>
 </figure>
 
+<script is:inline>
+  const officialFilmGateVideo = document.querySelector('[data-official-film] video');
+  if (officialFilmGateVideo instanceof HTMLVideoElement) {
+    officialFilmGateVideo.autoplay = false;
+    officialFilmGateVideo.removeAttribute('autoplay');
+  }
+</script>
+
 <script>
   const figure = document.querySelector<HTMLElement>('[data-official-film]');
   const video = figure?.querySelector<HTMLVideoElement>('video');
