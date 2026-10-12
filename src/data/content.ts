@@ -356,27 +356,8 @@ export const engineer = {
       pics: [{ src: pump, model: 'engineer-pump.glb', cutout: true, alt: { zh: '3508 改装真空泵', en: '3508-converted vacuum pump' } }],
     },
     {
-      id: 'reliability',
-      mark: 'E',
-      title: { zh: '赛场可靠性', en: 'Field reliability' },
-      lede: {
-        zh: '半年高强度调试和实战，零重大结构损伤。',
-        en: 'Six months of hard testing and competition with zero major structural failures.',
-      },
-      bullets: [
-        {
-          zh: '云台与底盘、云台与机械臂、机械臂整体、单个舵轮模组，四处都按快拆设计，场间排障以模块为单位。',
-          en: 'Gimbal to chassis, gimbal to arm, the arm as a unit and each swerve module all detach quickly, so between-match troubleshooting works module by module.',
-        },
-        {
-          zh: '模块化结构也让小幅机构调整可以快速迭代，不用整车返工。',
-          en: 'The same modularity made it possible to iterate small mechanism changes quickly without reworking the whole robot.',
-        },
-      ],
-    },
-    {
       id: 'controller',
-      mark: 'F',
+      mark: 'E',
       title: { zh: '自定义控制器', en: 'Custom controller' },
       lede: {
         zh: '工程机器人的输入终端。拓扑和主机械臂近似同构，按 1:2 映射，操作手不用在脑子里换算姿态。',
