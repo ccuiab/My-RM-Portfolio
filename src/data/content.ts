@@ -11,6 +11,7 @@ import controller from '../../materials/images/derived/site/cad-cutouts/controll
 import heroBot from '../../materials/images/derived/site/cad-cutouts/hero-bot.png';
 import heroChassis from '../../materials/images/derived/site/cad-cutouts/hero-chassis-adaptive.png';
 import heroLauncher from '../../materials/images/derived/site/cad-cutouts/hero-launcher-2024.png';
+import heroLauncherCore from '../../materials/images/derived/site/research-cutouts/hero-launcher-core.png';
 import launcher4 from '../../materials/images/derived/site/research-cutouts/launcher-dual-4.png';
 import launcher6 from '../../materials/images/derived/site/research-cutouts/launcher-dual-6.png';
 import feederLarge from '../../materials/images/derived/site/cad-cutouts/feeder-large.png';
@@ -542,7 +543,7 @@ export const research = {
       {
         title: { zh: 'RM2024 英雄单级发射', en: 'RM2024 Hero, single stage' },
         body: { zh: '对轴摩擦轮加预加速小轮，是后面所有多级方案的起点。', en: 'Double-supported friction wheels with a pre-acceleration pair: the starting point for every multi-stage design that followed.' },
-        pic: { src: heroLauncher, cutout: true, alt: { zh: 'RM2024 英雄发射机构', en: 'RM2024 Hero launcher' } },
+        pic: { src: heroLauncherCore, cutout: true, alt: { zh: 'RM2024 英雄发射机构内部：两个大摩擦轮与一个预加速小轮', en: 'RM2024 Hero launcher core: two large friction wheels and one small pre-acceleration wheel' } },
       },
       {
         title: { zh: '双级四摩擦轮样机', en: 'Dual-stage, four wheels' },
