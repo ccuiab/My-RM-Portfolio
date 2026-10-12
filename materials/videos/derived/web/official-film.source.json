@@ -1,0 +1,42 @@
+﻿{
+    "name":  "official-film",
+    "source":  "https://www.bilibili.com/video/BV1Y482zjERP/",
+    "bvid":  "BV1Y482zjERP",
+    "page":  1,
+    "title":  "轮式末端机械臂｜香港科技大学 工程机器人",
+    "uploader":  "RoboMaster机甲大师",
+    "sourceFile":  "materials/videos/source/bilibili/robot-demo/BV1Y482zjERP-P01 - 轮式末端机械臂｜香港科技大学 工程机器人.mp4",
+    "sourceSha256":  "fff12b9a343959e3756f66e54873defe27da7d2cb77f22b877c846d9892d1f72",
+    "sourceBytes":  12086403,
+    "sourceDurationSeconds":  64.032154,
+    "input":  {
+                  "videoCodec":  "hevc",
+                  "audioCodec":  "aac",
+                  "width":  1920,
+                  "height":  1080
+              },
+    "output":  {
+                   "video":  "materials/videos/derived/web/official-film.mp4",
+                   "poster":  "materials/images/derived/video-posters/official-film.jpg",
+                   "width":  1920,
+                   "height":  1080,
+                   "fps":  "30/1",
+                   "videoCodec":  "h264",
+                   "pixelFormat":  "yuv420p",
+                   "crf":  24,
+                   "maxVideoBitrateKbps":  1400,
+                   "actualVideoBitrateKbps":  1400.8,
+                   "audioCodec":  "aac",
+                   "audioBitrateKbps":  130.8,
+                   "faststart":  true,
+                   "durationSeconds":  64.031995,
+                   "sizeBytes":  12318783,
+                   "averageBitrateKbps":  1539.1,
+                   "parameters":  "-preset slow -crf 24 -maxrate 1400k -bufsize 2800k -pix_fmt yuv420p -profile:v high -level:v 4.1 -c:a aac -b:a 128k -movflags +faststart",
+                   "posterSeconds":  30
+               },
+    "rights":  {
+                   "attribution":  "来源注明 RoboMaster机甲大师，并链接 B 站原片。",
+                   "permissionStatus":  "公开来源及归属已记录；公开视频不代表已核实转载授权。"
+               }
+}
