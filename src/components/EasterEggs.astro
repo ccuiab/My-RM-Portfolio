@@ -48,8 +48,9 @@ const base = import.meta.env.BASE_URL;
           </div>
           <div class="source-row">
             <span>{t(L.sourceLabel, lang)}：{t(egg.source, lang)}</span>
-            <a href={egg.href} target="_blank" rel="noopener noreferrer">{t('heroHref' in egg ? L.engineerWatch : L.watch, lang)}</a>
+            <a href={egg.href} target="_blank" rel="noopener noreferrer">{t('heroHref' in egg ? L.engineerWatch : 'broadcastHref' in egg ? L.povWatch : L.watch, lang)}</a>
             {'heroHref' in egg && <a href={egg.heroHref} target="_blank" rel="noopener noreferrer">{t(L.heroWatch, lang)}</a>}
+            {'broadcastHref' in egg && <a href={egg.broadcastHref} target="_blank" rel="noopener noreferrer">{t(L.broadcastWatch, lang)}</a>}
           </div>
         </div>
       </article>

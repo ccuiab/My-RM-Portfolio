@@ -1,4 +1,4 @@
-# Rebuild complete, silent actions; raw sources are always read in place.
+﻿# Rebuild complete, silent actions; raw sources are always read in place.
 [CmdletBinding()]
 param(
     [string]$MainRepository = 'D:\AI_playground\My-RM-Portfolio',
@@ -7,13 +7,23 @@ param(
     [ValidateSet('egg-stairs', 'egg-steal', 'egg-grab', 'egg-right-hero')]
     [string[]]$Name = @('egg-stairs', 'egg-steal', 'egg-grab', 'egg-right-hero'),
     [string]$EvidenceDirectory = (Join-Path $env:LOCALAPPDATA 'Temp/rm-shots/eggs3'),
-    [switch]$ReuseInputs
+    [switch]$ReuseInputs,
+    [switch]$AuditTrackingOnly
 )
 $ErrorActionPreference = 'Stop'
 $root = [IO.Path]::GetFullPath((Split-Path $PSScriptRoot -Parent))
 $catalog = Get-Content (Join-Path $root 'materials/documents/derived/bilibili-video-catalog.json') -Raw -Encoding UTF8 | ConvertFrom-Json
 $invariant = [Globalization.CultureInfo]::InvariantCulture
 $utf8 = [Text.UTF8Encoding]::new($false)
+$permissionTemplate = [ordered]@{
+    permissionStatus = '用户 2026-10-12 确认：可以转载，条件是标明来源并提供原片跳转链接。'
+}
+function SaveConfirmedPermission($Edit, [string]$ClipName) {
+    if ($ClipName -notin @('egg-steal', 'egg-right-hero')) { return }
+    if ($Edit.copyright.permissionStatus -eq $permissionTemplate.permissionStatus) { return }
+    $Edit.copyright.permissionStatus = $permissionTemplate.permissionStatus
+    [IO.File]::WriteAllText((WorkspacePath "materials/videos/derived/web/$ClipName.source.json"), ($Edit | ConvertTo-Json -Depth 32) + "`n", $utf8)
+}
 function Number([double]$Value) { $Value.ToString('0.########', $invariant) }
 function WorkspacePath([string]$Relative) {
     $path = [IO.Path]::GetFullPath((Join-Path $root $Relative))
@@ -54,6 +64,52 @@ function CropFilter($Segment) {
     }
     return ",crop=$($crop.width):$($crop.height):'$expression':$($crop.y)"
 }
+function TrackingValue($Knots, [double]$Time, [string]$Field, [switch]$Monotone) {
+    $knots = @($Knots); $j = 0
+    while ($j -lt $knots.Count-2 -and $Time -ge $knots[$j+1].seconds) { $j++ }
+    $values = @($knots | ForEach-Object {
+        $value = $_; foreach ($part in $Field.Split('.')) { $value = $value.$part }; [double]$value
+    })
+    $h = [double]$knots[$j+1].seconds-$knots[$j].seconds
+    $u = [Math]::Max(0.0,[Math]::Min(1.0,($Time-$knots[$j].seconds)/$h))
+    if (-not $Monotone) { return $values[$j]+($values[$j+1]-$values[$j])*$u }
+    $slopes = @()
+    for ($k=0;$k -lt $knots.Count;$k++) {
+        if ($k -eq 0) { $slopes += ($values[1]-$values[0])/($knots[1].seconds-$knots[0].seconds); continue }
+        if ($k -eq $knots.Count-1) { $slopes += ($values[$k]-$values[$k-1])/($knots[$k].seconds-$knots[$k-1].seconds); continue }
+        $before = $knots[$k].seconds-$knots[$k-1].seconds; $after = $knots[$k+1].seconds-$knots[$k].seconds
+        $left = ($values[$k]-$values[$k-1])/$before; $right = ($values[$k+1]-$values[$k])/$after
+        if ($left*$right -le 0) { $slopes += 0.0 }
+        else { $w1=2*$after+$before; $w2=$after+2*$before; $slopes += ($w1+$w2)/($w1/$left+$w2/$right) }
+    }
+    return (2*$u*$u*$u-3*$u*$u+1)*$values[$j]+($u*$u*$u-2*$u*$u+$u)*$h*$slopes[$j]+(-2*$u*$u*$u+3*$u*$u)*$values[$j+1]+($u*$u*$u-$u*$u)*$h*$slopes[$j+1]
+}
+function TrackingObservation($Tracking, [double]$Time) {
+    $observations=@($Tracking.observations); $j=0
+    while ($j -lt $observations.Count-2 -and $Time -ge $observations[$j+1].seconds) { $j++ }
+    $a=$observations[$j];$b=$observations[$j+1]
+    $u=[Math]::Max(0.0,[Math]::Min(1.0,($Time-$a.seconds)/($b.seconds-$a.seconds)))
+    $body=[ordered]@{}
+    foreach ($field in @('x','y','w','h')) { $body[$field]=TrackingValue $observations $Time "body.$field" -Monotone }
+    $result=[ordered]@{body=[pscustomobject]$body}
+    foreach ($kind in @('otherRobots','bloodBars')) {
+        $boxes=@()
+        for ($k=0;$k -lt @($a.$kind).Count;$k++) {
+            $ra=$a.$kind[$k];$rb=$b.$kind[$k]
+            if ($ra.id -ne $rb.id) { throw 'Observation identities must remain ordered.' }
+            $box=[ordered]@{id=$ra.id}
+            foreach ($field in @('x','y','w','h')) { $box[$field]=[double]$ra.$field+([double]$rb.$field-[double]$ra.$field)*$u }
+            $boxes += [pscustomobject]$box
+        }
+        $result[$kind]=$boxes
+    }
+    return [pscustomobject]$result
+}
+function BoxOverlap($A,$B) {
+    $w=[Math]::Max([double]0,[Math]::Min([double]($A.x+$A.w),[double]($B.x+$B.w))-[Math]::Max([double]$A.x,[double]$B.x))
+    $h=[Math]::Max([double]0,[Math]::Min([double]($A.y+$A.h),[double]($B.y+$B.h))-[Math]::Max([double]$A.y,[double]$B.y))
+    return $w*$h
+}
 function TrackingPose($Tracking, [double]$Time) {
     $knots = @($Tracking.keyframes); $j = 0
     while ($j -lt $knots.Count-2 -and $Time -ge $knots[$j+1].seconds) { $j++ }
@@ -63,12 +119,46 @@ function TrackingPose($Tracking, [double]$Time) {
     $point = [ordered]@{seconds=$Time}
     foreach ($field in @('x','y','w','h','opacity')) {
         $point[$field] = [double]$a.$field+([double]$b.$field-[double]$a.$field)*$u
+        if ($Tracking.interpolation -eq 'monotone-cubic') { $point[$field]=TrackingValue $knots $Time $field -Monotone }
+    }
+    if ($Tracking.interpolation -eq 'monotone-cubic') {
+        foreach ($field in @('labelX','labelY')) { $point[$field]=TrackingValue $knots $Time $field -Monotone }
     }
     if ($Tracking.introSeconds -gt 0 -and $Time -lt $Tracking.introSeconds) {
         $v = $Time/[double]$Tracking.introSeconds; $v = $v*$v*(3-2*$v)
         $extra = [double]$Tracking.introScaleExtra*(1-$v)
-        $point.x -= $point.w*$extra/2; $point.y -= $point.h*$extra/2
-        $point.w *= 1+$extra; $point.h *= 1+$extra
+        if ($null -ne $Tracking.introMaxExpansionPixels) {
+            $expansion=[double]$Tracking.introMaxExpansionPixels*(1-$v)
+            $point.x-=$expansion;$point.y-=$expansion;$point.w+=2*$expansion;$point.h+=2*$expansion
+        } else {
+            $point.x -= $point.w*$extra/2; $point.y -= $point.h*$extra/2
+            $point.w *= 1+$extra; $point.h *= 1+$extra
+        }
+    }
+    if ($Tracking.observations) {
+        $observed=TrackingObservation $Tracking $Time; $gap=[double]$Tracking.neighborGapPixels
+        foreach ($other in $observed.otherRobots) {
+            $expanded=[pscustomobject]@{x=$point.x-$gap;y=$point.y-$gap;w=$point.w+2*$gap;h=$point.h+2*$gap}
+            if ((BoxOverlap $expanded $other) -le 0) { continue }
+            $right=$point.x+$point.w;$bottom=$point.y+$point.h
+            $leftCut=$other.x+$other.w+$gap;$topCut=$other.y+$other.h+$gap
+            $candidates=@(
+                [pscustomobject]@{x=$point.x;y=$point.y;w=[Math]::Min($right,$other.x-$gap)-$point.x;h=$point.h},
+                [pscustomobject]@{x=[Math]::Max($point.x,$leftCut);y=$point.y;w=$right-[Math]::Max($point.x,$leftCut);h=$point.h},
+                [pscustomobject]@{x=$point.x;y=$point.y;w=$point.w;h=[Math]::Min($bottom,$other.y-$gap)-$point.y},
+                [pscustomobject]@{x=$point.x;y=[Math]::Max($point.y,$topCut);w=$point.w;h=$bottom-[Math]::Max($point.y,$topCut)}
+            )
+            $best=$null;$bestScore=[double]::NegativeInfinity
+            foreach ($candidate in $candidates) {
+                if ($candidate.w -lt 12 -or $candidate.h -lt 12) { continue }
+                $dx=$candidate.x+$candidate.w/2-$observed.body.x-$observed.body.w/2
+                $dy=$candidate.y+$candidate.h/2-$observed.body.y-$observed.body.h/2
+                $score=(BoxOverlap $candidate $observed.body)-.01*($dx*$dx+$dy*$dy)
+                if ($score -gt $bestScore) { $best=$candidate;$bestScore=$score }
+            }
+            if (-not $best) { throw 'No unambiguous tracking rectangle remains.' }
+            foreach ($field in @('x','y','w','h')) { $point[$field]=$best.$field }
+        }
     }
     return [pscustomobject]$point
 }
@@ -100,7 +190,8 @@ function MotionEvidence($Edit) {
                 }
                 $samples += $point; $previous = $point
             }
-            $groups += [ordered]@{group=$kind; source=$segment.source; fps=30; units='source crop pixels / output tracking pixels'; interpolation='smoothstep'; maxAdjacentDisplacement=$maximum; maxAdjacentSizeChange=$maxEdge; maxAdjacentRotationDegrees=0; samples=$samples}
+            $interpolation=$(if($kind -eq 'tracking' -and $curve.interpolation){$curve.interpolation}else{'smoothstep'})
+            $groups += [ordered]@{group=$kind; source=$segment.source; fps=30; units='source crop pixels / output tracking pixels'; interpolation=$interpolation; maxAdjacentDisplacement=$maximum; maxAdjacentSizeChange=$maxEdge; maxAdjacentRotationDegrees=0; samples=$samples}
         }
     }
     # These are video edits, without animated 3D part groups. Check the actual crop/box curves.
@@ -116,7 +207,8 @@ function HudTrackingFilter($Segment, [int]$Fps, [int]$Index) {
         $time = $frame/[double]$Fps; $p = TrackingPose $tracking $time
         $x = [Math]::Round($p.x); $y = [Math]::Round($p.y)
         $w = [Math]::Round($p.w); $h = [Math]::Round($p.h)
-        $stroke = [int]$tracking.lineWidth; $length = [int]$tracking.cornerLength
+        $stroke = [int]$tracking.lineWidth
+        $length = [Math]::Min([int]$tracking.cornerLength,[Math]::Floor([Math]::Min($w,$h)/2)-3)
         # Eight filled bars form four open HUD corners. The dark bars underneath
         # stay 2 px wider on every edge, including against bright field surfaces.
         $bars = @(
@@ -138,9 +230,11 @@ function HudTrackingFilter($Segment, [int]$Fps, [int]$Index) {
             }
         }
         $labelTarget = "drawtext@hud${Index}_label"
-        $updates += "$labelTarget x $x", "$labelTarget y $($y-27)", "$labelTarget fontcolor $($tracking.color)@$(Number $p.opacity)"
+        $labelX=$(if($null -ne $p.labelX){[Math]::Round($p.labelX)}else{$x})
+        $labelY=$(if($null -ne $p.labelY){[Math]::Round($p.labelY)}else{$y-27})
+        $updates += "$labelTarget x $labelX", "$labelTarget y $labelY", "$labelTarget fontcolor $($tracking.color)@$(Number $p.opacity)", "$labelTarget boxcolor 0x0b1420@$(Number (.95*$p.opacity))"
         if ($frame -eq 0) {
-            $initial += "${labelTarget}=fontfile='C\:/Windows/Fonts/consolab.ttf':text='$($tracking.label)':fontsize=15:fontcolor=$($tracking.color):x=${x}:y=$($y-27):box=1:boxcolor=0x0b1420@0.95:boxborderw=5"
+            $initial += "${labelTarget}=fontfile='C\:/Windows/Fonts/consolab.ttf':text='$($tracking.label)':fontsize=15:fontcolor=$($tracking.color):x=${labelX}:y=${labelY}:box=1:boxcolor=0x0b1420@0.95:boxborderw=5"
         }
         $commands.Add("$(Number $time) $($updates -join ',');")
     }
@@ -184,6 +278,59 @@ function TrackingFilter($Segment, [int]$Fps, [int]$Index) {
     [IO.File]::WriteAllLines((WorkspacePath $relative), $commands, $utf8)
     return ",sendcmd=f='$relative',${target}=x=$($knots[0].x):y=$($knots[0].y):w=$($knots[0].w):h=$($knots[0].h):color=$($tracking.color)@$(Number $knots[0].opacity):t=$($tracking.lineWidth)"
 }
+function AuditTracking($Edit) {
+    $tracking=@($Edit.segments | Where-Object {$_.tracking})[0].tracking
+    if (-not $tracking.observations) { throw 'Tracking audit requires independently measured vehicle observations.' }
+    $checks=@();$maximumOverlap=0.0;$maximumLabelOverlap=0.0;$maximumCenter=0.0;$maximumFrameStep=0.0;$maximumSizeStep=0.0
+    foreach ($fps in @(5,25,30)) {
+        $previous=$null;$maximumAtFps=0.0;$maxStepAtFps=0.0
+        for ($frame=0;$frame -le [Math]::Floor(5.2*$fps);$frame++) {
+            $time=$frame/[double]$fps;$pose=TrackingPose $tracking $time;$observed=TrackingObservation $tracking $time
+            $box=[pscustomobject]@{x=[Math]::Round($pose.x);y=[Math]::Round($pose.y);w=[Math]::Round($pose.w);h=[Math]::Round($pose.h)}
+            $paint=[pscustomobject]@{x=$box.x-2;y=$box.y-2;w=$box.w+4;h=$box.h+4}
+            $label=[pscustomobject]@{x=[Math]::Round($pose.labelX)-5;y=[Math]::Round($pose.labelY)-5;w=$tracking.labelReservedWidthPixels;h=$tracking.labelReservedHeightPixels}
+            $overlap=0.0;$labelOverlap=0.0
+            if($pose.opacity -gt .00001) {
+                foreach($other in $observed.otherRobots){$overlap=[Math]::Max($overlap,(BoxOverlap $paint $other));$labelOverlap=[Math]::Max($labelOverlap,(BoxOverlap $label $other))}
+                foreach($bar in $observed.bloodBars){$labelOverlap=[Math]::Max($labelOverlap,(BoxOverlap $label $bar))}
+                $labelOverlap=[Math]::Max($labelOverlap,(BoxOverlap $label $observed.body))
+                $dx=$box.x+$box.w/2-$observed.body.x-$observed.body.w/2;$dy=$box.y+$box.h/2-$observed.body.y-$observed.body.h/2
+                $center=[Math]::Sqrt($dx*$dx+$dy*$dy);$maximumAtFps=[Math]::Max($maximumAtFps,$center)
+                $maximumOverlap=[Math]::Max($maximumOverlap,$overlap);$maximumLabelOverlap=[Math]::Max($maximumLabelOverlap,$labelOverlap)
+                if($box.w -lt 18 -or $box.h -lt 18){throw 'Collision trimming left an unreadable marker.'}
+                $checks += [ordered]@{fps=$fps;seconds=$time;body=$observed.body;frame=$box;labelReserved=$label;centerDeviationPixels=$center;otherRobotOverlapPixels=$overlap;labelObstacleOverlapPixels=$labelOverlap;opacity=$pose.opacity;bodyCoverage=(BoxOverlap $box $observed.body)/($observed.body.w*$observed.body.h)}
+            }
+            if($previous){
+                $step=[Math]::Sqrt([Math]::Pow($pose.x-$previous.x,2)+[Math]::Pow($pose.y-$previous.y,2));$maxStepAtFps=[Math]::Max($maxStepAtFps,$step)
+                if($fps -eq 30){$maximumSizeStep=[Math]::Max($maximumSizeStep,[Math]::Max([Math]::Abs($pose.w-$previous.w),[Math]::Abs($pose.h-$previous.h)))}
+            }
+            $previous=$pose
+        }
+        $maximumCenter=[Math]::Max($maximumCenter,$maximumAtFps)
+        if($fps -eq 30){$maximumFrameStep=$maxStepAtFps}
+    }
+    $boundaryGap=0.0
+    foreach($time in @(@($tracking.keyframes | ForEach-Object {$_.seconds}) + @($tracking.introSeconds))) {
+        if($time -le 0 -or $time -ge $tracking.keyframes[-1].seconds){continue}
+        $left=TrackingPose $tracking ($time-.0000001);$right=TrackingPose $tracking ($time+.0000001)
+        foreach($field in @('x','y','w','h','labelX','labelY')){$boundaryGap=[Math]::Max($boundaryGap,[Math]::Abs($right.$field-$left.$field))}
+    }
+    $result=[ordered]@{annotationFps=5;annotationPoints=@($tracking.observations).Count;sampleFps=@(5,25,30);includesRoundedEncoderCoordinates=$true;includesDarkOutlinePixels=2;maxCenterDeviationPixels=$maximumCenter;maxOtherRobotOverlapPixels=$maximumOverlap;maxLabelObstacleOverlapPixels=$maximumLabelOverlap;maxAdjacentDisplacementAt30fps=$maximumFrameStep;maxAdjacentSizeChangeAt30fps=$maximumSizeStep;maxBoundaryGapPixels=$boundaryGap;manualPixelTolerance=$tracking.annotationPixelTolerance;checks=$checks}
+    New-Item -ItemType Directory -Force -Path $EvidenceDirectory | Out-Null
+    [IO.File]::WriteAllText((Join-Path $EvidenceDirectory "$($Edit.name)-geometry-audit.json"),($result | ConvertTo-Json -Depth 12),$utf8)
+    Write-Host "Geometry audit: center <= $(Number $maximumCenter) px; robot overlap $(Number $maximumOverlap) px2; label overlap $(Number $maximumLabelOverlap) px2."
+    if($maximumOverlap -gt 0 -or $maximumLabelOverlap -gt 0){throw 'Tracking geometry overlaps a different vehicle or the label covers a body/health bar.'}
+    if($maximumSizeStep -gt 8 -or $boundaryGap -gt .001){throw 'Avoidance switches create an abrupt size change or a discontinuity.'}
+    return $result
+}
+if ($AuditTrackingOnly) {
+    foreach ($clipName in $Name) {
+        $edit=Get-Content (WorkspacePath "materials/videos/derived/web/$clipName.source.json") -Raw -Encoding UTF8 | ConvertFrom-Json
+        AuditTracking $edit | Out-Null
+        MotionEvidence $edit
+    }
+    return
+}
 Push-Location $root
 try {
     New-Item -ItemType Directory -Force -Path $EvidenceDirectory | Out-Null
@@ -192,6 +339,7 @@ try {
         try {
         $lockStarted = Get-Date
         $edit = Get-Content (WorkspacePath "materials/videos/derived/web/$clipName.source.json") -Raw -Encoding UTF8 | ConvertFrom-Json
+        SaveConfirmedPermission $edit $clipName
         $output = WorkspacePath $edit.output.video
         $poster = WorkspacePath $edit.output.poster
         New-Item -ItemType Directory -Force -Path (Split-Path $output -Parent), (Split-Path $poster -Parent), (WorkspacePath 'materials/videos/derived/inputs') | Out-Null
