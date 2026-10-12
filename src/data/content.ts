@@ -2,7 +2,7 @@ import type { ImageMetadata } from 'astro';
 import type { T } from './i18n';
 
 import engReach from '../../materials/images/source/historical/eng-reach.webp';
-import engineerFull from '../../materials/images/derived/site/cad-cutouts/engineer-full.png';
+import engineerFront from '../../materials/images/derived/site/cad-cutouts/engineer-front.png';
 import engStats from '../../materials/images/source/historical/eng-mvp.webp';
 import engAllstar from '../../materials/images/source/historical/eng-allstar.webp';
 import pump from '../../materials/images/derived/site/cad-cutouts/air-pump.png';
@@ -258,8 +258,8 @@ export const engineer = {
     zh: '六轴机械臂、轮式末端的工程机器人。我独立主导整车结构设计，从 PUMA 构型、连杆参数到整车布局。',
     en: 'An Engineer robot with a six-axis arm and a wheeled end effector. I led the whole-robot structural design, from the PUMA configuration and link lengths to the vehicle layout.',
   },
-  cover: { src: engineerFull, cutout: true, alt: { zh: '工程机器人 SolidWorks 整车总装', en: 'Engineer robot, SolidWorks assembly' } } as Pic,
-  assembly: { src: engineerFull, cutout: true, alt: { zh: '工程机器人 SolidWorks 整车总装', en: 'Engineer robot, SolidWorks assembly' } } as Pic,
+  cover: { src: engineerFront, cutout: true, alt: { zh: '工程机器人整车 CAD 渲染，车头 3/4 视角', en: 'Engineer robot CAD render, front three-quarter view' } } as Pic,
+  assembly: { src: engineerFront, cutout: true, alt: { zh: '工程机器人整车 CAD 渲染，车头 3/4 视角', en: 'Engineer robot CAD render, front three-quarter view' } } as Pic,
   titleBlock: [
     { label: { zh: '赛季', en: 'Season' }, value: { zh: 'RMUC 2025', en: 'RMUC 2025' } },
     { label: { zh: '职责', en: 'Role' }, value: { zh: '整车结构设计负责人', en: 'Lead structural designer' } },
