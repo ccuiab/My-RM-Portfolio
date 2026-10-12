@@ -278,7 +278,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       const groups: THREE.Object3D[] = [];
       inspection = new Set();
       model.traverse(object => {
-        if (!transmissions.includes(object.userData.web_transmission)) return;
+        if (!transmissions.includes(object.userData.web_transmission) && !(isSwerve && transmissions.includes(object.userData.web_suspension))) return;
         groups.push(object);
         object.traverse(child => { if ((child as THREE.Mesh).isMesh) inspection!.add(child as THREE.Mesh); });
       });
@@ -291,7 +291,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
         }
       }
       groups.sort((a, b) => transmissions.indexOf(a.userData.web_transmission) - transmissions.indexOf(b.userData.web_transmission));
-      if (groups.length === 2) {
+      if (groups.length === 2 && (!isSwerve || (transmissions.includes('steering-input') && transmissions.includes('steering-output')))) {
         // Look from the large-gear side, keeping the intact motor behind it.
         const side = groups[1].getWorldPosition(new THREE.Vector3()).sub(groups[0].getWorldPosition(new THREE.Vector3()));
         side.addScaledVector(camera.up, -side.dot(camera.up)).normalize().addScaledVector(camera.up, .8).normalize();
