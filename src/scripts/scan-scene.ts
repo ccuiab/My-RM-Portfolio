@@ -18,7 +18,7 @@ export type ScanStage = {
   render: () => void;
   /** called after the canvas resizes (the drawing buffer is cleared then) */
   onResize: (cb: () => void) => void;
-  /** Pointer drag rotates the camera; wheel scrolling remains native. No continuous render loop. */
+  /** Pointer drag rotates the camera and the wheel zooms over the canvas. No continuous render loop. */
   enableInteraction: (onChange?: () => void) => void;
   /** Restore the most recent frame() direction, retaining the current model pose. */
   resetView: () => void;
@@ -123,6 +123,9 @@ export async function loadScanStage(
   let framed: { sphere: THREE.Sphere; dir: THREE.Vector3; bounds?: THREE.Box3 } | null = null;
   const viewDirection = new THREE.Vector3();
   let interactionEnabled = false;
+  // Wheel zoom multiplies the fitted distance; 1 is the framed view.
+  let zoom = 1;
+  const ZOOM_MIN = .3, ZOOM_MAX = 1.6;
   let interactionChange: (() => void) | undefined;
   const redrawInteraction = () => {
     applyFrame();
@@ -149,7 +152,7 @@ export async function loadScanStage(
       }
       dist = Math.max(dist, sphere.radius * .2);
     }
-    camera.position.copy(sphere.center).addScaledVector(viewDirection, dist);
+    camera.position.copy(sphere.center).addScaledVector(viewDirection, dist * zoom);
     camera.lookAt(sphere.center);
   };
 
@@ -226,7 +229,21 @@ export async function loadScanStage(
       canvas.addEventListener('pointerup', end);
       canvas.addEventListener('pointercancel', end);
       canvas.addEventListener('lostpointercapture', end);
+      // Wheel zooms only while the pointer is on the canvas; Lenis is told to leave it alone.
+      canvas.setAttribute('data-lenis-prevent-wheel', '');
+      canvas.addEventListener('wheel', event => {
+        event.preventDefault();
+        const pixels = event.deltaY * (event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? canvas.clientHeight : 1);
+        zoom = THREE.MathUtils.clamp(zoom * Math.exp(THREE.MathUtils.clamp(pixels * .0012, -.6, .6)), ZOOM_MIN, ZOOM_MAX);
+        redrawInteraction();
+      }, { passive: false });
       canvas.addEventListener('keydown', event => {
+        if (event.key === '+' || event.key === '=' || event.key === '-' || event.key === '_') {
+          event.preventDefault();
+          zoom = THREE.MathUtils.clamp(zoom * (event.key === '-' || event.key === '_' ? 1.12 : 1 / 1.12), ZOOM_MIN, ZOOM_MAX);
+          redrawInteraction();
+          return;
+        }
         const movement: Record<string, [number, number]> = { ArrowLeft: [-12, 0], ArrowRight: [12, 0], ArrowUp: [0, -12], ArrowDown: [0, 12] };
         if (!movement[event.key]) return;
         event.preventDefault();
@@ -236,6 +253,7 @@ export async function loadScanStage(
     resetView() {
       if (!framed) return;
       viewDirection.copy(framed.dir);
+      zoom = 1;
       redrawInteraction();
     },
     dispose() {
