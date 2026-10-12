@@ -40,7 +40,7 @@
       "endTimecode": "00:18:35.40",
       "role": "全程同步英雄第一视角：菜单开启时裁出未遮挡的车体与地面，菜单关闭后恢复完整画中画。",
       "inputFile": "materials/videos/derived/inputs/egg-right-hero-p02.mp4",
-      "evidence": "18:05.40–18:27.40 逐秒帧中央菜单覆盖 x=72..780 / y=124..351（852×480）。菜单下方车体和路面仍可见，18:25.40–18:27.40 可见扶正时路面倾转；18:28.40 帧菜单已关闭，随后恢复行驶。按英雄减工程 -3.6 s 全程对齐。",
+      "evidence": "逐秒与 0.1 s 抽帧确认中央菜单覆盖 x=72..780 / y=124..351（852×480）。英雄原片 18:28.60 仍有菜单，18:28.70 已关闭；完整画中画从 18:28.80 安全帧（合成时间 23.4 s）淡入。此前保留菜单下方车体与路面，连续显示扶正倾转；与工程 -3.6 s 全程同步。",
       "copyrightOwner": "RoboMaster 赛事画面制作方；投稿与兵种视角编排：翔林魔主"
     }
   ],
@@ -101,7 +101,7 @@
     "y": 72,
     "reason": "保留工程完整主画面；菜单遮挡期英雄画中画裁出车体和地面以持续展示倾转，菜单关闭后淡入完整英雄视角。裁剪避免播放设置菜单，保留真实可见区域，覆盖接近、扶正和恢复行驶。",
     "insetStartSeconds": 0,
-    "fullViewStartSeconds": 23,
+    "fullViewStartSeconds": 23.4,
     "switchFadeSeconds": 0.32,
     "menuCrop": {
       "x": 214,
@@ -131,7 +131,7 @@
     "audio": false,
     "faststart": true,
     "maxBytes": 6000000,
-    "posterSeconds": 23.8
+    "posterSeconds": 24.2
   },
   "copyright": {
     "attribution": "页面注明 UP 主翔林魔主，并分别链接工程 P03 与英雄 P02 原片；赛事原画面版权归对应赛事制作方。",
