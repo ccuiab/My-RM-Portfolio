@@ -37,11 +37,15 @@ CAD 原件在 `D:\RM2025` 和 OneDrive，只读使用，入口见 [models/source
 
 ### RM2024 英雄发射机构核心
 
-`images/derived/site/research-cutouts/hero-launcher-core.png` 是预研页首个发射阶段专用的透明 PNG（1800 × 1400），只读输入为主仓库 `materials/models/derived/inputs/codex/task3_hero_raw.glb`。同装配的网页模型 `models/derived/web/hero-launcher.glb` 已合并为单个网格，无法按零件节点核验，因此使用完整派生输入中的 `发机_4310pitch` 装配（节点 767）。
+`images/derived/site/research-cutouts/hero-launcher-core.png` 是预研页首个发射阶段专用的透明 PNG（2400 × 1400），只读输入为主仓库 `materials/models/derived/inputs/codex/task3_hero_raw.glb`。同装配的网页模型 `models/derived/web/hero-launcher.glb` 已合并为单个网格，无法按零件节点核验，因此使用完整派生输入中的 `发机_4310pitch` 装配（节点 767）。
 
-模型确认为两个主摩擦轮装配（803、819）和一个预加速小轮装配（809）。保留外圈、金属中心、完整电机（806、811、822）、主轮对轴销及轴承（772、818、773、792）、小轮对轴销及轴承（799、797），不改变零件的内部装配位置。隐藏上下板、侧板、罩盖、电子仓、枪管等遮挡件。此输入的 `Hub` 与 `Rubber` 名称和实际几何、原材质相反：805／821／810 的外圈使用灰黑橡胶表现，804／820／812 的中心使用银色金属表现；节点原名和网格均保留。琥珀虚线箭头是弹道方向示意，沿枪管长轴及小轮到主轮的位置关系推断，不属于 CAD 零件。
+模型确认为两个主摩擦轮装配（803、819）和一个预加速小轮装配（809）。第四版按用户指认的三个水平层级处理：删除顶板 `3mm_供弹摩擦轮上板`（914）及其专属支座、立柱和紧固件，共 24 个节点；中板 `4mm_发机主上板`（816）和贴合的加固板（791）保留并淡化；底板 `4mm_发机主下板`（801）保持实体。轮轴支承、其余连接件、枪管导向件（813）、供弹导引块（823）和测速模块及其连接件（817、807、814、830）继续保留，最终共 74 个原生网格对象。电机本体、减速器和输出轴（806／811／822）保持整体及原装配位置；节点 811 只隐藏主体外的长线缆和连接器。
 
-复现运行 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/render-launcher-core.ps1`；脚本自动取重负载锁、后台运行 Blender 5.1.1、在超时或出错后释放锁。采用 CPU Cycles、48 samples、denoise、AgX、透明背景和正交 3/4 视角，按实际网格的投影边界取景。只提取选中网格的缓冲，不复制整车大文件，不保存 `.blend`。生成节点、尺寸边界、输入与图片 SHA-256 写入运行时审计报告，默认位置为 `C:\Users\cch20\AppData\Local\Temp\rm-shots\launcher\render-audit.json`。英雄页继续使用 `images/derived/site/cad-cutouts/hero-launcher-2024.png`。
+小轮两侧夹轴竖板 `4mm_2006电机固定板`（796）与 `4mm_2006电机对轴固定板`（800）保留并淡化；主轮两侧外板 `2mm_主摩擦轮侧保护壳`（781／919）从第三版的隐藏状态恢复为半透明；邻接轮组的轴支架垫片（916）也保留为半透明。半透明节点共 7 个：781、791、796、800、816、916、919。其余外罩、护板仍隐藏：771、774、777、915、923、926、927、931、946。完整输入中的后部云台、CV 相机、电控仓、图传及外围配件未纳入发射核心；顶板专属支座和全部隐藏节点的逐项理由见运行时审计报告。
+
+两候选均沿用第三版 B 的局部方位角 57°、俯仰 5°及材质，填充 alpha 分别为 A 0.18、B 0.28；与 `launcher-dual-4.png`、`launcher-dual-6.png` 并排比较后采用 A，轮组透出更清楚。板件填充保留原色和碳纤维纹理，背面透明，避免前后表面重复叠色；板件不投影，深色 Freestyle 轮廓线保留，不增加白色或发光材质。其余支座保持第三版的柔和金属灰。测速／枪口模块投影在左，三个轮子、完整电机与轴清楚可见。主体宽度以 A2 的实心 alpha 包围盒为准，垂直中心以 A2/A3 平均位置为准，模型完整入框；没有移动装配内的零件或添加弹道箭头。
+
+复现运行 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/render-launcher-core.ps1`（默认候选 A）；通过 `-Candidate a/b -Output <worktree 内 PNG 路径> -Audit <审计 JSON 路径>` 生成两种透明度。脚本自动取重负载锁、后台运行 Blender 5.1.1、在 14 分钟超时或出错后释放锁；启动参数和渲染设置均为 2 线程，渲染后立即退出。采用 CPU Cycles、16 samples、denoise、512 像素分块、Standard、Freestyle 细边线、透明背景及 2400 × 1400 正交侧向 3/4 画面。只提取所需缓冲与 CAD 纹理，在渲染前释放临时投影数组，不复制整车大文件或保存 `.blend`。除指定板件外，材质 alpha 全为 1；三个轮胎网格分别按 800 个面积加权表面点作射线检查，遇到半透明板件按每板一次衰减估计透出量。节点取舍、材质 alpha、相机、边界及 SHA-256 写入审计；两候选、并排图、页面截图和报告在本机 `C:\Users\cch20\AppData\Local\Temp\rm-shots\launcher\fourth\`。第三版证据保留在 `side/`，前版在 `revision/`。英雄页图片和 `content.ts` 均未修改。
 
 ## 清理与维护
 
