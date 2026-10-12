@@ -2,6 +2,7 @@ import type { ScanStage } from './scan-scene';
 import { mountViewportScene } from './lib/viewport-scene';
 
 document.querySelectorAll<HTMLElement>('[data-module-media]').forEach(root => {
+  const engineerHeader = root.closest('[data-engineer-header]') !== null;
   const photo = root.querySelector<HTMLElement>('[data-module-photo]')!;
   const view = root.querySelector<HTMLElement>('[data-module-view]')!;
   const status = root.querySelector<HTMLElement>('[data-module-status]')!;
@@ -19,13 +20,16 @@ document.querySelectorAll<HTMLElement>('[data-module-media]').forEach(root => {
     const phase = elapsed % 18;
     const smooth = (x: number) => x * x * (3 - 2 * x);
     const reveal = phase < 3 ? 0 : phase < 6 ? smooth((phase - 3) / 3) : phase < 14 ? 1 : phase < 17 ? 1 - smooth((phase - 14) / 3) : 0;
-    stage.setScan(reveal); stage.turntable.rotation.y += dt * .16;
+    stage.setScan(engineerHeader ? 1 : reveal);
+    // Hold the actual front view long enough to read it, including after reset.
+    if (!engineerHeader || elapsed > 1.2) stage.turntable.rotation.y += dt * .16;
+    if (engineerHeader) root.dataset.turntableAngle = stage.turntable.rotation.y.toFixed(5);
     previous = now; stage.render(); frame = requestAnimationFrame(tick);
   };
   const run = () => { if (!frame && stage && visible && rotating) frame = requestAnimationFrame(tick); };
   const pause = () => { rotating = false; sync(); stop(); stage?.setScan(1); stage?.render(); };
   spin.addEventListener('click', () => { rotating = !rotating; sync(); if (rotating) run(); else pause(); });
-  root.querySelector('[data-module-reset]')!.addEventListener('click', () => { if (stage) { stage.turntable.rotation.y = 0; stage.resetView(); } });
+  root.querySelector('[data-module-reset]')!.addEventListener('click', () => { if (stage) { stage.turntable.rotation.y = 0; if (engineerHeader) { elapsed = 0; root.dataset.turntableAngle = '0'; } stage.resetView(); } });
   mountViewportScene({
     root, view: root.querySelector<HTMLElement>('.media-view')!,
     media: '(min-width: 901px) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
@@ -33,10 +37,12 @@ document.querySelectorAll<HTMLElement>('[data-module-media]').forEach(root => {
       const { loadModuleStage } = await import('./lib/module-stage');
       if (signal.aborted) return;
       const canvas = document.createElement('canvas'); canvas.setAttribute('role', 'img'); canvas.setAttribute('aria-label', photo.dataset.alt!); view.replaceChildren(canvas);
-      const next = await loadModuleStage(canvas, import.meta.env.BASE_URL, root.dataset.model!, signal, root.closest('[data-engineer-header]') !== null);
+      const next = await loadModuleStage(canvas, import.meta.env.BASE_URL, root.dataset.model!, signal, engineerHeader);
       try {
         stage = next;
-        stage.setScan(rotating ? 0 : 1);
+        if (engineerHeader) elapsed = 0;
+        if (engineerHeader) root.dataset.turntableAngle = '0';
+        stage.setScan(engineerHeader || !rotating ? 1 : 0);
         stage.onResize(() => { if (visible) stage?.render(); });
         canvas.addEventListener('pointerdown', pause); canvas.addEventListener('keydown', pause);
       } catch (error) { next.dispose(); stage = undefined; throw error; }

@@ -16,6 +16,7 @@ const times = [0, 1.4, 2.2, 3.7, 4.8, 5.2, 6.5];
     </div>
     <canvas data-canvas role="img" aria-label={t(L.canvasAlt, lang)}></canvas>
     <span class="scene-label mineral-label" data-mineral-label>{t(L.mineral, lang)}</span>
+    <span class="scene-label storage-label" data-storage-label>{t(L.storage, lang)}</span>
     <span class="scene-label station-label" data-station-label>{t(L.station, lang)}</span>
     <div class="view-label"><span class="phase" data-phase>{t(L.phases[0], lang)}</span><span class="illustration">{t(L.illustration, lang)}</span></div>
     <span class="scene-status" data-status role="status">{t(L.loading, lang)}</span>
@@ -86,6 +87,7 @@ const times = [0, 1.4, 2.2, 3.7, 4.8, 5.2, 6.5];
   .scene-label { display: none; position: absolute; top: 0; left: 0; pointer-events: none; font-size: .65rem; white-space: nowrap; padding: .2rem .4rem; background: var(--ground); color: var(--ink-2); }
   .is-ready .scene-label { display: block; }
   .station-label { color: var(--amber); border-bottom: 1px solid var(--amber); }
+  .storage-label { color: var(--ink-3); border-bottom: 1px solid var(--rule); }
   /* Keep the same desktop rows while the viewport scheduler releases the GLB. */
   fieldset { margin: 0; padding: .75rem var(--scene-inset); min-width: 0; border: 0; border-top: 1px solid var(--rule); height: 130px; display: grid; grid-template-rows: 36px 28px 24px; gap: 8px; visibility: hidden; }
   .is-ready fieldset { visibility: visible; }

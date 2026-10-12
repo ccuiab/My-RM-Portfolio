@@ -10,21 +10,65 @@ export const EXCHANGE_DURATION = 7.2;
 // Display poses, relative to the CAD export. J1-J3 hardware endpoints are unknown:
 // these finite display windows are NOT calibrated physical limits (see arm-joints.json).
 // J5 stays inside its documented export-relative interval [-121.371652, 118.628348].
-const DISPLAY_WINDOWS: [number, number][] = [[-40, 40], [0, 125], [-150, 5], [-170, 170], [-110, 110], [-180, 180]];
+const DISPLAY_WINDOWS: [number, number][] = [[-300, 300], [-160, 160], [-200, 180], [-170, 170], [-121.3716516466, 118.6283483533], [-180, 180]];
+// Source engineer_raw.glb node 1673, fixed ZP-80HB in gimbal_v2; inverse
+// source arm-root transform, then subtract arm.glb link_base/J1 translation.
+// Cup centre = (169.041,140.500,-382.542) mm; its contact plane is Y=158 mm.
+// A 200 mm illustrative cube rests above that plane, with no CAD repositioning.
+const STORAGE_ORE = new THREE.Vector3(.1690407641, .2579999982, -.3825417976);
 const folded: Angles = [0, 0, 0, 0, 0, 0];
-const unfolded: Angles = [-12, 60, -65, 15, -20, 10];
-const pickup: Angles = [-20, 100, -125, -15, 25, -10];
-// Numerical IK using the GLB pivots/web_axis: cube centre at (0.13, 0.36, z) m,
-// with the tool turned 100 degrees about world Z. TCP is 70.5 mm from the wrist;
-// add half the 200 mm cube to attach its rear face to the suction cup.
-const aligned: Angles = [15.758, 75.5396, -76.2039, 103.4284, -19.4004, -3.9786];
-const inserted: Angles = [11.1031, 111.4384, -128.4148, 147.2265, -25.443, -49.4984];
+const unfolded: Angles = [-23.840077, 60.179677, 127.454973, 0.395407, -95.814065, 0.764780];
+const pickup: Angles = [-23.840077, 63.208411, 105.017173, 0.395407, -76.405000, 0.764780];
+// Numerical IK on the exact GLB pivots/web_axis. Ore centre at the CAD storage
+// contact plane +100 mm; bay centre (-280,350,150) mm. Inward normal
+// (-.8503,-.0800,-.5202): mouth points to the opposite side and toward rear (+Z).
+// The arm turns J1 about 145 degrees before aligning. Extra clearance poses
+// keep the joint-interpolated transfer outside the bay frame.
+const transferClearance: Angles = [-164.702604, 48.000556, -110.156775, 101.154606, -55.262289, 91.210081];
+const approach: Angles = [-169.245746, -8.373955, -93.229804, 50.052930, 103.011398, 10.865506];
+const aligned: Angles = [-169.245747, -42.064505, -58.532404, 49.861056, 102.358317, 10.075541];
+const inserted: Angles = [-206.383067, -43.370032, -44.527310, 85.409704, 93.314053, 0.693803];
+// Continuation IK every 11.25 mm on a 225 mm straight insertion, constant wrist
+// orientation; unwrapped joint coordinates avoid branch jumps at +/-180 degrees.
+const INSERTION_PATH: Angles[] = [
+  [-169.245747, -42.064506, -58.532401, 49.861058, 102.358316, 10.075538],
+  [-170.558322, -42.203026, -57.413118, 51.006639, 101.497012, 9.502411],
+  [-171.925130, -42.323090, -56.335044, 52.217416, 100.669465, 8.924899],
+  [-173.347949, -42.426064, -55.298473, 53.494998, 99.877979, 8.343824],
+  [-174.828429, -42.513429, -54.303768, 54.840847, 99.124907, 7.760374],
+  [-176.368046, -42.586781, -53.351351, 56.256220, 98.412602, 7.176134],
+  [-177.968057, -42.647840, -52.441698, 57.742119, 97.743360, 6.593120],
+  [-179.629441, -42.698443, -51.575333, 59.299225, 97.119352, 6.013805],
+  [-181.352843, -42.740543, -50.752817, 60.927837, 96.542542, 5.441139],
+  [-183.138505, -42.776200, -49.974744, 62.627810, 96.014596, 4.878555],
+  [-184.986207, -42.807566, -49.241732, 64.398495, 95.536783, 4.329962],
+  [-186.895195, -42.836866, -48.554417, 66.238686, 95.109870, 3.799723],
+  [-188.864123, -42.866373, -47.913442, 68.146565, 94.734012, 3.292601],
+  [-190.890993, -42.898379, -47.319451, 70.119670, 94.408649, 2.813695],
+  [-192.973111, -42.935158, -46.773079, 72.154866, 94.132414, 2.368337],
+  [-195.107050, -42.978922, -46.274945, 74.248332, 93.903047, 1.961971],
+  [-197.288638, -43.031781, -45.825643, 76.395564, 93.717348, 1.600010],
+  [-199.512967, -43.095692, -45.425734, 78.591395, 93.571151, 1.287667],
+  [-201.774420, -43.172412, -45.075737, 80.830028, 93.459340, 1.029781],
+  [-204.066730, -43.263453, -44.776124, 83.105093, 93.375907, 0.830640],
+  [-206.383067, -43.370032, -44.527310, 85.409704, 93.314053, 0.693803],
+];
+const smoothProgress = (u: number) => u * u * u * (u * (u * 6 - 15) + 10);
+const insertionPose = (progress: number): Angles => {
+  const value = THREE.MathUtils.clamp(progress, 0, 1) * (INSERTION_PATH.length - 1);
+  const i = Math.min(Math.floor(value), INSERTION_PATH.length - 2), u = value - i;
+  const at = (index: number) => INSERTION_PATH[THREE.MathUtils.clamp(index, 0, INSERTION_PATH.length - 1)];
+  const [a, b, c, d] = [at(i - 1), at(i), at(i + 1), at(i + 2)];
+  return b.map((v, j) => .5 * (2 * v + (-a[j] + c[j]) * u + (2 * a[j] - 5 * v + 4 * c[j] - d[j]) * u * u + (-a[j] + 3 * v - 3 * c[j] + d[j]) * u * u * u)) as Angles;
+};
 export const EXCHANGE_KEYFRAMES: Keyframe[] = [
   { time: 0, angles: folded, envelope: 0 },
   { time: .45, angles: folded, envelope: 0 },
   { time: 1.4, angles: unfolded, envelope: .55 },
   { time: 2.2, angles: pickup, envelope: .9 },
-  { time: 2.55, angles: [-18, 95, -112, 0, 18, -8], envelope: .9 },
+  { time: 2.55, angles: unfolded, envelope: .9 },
+  { time: 2.9, angles: transferClearance, envelope: 1 },
+  { time: 3.25, angles: approach, envelope: .95 },
   { time: 3.7, angles: aligned, envelope: .85 },
   { time: 4.8, angles: inserted, envelope: 1 },
   { time: 5.2, angles: inserted, envelope: 1 },
@@ -40,9 +84,11 @@ export function sampleExchange(time: number) {
   const a = EXCHANGE_KEYFRAMES[index - 1], b = EXCHANGE_KEYFRAMES[index];
   const u = (t - a.time) / (b.time - a.time);
   const ease = u * u * u * (u * (u * 6 - 15) + 10);
-  const angles = a.angles.map((angle, i) => THREE.MathUtils.clamp(
+  let angles = a.angles.map((angle, i) => THREE.MathUtils.clamp(
     THREE.MathUtils.lerp(angle, b.angles[i], ease), ...DISPLAY_WINDOWS[i],
   )) as Angles;
+  if (t >= 3.7 && t <= 4.8) angles = insertionPose(smoothProgress((t - 3.7) / 1.1));
+  if (t >= 5.2 && t <= 5.65) angles = insertionPose(1 - smoothProgress((t - 5.2) / .45));
   return { angles, envelope: THREE.MathUtils.lerp(a.envelope, b.envelope, ease) };
 }
 
@@ -179,6 +225,7 @@ export async function createArmExchange(root: HTMLElement, base: string, signal:
     });
     applyPose(pickup);
     const picked = oreTransform();
+    picked.position.copy(STORAGE_ORE);
     applyPose(inserted);
     const placed = oreTransform();
     // Open receiving slot: its tilted aperture follows the final tool orientation.
@@ -188,7 +235,8 @@ export async function createArmExchange(root: HTMLElement, base: string, signal:
     station.quaternion.copy(placed.rotation);
     station.updateMatrixWorld(true);
     const stationBounds = new THREE.Box3().setFromObject(station);
-    wireBox(new THREE.Vector3(.24, .025, .24), picked.position.clone().add(new THREE.Vector3(0, -.15, 0)), mutedWire);
+    const storageTray = wireBox(new THREE.Vector3(.24, .025, .24), picked.position.clone().add(new THREE.Vector3(0, -.1125, 0)), mutedWire);
+    const storageBounds = new THREE.Box3().setFromObject(storageTray);
     // Only a small grounding patch remains. Clip and fade the grid radially.
     const grid = new THREE.GridHelper(1.1, 16, 0x7b8ea8, 0x7b8ea8);
     grid.material.dispose();
@@ -224,12 +272,13 @@ export async function createArmExchange(root: HTMLElement, base: string, signal:
     trail.frustumCulled = false;
     scene.add(trail);
     const history: { time: number; point: THREE.Vector3 }[] = [];
-    const viewDirection = new THREE.Vector3(-2.4, .65, 1).normalize();
+    const viewDirection = new THREE.Vector3(1.7, 1.1, 2.4).normalize();
     let autoFrame = true;
     let framing = false;
     const fitPose = (instant = false) => {
       const points = corners.map(({ mesh, point }) => point.clone().applyMatrix4(mesh.matrixWorld));
       for (const x of [stationBounds.min.x, stationBounds.max.x]) for (const y of [stationBounds.min.y, stationBounds.max.y]) for (const z of [stationBounds.min.z, stationBounds.max.z]) points.push(new THREE.Vector3(x, y, z));
+      for (const x of [storageBounds.min.x, storageBounds.max.x]) for (const y of [storageBounds.min.y, storageBounds.max.y]) for (const z of [storageBounds.min.z, storageBounds.max.z]) points.push(new THREE.Vector3(x, y, z));
       for (const x of [-.1, .1]) for (const y of [-.1, .1]) for (const z of [-.1, .1]) points.push(new THREE.Vector3(x, y, z).applyQuaternion(ore.quaternion).add(ore.position));
       const target = new THREE.Box3().setFromPoints(points).getCenter(new THREE.Vector3());
       const right = new THREE.Vector3().crossVectors(new THREE.Vector3(0, 1, 0), viewDirection).normalize();
@@ -261,6 +310,8 @@ export async function createArmExchange(root: HTMLElement, base: string, signal:
     const labelPoint = new THREE.Vector3();
     const mineralLabel = $('[data-mineral-label]');
     const stationLabel = $('[data-station-label]');
+    const storageLabel = $('[data-storage-label]');
+    root.dataset.storagePosition = STORAGE_ORE.toArray().map(value => value.toFixed(6)).join(',');
     const projectLabel = (label: HTMLElement, position: THREE.Vector3, lift: number) => {
       labelPoint.copy(position).add(new THREE.Vector3(0, lift, 0)).project(camera);
       const x = THREE.MathUtils.clamp((labelPoint.x * .5 + .5) * canvas.clientWidth, 75, canvas.clientWidth - 75);
@@ -301,13 +352,24 @@ export async function createArmExchange(root: HTMLElement, base: string, signal:
       ore.quaternion.copy(transform.rotation);
       let clearance = .135;
       let depth = Infinity;
+      let back = -Infinity;
+      const slotMin = new THREE.Vector3(Infinity, Infinity, Infinity);
+      const slotMax = new THREE.Vector3(-Infinity, -Infinity, -Infinity);
       for (const x of [-.1, .1]) for (const y of [-.1, .1]) for (const z of [-.1, .1]) {
         const corner = station.worldToLocal(new THREE.Vector3(x, y, z).applyQuaternion(ore.quaternion).add(ore.position));
         clearance = Math.min(clearance, .135 - Math.max(Math.abs(corner.x), Math.abs(corner.y)));
         depth = Math.min(depth, corner.z);
+        back = Math.max(back, corner.z);
+        slotMin.min(corner); slotMax.max(corner);
       }
       root.dataset.slotClearance = clearance.toFixed(5);
       root.dataset.slotDepth = depth.toFixed(5);
+      root.dataset.slotBackClearance = (.12 - back).toFixed(5);
+      // Clearance/depth are raw bay-local support bounds, also while ore is
+      // outside the opening. Only test a wall overlap inside the bay's slab.
+      const inSlab = slotMin.z <= .12 && slotMax.z >= -.12;
+      const inFrame = slotMin.x <= .145 && slotMax.x >= -.145 && slotMin.y <= .145 && slotMax.y >= -.145;
+      root.dataset.slotOverlap = String(inSlab && inFrame && (clearance < -.000001 || back > .120001));
       if (autoFrame) fitPose(instant);
       // Clear the received mineral near loop-end before the next illustrative cycle.
       const opacity = time > 6.8 ? 1 - (time - 6.8) / .4 : 1;
@@ -335,6 +397,7 @@ export async function createArmExchange(root: HTMLElement, base: string, signal:
       renderer.render(scene, camera);
       projectLabel(stationLabel, placed.position, .22);
       projectLabel(mineralLabel, ore.position, .14);
+      projectLabel(storageLabel, STORAGE_ORE, -.11);
       mineralLabel.style.visibility = time < 4.4 ? 'visible' : 'hidden';
       root.dataset.camera = camera.position.toArray().map((value) => value.toFixed(5)).join(',');
       root.dataset.cameraDistance = camera.position.distanceTo(controls.target).toFixed(5);
