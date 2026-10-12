@@ -536,9 +536,9 @@ export const research = {
   title: { zh: '2024–2025 技术预研', en: '2024–2025 R&D' },
   short: { zh: '技术预研', en: 'R&D' },
   shortTag: { zh: '发射、供弹与舵轮预研', en: 'Module R&D' },
-  cover: { src: launcher6, cutout: true, alt: { zh: '双级六摩擦轮方案', en: 'Dual-stage six-wheel design' } } as Pic,
+  cover: { src: launcher6, cutout: true, alt: { zh: '双级六摩擦轮', en: 'Dual-stage six-friction-wheel launcher' } } as Pic,
   launcher: {
-    title: { zh: '发射机构：从单级到双级六摩擦轮', en: 'Launcher: from single-stage to dual-stage six-wheel' },
+    title: { zh: '发射机构：从单级到双级六摩擦轮', en: 'Launcher: from single stage to dual-stage six friction wheels' },
     stages: [
       {
         title: { zh: 'RM2024 英雄单级发射', en: 'RM2024 Hero, single stage' },
@@ -546,14 +546,14 @@ export const research = {
         pic: { src: heroLauncherCore, cutout: true, alt: { zh: 'RM2024 英雄发射机构内部：两个大摩擦轮与一个预加速小轮', en: 'RM2024 Hero launcher core: two large friction wheels and one small pre-acceleration wheel' } },
       },
       {
-        title: { zh: '双级四摩擦轮样机', en: 'Dual-stage, four wheels' },
+        title: { zh: '双级四摩擦轮', en: 'Dual-stage four-friction-wheel launcher' },
         body: { zh: '样机暴露左右散布较大的问题。中间试过三摩擦轮，初射角稳定了，弹速一致性不够。', en: 'The prototype showed wide left-right dispersion. An intermediate three-wheel design stabilised the launch angle but did not keep muzzle velocity consistent.' },
-        pic: { src: launcher4, cutout: true, alt: { zh: '双级四摩擦轮样机', en: 'Dual-stage four-wheel prototype' } },
+        pic: { src: launcher4, cutout: true, alt: { zh: '双级四摩擦轮', en: 'Dual-stage four-friction-wheel launcher' } },
       },
       {
-        title: { zh: '双级六摩擦轮', en: 'Dual-stage, six wheels' },
+        title: { zh: '双级六摩擦轮', en: 'Dual-stage six-friction-wheel launcher' },
         body: { zh: '目标是兼顾弹速一致性和散布控制。', en: 'The design targets consistent muzzle velocity and controlled dispersion.' },
-        pic: { src: launcher6, cutout: true, alt: { zh: '双级六摩擦轮方案', en: 'Dual-stage six-wheel design' } },
+        pic: { src: launcher6, cutout: true, alt: { zh: '双级六摩擦轮', en: 'Dual-stage six-friction-wheel launcher' } },
       },
     ] as Stage[],
   },
