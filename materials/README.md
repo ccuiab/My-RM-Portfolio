@@ -35,6 +35,14 @@ CAD 原件在 `D:\RM2025` 和 OneDrive，只读使用，入口见 [models/source
 
 本次派生输入的 UWB 支架在车头投影中形成较高轮廓，与旧 SolidWorks 静态图的紧凑构图有差异；在整车完整入框的条件下，主体占比和小图辨识度低于旧图。因此按本轮“质量明显不如原图时不要替换”的要求，将新图保留为前视候选，首页和静态降级继续使用 `engineer-full.png`。页头 3D 已改为车头视角。图片选择依据和对比见本轮 orient 验收报告；生成脚本及原色/深色候选对比保存在本机 `C:\Users\cch20\AppData\Local\Temp\rm-shots\orient\`。
 
+### RM2024 英雄发射机构核心
+
+`images/derived/site/research-cutouts/hero-launcher-core.png` 是预研页首个发射阶段专用的透明 PNG（1800 × 1400），只读输入为主仓库 `materials/models/derived/inputs/codex/task3_hero_raw.glb`。同装配的网页模型 `models/derived/web/hero-launcher.glb` 已合并为单个网格，无法按零件节点核验，因此使用完整派生输入中的 `发机_4310pitch` 装配（节点 767）。
+
+模型确认为两个主摩擦轮装配（803、819）和一个预加速小轮装配（809）。保留外圈、金属中心、完整电机（806、811、822）、主轮对轴销及轴承（772、818、773、792）、小轮对轴销及轴承（799、797），不改变零件的内部装配位置。隐藏上下板、侧板、罩盖、电子仓、枪管等遮挡件。此输入的 `Hub` 与 `Rubber` 名称和实际几何、原材质相反：805／821／810 的外圈使用灰黑橡胶表现，804／820／812 的中心使用银色金属表现；节点原名和网格均保留。琥珀虚线箭头是弹道方向示意，沿枪管长轴及小轮到主轮的位置关系推断，不属于 CAD 零件。
+
+复现运行 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts/render-launcher-core.ps1`；脚本自动取重负载锁、后台运行 Blender 5.1.1、在超时或出错后释放锁。采用 CPU Cycles、48 samples、denoise、AgX、透明背景和正交 3/4 视角，按实际网格的投影边界取景。只提取选中网格的缓冲，不复制整车大文件，不保存 `.blend`。生成节点、尺寸边界、输入与图片 SHA-256 写入运行时审计报告，默认位置为 `C:\Users\cch20\AppData\Local\Temp\rm-shots\launcher\render-audit.json`。英雄页继续使用 `images/derived/site/cad-cutouts/hero-launcher-2024.png`。
+
 ## 清理与维护
 
 二级材料的“使用”包括当前展示、保留的加工流程输入、运动学交付和事实溯源。来源映射、只读 CAD 审计及技术推导继续保留。未引用的试渲染、检查截图、抽帧拼图、巨大 BMP、旧候选、重复文件和剪辑残片已清理。
