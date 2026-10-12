@@ -48,10 +48,10 @@ const { lang, drawing, title, lede, cover, titleBlock = [], stats = [], statsSou
     <div class="wrap">
       <ul class="stats">
         {stats.map((s) => (
-          <li>
+          <li class:list={{ gold: s.rank === '1st', silver: s.rank === '2nd' }}>
             <span class="num v">{s.value}{s.unit && <span class="u">{s.unit}</span>}</span>
             <span class="l">{t(s.label, lang)}</span>
-            {s.rank && <span class:list={['num rank', { gold: s.rank === '1st', silver: s.rank === '2nd' }]}>{s.rank}</span>}
+            {s.rank && <span class="num rank">{s.rank}</span>}
           </li>
         ))}
       </ul>
@@ -143,8 +143,9 @@ const { lang, drawing, title, lede, cover, titleBlock = [], stats = [], statsSou
     color: var(--amber);
   }
   /* Medal colours carry the ranking; amber stays the only UI accent. */
-  .rank.gold { color: #ffd23f; }
-  .rank.silver { color: #c9d3de; }
+  .gold { --medal: #ffd23f; }
+  .silver { --medal: #c9d3de; }
+  .gold .v, .gold .rank, .silver .v, .silver .rank { color: var(--medal); }
   .stats-src { margin-top: 0.8rem; font-size: var(--t-xs); color: var(--ink-3); }
 
   @media (max-width: 900px) {
