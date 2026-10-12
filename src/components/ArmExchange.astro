@@ -1,12 +1,12 @@
 ---
 import { Image } from 'astro:assets';
-import { sceneCopy } from '../data/content';
+import { engineer, sceneCopy } from '../data/content';
 import { t, type Lang } from '../data/i18n';
-import still from '../../materials/images/derived/site/cad-cutouts/engineer-full.png';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const L = sceneCopy.armExchange;
+const still = engineer.assembly.src;
 const times = [0, 1.4, 2.2, 3.7, 4.8, 5.2, 6.5];
 ---
 <div class="exchange is-static" data-arm-exchange data-play={t(L.play, lang)} data-pause={t(L.pause, lang)} data-loading={t(L.loading, lang)} data-unavailable={t(L.unavailable, lang)}>
