@@ -27,6 +27,14 @@ CAD 原件在 `D:\RM2025` 和 OneDrive，只读使用，入口见 [models/source
 
 图片原始输入可以直接被 Astro 引用，构建仅输出页面使用的优化图片。构建另将 `models/derived/web/`、`videos/derived/web/`、`images/derived/video-posters/` 与 `images/derived/web/` 复制到临时静态目录；大型原片和处理输入保存在本地。工程页片尾的上台阶、偷银矿和抢矿静音循环位于 `videos/derived/web/egg-*.mp4`，剪辑输入在 `videos/derived/inputs/`，来源记录随视频保存；复现使用 `scripts/cut-eggs.ps1`，原片仍在 `videos/source/bilibili/`。
 
+### 工程整车前视图
+
+`images/derived/site/cad-cutouts/engineer-front.png` 是 orient 轮生成的车头 3/4 透明 PNG（1600 × 1440）。输入只读来自主仓库 `materials/models/derived/inputs/codex/engineer_tagged.glb`，通过节点 `extras.source_node_index` 核对末端吸盘 779、车尾存矿吸盘 1330/1673、四个轮胎和裁判系统的位置；车头为整车水平单位方向约 `(-0.794, 0, -0.608)`，对应机械臂局部 `+Z`。
+
+生成使用 Blender 5.1.1 后台 CPU Cycles、32 samples、denoise、AgX、透明胶片和正交相机。按 `atan2(camera.x, camera.z)` 计，方位角 255.04°，俯仰角约 33.02°；保留整车装配位置，按投影包围盒留白取景。保留 GLB 中的白色壳体、灯条及裁判系统材质；SolidWorks 碳纤维贴图导入时偏白，渲染内将其乘以深色环氧底色 `(0.028, 0.032, 0.040)`，roughness 设为 0.32。没有修改输入 GLB 或保存 `.blend`。图片 SHA-256 为 `28aabf2e81745bfa764556304f3fd60cbd6c5fa47a6f84ab93df86798fca09e2`。旧图 `engineer-full.png` 保留。
+
+本次派生输入的 UWB 支架在车头投影中形成较高轮廓，与旧 SolidWorks 静态图的紧凑构图有差异；在整车完整入框的条件下，主体占比和小图辨识度低于旧图。因此按本轮“质量明显不如原图时不要替换”的要求，将新图保留为前视候选，首页和静态降级继续使用 `engineer-full.png`。页头 3D 已改为车头视角。图片选择依据和对比见本轮 orient 验收报告；生成脚本及原色/深色候选对比保存在本机 `C:\Users\cch20\AppData\Local\Temp\rm-shots\orient\`。
+
 ## 清理与维护
 
 二级材料的“使用”包括当前展示、保留的加工流程输入、运动学交付和事实溯源。来源映射、只读 CAD 审计及技术推导继续保留。未引用的试渲染、检查截图、抽帧拼图、巨大 BMP、旧候选、重复文件和剪辑残片已清理。

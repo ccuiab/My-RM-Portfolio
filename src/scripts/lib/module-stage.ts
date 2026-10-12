@@ -12,9 +12,10 @@ export async function loadModuleStage(canvas: HTMLCanvasElement, base: string, m
     const direction = new Vector3(1, .65, 1.3);
     if (engineerHeader) {
       // CAD source nodes 1330/1673 are the fixed ZP-80HB storage cups.
-      // From J1 toward their midpoint is vehicle-forward (+.794, 0, +.608).
-      // Look from 22.5 degrees to that side, slightly above the front bumper.
-      const azimuth = (52.54 + 22.5) * Math.PI / 180;
+      // Their midpoint is vehicle-rear (+.794, 0, +.608), local arm -Z.
+      // Vehicle-front is the opposite side, where the arm/end cup extends.
+      // Rotate the old rear three-quarter view by 180 degrees, retaining pitch.
+      const azimuth = (52.54 + 22.5 + 180) * Math.PI / 180;
       direction.set(Math.sin(azimuth), .65, Math.cos(azimuth));
       // The vehicle's slender arm leaves a lot of empty bounding-sphere space.
       // A header-specific frame fills about four fifths of the drawing height.

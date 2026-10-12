@@ -101,7 +101,7 @@ export const sceneCopy = {
     mineral: { zh: '矿石', en: 'Mineral' },
     storage: { zh: '存矿位 · CAD 定位', en: 'Storage · CAD location' },
     station: { zh: '兑换站示意', en: 'Exchange bay schematic' },
-    caption: { zh: '存矿位按 CAD 吸盘定位；槽口朝侧后方。角度相对 CAD 折叠姿态；包络为设计示意；J1–J3 实机限位待确认。', en: 'Storage follows the CAD cup; the bay opens sideways and rearward. Angles relative to CAD pose; envelope is illustrative; J1–J3 hardware limits unconfirmed.' },
+    caption: { zh: '车尾存矿位按 CAD 吸盘定位；槽口朝侧面、略偏车尾。角度相对 CAD 折叠姿态；包络为设计示意；J1–J3 实机限位待确认。', en: 'Rear storage follows the CAD cup; the bay opens sideways and slightly rearward. Angles relative to CAD pose; envelope is illustrative; J1–J3 hardware limits unconfirmed.' },
     hint: { zh: '拖动旋转 · 滚轮 / 双指缩放', en: 'Drag to orbit · Scroll / pinch to zoom' },
     phases: [
       { zh: '折叠', en: 'Folded' },
