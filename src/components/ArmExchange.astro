@@ -14,7 +14,7 @@ const times = [0, 1.4, 2.2, 3.7, 4.8, 5.2, 6.5];
     <div class="exchange-still">
       <Image src={still} alt={t(L.staticAlt, lang)} width={1200} loading="lazy" />
     </div>
-    <canvas data-canvas role="img" aria-label={t(L.canvasAlt, lang)}></canvas>
+    <canvas data-canvas data-lenis-prevent-wheel role="img" aria-label={t(L.canvasAlt, lang)}></canvas>
     <span class="scene-label mineral-label" data-mineral-label>{t(L.mineral, lang)}</span>
     <span class="scene-label storage-label" data-storage-label>{t(L.storage, lang)}</span>
     <span class="scene-label station-label" data-station-label>{t(L.station, lang)}</span>
