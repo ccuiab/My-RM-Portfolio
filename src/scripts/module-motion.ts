@@ -84,7 +84,7 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
     const mesh = child as THREE.Mesh;
     if (!mesh.isMesh) return;
     for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-      material.transparent = true; material.opacity = kind === 'pump' ? .12 : .16; material.depthWrite = false;
+      material.transparent = true; material.opacity = kind === 'pump' ? .32 : .16; material.depthWrite = false;
       material.side = THREE.FrontSide; material.needsUpdate = true;
     }
   });
@@ -120,6 +120,7 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
       if (!mesh.isMesh) return;
       const source = mesh.geometry, positions = source.attributes.position;
       const index = source.index;
+      const tubeFaces = new Set<number>();
       const toModel = stage.model.matrixWorld.clone().invert().multiply(mesh.matrixWorld);
       const points = Array.from({ length: positions.count }, (_, i) => new THREE.Vector3().fromBufferAttribute(positions, i).applyMatrix4(toModel));
       for (const port of ports) {
@@ -131,13 +132,31 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
         const triangles: number[] = [];
         for (let i = 0; i < (index?.count ?? positions.count); i += 3) {
           const ids = [0, 1, 2].map(j => index ? index.getX(i + j) : i + j);
-          if (ids.every(id => onTube[id])) triangles.push(...ids);
+          if (ids.every(id => onTube[id])) { triangles.push(...ids); tubeFaces.add(i); }
         }
         if (!triangles.length) continue;
         const geometry = source.clone(); geometry.setIndex(triangles); geometry.clearGroups();
         const material = (Array.isArray(mesh.material) ? mesh.material[0] : mesh.material).clone();
         material.opacity = .55;
         details.push({ parent: mesh, mesh: new THREE.Mesh(geometry, material) });
+      }
+      if (tubeFaces.size) {
+        // Material groups only: retain every original vertex and index. The
+        // tubes keep their old .12 base plus .55 overlay, independently of the
+        // denser head/cylinder housing around them.
+        const body = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material;
+        const tube = body.clone(); tube.opacity = .12;
+        mesh.material = [body, tube];
+        source.clearGroups();
+        const length = index?.count ?? positions.count;
+        let start = 0, materialIndex = tubeFaces.has(0) ? 1 : 0;
+        for (let i = 3; i <= length; i += 3) {
+          const next = tubeFaces.has(i) ? 1 : 0;
+          if (i === length || next !== materialIndex) {
+            source.addGroup(start, i - start, materialIndex);
+            start = i; materialIndex = next;
+          }
+        }
       }
     });
     details.forEach(({ parent, mesh }) => parent.add(mesh));
@@ -225,7 +244,7 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
     },
     diagnostics: () => diagnostics,
     annotations() {
-      if (kind === 'pump') return ports.map((port: THREE.Vector3) => project(port.clone().addScaledVector(portAxis, .031)));
+      if (kind === 'pump') return ports.map((port: THREE.Vector3) => project(port));
       return ['drive-input', 'drive-compound', 'drive-output', 'steering-input', 'steering-output'].map(name => {
         const part = parts.find(p => p.object.userData.web_transmission === name);
         if (!part) return { x: 0, y: 0, visible: false };

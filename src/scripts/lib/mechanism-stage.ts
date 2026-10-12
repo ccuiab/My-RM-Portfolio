@@ -16,6 +16,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   const isPump = file === 'engineer-pump.glb';
   const isSwerve = file === 'engineer-swerve.glb';
   let swerveViewChange: (() => void) | undefined;
+  let pumpViewChange: (() => void) | undefined;
   if (isPump) camera.up.set(0, 0, 1);
   const amber = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--amber').trim());
   scene.add(new THREE.HemisphereLight(0xe5ecf5, 0x182438, 2.4));
@@ -205,6 +206,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     updateHover();
     renderer.render(scene, camera);
     if (isSwerve) swerveViewChange?.();
+    else if (isPump) pumpViewChange?.();
   };
   const resize = () => {
     const w = canvas.clientWidth, h = canvas.clientHeight;
@@ -244,6 +246,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     scene, model, camera, controls, amber, sphere,
     render, fitView: fit,
     onSwerveViewChange(listener: () => void) { if (isSwerve) swerveViewChange = listener; },
+    onPumpViewChange(listener: () => void) { if (isPump) pumpViewChange = listener; },
     swerveAnchors() {
       model.updateMatrixWorld(true); camera.updateMatrixWorld(true);
       return swerveAnchors.map(anchor => {
