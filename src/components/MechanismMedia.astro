@@ -71,8 +71,8 @@ const L = sceneCopy[kind];
   .annotation-leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
   .annotation-leaders path { fill: none; stroke: var(--amber); stroke-width: .7px; opacity: .5; }
   .annotation-leaders circle { fill: var(--amber); opacity: .85; }
-  .valve { color: var(--ink-3); border-color: var(--rule); }
-  .valve[data-open="true"] { color: var(--amber); border-color: var(--amber); }
+  [data-mechanism="pump"] .annotation.valve { color: var(--ink-3); border-color: var(--rule); }
+  [data-mechanism="pump"] .valve[data-open="true"] { color: var(--amber); border-color: var(--amber); }
   .hover { position: absolute; bottom: 1rem; left: 1rem; right: 1rem; width: fit-content; max-width: calc(100% - 2rem); padding: .5rem .7rem; color: var(--amber); border: 1px solid var(--amber); background: var(--ground); font-family: var(--f-mono); font-size: var(--t-xs); overflow-wrap: anywhere; pointer-events: none; }
   .status { position: absolute; bottom: 0; left: 0; right: 0; margin: 0; padding: .75rem; font-size: var(--t-xs); color: var(--ink-2); background: var(--panel); text-align: center; }
   .controls { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; padding: .8rem 1rem; }
