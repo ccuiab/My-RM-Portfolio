@@ -3,7 +3,7 @@
   "match": "RMUC 2025 复活赛第 33 场 vs 哈尔滨工业大学（深圳），最后一局，港科大为蓝方",
   "verifiedAt": "2026-10-12",
   "catalog": "materials/documents/derived/bilibili-video-catalog.json",
-  "evidence": "B 站当前分 P 列表、官方记分栏、工程与英雄比赛计时器以及逐秒抽帧交叉核验。证据与接触表：C:/Users/cch20/AppData/Local/Temp/rm-shots/eggs2/。",
+  "evidence": "eggs3：逐秒原片抽帧、菜单边界核对、输出接触表与中英文页面截图：C:/Users/cch20/AppData/Local/Temp/rm-shots/eggs3/。",
   "segments": [
     {
       "source": "https://www.bilibili.com/video/BV1Aw8gzoEZd/?p=3",
@@ -14,14 +14,14 @@
       "uploaderId": 1568334988,
       "sourceFile": "materials/videos/source/bilibili/engineer-pov/BV1Aw8gzoEZd-P03 - [RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - B2SuqqreProject_0.mp4",
       "sourceSha256FromCatalog": "bd8ea8255494ebf4e2cd4a307cdd1fc40c56e36597ecac0fa39059dde301be22",
-      "startSeconds": 1092,
-      "durationSeconds": 25,
-      "endSeconds": 1117,
-      "startTimecode": "00:18:12.00",
-      "endTimecode": "00:18:37.00",
+      "startSeconds": 1089,
+      "durationSeconds": 30,
+      "endSeconds": 1119,
+      "startTimecode": "00:18:09.00",
+      "endTimecode": "00:18:39.00",
       "role": "主画面：蓝方 2 号工程扶正蓝方 1 号英雄",
       "inputFile": "materials/videos/derived/inputs/egg-right-hero-p03.mp4",
-      "evidence": "18:10（倒计时 2:15）英雄已侧翻；18:12–18:22 工程接触英雄并持续调整；18:24–18:32 英雄逐步翻回正姿态；18:33（1:52）英雄恢复行驶，18:35 前与工程分开。",
+      "evidence": "18:09 英雄已侧翻，工程接近并调整；18:24–18:32 逐步扶正，18:33 恢复行驶；继续到 18:39，覆盖分离和行驶。",
       "copyrightOwner": "RoboMaster 赛事画面制作方；投稿与兵种视角编排：翔林魔主"
     },
     {
@@ -33,14 +33,14 @@
       "uploaderId": 1568334988,
       "sourceFile": "materials/videos/source/bilibili/engineer-pov/BV1Aw8gzoEZd-P02 - [RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - B1Hero_0.mp4",
       "sourceSha256FromCatalog": "0bdfe839199d51255d6be53292b06a18f9d41c60a39ba6769df3967f867b246d",
-      "startSeconds": 1109,
-      "durationSeconds": 4.4,
-      "endSeconds": 1113.4,
-      "startTimecode": "00:18:29.00",
-      "endTimecode": "00:18:33.40",
-      "role": "右上角：蓝方 1 号英雄被扶正的同步第一视角",
+      "startSeconds": 1085.4,
+      "durationSeconds": 30,
+      "endSeconds": 1115.4,
+      "startTimecode": "00:18:05.40",
+      "endTimecode": "00:18:35.40",
+      "role": "全程同步英雄第一视角：菜单开启时裁出未遮挡的车体与地面，菜单关闭后恢复完整画中画。",
       "inputFile": "materials/videos/derived/inputs/egg-right-hero-p02.mp4",
-      "evidence": "英雄 18:29.0（1:53）对应工程 18:32.6（1:53）；菜单关闭后看见工程接近，视野恢复并与工程分开；细化文件偏移 -3.6 s。早期设置菜单遮挡不剪入。",
+      "evidence": "逐秒与 0.1 s 抽帧确认中央菜单覆盖 x=72..780 / y=124..351（852×480）。英雄原片 18:28.60 仍有菜单，18:28.70 已关闭；完整画中画从 18:28.80 安全帧（合成时间 23.4 s）淡入。此前保留菜单下方车体与路面，连续显示扶正倾转；与工程 -3.6 s 全程同步。",
       "copyrightOwner": "RoboMaster 赛事画面制作方；投稿与兵种视角编排：翔林魔主"
     }
   ],
@@ -99,14 +99,23 @@
     "height": 288,
     "x": 744,
     "y": 72,
-    "reason": "工程完整大画面，收尾 4.4 s 在菜单关闭后显示同计时英雄视角；切秒边界细化后按 -3.6 s 偏移对齐。",
-    "insetStartSeconds": 20.6
+    "reason": "保留工程完整主画面；菜单遮挡期英雄画中画裁出车体和地面以持续展示倾转，菜单关闭后淡入完整英雄视角。裁剪避免播放设置菜单，保留真实可见区域，覆盖接近、扶正和恢复行驶。",
+    "insetStartSeconds": 0,
+    "fullViewStartSeconds": 23.4,
+    "switchFadeSeconds": 0.32,
+    "menuCrop": {
+      "x": 214,
+      "y": 354,
+      "width": 432,
+      "height": 94,
+      "outputHeight": 112
+    }
   },
   "transitionSeconds": 0,
   "loop": {
     "seamSeconds": 0.32,
     "method": "尾段与片头重叠淡化 0.32 s，循环时间线从原片头 0.32 s 开始；最后一帧接回同一源时间的下一帧。两路同步淡化。",
-    "expectedDurationSeconds": 24.68
+    "expectedDurationSeconds": 29.68
   },
   "playbackRate": 1,
   "output": {
@@ -117,16 +126,16 @@
     "fps": 25,
     "codec": "h264",
     "pixelFormat": "yuv420p",
-    "crf": 25,
-    "maxBitrateKbps": 1600,
+    "crf": 26,
+    "maxBitrateKbps": 1450,
     "audio": false,
     "faststart": true,
     "maxBytes": 6000000,
-    "posterSeconds": 20.8
+    "posterSeconds": 24.2
   },
   "copyright": {
     "attribution": "页面注明 UP 主翔林魔主，并分别链接工程 P03 与英雄 P02 原片；赛事原画面版权归对应赛事制作方。",
-    "permissionStatus": "公开来源和归属已记录，未把可访问视为已核实的转载授权。"
+    "permissionStatus": "用户 2026-10-12 确认：可以转载，条件是标明来源并提供原片跳转链接。"
   },
-  "note": "完整原片直接存入用户授权的主仓库 engineer-pov 目录；没有覆盖已有文件。英雄原片为当前公开接口可用的 852×480，工程原片为 1920×1080。网站只描述画面可见的扶正行为。 英雄原片设置菜单遮挡扶正早期，因此仅选菜单关闭后的末段 4.4 s，不能恢复被菜单盖住的画面。"
+  "note": "英雄 852×480 原片只读；不还原菜单盖住的中央画面。两路各 30 s，-3.6 s 同步；菜单下方的裁剪画面全程参与，菜单关闭后使用完整英雄画中画；循环接缝重叠 0.32 s，输出 29.68 s。"
 }
