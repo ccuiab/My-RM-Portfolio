@@ -377,7 +377,44 @@ try {
             $filters += "[$($i):v]setpts=PTS-STARTPTS${rotate}${crop}${scale},fps=$($edit.output.fps),setsar=1,settb=AVTB${track},format=yuv420p[s$i]"
             $total += [double]$edit.segments[$i].durationSeconds
         }
-        if ($edit.composition.type -eq 'picture-in-picture') {
+        if ($clipName -eq 'egg-right-hero' -and $edit.composition.type -eq 'staged-split-to-hero') {
+            # 04 only: engineer approach -> synchronized, menu-free split -> full Hero POV.
+            $layout = $edit.composition
+            $join = [double]$layout.heroStartSeconds
+            $full = [double]$layout.fullHeroStartSeconds
+            $introFade = [double]$layout.introFadeSeconds
+            $fullFade = [double]$layout.fullHeroFadeSeconds
+            $total = [double]$edit.segments[0].durationSeconds
+            if ($inputPaths.Count -ne 2 -or $edit.output.width -lt 1280 -or $introFade -gt .3 -or $fullFade -gt .3 -or
+                [Math]::Abs($total-$join-$edit.segments[1].durationSeconds) -gt .001 -or
+                [Math]::Abs($edit.segments[1].startSeconds-$edit.segments[0].startSeconds-$edit.synchronization.heroMinusEngineerSeconds-$join) -gt .001 -or
+                $full -le $join+$introFade -or $full+$fullFade -ge $total) { throw '04 source alignment or staged transition is invalid.' }
+            $copy = [IO.File]::ReadAllText((WorkspacePath 'src/data/content.ts'))
+            $labelFilters = @{}
+            foreach ($key in @('povLabel','engineerPovLabel')) {
+                $match = [regex]::Match($copy, "(?s)index: '04'.*?$($key): \{ zh: '([^']+)', en: '([^']+)' \}")
+                if (-not $match.Success) { throw "04 label must come from bilingual content.ts: $key" }
+                $relative = "materials/videos/derived/inputs/egg-right-hero-$key.txt"
+                [IO.File]::WriteAllText((WorkspacePath $relative), "$($match.Groups[1].Value) / $($match.Groups[2].Value)", $utf8)
+                # Same amber text, dark backing and unobtrusive HUD treatment as 02.
+                $labelFilters[$key] = "drawtext=fontfile='C\:/Windows/Fonts/msyh.ttc':textfile='$relative':fontcolor=0xf2b53a:fontsize=24:box=1:boxcolor=0x0b1420@0.86:boxborderw=8:x=20:y=142"
+            }
+            $half = [int]($edit.output.width/2)
+            $mc = $layout.menuCrop
+            $cropHeight = [int](2*[Math]::Round(($half*$mc.height/$mc.width)/2))
+            $halfY = [int](($edit.output.height-$edit.output.height/2)/2)
+            $cropY = [int](($edit.output.height-$cropHeight)/2)
+            $filters += '[s0]split=2[solo0][engineerHalf0]'
+            $filters += '[s1]split=2[heroCrop0][heroFull0]'
+            $filters += "[solo0]trim=duration=$(Number ($join+$introFade)),setpts=PTS-STARTPTS[solo]"
+            $filters += "[engineerHalf0]trim=start=$(Number $join):end=$(Number ($full+$fullFade)),setpts=PTS-STARTPTS,scale=${half}:$($edit.output.height/2):flags=lanczos,pad=${half}:$($edit.output.height):0:${halfY}:color=0x0b1420,$($labelFilters.engineerPovLabel)[engineerHalf]"
+            $filters += "[heroCrop0]trim=duration=$(Number ($full-$join+$fullFade)),setpts=PTS-STARTPTS,crop=$($mc.width):$($mc.height):$($mc.x):$($mc.y),scale=${half}:${cropHeight}:flags=lanczos,pad=${half}:$($edit.output.height):0:${cropY}:color=0x0b1420,$($labelFilters.povLabel)[heroHalf]"
+            $filters += "[engineerHalf][heroHalf]hstack=inputs=2:shortest=1,drawbox=x=$($half-1):y=176:w=2:h=368:color=0xf2b53a:t=fill[splitView]"
+            $fullLabel = $labelFilters.povLabel.Replace('y=142','y=64')
+            $filters += "[heroFull0]trim=start=$(Number ($full-$join)),setpts=PTS-STARTPTS,scale=$($edit.output.width):$($edit.output.height):flags=lanczos,${fullLabel}[heroFull]"
+            $filters += "[solo][splitView]xfade=transition=fade:duration=$(Number $introFade):offset=$(Number $join)[withSplit]"
+            $filters += "[withSplit][heroFull]xfade=transition=fade:duration=$(Number $fullFade):offset=$(Number $full)[edit]"
+        } elseif ($edit.composition.type -eq 'picture-in-picture') {
             $pip = $edit.composition
             $insetStart = [double]$pip.insetStartSeconds
             if ([Math]::Abs($edit.segments[0].durationSeconds-$edit.segments[1].durationSeconds-$insetStart) -gt .001 -or
