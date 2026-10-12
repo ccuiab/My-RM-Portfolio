@@ -177,6 +177,10 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
     });
   }
   const rotation = new THREE.Quaternion(), swing = new THREE.Quaternion();
+  // CAD-counted metadata, shared by the exporter and this derived GLB.
+  const steeringInput = kind === 'swerve' ? parts.find(p => p.object.userData.web_transmission === 'steering-input') : undefined;
+  const steeringOutput = kind === 'swerve' ? parts.find(p => p.object.userData.web_transmission === 'steering-output') : undefined;
+  const steeringRatio = steeringInput && steeringOutput ? steeringOutput.object.userData.web_gear_teeth / steeringInput.object.userData.web_gear_teeth : 0;
   const a = new THREE.Vector3(), b = new THREE.Vector3();
   const project = (point: THREE.Vector3) => {
     const ndc = stage.model.localToWorld(point.clone()).project(stage.camera);
@@ -197,7 +201,7 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
         p.object.position.addScaledVector(p.offset, explode);
         if (kind === 'swerve') {
           const value = p.motion === 'roll' ? swerve.roll : p.motion === 'steer' ? swerve.steer :
-            p.motion === 'steering-pinion' ? -swerve.steer * p.object.userData.web_gear_ratio : 0;
+            p.motion === 'steering-pinion' ? -swerve.steer * steeringRatio : 0;
           // Axes are expressed in the part parent's frame, not the mesh frame.
           if (value) p.object.quaternion.premultiply(rotation.setFromAxisAngle(p.axis, value));
         } else if (p.motion === 'crank' || p.motion === 'bearing-inner') {
@@ -245,7 +249,7 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
     diagnostics: () => diagnostics,
     annotations() {
       if (kind === 'pump') return ports.map((port: THREE.Vector3) => project(port));
-      return ['drive-input', 'drive-compound', 'drive-output', 'steering-input', 'steering-output'].map(name => {
+      return ['steering-input', 'steering-output', 'rail', 'gas-spring', 'drive-input', 'drive-compound', 'drive-output'].map(name => {
         const part = parts.find(p => p.object.userData.web_transmission === name);
         if (!part) return { x: 0, y: 0, visible: false };
         const ndc = new THREE.Box3().setFromObject(part.object).getCenter(new THREE.Vector3()).project(stage.camera);

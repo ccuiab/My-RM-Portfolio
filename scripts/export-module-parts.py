@@ -202,11 +202,17 @@ for role in ('pump', 'swerve'):
         pinion['web_motion'] = 'steering-pinion'
         pinion['web_axis'] = [0, 1, 0]
         pinion['web_gear_ratio'] = counts['large']['teeth'] / counts['pinion']['teeth']
+        pinion['web_gear_teeth'] = counts['pinion']['teeth']
+        # Centre the tooth in the opposing CAD gap. Contact-plane silhouettes
+        # were checked over the entire steering sweep, not just one still.
+        pinion['web_mesh_phase'] = .07479982508547127
         # Put the object origin at the shaft centre, without changing triangles.
         transform = worlds[pinion].copy()
         local_center = transform.inverted() @ target
         pinion.data.transform(Matrix.Translation(-local_center))
-        transform.translation = target; worlds[pinion] = transform
+        transform.translation = target
+        transform = Matrix.Translation(target) @ Matrix.Rotation(pinion['web_mesh_phase'], 4, 'Z') @ Matrix.Translation(-target) @ transform
+        worlds[pinion] = transform
     records = []
     steering = None
     if role == 'swerve':
@@ -285,26 +291,29 @@ for role in ('pump', 'swerve'):
                       41: .143, 42: -.037, 43: -.06, 44: -.087,
                       45: .168, 46: .168, 47: -.06, 31: .21}
             if idx in layers: offset = wheel_axis * layers[idx]
-            elif idx in (58, 62): offset = Vector((0, 0, .10 if idx == 58 else .065))
-            # Motor output points down. Move the complete motor farther up than
-            # the pinion, so their relative separation extends along that shaft.
-            elif idx == 61: offset = Vector((0, 0, .11))
-            elif idx == 63: offset = Vector((0, 0, .17))
+            elif idx == 58: offset = Vector((0, 0, .18))
+            elif idx == 62: offset = Vector((0, 0, .065))
+            # Both complete motors and the outer frame retain their CAD pose.
+            if idx in layers and idx != 31: offset += Vector((0, 0, .052))
             if idx in rail_nodes:
-                offset = rail_axis * -.095
+                # Small motion along the verified slide axis within one layer.
+                offset = Vector((0, 0, .13)) - rail_axis * (.012 if idx in (24, 28, 29, 51) else .006)
                 obj['web_suspension'] = 'rail'
             elif idx in spring_nodes:
                 # Translate the original cylinder and rod by the same vector:
                 # this is the complete CAD spring, never a cutaway or extension.
-                offset = Vector((.115, 0, 0))
+                offset = Vector((.015, 0, .13))
                 obj['web_suspension'] = 'gas-spring'
-            if obj == pinion: offset = Vector((0, 0, .07))
+            # One axial translation preserves the steering gears' centre
+            # distance, common tooth plane and relative mesh phase.
+            if obj == pinion: offset = Vector((0, 0, .18))
             if idx == 31:
                 obj['web_motion'] = 'roll'
                 obj['web_axis'] = web_vector(wheel_axis)
             if idx in (35, 37, 38, 39, 40): obj['web_transmission'] = 'drive-input' if idx == 35 else 'drive-output' if idx == 38 else 'drive-compound'
             if obj == pinion: obj['web_transmission'] = 'steering-input'
             if idx == 58: obj['web_transmission'] = 'steering-output'
+            if idx == 58: obj['web_gear_teeth'] = counts['large']['teeth']
             if idx in (35, 39, 38, 58, 25, 53): obj['web_guide'] = True
             obj['web_structure'] = obj != pinion and idx not in layers and idx not in (58, 62) + rail_nodes + spring_nodes and not obj['web_motor_intact']
             obj['web_explode'] = web_vector(offset)

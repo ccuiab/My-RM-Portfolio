@@ -18,7 +18,9 @@ const L = sceneCopy[kind];
       <svg class="annotation-leaders" data-swerve-leaders aria-hidden="true" hidden>
         {sceneCopy.swerve.stages.map(() => <g data-annotation-leader hidden><path /><circle r="2" /></g>)}
       </svg>
-      {sceneCopy.swerve.stages.map(text => <span class="annotation" data-mechanism-annotation hidden>{t(text, lang)}</span>)}
+      <div role="group" aria-label={t(sceneCopy.swerve.layers, lang)}>
+        {sceneCopy.swerve.stages.map(text => <span class="annotation" data-mechanism-annotation hidden>{t(text, lang)}</span>)}
+      </div>
     </>}
     {kind === 'pump' && <>
       <svg class="annotation-leaders" data-pump-leaders aria-hidden="true" hidden>

@@ -141,7 +141,8 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   });
   // Cache anchors in each original part's local frame. They follow both the
   // explosion and the steering parent, without moving a label onto the mesh.
-  const swerveAnchors = isSwerve ? ['drive-input', 'drive-compound', 'drive-output', 'steering-input', 'steering-output', 'rail', 'gas-spring'].map(key => {
+  const swerveKeys = ['steering-input', 'steering-output', 'rail', 'gas-spring', 'drive-input', 'drive-compound', 'drive-output'];
+  const swerveAnchors = isSwerve ? swerveKeys.map(key => {
     let part: THREE.Object3D | undefined;
     model.traverse(object => {
       if (part) return;
@@ -195,7 +196,11 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       saved.push({ material, color: material.emissive.clone(), intensity: material.emissiveIntensity });
       material.emissive.copy(amber); material.emissiveIntensity = .85;
     }
-    label.textContent = cleanPartName(source?.split('/').pop() ?? hit.name);
+    let namedPart: THREE.Object3D | null = hit;
+    if (isSwerve) while (namedPart && !namedPart.userData.web_transmission && !namedPart.userData.web_suspension) namedPart = namedPart.parent;
+    const key = namedPart?.userData.web_transmission ?? namedPart?.userData.web_suspension;
+    const caption = isSwerve && key ? canvas.closest('[data-mechanism]')?.querySelectorAll('[data-mechanism-annotation]')[swerveKeys.indexOf(key)]?.textContent : undefined;
+    label.textContent = caption || cleanPartName(source?.split('/').pop() ?? hit.name);
     label.hidden = false;
   };
   const render = (fitView = true) => {
