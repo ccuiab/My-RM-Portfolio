@@ -4,14 +4,12 @@ import { mountViewportScene } from './lib/viewport-scene';
 
 /** Both rails live outside the canvas. Sort endpoints vertically on each side
  * so the leaders and labels remain readable from any orbit angle. */
-export function layoutSwerveAnnotations(root: HTMLElement, stage: MechanismStage, amount: number, phase: string) {
+function layoutMechanismAnnotations(root: HTMLElement, points: { x: number; y: number; visible: boolean }[], show: boolean) {
   const holder = root.querySelector<HTMLElement>('[data-mechanism-canvas]')!;
   const view = root.querySelector<HTMLElement>('[data-mechanism-view]')!;
   const items = [...root.querySelectorAll<HTMLElement>('[data-mechanism-annotation]')];
-  const svg = root.querySelector<SVGSVGElement>('[data-swerve-leaders]')!;
+  const svg = root.querySelector<SVGSVGElement>('[data-swerve-leaders], [data-pump-leaders]')!;
   const leaders = [...svg.querySelectorAll<SVGGElement>('[data-annotation-leader]')];
-  const show = amount >= .72 && (phase === 'opening' || phase === 'exploded');
-  const points = stage.swerveAnchors();
   svg.toggleAttribute('hidden', !show);
   const frame = view.getBoundingClientRect(), canvas = holder.getBoundingClientRect();
   svg.setAttribute('viewBox', `0 0 ${frame.width} ${frame.height}`);
@@ -46,6 +44,14 @@ export function layoutSwerveAnnotations(root: HTMLElement, stage: MechanismStage
       next = y + heights[index] + gap;
     });
   }
+}
+
+export function layoutSwerveAnnotations(root: HTMLElement, stage: MechanismStage, amount: number, phase: string) {
+  layoutMechanismAnnotations(root, stage.swerveAnchors(), amount >= .72 && (phase === 'opening' || phase === 'exploded'));
+}
+
+export function layoutPumpAnnotations(root: HTMLElement, motion: ModuleMotion) {
+  layoutMechanismAnnotations(root, motion.annotations(), true);
 }
 
 document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
@@ -96,15 +102,6 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
     }
     stage.render();
     detail?.setAttribute('aria-pressed', String(stage.isInspecting()));
-    if (root.dataset.mechanism === 'pump') motion.annotations().forEach((point, index) => {
-      const item = annotations[index]; if (!item) return;
-      item.hidden = !point.visible;
-      if (!item.hidden) {
-        const margin = item.getBoundingClientRect().width / holder.clientWidth * 50 + 2;
-        point.x = Math.min(100 - margin, Math.max(margin, point.x));
-      }
-      item.style.left = `${point.x}%`; item.style.top = `${point.y}%`;
-    });
     root.dataset.cameraPosition = JSON.stringify(stage.camera.position.toArray());
     root.dataset.screenBounds = JSON.stringify(stage.screenBounds());
   };
@@ -182,6 +179,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       try {
         stage = next; motion = module.createModuleMotion(stage, root.dataset.mechanism as 'pump' | 'swerve');
         if (root.dataset.mechanism === 'swerve') stage.onSwerveViewChange(() => layoutSwerveAnnotations(root, next, explode, phase));
+        else stage.onPumpViewChange(() => { if (motion) layoutPumpAnnotations(root, motion); });
       }
       catch (error) { next.dispose(); stage = undefined; throw error; }
       return {
@@ -191,7 +189,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
     },
     loading() { delete root.dataset.failedState; status.hidden = false; status.textContent = root.dataset.loading!; },
     ready() { root.dataset.ready = 'true'; controls.hidden = false; controls.inert = false; status.hidden = true; },
-    reset() { holder.replaceChildren(); controls.hidden = true; controls.inert = true; label.hidden = true; annotations.forEach(a => a.hidden = true); root.querySelector('[data-swerve-leaders]')?.setAttribute('hidden', ''); root.dataset.ready = 'false'; status.hidden = root.dataset.failedState !== 'true'; },
+    reset() { holder.replaceChildren(); controls.hidden = true; controls.inert = true; label.hidden = true; annotations.forEach(a => a.hidden = true); root.querySelector('[data-swerve-leaders], [data-pump-leaders]')?.setAttribute('hidden', ''); root.dataset.ready = 'false'; status.hidden = root.dataset.failedState !== 'true'; },
     failed(error) { root.dataset.failedState = 'true'; status.hidden = false; status.textContent = root.dataset.failed!; console.warn('Mechanism unavailable', error); },
   });
   sync();
