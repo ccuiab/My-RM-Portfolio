@@ -161,10 +161,15 @@ export const sceneCopy = {
   engineer: {
     relatedLinks: { zh: '相关链接', en: 'Links' },
     armFeature: {
-      label: { zh: '工程机器人介绍', en: 'Engineer robot introduction' },
-      credit: { zh: 'RoboMaster 机甲大师 · B 站完整视频', en: 'RoboMaster · Full video on Bilibili' },
+      label: { zh: '官方纪录片', en: 'Official documentary' },
+      credit: { zh: 'RoboMaster 机甲大师出品 · B 站原片', en: 'Produced by RoboMaster · Original video on Bilibili' },
       href: 'https://www.bilibili.com/video/BV1Y482zjERP/',
-      embed: 'https://player.bilibili.com/player.html?isOutside=true&bvid=BV1Y482zjERP&p=1&autoplay=0',
+      file: 'official-film.mp4',
+      poster: 'official-film.jpg',
+      alt: { zh: 'RoboMaster 机甲大师工程机器人官方纪录片画面', en: 'Footage from RoboMaster’s official Engineer robot documentary' },
+      soundOn: { zh: '开启声音', en: 'Turn sound on' },
+      soundOff: { zh: '静音', en: 'Mute' },
+      play: { zh: '播放纪录片', en: 'Play documentary' },
     },
   },
   armExplode: {

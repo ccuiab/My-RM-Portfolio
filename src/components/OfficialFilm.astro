@@ -1,0 +1,192 @@
+---
+import { t, type Lang, type T } from '../data/i18n';
+
+interface Props {
+  lang: Lang;
+  label: T;
+  credit: T;
+  href: string;
+  file: string;
+  poster: string;
+  alt: T;
+  soundOn: T;
+  soundOff: T;
+  play: T;
+}
+
+const { lang, label, credit, href, file, poster, alt, soundOn, soundOff, play } = Astro.props;
+const assetBase = import.meta.env.BASE_URL;
+---
+<figure
+  class="official-film"
+  data-official-film
+  data-sound-on={t(soundOn, lang)}
+  data-sound-off={t(soundOff, lang)}
+>
+  <figcaption>
+    <h2>{t(label, lang)}</h2>
+    <a href={href} target="_blank" rel="noopener noreferrer">{t(credit, lang)}</a>
+  </figcaption>
+  <div class="film-frame">
+    <video
+      src={`${assetBase}video/${file}`}
+      poster={`${assetBase}video/${poster}`}
+      aria-label={t(alt, lang)}
+      title={t(label, lang)}
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      controls
+    ></video>
+    <button
+      class="film-sound"
+      type="button"
+      data-sound-button
+      aria-label={t(soundOn, lang)}
+      aria-pressed="false"
+    >{t(soundOn, lang)}</button>
+    <button
+      class="film-play"
+      type="button"
+      data-play-button
+      aria-label={t(play, lang)}
+      hidden
+    >{t(play, lang)}</button>
+  </div>
+</figure>
+
+<script is:inline>
+  const officialFilmGateVideo = document.querySelector('[data-official-film] video');
+  if (officialFilmGateVideo instanceof HTMLVideoElement) {
+    officialFilmGateVideo.autoplay = false;
+    officialFilmGateVideo.removeAttribute('autoplay');
+  }
+</script>
+
+<script>
+  const figure = document.querySelector<HTMLElement>('[data-official-film]');
+  const video = figure?.querySelector<HTMLVideoElement>('video');
+  const soundButton = figure?.querySelector<HTMLButtonElement>('[data-sound-button]');
+  const playButton = figure?.querySelector<HTMLButtonElement>('[data-play-button]');
+
+  if (figure && video && soundButton && playButton) {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let inView = false;
+    let blocked = false;
+    let manuallyPlaying = false;
+
+    video.autoplay = false;
+    video.removeAttribute('autoplay');
+
+    const updateSoundButton = () => {
+      const isSoundOn = !video.muted;
+      const label = isSoundOn ? figure.dataset.soundOff! : figure.dataset.soundOn!;
+      soundButton.textContent = label;
+      soundButton.setAttribute('aria-label', label);
+      soundButton.setAttribute('aria-pressed', String(isSoundOn));
+    };
+
+    const updatePlayButton = () => {
+      playButton.hidden = !blocked && (!reducedMotion.matches || manuallyPlaying);
+    };
+
+    const startPlayback = () => {
+      if (!inView || reducedMotion.matches || document.hidden) return;
+      video.play().then(() => {
+        blocked = false;
+        updatePlayButton();
+      }).catch(() => {
+        blocked = true;
+        updatePlayButton();
+      });
+    };
+
+    updateSoundButton();
+    updatePlayButton();
+
+    soundButton.addEventListener('click', () => {
+      video.muted = !video.muted;
+      updateSoundButton();
+      if (!video.muted && inView && video.paused && !reducedMotion.matches) startPlayback();
+    });
+
+    playButton.addEventListener('click', () => {
+      blocked = false;
+      manuallyPlaying = true;
+      updatePlayButton();
+      video.play().then(() => updatePlayButton()).catch(() => {
+        manuallyPlaying = false;
+        blocked = true;
+        updatePlayButton();
+      });
+    });
+
+    video.addEventListener('play', () => {
+      blocked = false;
+      if (reducedMotion.matches) manuallyPlaying = true;
+      updatePlayButton();
+    });
+    video.addEventListener('pause', () => {
+      if (reducedMotion.matches) manuallyPlaying = false;
+      updatePlayButton();
+    });
+    video.addEventListener('error', () => {
+      blocked = true;
+      updatePlayButton();
+    });
+
+    const observer = new IntersectionObserver(([entry]) => {
+      inView = entry.isIntersecting;
+      if (!inView) {
+        video.pause();
+        return;
+      }
+      if (reducedMotion.matches) {
+        video.pause();
+        updatePlayButton();
+      } else {
+        startPlayback();
+      }
+    }, { threshold: 0.15 });
+    observer.observe(figure);
+
+    reducedMotion.addEventListener('change', () => {
+      if (reducedMotion.matches) {
+        manuallyPlaying = false;
+        blocked = false;
+        video.pause();
+      } else if (inView) {
+        startPlayback();
+      }
+      updatePlayButton();
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) video.pause();
+      else if (inView) startPlayback();
+    });
+  }
+</script>
+
+<style>
+  .official-film { margin: 1.5rem 0 0; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+  figcaption { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: .75rem 1.5rem; padding-bottom: 1.25rem; }
+  h2 { font-family: var(--f-cjk); font-size: var(--t-lg); }
+  :global(html[lang="en"]) h2 { font-family: var(--f-latin); font-weight: 600; }
+  a { color: var(--ink-2); font-size: var(--t-sm); text-underline-offset: 4px; }
+  a:hover { color: var(--amber); }
+  .film-frame { position: relative; overflow: hidden; border: 1px solid var(--rule); background: #000; }
+  video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+  button { position: absolute; z-index: 1; min-width: 44px; min-height: 44px; padding: .65rem .9rem; border: 1px solid var(--amber); color: var(--amber); background: rgb(5 10 17 / 88%); font: inherit; font-size: var(--t-xs); cursor: pointer; }
+  button:hover { color: var(--ground); background: var(--amber); }
+  button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
+  button[hidden] { display: none !important; }
+  .film-sound { top: .75rem; right: .75rem; }
+  .film-play { top: 50%; left: 50%; transform: translate(-50%, -50%); min-height: 48px; padding-inline: 1.25rem; }
+  @media (max-width: 640px) {
+    figcaption { align-items: flex-start; flex-direction: column; gap: .5rem; }
+    .film-sound { top: .5rem; right: .5rem; }
+  }
+</style>
