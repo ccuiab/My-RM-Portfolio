@@ -408,7 +408,7 @@ if __name__ == '__main__':
     parser.add_argument('--width', type=int, default=2400)
     parser.add_argument('--height', type=int, default=1400)
     parser.add_argument('--samples', type=int, default=24)
-    parser.add_argument('--candidate', choices=['a', 'b'], default='a')
+    parser.add_argument('--candidate', choices=['a', 'b'], default='b')
     parser.add_argument('--view', nargs=3, type=float)
     parser.add_argument('--frame-alpha', type=float)
     args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])

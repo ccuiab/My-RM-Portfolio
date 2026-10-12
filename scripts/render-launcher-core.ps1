@@ -3,7 +3,7 @@ param(
   [string]$Blender = 'D:\Blender Foundation\Blender 5.1\blender.exe',
   [string]$Audit = "$env:LOCALAPPDATA\Temp\rm-shots\launcher\revision\render-audit.json",
   [int]$Samples = 24,
-  [ValidateSet('a','b')][string]$Candidate = 'a',
+  [ValidateSet('a','b')][string]$Candidate = 'b',
   [string]$Output = '',
   [double[]]$View = @()
 )
