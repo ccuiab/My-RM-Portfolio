@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import ProjectHeader from './ProjectHeader.astro';
 import Chapter from './Chapter.astro';
 import ArmExchange from './ArmExchange.astro';
-import BilibiliVideo from './BilibiliVideo.astro';
+import OfficialFilm from './OfficialFilm.astro';
 import EasterEggs from './EasterEggs.astro';
 import ArmExplode from './ArmExplode.astro';
 import Lightbox from './Lightbox.astro';
@@ -28,12 +28,17 @@ const p = engineer;
   />
 
   <section class="wrap video-intro">
-    <BilibiliVideo
+    <OfficialFilm
       lang={lang}
       label={sceneCopy.engineer.armFeature.label}
       credit={sceneCopy.engineer.armFeature.credit}
       href={sceneCopy.engineer.armFeature.href}
-      embed={sceneCopy.engineer.armFeature.embed}
+      file={sceneCopy.engineer.armFeature.file}
+      poster={sceneCopy.engineer.armFeature.poster}
+      alt={sceneCopy.engineer.armFeature.alt}
+      soundOn={sceneCopy.engineer.armFeature.soundOn}
+      soundOff={sceneCopy.engineer.armFeature.soundOff}
+      play={sceneCopy.engineer.armFeature.play}
     />
   </section>
 
