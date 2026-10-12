@@ -148,6 +148,8 @@ export const sceneCopy = {
       { zh: '驱动 · 内齿圈', en: 'DRIVE · RING' },
       { zh: '转向 · 电机小齿轮', en: 'STEERING · PINION' },
       { zh: '转向 · 大齿轮', en: 'STEERING · LARGE GEAR' },
+      { zh: '悬挂 · 滑轨', en: 'SUSPENSION · RAIL' },
+      { zh: '悬挂 · 气弹簧', en: 'SUSPENSION · GAS SPRING' },
     ],
     static: { zh: '静态装配视图', en: 'Static assembly view' },
   },
@@ -341,8 +343,8 @@ export const engineer = {
       },
       bullets: [
         {
-          zh: '驱动电机经输入直齿轮、复合齿轮与内齿圈带动车轮，把减速机构收进轮侧；宽橡胶胎与舵下悬挂承担高负载。',
-          en: 'The drive motor powers the wheel through an input spur gear, compound gears and an internal ring, packaging reduction beside the wheel. Wide rubber tyres and under-module suspension carry high loads.',
+          zh: '驱动电机经输入直齿轮、复合齿轮与内齿圈带动车轮，把减速机构收进轮侧；舵下悬挂由滑轨导向、气弹簧提供支撑。',
+          en: 'The drive motor powers the wheel through an input spur gear, compound gears and an internal ring, packaging reduction beside the wheel. Rails guide the under-module suspension, with gas-spring support.',
         },
         {
           zh: '转向电机经小齿轮啮合舵组大直齿轮，驱动舵组整体回转；驱动与转向分别布置，便于独立控制。',

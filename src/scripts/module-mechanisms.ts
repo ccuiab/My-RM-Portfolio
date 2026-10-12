@@ -2,6 +2,52 @@ import type { MechanismStage } from './lib/mechanism-stage';
 import type { ModuleMotion } from './module-motion';
 import { mountViewportScene } from './lib/viewport-scene';
 
+/** Both rails live outside the canvas. Sort endpoints vertically on each side
+ * so the leaders and labels remain readable from any orbit angle. */
+export function layoutSwerveAnnotations(root: HTMLElement, stage: MechanismStage, amount: number, phase: string) {
+  const holder = root.querySelector<HTMLElement>('[data-mechanism-canvas]')!;
+  const view = root.querySelector<HTMLElement>('[data-mechanism-view]')!;
+  const items = [...root.querySelectorAll<HTMLElement>('[data-mechanism-annotation]')];
+  const svg = root.querySelector<SVGSVGElement>('[data-swerve-leaders]')!;
+  const leaders = [...svg.querySelectorAll<SVGGElement>('[data-annotation-leader]')];
+  const show = amount >= .72 && (phase === 'opening' || phase === 'exploded');
+  const points = stage.swerveAnchors();
+  svg.toggleAttribute('hidden', !show);
+  const frame = view.getBoundingClientRect(), canvas = holder.getBoundingClientRect();
+  svg.setAttribute('viewBox', `0 0 ${frame.width} ${frame.height}`);
+  const rows = points.flatMap((point, index) => {
+    const item = items[index]; if (!item) return [];
+    item.hidden = !show || !point.visible;
+    leaders[index]?.setAttribute('hidden', '');
+    if (item.hidden) return [];
+    return [{ item, index, x: canvas.left - frame.left + point.x / 100 * canvas.width,
+      y: canvas.top - frame.top + point.y / 100 * canvas.height }];
+  }).sort((a, b) => a.x - b.x || a.index - b.index);
+  // Balanced columns guarantee enough room even at the smallest desktop size.
+  const middle = Math.ceil(rows.length / 2);
+  for (const [side, group] of [['left', rows.slice(0, middle)], ['right', rows.slice(middle)]] as const) {
+    group.sort((a, b) => a.y - b.y || a.index - b.index);
+    const heights = group.map(row => row.item.getBoundingClientRect().height);
+    const gap = 8, top = 48, bottom = frame.height - 42;
+    let next = top;
+    group.forEach((row, index) => {
+      const remaining = heights.slice(index).reduce((sum, height) => sum + height, 0) + (group.length - index - 1) * gap;
+      const y = Math.max(next, Math.min(bottom - remaining, row.y - heights[index] / 2));
+      const width = row.item.getBoundingClientRect().width;
+      const x = side === 'left' ? 12 : frame.width - 12 - width;
+      row.item.dataset.side = side; row.item.style.left = `${x}px`; row.item.style.top = `${y}px`;
+      const edge = side === 'left' ? x + width : x;
+      const elbow = side === 'left' ? canvas.left - frame.left - 4 : canvas.right - frame.left + 4;
+      const center = y + heights[index] / 2;
+      const leader = leaders[row.index];
+      leader?.removeAttribute('hidden');
+      leader?.querySelector('path')?.setAttribute('d', `M ${edge} ${center} H ${elbow} L ${row.x} ${row.y}`);
+      const dot = leader?.querySelector('circle'); dot?.setAttribute('cx', String(row.x)); dot?.setAttribute('cy', String(row.y));
+      next = y + heights[index] + gap;
+    });
+  }
+}
+
 document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
   const holder = root.querySelector<HTMLElement>('[data-mechanism-canvas]')!;
   const controls = root.querySelector<HTMLElement>('[data-mechanism-controls]')!;
@@ -50,18 +96,9 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
     }
     stage.render();
     detail?.setAttribute('aria-pressed', String(stage.isInspecting()));
-    const points = motion.annotations();
-    if (root.dataset.mechanism === 'swerve') {
-      let previousY = 1;
-      const sorted = [...points].sort((a, b) => a.y - b.y);
-      for (const [index, point] of sorted.entries()) {
-        point.y = Math.min(88 - (sorted.length - 1 - index) * 9, Math.max(point.y, previousY + 9));
-        previousY = point.y;
-      }
-    }
-    points.forEach((point, index) => {
+    if (root.dataset.mechanism === 'pump') motion.annotations().forEach((point, index) => {
       const item = annotations[index]; if (!item) return;
-      item.hidden = !point.visible || (root.dataset.mechanism === 'swerve' && (explode < .4 || (stage!.isInspecting() && index < 3)));
+      item.hidden = !point.visible;
       if (!item.hidden) {
         const margin = item.getBoundingClientRect().width / holder.clientWidth * 50 + 2;
         point.x = Math.min(100 - margin, Math.max(margin, point.x));
@@ -142,7 +179,10 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       canvas.setAttribute('aria-label', root.querySelector<HTMLImageElement>('img')!.alt);
       canvas.setAttribute('role', 'img'); holder.replaceChildren(canvas);
       const next = await loadMechanismStage(canvas, import.meta.env.BASE_URL, root.dataset.model!, label, () => visible, signal);
-      try { stage = next; motion = module.createModuleMotion(stage, root.dataset.mechanism as 'pump' | 'swerve'); }
+      try {
+        stage = next; motion = module.createModuleMotion(stage, root.dataset.mechanism as 'pump' | 'swerve');
+        if (root.dataset.mechanism === 'swerve') stage.onSwerveViewChange(() => layoutSwerveAnnotations(root, next, explode, phase));
+      }
       catch (error) { next.dispose(); stage = undefined; throw error; }
       return {
         setVisible(value) { visible = value; if (value) { draw(); run(); } else stop(); },
@@ -151,7 +191,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
     },
     loading() { delete root.dataset.failedState; status.hidden = false; status.textContent = root.dataset.loading!; },
     ready() { root.dataset.ready = 'true'; controls.hidden = false; controls.inert = false; status.hidden = true; },
-    reset() { holder.replaceChildren(); controls.hidden = true; controls.inert = true; label.hidden = true; annotations.forEach(a => a.hidden = true); root.dataset.ready = 'false'; status.hidden = root.dataset.failedState !== 'true'; },
+    reset() { holder.replaceChildren(); controls.hidden = true; controls.inert = true; label.hidden = true; annotations.forEach(a => a.hidden = true); root.querySelector('[data-swerve-leaders]')?.setAttribute('hidden', ''); root.dataset.ready = 'false'; status.hidden = root.dataset.failedState !== 'true'; },
     failed(error) { root.dataset.failedState = 'true'; status.hidden = false; status.textContent = root.dataset.failed!; console.warn('Mechanism unavailable', error); },
   });
   sync();
