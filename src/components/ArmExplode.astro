@@ -15,14 +15,21 @@ const L = sceneCopy.armExplode;
   <div class="view">
     <div class="still"><Image src={fallback} alt={t(L.alt, lang)} widths={[900, 1600]} sizes="100vw" /></div>
     <canvas class="three" data-lenis-prevent-wheel tabindex="0" role="img" aria-label={t(L.hint, lang)}></canvas>
+    <div class="detail-bar" hidden data-detail-bar>
+      <span><span class="detail-type">{t(L.detail, lang)}</span><strong data-detail-name></strong></span>
+      <button type="button" data-back-arm>{t(L.back, lang)}</button>
+    </div>
     <div class="link-labels" aria-hidden="true">{Array.from({ length: 5 }, (_, i) => <span data-link-label={i}></span>)}</div>
-    <div class="hud" data-part-hud data-idle={t(L.hover, lang)} data-mount={t(L.mount, lang)}>
+    <div class="hud" data-part-hud role="status" aria-live="polite" data-idle={t(L.hover, lang)} data-mount={t(L.mount, lang)}>
       <span class="joint" data-part-joint></span><span data-part-name>{t(L.hover, lang)}</span>
     </div>
     <p class="static-note">{t(L.staticNote, lang)}</p>
     <p class="status" role="status" data-status data-loading={t(sceneCopy.module.loading, lang)} data-failed={t(sceneCopy.module.failed, lang)} hidden></p>
   </div>
   <p class="caption">{t(L.caption, lang)}</p>
+  <div class="group-picker" role="group" aria-label={t(L.selectGroup, lang)}>
+    {L.groupNames.map((name, id) => <button type="button" data-select-group={id} aria-pressed="false" disabled>{t(name, lang)}</button>)}
+  </div>
   <fieldset class="controls" disabled>
     <legend class="sr-only">{t(L.controls, lang)}</legend>
     <div class="states" role="group" aria-label={t(L.controls, lang)}>
@@ -54,6 +61,8 @@ const L = sceneCopy.armExplode;
       ready() { root.classList.remove('is-loading'); root.classList.add('has-3d'); root.dataset.ready = 'true'; controls.disabled = false; status.hidden = true; },
       reset() {
         root.classList.remove('has-3d', 'is-loading'); delete root.dataset.ready; controls.disabled = true;
+        root.querySelectorAll<HTMLButtonElement>('[data-select-group]').forEach(button => { button.disabled = true; button.setAttribute('aria-pressed', 'false'); });
+        root.querySelector<HTMLElement>('[data-detail-bar]')!.hidden = true;
         status.hidden = root.dataset.failedState !== 'true';
         const canvas = root.querySelector('canvas')!; canvas.replaceWith(canvas.cloneNode(false));
       },
@@ -71,6 +80,14 @@ const L = sceneCopy.armExplode;
   .has-3d .still { visibility: hidden; }
   .has-3d .three { visibility: visible; pointer-events: auto; }
   .three:active { cursor: grabbing; }
+  .three.is-hovering { cursor: pointer; }
+  .detail-bar { position: absolute; top: 1rem; left: var(--scene-inset); right: var(--scene-inset); display: flex; align-items: center; justify-content: space-between; gap: 1rem; pointer-events: none; }
+  .detail-bar > span { display: grid; gap: .2rem; padding: .5rem .75rem; background: var(--ground); border-left: 2px solid var(--amber); color: var(--amber); }
+  .detail-type { font: .65rem var(--f-mono); color: var(--ink-3); }
+  .detail-bar button { pointer-events: auto; border-color: var(--amber); color: var(--amber); }
+  .group-picker { display: flex; flex-wrap: wrap; gap: .4rem; padding: 0 var(--scene-inset); visibility: hidden; }
+  .has-3d .group-picker { visibility: visible; }
+  .group-picker button { height: 30px; padding: .25rem .6rem; font: .7rem var(--f-mono); }
   .link-labels { display: none; position: absolute; inset: 0; pointer-events: none; }
   .has-3d .link-labels { display: block; }
   .link-labels span { position: absolute; top: 0; left: 0; max-width: 190px; padding: .2rem .4rem; opacity: 0; color: var(--amber); border-left: 1px solid var(--amber); background: var(--ground); font: .7rem var(--f-mono); }
@@ -99,7 +116,7 @@ const L = sceneCopy.armExplode;
     .range { gap: .4rem; }
   }
   @media (max-width: 767px), (pointer: coarse), (prefers-reduced-motion: reduce) {
-    .controls, .three { display: none; }
+    .controls, .three, .group-picker, .detail-bar { display: none; }
     .still { visibility: visible; }
   }
   @media (max-width: 767px) { .explode { --scene-inset: .75rem; } .view { height: 340px; } .still :global(img) { transform: scale(1.8); } }

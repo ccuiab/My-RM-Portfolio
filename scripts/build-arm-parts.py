@@ -146,28 +146,51 @@ def link_for(i):
     anchors = known_by_branch.get(branch, list(known))
     return known[min(anchors, key=lambda k: float(np.linalg.norm(center(arm_bounds[k]) - center(arm_bounds[i]))))]['link']
 
+def arm_exclusion(i):
+    hierarchy = [arm.name(k) for k in arm.ancestry(i)]
+    if any(n.startswith('图传uwb模块') for n in hierarchy):
+        return 'Peripheral UWB/video transmitter subtree, outside L0–L6 mechanical chain.'
+    if any(s in arm.name(i) for s in ['realsense', 'RealSense', '图传', 'VT03']):
+        return 'Peripheral sensor/transmitter or sensor-only bracket, not a joint or transmission body.'
+    return None
+
+
 mapping = [{'source_asset': 'arm', 'source_node_index': i, 'source_node_name': arm.name(i),
-            'source_hierarchy': [arm.name(k) for k in arm.ancestry(i)], 'link': link_for(i)} for i in arm_nodes]
-# Recover the complete J1 chain drive on the left of the arm, absent from the standalone arm export.
-# The J0 turntable, its rear chain and chassis remain outside this presentation's arm boundary.
+            'source_hierarchy': [arm.name(k) for k in arm.ancestry(i)], 'link': link_for(i)}
+           for i in arm_nodes if not arm_exclusion(i)]
+# Preserve the actual side constraint's chain from the standalone arm. Exclude the
+# external chain admitted by the old broad J1 bounding region. Never join two loops.
+# J0 is an explicit assembly boundary, including its coaxial bearing/turntable subtree.
+turntable_root = next(i for i in range(len(engineer.data['nodes'])) if engineer.name(i) == '滑环模块.2025.10.1')
+j0_named = {i for i in range(len(engineer.data['nodes'])) if engineer.name(i) in
+            ['J0云台主体v2.2025.10.1-1', 'J0_8016垫块CNC.2025.10.1-1',
+             'MG8016E-i6 V3.2025.10.1-2', '04C_37teeth_主动轮.2025.10.1-1']}
 extra_nodes = []
-excluded = []
+excluded = [{'asset': 'arm', 'index': i, 'node_name': arm.name(i),
+             'hierarchy': [arm.name(k) for k in arm.ancestry(i)], 'bounds': arm_bounds[i], 'reason': arm_exclusion(i)}
+            for i in arm_nodes if arm_exclusion(i)]
 for i, node in enumerate(engineer.data['nodes']):
-    if 'mesh' not in node or gimbal_root not in engineer.ancestry(i) or arm_root in engineer.ancestry(i):
+    chain = engineer.ancestry(i)
+    if 'mesh' not in node or (gimbal_root not in chain and turntable_root not in chain) or arm_root in chain:
         continue
     name = engineer.name(i)
     box = engineer.bounds(i, engineer_to_arm)
     low, high = np.array(box['min']), np.array(box['max'])
     left_region = low[0] > -.195 and high[0] < .025 and low[2] > -.065 and high[2] < .18 and high[1] < -.015
-    selected = left_region and not any(token in name for token in ['RM_主控', 'J0'])
+    direct_gimbal = engineer.parents.get(i) == gimbal_root
+    j0_hardware = direct_gimbal and bool(re.search(r'螺|垫|Screw|Nut|Washer', name, re.I)) and low[0] > -.11 and high[0] < .03 and low[2] > -.29 and high[2] < -.16
+    is_j0 = turntable_root in chain or i in j0_named or j0_hardware
+    selected = is_j0 or (left_region and not any(token in name for token in ['RM_主控', 'J0', '04C链节']))
     if selected:
         extra_nodes.append(i)
         is_mount = 'RA6008' in name or '30teeth_从动轮' in name or '6706' in name
         mapping.append({'source_asset': 'engineer', 'source_node_index': i, 'source_node_name': name,
                         'source_hierarchy': [engineer.name(k) for k in engineer.ancestry(i)],
-                        'link': 'link_1' if is_mount else 'link_1_left'})
+                        'link': 'link_base' if is_j0 else 'link_1' if is_mount else 'link_1_left'})
     else:
-        excluded.append({'index': i, 'node_name': name, 'bounds': box, 'reason': 'Outside J1 arm drive boundary (J0 turntable/rear drive/chassis electronics or cup).'})
+        reason = 'External chain in gimbal subtree, outside standalone arm; old left-region selection admitted it.' if '04C链节' in name else 'Outside J0 rotation assembly and J1 mounting boundary (battery, pump, electronics, cup or unrelated gimbal hardware).'
+        excluded.append({'asset': 'engineer', 'index': i, 'node_name': name,
+                         'hierarchy': [engineer.name(k) for k in chain], 'bounds': box, 'reason': reason})
 
 current = json.loads((out / 'arm-parts.json').read_text(encoding='utf8'))
 present = {(m['asset'], m['index']) for part in current['parts'] for m in part['members']}
@@ -208,12 +231,16 @@ for item in mapping:
     if (asset, i) not in present and not (asset == 'engineer' and any(item['source_node_name'] == n or item['source_node_name'].endswith('/' + n) for n in old_gimbal)):
         missing.append(record)
 coverage = {'arm_source_meshes': len(arm_nodes), 'engineer_arm_meshes': len(engineer_arm), 'matched_meshes': len(comparison),
-            'max_source_bounds_delta_m': max(c['bounds_max_delta_m'] for c in comparison), 'j1_drive_source_meshes': len(extra_nodes),
+            'max_source_bounds_delta_m': max(c['bounds_max_delta_m'] for c in comparison),
+            'j1_drive_source_meshes': sum(m['source_asset'] == 'engineer' and m['link'] != 'link_base' for m in mapping),
             'missing_count': len(missing), 'missing_nodes': missing, 'restored_from_original_mapping_count': len(restored), 'restored_nodes': restored, 'source_comparison': comparison,
             'volume_method': 'Absolute signed triangle-mesh volume per source primitive; open or inconsistent shells are not physical mass/volume proof.',
-            'excluded_engineer_nodes': excluded}
+            'intentional_exclusions': excluded,
+            'removed_from_previous_model': [n for n in excluded if (n['asset'], n['index']) in present],
+            'selected_source_meshes': len(mapping),
+            'j0_source_meshes': sum(m['link'] == 'link_base' for m in mapping)}
 (work / 'coverage.json').write_text(json.dumps(coverage, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
-print('COVERAGE', len(arm_nodes), 'arm meshes;', len(extra_nodes), 'J1 drive meshes;', len(missing), 'missing', flush=True)
+print('COVERAGE', coverage['selected_source_meshes'], 'audited arm/J0/J1 meshes;', coverage['j0_source_meshes'], 'J0 meshes;', len(missing), 'missing', flush=True)
 if options.audit_only:
     sys.exit(1 if missing else 0)
 
@@ -454,7 +481,7 @@ bpy.ops.export_scene.gltf(filepath=str(out / 'arm-parts.glb'), export_format='GL
                           export_yup=True, export_normals=True, export_apply=True, export_texcoords=False,
                           export_materials='EXPORT', export_cameras=False, export_lights=False, export_extras=True,
                           export_draco_mesh_compression_enable=True, export_draco_mesh_compression_level=10,
-                          export_draco_position_quantization=12, export_draco_normal_quantization=8)
+                          export_draco_position_quantization=11, export_draco_normal_quantization=7)
 # Blender limits object-name bytes. Restore exact original names in the GLB JSON.
 gltf, binary = read_glb(out / 'arm-parts.glb')
 by_key = {p['key']: p for p in parts}
@@ -463,13 +490,20 @@ for node in gltf['nodes']:
     if key in by_key:
         node['name'] = by_key[key]['node_name']
 write_glb(out / 'arm-parts.glb', gltf, binary)
-coverage['missing_count_after_export'] = 0
-meta = {'schema_version': 3, 'units': 'metres', 'coordinate_frame': joints['coordinate_frame'],
-        'sources': sources, 'mapping_source': 'Complete arm_tagged subtree, old rigid-link map as mounting hints, and engineer_tagged J1 drive bounding region; no source mesh exclusions within the arm.',
+if (out / 'arm-parts.glb').stat().st_size > 5 * 1024 * 1024:
+    raise RuntimeError('Arm model exceeds the 5 MiB web budget')
+exported_keys = {n.get('extras', {}).get('part_key') for n in gltf['nodes']}
+retained = {(m['asset'], m['index']) for p in parts for m in p['members']}
+expected = {(m['source_asset'], m['source_node_index']) for m in mapping}
+coverage['missing_count_after_export'] = len(expected - retained)
+if coverage['missing_count_after_export'] or not set(by_key).issubset(exported_keys):
+    raise RuntimeError('Audited source nodes or exported mounting bundles are missing')
+meta = {'schema_version': 4, 'units': 'metres', 'coordinate_frame': joints['coordinate_frame'],
+        'sources': sources, 'mapping_source': 'Audited L0–L6 arm_tagged nodes; engineer_tagged J1 mounting bodies and explicit J0/turntable assembly. Peripheral sensors and external gimbal chain excluded with per-node evidence.',
         'joint_source': 'arm-joints.json', 'motor_policy': 'Complete source motor assemblies; rigid translation with the owning link, no internal separation.',
         'belt_policy': 'CAD tooth segments joined into one belt part per link and belt specification.',
         'explosion_policy': 'Two stages: radial CAD group separation about the complete arm volume-weighted geometric center, then small mounting-axis part offsets. Close in reverse stage order. Complete motors and mounting bundles remain rigid.',
-        'quality_policy': {'position_bits': 12, 'normal_bits': 8, 'protected': 'Structural parts, motors, bearings, chains, gears and pulleys retain cleaned source tessellation. Screw/nut thread detail is limited to 600 triangles per source object.', 'normals': '35 degree smoothing; area-weighted planar normals except motors.', 'merge': 'Same material within rigid mounting bundles only.'},
+        'quality_policy': {'position_bits': 11, 'normal_bits': 7, 'protected': 'Structural parts, motors, bearings, chains, gears and pulleys retain cleaned source tessellation. Screw/nut thread detail is limited to 600 triangles per source object.', 'normals': '35 degree smoothing; area-weighted planar normals except motors.', 'merge': 'Same material within rigid mounting bundles only.'},
         'groups': layout.groups(parts), 'coverage': coverage, 'source_nodes': source_nodes,
         'parts': parts, 'triangles': sum(p['triangles'] for p in parts),
         'draco_bytes': (out / 'arm-parts.glb').stat().st_size}
