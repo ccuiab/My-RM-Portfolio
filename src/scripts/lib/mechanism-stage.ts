@@ -14,6 +14,8 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(30, 1, .008, 8);
   const isPump = file === 'engineer-pump.glb';
+  const isSwerve = file === 'engineer-swerve.glb';
+  let swerveViewChange: (() => void) | undefined;
   if (isPump) camera.up.set(0, 0, 1);
   const amber = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--amber').trim());
   scene.add(new THREE.HemisphereLight(0xe5ecf5, 0x182438, 2.4));
@@ -113,7 +115,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       center.lerp(detailCenter, inspectionBlend);
     }
     controls.target.copy(center);
-    controls.minDistance = fitDistance * .65;
+    controls.minDistance = fitDistance * (isSwerve ? .82 : .65);
     controls.maxDistance = fitDistance * 1.65;
     camera.position.copy(controls.target).addScaledVector(direction, fitDistance * zoomFactor);
     camera.lookAt(controls.target);
@@ -136,6 +138,19 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     }
     meshes.push(mesh);
   });
+  // Cache anchors in each original part's local frame. They follow both the
+  // explosion and the steering parent, without moving a label onto the mesh.
+  const swerveAnchors = isSwerve ? ['drive-input', 'drive-compound', 'drive-output', 'steering-input', 'steering-output', 'rail', 'gas-spring'].map(key => {
+    let part: THREE.Object3D | undefined;
+    model.traverse(object => {
+      if (part) return;
+      const data = object.userData;
+      if (data.web_transmission === key || (data.web_suspension === key && data.source_node_index === (key === 'rail' ? 25 : 53))) part = object;
+    });
+    if (!part) return undefined;
+    const point = part.worldToLocal(new THREE.Box3().setFromObject(part).getCenter(new THREE.Vector3()));
+    return { part, point };
+  }) : [];
   const restoreInspectionMaterials = () => {
     for (const [material, saved] of inspectionMaterials) { Object.assign(material, saved); material.needsUpdate = true; }
     inspectionMaterials.clear();
@@ -189,6 +204,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     model.updateMatrixWorld(true);
     updateHover();
     renderer.render(scene, camera);
+    if (isSwerve) swerveViewChange?.();
   };
   const resize = () => {
     const w = canvas.clientWidth, h = canvas.clientHeight;
@@ -199,7 +215,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   const resizeObserver = new ResizeObserver(resize);
   resizeObserver.observe(canvas); resize();
   controls.addEventListener('change', () => {
-    if (fitDistance) zoomFactor = THREE.MathUtils.clamp(camera.position.distanceTo(controls.target) / fitDistance, .65, 1.65);
+    if (fitDistance) zoomFactor = THREE.MathUtils.clamp(camera.position.distanceTo(controls.target) / fitDistance, isSwerve ? .82 : .65, 1.65);
     render();
   });
   const events = new AbortController();
@@ -227,6 +243,31 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   return {
     scene, model, camera, controls, amber, sphere,
     render, fitView: fit,
+    onSwerveViewChange(listener: () => void) { if (isSwerve) swerveViewChange = listener; },
+    swerveAnchors() {
+      model.updateMatrixWorld(true); camera.updateMatrixWorld(true);
+      return swerveAnchors.map(anchor => {
+        if (!anchor) return { x: 0, y: 0, visible: false };
+        const point = anchor.part.localToWorld(anchor.point.clone()).project(camera);
+        return { x: (point.x + 1) * 50, y: (1 - point.y) * 50, visible: point.z > -1 && point.z < 1 };
+      });
+    },
+    /** Conservative per-mesh projected boxes, in canvas pixels, for QA. */
+    swerveMeshBounds() {
+      if (!isSwerve) return [];
+      model.updateMatrixWorld(true); camera.updateMatrixWorld(true);
+      return meshes.filter(mesh => {
+        for (let node: THREE.Object3D | null = mesh; node; node = node.parent) if (!node.visible) return false;
+        return (Array.isArray(mesh.material) ? mesh.material : [mesh.material]).some(material => material.visible && material.opacity > 0);
+      }).map(mesh => {
+        const points = corners.filter(corner => corner.mesh === mesh).map(({ point }) => point.clone().applyMatrix4(mesh.matrixWorld).project(camera));
+        return { name: mesh.name,
+          left: (Math.min(...points.map(p => p.x)) + 1) * canvas.clientWidth / 2,
+          right: (Math.max(...points.map(p => p.x)) + 1) * canvas.clientWidth / 2,
+          top: (1 - Math.max(...points.map(p => p.y))) * canvas.clientHeight / 2,
+          bottom: (1 - Math.min(...points.map(p => p.y))) * canvas.clientHeight / 2 };
+      });
+    },
     screenBounds() {
       const points = corners.map(({ mesh, point }) => point.clone().applyMatrix4(mesh.matrixWorld).project(camera));
       return [Math.min(...points.map(p => p.x)), Math.max(...points.map(p => p.x)), Math.min(...points.map(p => p.y)), Math.max(...points.map(p => p.y))];
@@ -237,7 +278,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       const groups: THREE.Object3D[] = [];
       inspection = new Set();
       model.traverse(object => {
-        if (!transmissions.includes(object.userData.web_transmission)) return;
+        if (!transmissions.includes(object.userData.web_transmission) && !(isSwerve && transmissions.includes(object.userData.web_suspension))) return;
         groups.push(object);
         object.traverse(child => { if ((child as THREE.Mesh).isMesh) inspection!.add(child as THREE.Mesh); });
       });
@@ -250,7 +291,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
         }
       }
       groups.sort((a, b) => transmissions.indexOf(a.userData.web_transmission) - transmissions.indexOf(b.userData.web_transmission));
-      if (groups.length === 2) {
+      if (groups.length === 2 && (!isSwerve || (transmissions.includes('steering-input') && transmissions.includes('steering-output')))) {
         // Look from the large-gear side, keeping the intact motor behind it.
         const side = groups[1].getWorldPosition(new THREE.Vector3()).sub(groups[0].getWorldPosition(new THREE.Vector3()));
         side.addScaledVector(camera.up, -side.dot(camera.up)).normalize().addScaledVector(camera.up, .8).normalize();

@@ -276,6 +276,11 @@ for role in ('pump', 'swerve'):
                 obj['web_motion'] = 'bearing-inner' if obj == bearing_inner else 'bearing-outer'
         else:
             wheel_axis = (worlds[nodes[31]].to_3x3() @ Vector((0, 0, 1))).normalized()
+            # Native rail/carriage origins verify the suspension sliding axis.
+            # Keep all four rail/carriage pairs together as one explosion level.
+            rail_axis = (worlds[nodes[25]].translation - worlds[nodes[24]].translation).normalized()
+            rail_nodes = (24, 25, 26, 27, 28, 29, 49, 51)
+            spring_nodes = (53, 54)
             layers = {35: .035, 37: .072, 39: .072, 40: .072, 38: .111,
                       41: .143, 42: -.037, 43: -.06, 44: -.087,
                       45: .168, 46: .168, 47: -.06, 31: .21}
@@ -285,6 +290,14 @@ for role in ('pump', 'swerve'):
             # the pinion, so their relative separation extends along that shaft.
             elif idx == 61: offset = Vector((0, 0, .11))
             elif idx == 63: offset = Vector((0, 0, .17))
+            if idx in rail_nodes:
+                offset = rail_axis * -.095
+                obj['web_suspension'] = 'rail'
+            elif idx in spring_nodes:
+                # Translate the original cylinder and rod by the same vector:
+                # this is the complete CAD spring, never a cutaway or extension.
+                offset = Vector((.115, 0, 0))
+                obj['web_suspension'] = 'gas-spring'
             if obj == pinion: offset = Vector((0, 0, .07))
             if idx == 31:
                 obj['web_motion'] = 'roll'
@@ -292,8 +305,8 @@ for role in ('pump', 'swerve'):
             if idx in (35, 37, 38, 39, 40): obj['web_transmission'] = 'drive-input' if idx == 35 else 'drive-output' if idx == 38 else 'drive-compound'
             if obj == pinion: obj['web_transmission'] = 'steering-input'
             if idx == 58: obj['web_transmission'] = 'steering-output'
-            if idx in (35, 39, 38, 58): obj['web_guide'] = True
-            obj['web_structure'] = obj != pinion and idx not in layers and idx not in (58, 62) and not obj['web_motor_intact']
+            if idx in (35, 39, 38, 58, 25, 53): obj['web_guide'] = True
+            obj['web_structure'] = obj != pinion and idx not in layers and idx not in (58, 62) + rail_nodes + spring_nodes and not obj['web_motor_intact']
             obj['web_explode'] = web_vector(offset)
         obj['web_motor_intact'] = 'MOTOR_' in src or 'DJ_M3508' in src
         # Keep original, auditable node names and component origins.
