@@ -5,13 +5,14 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { cleanPartName } from './lib/part-name';
 
-type Part = { key: string; node_name: string; link: string; motor: boolean; group: number; explode_offset_m: [number, number, number] };
-type Metadata = { parts: Part[] };
+type Part = { key: string; node_name: string; link: string; motor: boolean; group: number; group_offset_m: [number, number, number]; local_offset_m: [number, number, number] };
+type CadGroup = { id: number; node_name: string; center_m: [number, number, number]; offset_m: [number, number, number] };
+type Metadata = { parts: Part[]; groups: CadGroup[] };
 export type ArmExplodeScene = { setVisible: (visible: boolean) => void; dispose: () => void };
 
-// Round 4 timing contract shared with the swerve presentation.
-const ASSEMBLED = 1.2, OPEN = 1.8, EXPLODED = 1.5, CLOSE = 1.8;
-const PERIOD = ASSEMBLED + OPEN + EXPLODED + CLOSE;
+const ASSEMBLED = 1.2, GROUP_OPEN = 1.4, GROUP_HOLD = .4, LOCAL_OPEN = 1, EXPLODED = 1.5, LOCAL_CLOSE = 1, GROUP_CLOSE = 1.4;
+const FULL_OPEN = ASSEMBLED + GROUP_OPEN + GROUP_HOLD + LOCAL_OPEN;
+const PERIOD = FULL_OPEN + EXPLODED + LOCAL_CLOSE + GROUP_CLOSE;
 const IDLE = 5000;
 const ease = (t: number) => { const u = THREE.MathUtils.clamp(t, 0, 1); return u * u * u * (u * (u * 6 - 15) + 10); };
 const inverseEase = (value: number) => {
@@ -19,6 +20,20 @@ const inverseEase = (value: number) => {
   for (let i = 0; i < 24; i++) { const mid = (low + high) / 2; if (ease(mid) < value) low = mid; else high = mid; }
   return (low + high) / 2;
 };
+
+// A scalar follows one reversible path: [0,.5] separates groups; [.5,1] separates bundles.
+// Exported for the 30 fps numeric acceptance harness to exercise the actual runtime curve.
+export function explosionPose(time: number) {
+  const t = THREE.MathUtils.euclideanModulo(time, PERIOD);
+  if (t < ASSEMBLED) return { progress: 0, phase: 'assembled' };
+  if (t < ASSEMBLED + GROUP_OPEN) return { progress: .5 * ease((t - ASSEMBLED) / GROUP_OPEN), phase: 'opening-groups' };
+  if (t < ASSEMBLED + GROUP_OPEN + GROUP_HOLD) return { progress: .5, phase: 'group-hold' };
+  if (t < FULL_OPEN) return { progress: .5 + .5 * ease((t - ASSEMBLED - GROUP_OPEN - GROUP_HOLD) / LOCAL_OPEN), phase: 'opening-parts' };
+  if (t < FULL_OPEN + EXPLODED) return { progress: 1, phase: 'exploded' };
+  if (t < FULL_OPEN + EXPLODED + LOCAL_CLOSE) return { progress: 1 - .5 * ease((t - FULL_OPEN - EXPLODED) / LOCAL_CLOSE), phase: 'closing-parts' };
+  return { progress: .5 * (1 - ease((t - FULL_OPEN - EXPLODED - LOCAL_CLOSE) / GROUP_CLOSE)), phase: 'closing-groups' };
+}
+export const explosionPeriod = PERIOD;
 
 export async function loadArmExplodeScene(root: HTMLElement, base: string, signal: AbortSignal): Promise<ArmExplodeScene> {
   const canvas = root.querySelector<HTMLCanvasElement>('canvas')!;
@@ -51,7 +66,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   const parts = meta.parts.map(part => {
     const node = nodes.get(part.key);
     if (!node || node.userData.node_name !== part.node_name) throw new Error(`Arm part mismatch: ${part.key}`);
-    return { part, node, rest: node.position.clone(), offset: new THREE.Vector3(...part.explode_offset_m) };
+    return { part, node, rest: node.position.clone(), groupOffset: new THREE.Vector3(...part.group_offset_m), localOffset: new THREE.Vector3(...part.local_offset_m) };
   });
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
@@ -72,11 +87,14 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   controls.rotateSpeed = .7; controls.zoomSpeed = .6;
   const direction = new THREE.Vector3(1, .48, 1.6).normalize();
   if (root.dataset.cameraTheta && root.dataset.cameraPhi) direction.setFromSpherical(new THREE.Spherical(1, Number(root.dataset.cameraPhi), Number(root.dataset.cameraTheta)));
-  const groups = Array.from({ length: 6 }, (_, i) => ({
-    members: parts.filter(p => p.part.group === i + 1),
-    label: root.querySelector<HTMLElement>(`[data-link-label="${i + 1}"]`)!, box: new THREE.Box3(), progress: 0,
+  const labelIds = [7, 1, 2, 4, 6];
+  const groups = meta.groups.map(spec => ({
+    spec, members: parts.filter(p => p.part.group === spec.id),
+    label: labelIds.includes(spec.id) ? root.querySelector<HTMLElement>(`[data-link-label="${labelIds.indexOf(spec.id)}"]`)! : undefined,
+    box: new THREE.Box3(),
   }));
-  // Five chain connections replace a line from every part back to its origin.
+  groups.forEach(group => { if (group.label) group.label.textContent = cleanPartName(group.spec.node_name); });
+  // At most five guides, each from a CAD group center to its current center.
   const guidePositions = new Float32Array(5 * 6);
   const guideGeometry = new THREE.BufferGeometry();
   guideGeometry.setAttribute('position', new THREE.BufferAttribute(guidePositions, 3));
@@ -133,7 +151,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
       });
       hudName.textContent = cleanPartName(node.userData.node_name);
       const part = meta.parts.find(p => p.key === node.userData.part_key)!;
-      hudJoint.textContent = part.link === 'link_base' ? hud.dataset.mount! : `L${part.group} · ${part.link}`;
+      hudJoint.textContent = cleanPartName(meta.groups.find(group => group.id === part.group)!.node_name);
       root.dataset.hoverPart = node.userData.part_key;
     } else { hudName.textContent = hud.dataset.idle!; hudJoint.textContent = ''; delete root.dataset.hoverPart; }
   };
@@ -166,20 +184,22 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
     controls.update(); camera.updateMatrixWorld();
   };
   const applyProgress = () => {
-    // A small stagger opens links in chain order, then closes them in reverse.
-    // All members of a mounting bundle use the same link progress.
-    groups.forEach((group, i) => { group.progress = ease((progress - i * .045) / .775); });
-    parts.forEach(({ part, node, rest, offset }) => node.position.copy(rest).addScaledVector(offset, groups[part.group - 1].progress));
+    const groupProgress = THREE.MathUtils.clamp(progress * 2, 0, 1);
+    const localProgress = THREE.MathUtils.clamp(progress * 2 - 1, 0, 1);
+    parts.forEach(({ node, rest, groupOffset, localOffset }) => node.position.copy(rest).addScaledVector(groupOffset, groupProgress).addScaledVector(localOffset, localProgress));
     model.updateMatrixWorld(true);
     groups.forEach(group => { group.box.makeEmpty(); group.members.forEach(p => group.box.union(new THREE.Box3().setFromObject(p.node))); });
     for (let i = 0; i < 5; i++) {
-      const start = groups[i].box.getCenter(new THREE.Vector3()), end = groups[i + 1].box.getCenter(new THREE.Vector3());
-      start.y = groups[i].box.max.y + .035; end.y = groups[i + 1].box.max.y + .035;
+      const group = groups.find(g => g.spec.id === labelIds[i])!;
+      const start = new THREE.Vector3(...group.spec.center_m), end = group.box.getCenter(new THREE.Vector3());
       start.toArray(guidePositions, i * 6); end.toArray(guidePositions, i * 6 + 3);
     }
     guideGeometry.attributes.position.needsUpdate = true;
-    guideMaterial.opacity = .10 * Math.sin(Math.PI * progress);
-    guides.visible = progress > .001 && progress < .999;
+    const moving = (automatic(performance.now()) && (root.dataset.cyclePhase?.startsWith('opening') || root.dataset.cyclePhase?.startsWith('closing'))) || !!transition || interacting;
+    guideMaterial.opacity = .18 * Math.sin(Math.PI * (progress < .5 ? groupProgress : localProgress));
+    guides.visible = Boolean(moving) && guideMaterial.opacity > .001;
+    root.dataset.visibleGuides = guides.visible ? '5' : '0';
+    root.dataset.groupProgress = groupProgress.toFixed(6); root.dataset.localProgress = localProgress.toFixed(6);
     const percentage = Math.round(progress * 100);
     slider.value = String(percentage); output.value = `${percentage}%`;
     root.dataset.progress = progress.toFixed(5);
@@ -197,7 +217,11 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
     rememberView(); hoverPoint = undefined; select(); syncPlay(performance.now()); armIdleTimer(); requestDraw();
   };
   const seekFromCurrent = () => {
-    cycleTime = progress <= 0 ? 0 : progress >= 1 ? ASSEMBLED + OPEN : ASSEMBLED + OPEN * inverseEase(progress);
+    const closing = root.dataset.cyclePhase?.startsWith('closing');
+    if (progress <= 0) cycleTime = 0;
+    else if (progress >= 1) cycleTime = FULL_OPEN;
+    else if (closing) cycleTime = progress > .5 ? FULL_OPEN + EXPLODED + LOCAL_CLOSE * inverseEase((1-progress)*2) : FULL_OPEN + EXPLODED + LOCAL_CLOSE + GROUP_CLOSE * inverseEase(1-progress*2);
+    else cycleTime = progress <= .5 ? ASSEMBLED + GROUP_OPEN * inverseEase(progress*2) : ASSEMBLED + GROUP_OPEN + GROUP_HOLD + LOCAL_OPEN * inverseEase(progress*2-1);
   };
   const draw = (now: number) => {
     frame = 0;
@@ -210,12 +234,8 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
       rejoining = Math.min(1, rejoining + dt / .9);
       const step = dt * ease(rejoining);
       cycleTime = (cycleTime + step) % PERIOD; orbitTime += step;
-      let phase: string;
-      if (cycleTime < ASSEMBLED) { progress = 0; phase = 'assembled'; }
-      else if (cycleTime < ASSEMBLED + OPEN) { progress = ease((cycleTime - ASSEMBLED) / OPEN); phase = 'opening'; }
-      else if (cycleTime < ASSEMBLED + OPEN + EXPLODED) { progress = 1; phase = 'exploded'; }
-      else { progress = 1 - ease((cycleTime - ASSEMBLED - OPEN - EXPLODED) / CLOSE); phase = 'closing'; }
-      root.dataset.cyclePhase = phase;
+      const pose = explosionPose(cycleTime); progress = pose.progress;
+      root.dataset.cyclePhase = pose.phase;
       orbitTheta += step * Math.PI * 2 / 40;
       const phi = THREE.MathUtils.clamp(orbitPhi + Math.sin(orbitTime * Math.PI * 2 / 28) * THREE.MathUtils.degToRad(8), .18, Math.PI - .18);
       const radius = camera.position.distanceTo(controls.target);
@@ -224,7 +244,11 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
       root.dataset.cameraTheta = orbitTheta.toFixed(5); root.dataset.cameraPhi = phi.toFixed(5);
     } else if (transition) {
       transition.elapsed += dt;
-      progress = THREE.MathUtils.lerp(transition.from, transition.to, ease(transition.elapsed / transition.duration));
+      const { from, to, elapsed, duration } = transition;
+      if (Math.min(from, to) < .5 && Math.max(from, to) > .5) {
+        const first = duration * Math.abs(.5 - from) / Math.abs(to - from);
+        progress = elapsed < first ? THREE.MathUtils.lerp(from, .5, ease(elapsed / first)) : THREE.MathUtils.lerp(.5, to, ease((elapsed - first) / (duration - first)));
+      } else progress = THREE.MathUtils.lerp(from, to, ease(elapsed / duration));
       seekFromCurrent();
       if (transition.elapsed >= transition.duration) transition = undefined;
       root.dataset.cyclePhase = 'manual';
@@ -242,13 +266,14 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
     renderer.render(scene, camera);
     const labels: { x: number; y: number }[] = [];
     groups.forEach(group => {
+      if (!group.label) return;
       const point = group.box.getCenter(new THREE.Vector3()); point.y = group.box.max.y + .025; point.project(camera);
       const x = THREE.MathUtils.clamp((point.x * .5 + .5) * canvas.clientWidth, 24, canvas.clientWidth - 24);
       let y = THREE.MathUtils.clamp((-point.y * .5 + .5) * canvas.clientHeight, 30, canvas.clientHeight - 72);
-      while (labels.some(p => Math.abs(p.x - x) < 40 && Math.abs(p.y - y) < 24) && y > 30) y -= 25;
+      while (labels.some(p => Math.abs(p.x - x) < 170 && Math.abs(p.y - y) < 24) && y > 30) y -= 25;
       labels.push({ x, y });
       group.label.style.transform = `translate(${x}px, ${y}px) translate(-50%, -100%)`;
-      group.label.style.opacity = String(THREE.MathUtils.smoothstep(group.progress, .2, .65));
+      group.label.style.opacity = guides.visible ? String(Math.min(1, guideMaterial.opacity / .12)) : '0';
     });
     const boundsInside = corners.every(({ mesh, point }) => {
       const p = point.clone().applyMatrix4(mesh.matrixWorld).project(camera);
@@ -270,7 +295,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   controls.addEventListener('end', () => { interacting = false; activity(); });
   buttons.forEach(button => button.addEventListener('click', () => {
     activity(); const to = Number(button.dataset.explodeTo);
-    transition = { from: progress, to, elapsed: 0, duration: Math.max(.15, OPEN * Math.abs(to - progress)) };
+    transition = { from: progress, to, elapsed: 0, duration: Math.max(.15, (GROUP_OPEN + LOCAL_OPEN) * Math.abs(to - progress)) };
     lastFrame = performance.now(); requestDraw();
   }, events));
   slider.addEventListener('pointerdown', () => { interacting = true; activity(); }, events);
@@ -278,7 +303,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   slider.addEventListener('input', () => { const value = Number(slider.value) / 100; activity(); progress = value; seekFromCurrent(); root.dataset.cyclePhase = 'manual'; requestDraw(); }, events);
   play.addEventListener('click', () => {
     permanentPause = automatic(performance.now()); interacting = false; transition = undefined;
-    idleUntil = 0; rejoining = 0; rememberView(); clearTimeout(timer); lastFrame = performance.now(); syncPlay(performance.now()); requestDraw();
+    idleUntil = 0; rejoining = 0; seekFromCurrent(); rememberView(); clearTimeout(timer); lastFrame = performance.now(); syncPlay(performance.now()); requestDraw();
   }, events);
   root.querySelector('[data-reset-view]')!.addEventListener('click', () => { activity(); refit(true); rememberView(); requestDraw(); }, events);
   canvas.addEventListener('pointermove', event => {

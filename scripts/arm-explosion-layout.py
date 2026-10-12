@@ -1,7 +1,7 @@
-"""Ordered L1–L6 teaching layout, retaining each small part's assembly bundle.
+"""Two-stage radial separation in the unmodified CAD assembly coordinate frame.
 
-This is a visual separation diagram, not a collision-free maintenance sequence.
-Motors translate only with their rigid link, without internal separation.
+Group names come from CAD. This is a structural diagram, not a service sequence.
+Complete motors and the hardware on each mounting body remain rigid bundles.
 """
 import math
 import re
@@ -15,53 +15,98 @@ def size(part):
     return math.sqrt(sum((b - a) ** 2 for a, b in zip(part['bounds']['min'], part['bounds']['max'])))
 
 
-def plan(parts, joints):
-    # The wheel drive belongs to the L5 end assembly in the audited rigid-link map.
-    for part in parts:
-        part['group'] = 1 if part['link'] == 'link_base' else 5 if part['link'] == 'link_wheel' else int(part['link'].split('_')[-1])
-    axes = {joint['child_link']: joint['web_axis'] for joint in joints['joints']}
-    chain = [1., .06, -.22]
-    norm = math.sqrt(sum(v * v for v in chain))
-    chain = [v / norm for v in chain]
-    groups = []
-    for number in range(1, 7):
+def hardware(part):
+    return bool(re.search(r'垫|螺|卡簧|轴承|bearing|screw|nut|washer|DIN|ISO|^STD_|^AXK|^MR\d|^C-E', part['node_name'], re.I))
+
+
+NAMES = {1: 'J1.2025.10.1', 2: 'L2.2025.10.1', 3: 'J3.2025.10.1',
+         4: 'L4.2025.10.1', 5: 'L6_v2.2025.10.1 / J7J8_差速器CNC',
+         6: 'L6_v2.2025.10.1 / J8_末端轴cnc', 7: 'limitation.2025.10.1'}
+
+
+def groups(parts):
+    result = []
+    for number in range(1, 8):
         members = [p for p in parts if p['group'] == number]
-        lo = [min(p['bounds']['min'][i] for p in members) for i in range(3)]
-        hi = [max(p['bounds']['max'][i] for p in members) for i in range(3)]
-        groups.append({'members': members, 'center': [(a + b) / 2 for a, b in zip(lo, hi)],
-                       'half_width': sum(abs(chain[i]) * (hi[i] - lo[i]) for i in range(3)) / 2})
-    distance = 0
-    origin = groups[0]['center']
-    for index, group in enumerate(groups):
-        if index:
-            distance += groups[index - 1]['half_width'] + group['half_width'] + .09
-        translation = [origin[i] + chain[i] * distance - group['center'][i] for i in range(3)]
-        members = group['members']
-        anchors = [p for p in members if not p['motor'] and size(p) >= .055]
+        low = [min(p['bounds']['min'][i] for p in members) for i in range(3)]
+        high = [max(p['bounds']['max'][i] for p in members) for i in range(3)]
+        volume = sum(p.get('geometry_volume_m3', 0) for p in members)
+        centroid = [sum(p.get('geometry_centroid_m', center(p))[i] * p.get('geometry_volume_m3', 0) for p in members) / volume for i in range(3)] if volume else [(a+b)/2 for a, b in zip(low, high)]
+        result.append({'id': number, 'node_name': NAMES[number], 'bounds': {'min': low, 'max': high},
+                       'center_m': centroid, 'offset_m': members[0]['group_offset_m']})
+    return result
+
+
+def plan(parts, joints):
+    for part in parts:
+        part['group'] = 7 if part['link'] == 'link_1_left' else 1 if part['link'] == 'link_base' else 5 if part['link'] == 'link_wheel' else int(part['link'].split('_')[-1])
+        part['group_offset_m'] = [0., 0., 0.]
+    axes = {joint['child_link']: joint['web_axis'] for joint in joints['joints']}
+    overall = {'min': [min(p['bounds']['min'][i] for p in parts) for i in range(3)],
+               'max': [max(p['bounds']['max'][i] for p in parts) for i in range(3)]}
+    volume = sum(p.get('geometry_volume_m3', 0) for p in parts)
+    origin = [sum(p.get('geometry_centroid_m', center(p))[i] * p.get('geometry_volume_m3', 0) for p in parts) / volume for i in range(3)] if volume else center({'bounds': overall})
+    specs = groups(parts)
+    directions, distances = [], []
+    for group in specs:
+        delta = [group['center_m'][i] - origin[i] for i in range(3)]
+        # Amplify the narrow transverse dimension so the left-side drive reads as left.
+        delta[0] *= 2.5
+        length = math.sqrt(sum(v*v for v in delta))
+        direction = [v / length for v in delta]
+        directions.append(direction)
+        distances.append(.18 + .5 * size({'bounds': group['bounds']}))
+    # Increase separation only along outward rays until the group AABBs have a gap.
+    for iteration in range(80):
+        overlap = False
+        for a in range(7):
+            for b in range(a + 1, 7):
+                gap = max(max(specs[a]['bounds']['min'][i] + directions[a][i]*distances[a] - specs[b]['bounds']['max'][i] - directions[b][i]*distances[b],
+                              specs[b]['bounds']['min'][i] + directions[b][i]*distances[b] - specs[a]['bounds']['max'][i] - directions[a][i]*distances[a]) for i in range(3))
+                if gap < .045:
+                    alignment = sum(directions[a][i]*directions[b][i] for i in range(3))
+                    if alignment > .75:
+                        # Neighboring distal links share a forward ray. Extend the farther
+                        # group only; increasing both would keep their overlap and inflate the view.
+                        outward_a = sum((specs[a]['center_m'][i]-origin[i])*directions[a][i] for i in range(3))
+                        outward_b = sum((specs[b]['center_m'][i]-origin[i])*directions[b][i] for i in range(3))
+                        distances[a if outward_a > outward_b else b] += .012
+                    else:
+                        distances[a] += .008
+                        distances[b] += .008
+                    overlap = True
+        if not overlap:
+            break
+    for group, direction, distance in zip(specs, directions, distances):
+        members = [p for p in parts if p['group'] == group['id']]
+        translation = [v*distance for v in direction]
+        anchors = [p for p in members if not hardware(p)]
         for part in members:
             local = [0., 0., 0.]
-            name = part['node_name']
-            dims = [b - a for a, b in zip(part['bounds']['min'], part['bounds']['max'])]
-            if not part['motor'] and part['link'] != 'link_base':
-                if part.get('material') == 'carbon':
+            dims = [b-a for a, b in zip(part['bounds']['min'], part['bounds']['max'])]
+            delta = [center(part)[i]-group['center_m'][i] for i in range(3)]
+            if not part['motor'] and not hardware(part) and '04C链节' not in part['node_name']:
+                if part.get('material') == 'carbon' or min(dims) < .008:
                     axis = dims.index(min(dims))
-                    delta = center(part)[axis] - group['center'][axis]
-                    local[axis] = math.copysign(.028, delta) if abs(delta) > .004 else 0.
-                elif any(token in name.lower() for token in ['gear', 'teeth', '同步轮']):
+                    local[axis] = math.copysign(.035, delta[axis]) if abs(delta[axis]) > .004 else 0.
+                elif any(token in part['node_name'].lower() for token in ['gear', 'teeth', '同步轮', '轴cnc', '传动轴']):
                     axis = axes.get(part['link'], [1., 0., 0.])
-                    projection = sum((center(part)[i] - group['center'][i]) * axis[i] for i in range(3))
-                    local = [v * math.copysign(.025, projection) for v in axis]
+                    projection = sum(delta[i]*axis[i] for i in range(3))
+                    local = [v*math.copysign(.03, projection) for v in axis]
+                else:
+                    length = math.sqrt(sum(v*v for v in delta))
+                    if length > .02:
+                        local = [v/length*.018 for v in delta]
             part['local_offset_m'] = local
             part['assembly_bundle'] = part['key']
         for part in members:
-            small = size(part) < .055 or bool(re.search(r'垫|螺|卡簧|DIN|ISO|^M\d', part['node_name'], re.I))
-            if small and not part['motor'] and anchors:
+            if hardware(part) and not part['motor'] and anchors:
                 position = center(part)
                 def proximity(anchor):
                     box = anchor['bounds']
-                    return sum(max(box['min'][i] - position[i], 0., position[i] - box['max'][i]) ** 2 for i in range(3)) + .01 * sum((center(anchor)[i] - position[i]) ** 2 for i in range(3))
+                    return sum(max(box['min'][i]-position[i], 0., position[i]-box['max'][i])**2 for i in range(3)) + .01*sum((center(anchor)[i]-position[i])**2 for i in range(3))
                 host = min(anchors, key=proximity)
                 part['local_offset_m'] = host['local_offset_m'][:]
                 part['assembly_bundle'] = host['key']
             part['group_offset_m'] = translation[:]
-            part['explode_offset_m'] = [translation[i] + part['local_offset_m'][i] for i in range(3)]
+            part['explode_offset_m'] = [translation[i]+part['local_offset_m'][i] for i in range(3)]
