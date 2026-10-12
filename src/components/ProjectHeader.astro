@@ -146,6 +146,7 @@ const { lang, drawing, title, lede, cover, titleBlock = [], stats = [], statsSou
   .gold { --medal: #ffd23f; }
   .silver { --medal: #c9d3de; }
   .gold .v, .gold .rank, .silver .v, .silver .rank { color: var(--medal); }
+  .gold, .silver { border-top-color: var(--medal); }
   .stats-src { margin-top: 0.8rem; font-size: var(--t-xs); color: var(--ink-3); }
 
   @media (max-width: 900px) {

@@ -64,11 +64,6 @@ export const ui = {
 export const pageCopy = {
   homeProjects: { zh: '浏览项目', en: 'Explore projects' },
   homeEngineer: { zh: '查看工程机器人', en: 'View the Engineer' },
-  bomTitle: { zh: '能力清单', en: 'Skills' },
-  bomHead: {
-    no: { zh: '序号', en: 'No.' }, item: { zh: '能力', en: 'Skill' },
-    spec: { zh: '规格', en: 'Specification' }, used: { zh: '用在哪', en: 'Used on' },
-  },
   honoursTitle: { zh: '荣誉', en: 'Honours' },
   aboutTitle: { zh: '关于我', en: 'About' },
   nextSheet: { zh: '下一张图纸', en: 'Next sheet' },
@@ -625,47 +620,6 @@ export const exo = {
   ],
   pic: { src: exoPic, alt: { zh: '四轴手臂外骨骼原型', en: '4-DOF arm exoskeleton prototype' } } as Pic,
 };
-
-/* ------------------------------------------------------------------ skills */
-
-export const bom = [
-  {
-    no: 'S-01',
-    item: { zh: '结构设计', en: 'Structural design' },
-    spec: { zh: 'SolidWorks 建模、装配、工程图与 BOM；AutoCAD、Fusion 360', en: 'SolidWorks modelling, assemblies, drawings and BOMs; AutoCAD, Fusion 360' },
-    used: { zh: '全部项目', en: 'Every project' },
-  },
-  {
-    no: 'S-02',
-    item: { zh: '制造与装配', en: 'Manufacturing and assembly' },
-    spec: { zh: 'CNC 与 3D 打印件设计、加工沟通；两年高精度装配，公差修正、赛前质检、场间维修', en: 'Designing for CNC and 3D printing, briefing machinists; two years of precision assembly, tolerance fixes, pre-match checks and between-match repair' },
-    used: { zh: '工程 2025、控制器', en: 'Engineer 2025, controller' },
-  },
-  {
-    no: 'S-03',
-    item: { zh: '传动与气动', en: 'Drivetrains and pneumatics' },
-    spec: { zh: '电机选型、轴承、齿轮、链条、同步带；气动系统与吸附检测', en: 'Motor selection, bearings, gears, chains and timing belts; pneumatics and suction sensing' },
-    used: { zh: '机械臂 J4–J6、改装真空泵', en: 'Arm J4–J6, vacuum pump' },
-  },
-  {
-    no: 'S-04',
-    item: { zh: '材料与可靠性', en: 'Materials and reliability' },
-    spec: { zh: '常用材料、钣金与板材组合；基础强度仿真，负载与冲击测试', en: 'Common materials, sheet and plate construction; basic strength simulation, load and impact testing' },
-    used: { zh: '英雄底盘跌落测试', en: 'Hero chassis drop test' },
-  },
-  {
-    no: 'S-05',
-    item: { zh: '软件与嵌入式', en: 'Software and embedded' },
-    spec: { zh: 'Python、MATLAB 脚本与数据处理；C/C++、STM32 嵌入式开发基础流程', en: 'Python and MATLAB for scripts and data; basic embedded development with C/C++ and STM32' },
-    used: { zh: '外骨骼 IMU 跟随', en: 'Exoskeleton IMU tracking' },
-  },
-  {
-    no: 'S-06',
-    item: { zh: '跨组联调', en: 'Cross-team integration' },
-    spec: { zh: '与电控、视觉、算法团队共同梳理联调风险', en: 'Coordinating integration risks with the controls, vision and algorithms teams' },
-    used: { zh: '工程 2025 操作链路', en: 'Engineer 2025 operator loop' },
-  },
-];
 
 /* ------------------------------------------------------------------ honours */
 
