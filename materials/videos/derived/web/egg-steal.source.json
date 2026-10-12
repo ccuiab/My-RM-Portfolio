@@ -3,7 +3,7 @@
   "match": "RMUC 2025 复活赛第26场，香港科技大学 vs 华东理工大学，第二局",
   "verifiedAt": "2026-10-12",
   "catalog": "materials/documents/derived/bilibili-video-catalog.json",
-  "evidence": "第五轮：逐秒精确抽帧和比赛倒计时核对；接触表与中英文页面截图：C:/Users/cch20/AppData/Local/Temp/rm-shots/eggs2/。",
+  "evidence": "eggs3：逐秒原片抽帧、菜单边界核对、输出接触表与中英文页面截图：C:/Users/cch20/AppData/Local/Temp/rm-shots/eggs3/。",
   "segments": [
     {
       "source": "https://www.bilibili.com/video/BV1YN83zCEUy/?p=8",
@@ -44,12 +44,12 @@
       "copyrightOwner": "RoboMaster赛事画面制作方；投稿与视角编排署名见 uploader",
       "tracking": {
         "color": "0xf2b53a",
-        "lineWidth": 2,
+        "lineWidth": 5,
         "coordinateSpace": {
           "width": 1280,
           "height": 720
         },
-        "method": "仅第三视角段显示琥珀框；沿用已核验的红方 2 号人工锚点，改用 smoothstep 逐帧移动，在遮挡处淡出。",
+        "method": "仅第三视角段显示 5 px 琥珀 HUD 角标，外扩 2 px 深色描边、深底短英文标签；入场 0.3 s 按 smoothstep 从中心外扩 28% 平滑收拢，随后沿人工锚点逐帧稳定跟踪。",
         "identity": {
           "team": "香港科技大学 ENTERPRIZE，红方",
           "robot": "转播标注红方 2 号工程",
@@ -153,7 +153,13 @@
             "opacity": 1.0
           }
         ],
-        "occlusionNotes": "17:09.5–17:13.9 和 17:19–17:21.96，官方左下角画中画遮挡底盘。框停在最后可见位置并淡出；隐藏期间不猜测机器人位置；重新可见时淡入。17:22 画中画消失，红方 2 号在红方基地左侧再次可见。"
+        "occlusionNotes": "本剪辑截止官方 17:09.00，未纳入 17:09.5 后的左下角遮挡段；框始终跟随本段可见红方 2 号工程。",
+        "style": "hud-corners",
+        "cornerLength": 22,
+        "label": "HKUST ENGINEER",
+        "outlineWidth": 2,
+        "introSeconds": 0.3,
+        "introScaleExtra": 0.28
       }
     }
   ],
@@ -183,6 +189,6 @@
     "attribution": "页面与本来源记录保留原投稿者和官方赛事署名，画面权利归对应原作者或赛事制作方；裁剪等加工说明见各段记录。",
     "permissionStatus": "公开来源及归属已记录；未将公开可访问视为已核实的转载授权。"
   },
-  "note": "第一视角取矿与第三视角撤离按倒计时衔接；0.2 s 转场，约 5 s 第三视角收尾。第一视角不加跟踪框。",
+  "note": "第一视角取矿与第三视角撤离按倒计时衔接；0.2 s 转场，5.2 s 第三视角收尾。第一视角不加跟踪框。HUD 全部烧录到视频，无新增网页依赖。",
   "referenceViews": []
 }

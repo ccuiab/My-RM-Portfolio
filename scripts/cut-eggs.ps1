@@ -6,7 +6,7 @@ param(
     [string]$Ffprobe = 'ffprobe',
     [ValidateSet('egg-stairs', 'egg-steal', 'egg-grab', 'egg-right-hero')]
     [string[]]$Name = @('egg-stairs', 'egg-steal', 'egg-grab', 'egg-right-hero'),
-    [string]$EvidenceDirectory = (Join-Path $env:LOCALAPPDATA 'Temp/rm-shots/eggs2'),
+    [string]$EvidenceDirectory = (Join-Path $env:LOCALAPPDATA 'Temp/rm-shots/eggs3'),
     [switch]$ReuseInputs
 )
 $ErrorActionPreference = 'Stop'
@@ -54,6 +54,24 @@ function CropFilter($Segment) {
     }
     return ",crop=$($crop.width):$($crop.height):'$expression':$($crop.y)"
 }
+function TrackingPose($Tracking, [double]$Time) {
+    $knots = @($Tracking.keyframes); $j = 0
+    while ($j -lt $knots.Count-2 -and $Time -ge $knots[$j+1].seconds) { $j++ }
+    $a = $knots[$j]; $b = $knots[$j+1]
+    $u = [Math]::Max(0.0, [Math]::Min(1.0, ($Time-$a.seconds)/($b.seconds-$a.seconds)))
+    $u = $u*$u*(3-2*$u)
+    $point = [ordered]@{seconds=$Time}
+    foreach ($field in @('x','y','w','h','opacity')) {
+        $point[$field] = [double]$a.$field+([double]$b.$field-[double]$a.$field)*$u
+    }
+    if ($Tracking.introSeconds -gt 0 -and $Time -lt $Tracking.introSeconds) {
+        $v = $Time/[double]$Tracking.introSeconds; $v = $v*$v*(3-2*$v)
+        $extra = [double]$Tracking.introScaleExtra*(1-$v)
+        $point.x -= $point.w*$extra/2; $point.y -= $point.h*$extra/2
+        $point.w *= 1+$extra; $point.h *= 1+$extra
+    }
+    return [pscustomobject]$point
+}
 function MotionEvidence($Edit) {
     $groups = @()
     foreach ($segment in $Edit.segments) {
@@ -71,6 +89,10 @@ function MotionEvidence($Edit) {
                 foreach ($field in $(if ($kind -eq 'dynamicCrop') {@('x')} else {@('x','y','w','h')})) {
                     $point[$field] = [double]$a.$field+([double]$b.$field-[double]$a.$field)*$u
                 }
+                if ($kind -eq 'tracking') {
+                    $pose = TrackingPose $curve $time
+                    foreach ($field in @('x','y','w','h')) { $point[$field] = $pose.$field }
+                }
                 if ($previous) {
                     $dx = $point.x-$previous.x; $dy = $(if ($kind -eq 'tracking') {$point.y-$previous.y} else {0})
                     $maximum = [Math]::Max($maximum,[Math]::Sqrt($dx*$dx+$dy*$dy))
@@ -84,6 +106,48 @@ function MotionEvidence($Edit) {
     # These are video edits, without animated 3D part groups. Check the actual crop/box curves.
     [IO.File]::WriteAllText((Join-Path $EvidenceDirectory "$($Edit.name)-motion-30fps.json"), (@{groups=$groups; has3DPartGroups=$false} | ConvertTo-Json -Depth 12), $utf8)
 }
+function HudTrackingFilter($Segment, [int]$Fps, [int]$Index) {
+    $tracking = $Segment.tracking
+    if ($tracking.lineWidth -ne 5 -or $tracking.color -ne '0xf2b53a' -or $tracking.label -ne 'HKUST ENGINEER') {
+        throw 'HUD marker requires the verified amber, 5 px stroke and short team label.'
+    }
+    $commands = [Collections.Generic.List[string]]::new(); $initial = @()
+    for ($frame = 0; $frame -lt [Math]::Ceiling($Segment.durationSeconds*$Fps); $frame++) {
+        $time = $frame/[double]$Fps; $p = TrackingPose $tracking $time
+        $x = [Math]::Round($p.x); $y = [Math]::Round($p.y)
+        $w = [Math]::Round($p.w); $h = [Math]::Round($p.h)
+        $stroke = [int]$tracking.lineWidth; $length = [int]$tracking.cornerLength
+        # Eight filled bars form four open HUD corners. The dark bars underneath
+        # stay 2 px wider on every edge, including against bright field surfaces.
+        $bars = @(
+            @($x,$y,$length,$stroke), @($x,$y,$stroke,$length),
+            @(($x+$w-$length),$y,$length,$stroke), @(($x+$w-$stroke),$y,$stroke,$length),
+            @($x,($y+$h-$stroke),$length,$stroke), @($x,($y+$h-$length),$stroke,$length),
+            @(($x+$w-$length),($y+$h-$stroke),$length,$stroke), @(($x+$w-$stroke),($y+$h-$length),$stroke,$length)
+        )
+        $updates = @()
+        foreach ($layer in @('outline','amber')) {
+            for ($k = 0; $k -lt $bars.Count; $k++) {
+                $bar = $bars[$k]; $pad = $(if ($layer -eq 'outline') {2} else {0})
+                $target = "drawbox@hud${Index}_${layer}_$k"
+                $color = $(if ($layer -eq 'outline') {'0x0b1420'} else {$tracking.color})
+                $values = @(($bar[0]-$pad),($bar[1]-$pad),($bar[2]+2*$pad),($bar[3]+2*$pad))
+                for ($f = 0; $f -lt 4; $f++) { $updates += "$target $(@('x','y','w','h')[$f]) $($values[$f])" }
+                $updates += "$target color $color@$(Number $p.opacity)"
+                if ($frame -eq 0) { $initial += "${target}=x=$($values[0]):y=$($values[1]):w=$($values[2]):h=$($values[3]):color=$color@$(Number $p.opacity):t=fill" }
+            }
+        }
+        $labelTarget = "drawtext@hud${Index}_label"
+        $updates += "$labelTarget x $x", "$labelTarget y $($y-27)", "$labelTarget fontcolor $($tracking.color)@$(Number $p.opacity)"
+        if ($frame -eq 0) {
+            $initial += "${labelTarget}=fontfile='C\:/Windows/Fonts/consolab.ttf':text='$($tracking.label)':fontsize=15:fontcolor=$($tracking.color):x=${x}:y=$($y-27):box=1:boxcolor=0x0b1420@0.95:boxborderw=5"
+        }
+        $commands.Add("$(Number $time) $($updates -join ',');")
+    }
+    $relative = "materials/videos/derived/inputs/$($Segment.inputFile.Split('/')[-1]).tracking.cmd"
+    [IO.File]::WriteAllLines((WorkspacePath $relative), $commands, $utf8)
+    return ",sendcmd=f='$relative',$($initial -join ',')"
+}
 function TrackingFilter($Segment, [int]$Fps, [int]$Index) {
     $tracking = $Segment.tracking
     if (-not $tracking) { return '' }
@@ -96,6 +160,7 @@ function TrackingFilter($Segment, [int]$Fps, [int]$Index) {
             throw 'Manual tracking samples must be ordered and at most one second apart.'
         }
     }
+    if ($tracking.style -eq 'hud-corners') { return HudTrackingFilter $Segment $Fps $Index }
     $target = "drawbox@track$Index"
     $commands = [Collections.Generic.List[string]]::new()
     $j = 0
@@ -159,7 +224,9 @@ try {
             $track = TrackingFilter $edit.segments[$i] $edit.output.fps $i
             $crop = CropFilter $edit.segments[$i]
             $rotate = $(if ($edit.segments[$i].rotation) {",transpose=$($edit.segments[$i].rotation)"} else {''})
-            $filters += "[$($i):v]setpts=PTS-STARTPTS${rotate}${crop},scale=$($edit.output.width):$($edit.output.height):flags=lanczos,fps=$($edit.output.fps),setsar=1,settb=AVTB${track},format=yuv420p[s$i]"
+            # Keep the Hero's original coordinate space until the menu-free crop.
+            $scale = $(if ($i -eq 1 -and $edit.composition.menuCrop) {''} else {",scale=$($edit.output.width):$($edit.output.height):flags=lanczos"})
+            $filters += "[$($i):v]setpts=PTS-STARTPTS${rotate}${crop}${scale},fps=$($edit.output.fps),setsar=1,settb=AVTB${track},format=yuv420p[s$i]"
             $total += [double]$edit.segments[$i].durationSeconds
         }
         if ($edit.composition.type -eq 'picture-in-picture') {
@@ -167,8 +234,18 @@ try {
             $insetStart = [double]$pip.insetStartSeconds
             if ([Math]::Abs($edit.segments[0].durationSeconds-$edit.segments[1].durationSeconds-$insetStart) -gt .001 -or
                 [Math]::Abs($edit.segments[1].startSeconds-$edit.segments[0].startSeconds-$edit.synchronization.heroMinusEngineerSeconds-$insetStart) -gt .001) { throw 'POV placement must match the verified source-clock offset.' }
-            $filters += "[s1]scale=$($pip.width):$($pip.height),pad=iw+4:ih+4:2:2:color=0xf2b53a,setpts=PTS-STARTPTS+$(Number $insetStart)/TB[inset]"
-            $filters += "[s0][inset]overlay=x=$($pip.x):y=$($pip.y):eof_action=pass:repeatlast=0:enable='gte(t,$(Number $insetStart))'[edit]"
+            if ($pip.menuCrop) {
+                if ($insetStart -ne 0) { throw 'Menu-free Hero POV must cover the complete synchronized action.' }
+                $mc = $pip.menuCrop; $switch = [double]$pip.fullViewStartSeconds; $fade = [double]$pip.switchFadeSeconds
+                $filters += '[s1]split=2[crop0][full0]'
+                $filters += "[crop0]crop=$($mc.width):$($mc.height):$($mc.x):$($mc.y),scale=$($pip.width):$($mc.outputHeight):flags=lanczos,pad=iw+4:ih+4:2:2:color=0xf2b53a,format=yuva420p,fade=t=out:st=$(Number $switch):d=$(Number $fade):alpha=1[cropped]"
+                $filters += "[full0]scale=$($pip.width):$($pip.height):flags=lanczos,pad=iw+4:ih+4:2:2:color=0xf2b53a,format=yuva420p,fade=t=in:st=$(Number $switch):d=$(Number $fade):alpha=1[full]"
+                $filters += "[s0][cropped]overlay=x=$($pip.x):y=$($pip.y):eof_action=pass:repeatlast=0:enable='lt(t,$(Number ($switch+$fade)))'[withCrop]"
+                $filters += "[withCrop][full]overlay=x=$($pip.x):y=$($pip.y):eof_action=pass:repeatlast=0:enable='gte(t,$(Number $switch))'[edit]"
+            } else {
+                $filters += "[s1]scale=$($pip.width):$($pip.height),pad=iw+4:ih+4:2:2:color=0xf2b53a,setpts=PTS-STARTPTS+$(Number $insetStart)/TB[inset]"
+                $filters += "[s0][inset]overlay=x=$($pip.x):y=$($pip.y):eof_action=pass:repeatlast=0:enable='gte(t,$(Number $insetStart))'[edit]"
+            }
             $total = [double]$edit.segments[0].durationSeconds
         } elseif ($inputPaths.Count -eq 1) { $filters += '[s0]null[edit]' }
         elseif ($inputPaths.Count -eq 2 -and $edit.transitionSeconds -gt 0) {
