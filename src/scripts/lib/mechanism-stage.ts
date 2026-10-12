@@ -7,12 +7,13 @@ import { cleanPartName } from './part-name';
 /** Shared part viewer. Its owner decides when rendering is allowed. */
 export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string, file: string, label: HTMLElement, canRender: () => boolean, signal: AbortSignal) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.25));
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 1.25;
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(30, 1, .001, 20);
+  const camera = new THREE.PerspectiveCamera(30, 1, .008, 8);
+  if (file === 'engineer-pump.glb') camera.up.set(0, 0, 1);
   const amber = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--amber').trim());
   scene.add(new THREE.HemisphereLight(0xe5ecf5, 0x182438, 2.4));
   const key = new THREE.DirectionalLight(0xffffff, 3.5);
@@ -51,7 +52,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   canvas.tabIndex = 0;
   const bounds = new THREE.Box3().setFromObject(model, true);
   const sphere = bounds.getBoundingSphere(new THREE.Sphere());
-  const initialDirection = new THREE.Vector3(1, .45, 1.6).normalize();
+  const initialDirection = (file === 'engineer-pump.glb' ? new THREE.Vector3(-1, -1, .65) : new THREE.Vector3(1, .55, 1.6)).normalize();
   let radius = sphere.radius * 1.13;
   controls.target.copy(sphere.center);
   const direction = initialDirection.clone();
@@ -103,7 +104,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       const std = mat as THREE.MeshStandardMaterial;
       if (std.color) {
         const hsl = { h: 0, s: 0, l: 0 };
-        if (std.color.getHSL(hsl).l < .07) std.color.offsetHSL(0, 0, .09);
+        if (!std.name.includes('rubber') && std.color.getHSL(hsl).l < .07) std.color.offsetHSL(0, 0, .09);
         std.roughness = Math.max(std.roughness, .42);
       }
     }
@@ -183,7 +184,21 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   return {
     scene, model, camera, controls, amber, sphere,
     render,
+    screenBounds() {
+      const points = corners.map(({ mesh, point }) => point.clone().applyMatrix4(mesh.matrixWorld).project(camera));
+      return [Math.min(...points.map(p => p.x)), Math.max(...points.map(p => p.x)), Math.min(...points.map(p => p.y)), Math.max(...points.map(p => p.y))];
+    },
     setRadius(value: number) { radius = value; fit(); },
+    autoOrbit(dt: number, time: number, weight: number) {
+      const s = new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
+      s.theta += dt * Math.PI * 2 / 40 * weight;
+      const goal = Math.acos(initialDirection.y) + Math.sin(time * Math.PI * 2 / 24) * THREE.MathUtils.degToRad(8);
+      s.phi += (goal - s.phi) * (1 - Math.exp(-dt * weight * 1.5));
+      // Restore a complete view gradually after a user's close inspection.
+      s.radius += (fitDistance - s.radius) * (1 - Math.exp(-dt * weight * 2));
+      camera.position.copy(controls.target).add(new THREE.Vector3().setFromSpherical(s));
+      camera.lookAt(controls.target);
+    },
     resetView() { camera.position.copy(controls.target).add(initialDirection); fit(true); controls.update(); render(); },
     dispose() {
       events.abort(); resizeObserver.disconnect(); controls.dispose(); clearHover();

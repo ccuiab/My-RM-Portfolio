@@ -13,6 +13,14 @@ const L = sceneCopy[kind];
     </button>
     <div class="model" data-mechanism-canvas></div>
     <span class="badge">{t(L.badge, lang)}</span>
+    {kind === 'swerve' && <>
+      <output class="cycle" data-cycle-label data-assembled={t(sceneCopy.swerve.phases.assembled, lang)} data-opening={t(sceneCopy.swerve.phases.opening, lang)} data-exploded={t(sceneCopy.swerve.phases.exploded, lang)} data-closing={t(sceneCopy.swerve.phases.closing, lang)}></output>
+      {sceneCopy.swerve.stages.map(text => <span class="annotation" data-mechanism-annotation hidden>{t(text, lang)}</span>)}
+    </>}
+    {kind === 'pump' && <>
+      <span class="annotation valve" data-mechanism-annotation data-open-text={t(sceneCopy.pump.inletOpen, lang)} data-closed-text={t(sceneCopy.pump.inletClosed, lang)} hidden></span>
+      <span class="annotation valve" data-mechanism-annotation data-open-text={t(sceneCopy.pump.outletOpen, lang)} data-closed-text={t(sceneCopy.pump.outletClosed, lang)} hidden></span>
+    </>}
     <output class="hover" data-part-name hidden></output>
     <p class="status" data-mechanism-status role="status" hidden></p>
   </div>
@@ -20,7 +28,7 @@ const L = sceneCopy[kind];
     {kind === 'swerve' && <>
       <div class="states" role="group" aria-label={t(sceneCopy.swerve.amount, lang)}>
         <button type="button" data-explode-to="0" aria-pressed="true">{t(sceneCopy.swerve.assemble, lang)}</button>
-        <button type="button" data-explode-to="0.6" aria-pressed="false">{t(sceneCopy.swerve.explode, lang)}</button>
+        <button type="button" data-explode-to="1" aria-pressed="false">{t(sceneCopy.swerve.explode, lang)}</button>
       </div>
       <label class="amount"><span>{t(sceneCopy.swerve.amount, lang)}</span><input type="range" min="0" max="100" step="1" value="0" data-explode-amount /><output data-explode-output>0%</output></label>
     </>}
@@ -35,7 +43,7 @@ const L = sceneCopy[kind];
 </script>
 <style>
   .mechanism { margin: 0; min-width: 0; background: var(--panel); }
-  .media-view { position: relative; height: clamp(300px, 40vw, 530px); overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #182438, var(--ground) 78%); }
+  .mechanism > .media-view { position: relative; height: clamp(300px, 40vw, 530px); overflow: hidden; background: radial-gradient(ellipse at 50% 45%, #182438, var(--ground) 78%); }
   .still, .model { position: absolute; inset: 0; width: 100%; height: 100%; }
   .still { border: 0; background: var(--plate); padding: 3%; cursor: zoom-in; }
   .still :global(img) { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: multiply; }
@@ -46,6 +54,10 @@ const L = sceneCopy[kind];
   .model :global(canvas:active) { cursor: grabbing; }
   .model :global(canvas:focus-visible) { outline: 2px solid var(--amber); outline-offset: -3px; }
   .badge { position: absolute; top: 1rem; left: 1rem; color: var(--amber); font-size: var(--t-xs); pointer-events: none; }
+  .cycle { position: absolute; top: 1rem; right: 1rem; color: var(--ink-3); font: var(--t-xs) var(--f-mono); pointer-events: none; }
+  .annotation { position: absolute; transform: translate(-50%, -125%); padding: .25rem .4rem; border-left: 1px solid var(--amber); background: color-mix(in srgb, var(--ground) 88%, transparent); color: var(--amber); font: var(--t-xs) var(--f-mono); white-space: nowrap; pointer-events: none; }
+  .valve { transform: translate(8px, -50%); color: var(--ink-3); border-color: var(--rule); }
+  .valve[data-open="true"] { color: var(--amber); border-color: var(--amber); }
   .hover { position: absolute; bottom: 1rem; left: 1rem; right: 1rem; width: fit-content; max-width: calc(100% - 2rem); padding: .5rem .7rem; color: var(--amber); border: 1px solid var(--amber); background: var(--ground); font-family: var(--f-mono); font-size: var(--t-xs); overflow-wrap: anywhere; pointer-events: none; }
   .status { position: absolute; bottom: 0; left: 0; right: 0; margin: 0; padding: .75rem; font-size: var(--t-xs); color: var(--ink-2); background: var(--panel); text-align: center; }
   .controls { display: flex; flex-wrap: wrap; align-items: center; gap: .65rem; padding: .8rem 1rem; }
@@ -64,5 +76,5 @@ const L = sceneCopy[kind];
   @media (min-width: 901px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
     .controls[hidden] { display: flex !important; visibility: hidden; pointer-events: none; }
   }
-  @media (max-width: 900px), (prefers-reduced-motion: reduce) { .model, .badge, .controls { display: none !important; } .still { visibility: visible !important; } }
+  @media (max-width: 900px), (prefers-reduced-motion: reduce) { .model, .badge, .cycle, .annotation, .controls { display: none !important; } .still { visibility: visible !important; } }
 </style>
