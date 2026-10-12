@@ -28,7 +28,7 @@ const L = sceneCopy.armExplode;
     <div class="states" role="group" aria-label={t(L.controls, lang)}>
       <button type="button" data-explode-to="0" aria-pressed="true">{t(L.assemble, lang)}</button>
       <button type="button" data-explode-to="1" aria-pressed="false">{t(L.explode, lang)}</button>
-      <button type="button" data-rotate aria-pressed="false" data-play={t(L.rotate, lang)} data-pause={t(L.pause, lang)}>{t(L.rotate, lang)}</button>
+      <button type="button" data-cycle aria-pressed="true" data-play={t(L.rotate, lang)} data-pause={t(L.pause, lang)}>{t(L.pause, lang)}</button>
       <button type="button" data-reset-view>{t(sceneCopy.interaction.reset, lang)}</button>
     </div>
     <label class="range"><span>{t(L.progress, lang)}</span><input type="range" min="0" max="100" value="0" step="1" data-explode-range /><output data-progress>0%</output></label>
