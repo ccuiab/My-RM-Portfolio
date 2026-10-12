@@ -25,7 +25,7 @@ parser.add_argument('--role', choices=['pump', 'swerve'])
 args = parser.parse_args(sys.argv[sys.argv.index('--') + 1:])
 root = pathlib.Path.cwd()
 web = root / 'materials/models/derived/web'
-audit = {'blender': bpy.app.version_string, 'units': 'metres', 'up': '+Y', 'modules': {}}
+audit = {'blender': bpy.app.version_string, 'units': 'metres', 'modules': {}}
 
 def extract_module(source, target, root_index):
     """Read only referenced mesh buffers, including previously omitted gears."""
@@ -106,6 +106,22 @@ def material_class(source):
     if any(s in name for s in ('gear', 'teeth', '轴', 'bearing', '齿轮', '轴承', '50mm', '_pole', '活塞', '曲柄')): return 'alu_silver'
     return 'alu_black'
 
+def count_cad_teeth(obj, world, axis):
+    """Count clusters on the native tooth-tip circle, independent of the name."""
+    axis = axis.normalized()
+    u = axis.cross(Vector((0, 0, 1)))
+    if u.length < .1: u = axis.cross(Vector((1, 0, 0)))
+    u.normalize(); v = axis.cross(u)
+    radial = [world @ p.co - world.translation for p in obj.data.vertices]
+    radii = [(p - axis * p.dot(axis)).length for p in radial]
+    maximum = max(radii)
+    angles = sorted(set(round(math.atan2(p.dot(v), p.dot(u)) % (2 * math.pi), 6)
+                        for p, radius in zip(radial, radii) if radius > maximum - .000005))
+    gaps = [(angles[(i + 1) % len(angles)] - a) % (2 * math.pi) for i, a in enumerate(angles)]
+    count = sum(gap > max(gaps) * .6 for gap in gaps)
+    return {'teeth': count, 'tip_radius_mm': maximum * 1000,
+            'tip_angles': len(angles), 'status': 'CAD count, awaiting user confirmation'}
+
 for role in ('pump', 'swerve'):
     if args.role and args.role != role: continue
     bpy.ops.wm.read_factory_settings(use_empty=True)
@@ -129,33 +145,68 @@ for role in ('pump', 'swerve'):
     nodes = {o.get('source_node_index'): o for o in bpy.data.objects}
     orient = Matrix.Rotation(-math.pi / 2, 4, 'Z') if role == 'pump' else Matrix.Identity(4)
     worlds = {o: orient @ o.matrix_world for o in meshes}
-    # Match the previous web exports: identical Y-up axes, metres and centred bounds.
+    # Keep the existing centred web frames: swerve +Y up, pump +Z up.
     points = [worlds[o] @ v.co for o in meshes for v in o.data.vertices]
     minimum = Vector([min(p[i] for p in points) for i in range(3)])
     maximum = Vector([max(p[i] for p in points) for i in range(3)])
     centre = (minimum + maximum) / 2
     def pump_point(p): return web_vector(orient @ Vector((p[0], -p[2], p[1])) - centre)
+    bearing_inner = None
+    pinion = None
     if role == 'pump':
-        # The native simplified piston is a single mesh including the rod.
-        # Separate it at the neck for the pin-jointed teaching animation.
-        rod = nodes[1428]
-        piston = rod.copy(); piston.data = rod.data.copy(); piston.name = 'pump_piston_head'
-        bpy.context.collection.objects.link(piston)
-        worlds[piston] = worlds[rod].copy(); meshes.append(piston)
-        piston['web_motion'] = 'piston'
-        piston['web_visual_split'] = 'native integrated piston/rod split at neck; schematic articulation'
-        plane = orient @ Vector((-.0053492673, -.0335, .0052245655))
-        normal = orient.to_3x3() @ Vector((0, -1, 0))
-        for obj, head in [(rod, False), (piston, True)]:
+        # Node 1428 is the CAD's single wobble piston, including its rod.
+        # Never cut or duplicate that geometry. The bearing's native inner-ring
+        # triangles (r <= 7 mm) can follow the crank separately from its outer ring.
+        bearing = nodes[1430]
+        bearing_inner = bearing.copy(); bearing_inner.data = bearing.data.copy()
+        bearing_inner.name = 'pump_bearing_inner_01430'
+        bpy.context.collection.objects.link(bearing_inner)
+        worlds[bearing_inner] = worlds[bearing].copy(); meshes.append(bearing_inner)
+        bearing_center = worlds[bearing].translation
+        axle = orient.to_3x3() @ Vector((0, 0, 1))
+        for obj, keep_inner in ((bearing, False), (bearing_inner, True)):
             obj.data = obj.data.copy(); bm = bmesh.new(); bm.from_mesh(obj.data)
-            local = worlds[obj].inverted() @ plane
-            local_normal = worlds[obj].to_3x3().transposed() @ normal
-            result = bmesh.ops.bisect_plane(bm, geom=list(bm.verts) + list(bm.edges) + list(bm.faces),
-                                           plane_co=local, plane_no=local_normal,
-                                           clear_inner=not head, clear_outer=head, dist=1e-7)
-            boundary = [e for e in result['geom_cut'] if isinstance(e, bmesh.types.BMEdge) and e.is_boundary]
-            if boundary: bmesh.ops.holes_fill(bm, edges=boundary, sides=0)
+            def inner(face):
+                radii = []
+                for vertex in face.verts:
+                    p = worlds[obj] @ vertex.co - bearing_center
+                    radii.append((p - axle * p.dot(axle)).length)
+                return max(radii) < .008
+            remove = [face for face in bm.faces if inner(face) != keep_inner]
+            bmesh.ops.delete(bm, geom=remove, context='FACES')
             bm.to_mesh(obj.data); bm.free()
+    else:
+        # The tagged assembly contains the steering motor and large gear, but
+        # omits its external pinion. Reuse the native CAD pinion at node 35.
+        # Measured shaft spacing 45.9 mm matches the CAD 17/136 pair (m=0.6).
+        # This is a derived instance, never a newly invented tooth profile.
+        source_pinion = nodes[35]
+        counts = {'pinion': count_cad_teeth(source_pinion, worlds[source_pinion], worlds[source_pinion].to_3x3() @ Vector((0, 1, 0))),
+                  'large': count_cad_teeth(nodes[58], worlds[nodes[58]], worlds[nodes[58]].to_3x3() @ Vector((1, 0, 0)))}
+        if (counts['pinion']['teeth'], counts['large']['teeth']) != (17, 136):
+            raise ValueError(f'Unexpected CAD tooth count: {counts}')
+        pinion = source_pinion.copy(); pinion.data = source_pinion.data.copy()
+        pinion.name = 'steering_pinion_from_00035'
+        bpy.context.collection.objects.link(pinion); meshes.append(pinion)
+        large_points = [worlds[nodes[58]] @ v.co for v in nodes[58].data.vertices]
+        gear_height = (min(p.z for p in large_points) + max(p.z for p in large_points)) / 2
+        pinion_points = [worlds[source_pinion] @ v.co for v in source_pinion.data.vertices]
+        source_axis = (worlds[source_pinion].to_3x3() @ Vector((0, 1, 0))).normalized()
+        depths = [(p - worlds[source_pinion].translation).dot(source_axis) for p in pinion_points]
+        pinion_center = worlds[source_pinion].translation + source_axis * (min(depths) + max(depths)) / 2
+        target = worlds[nodes[61]].translation.copy(); target.z = gear_height
+        alignment = source_axis.rotation_difference(Vector((0, 0, 1))).to_matrix().to_4x4()
+        worlds[pinion] = Matrix.Translation(target) @ alignment @ Matrix.Translation(-pinion_center) @ worlds[source_pinion]
+        pinion['web_instance'] = 'steering-pinion'
+        pinion['web_reconstruction'] = 'CAD node 35 instance; omitted steering pinion, positioned by measured motor axis and gear plane'
+        pinion['web_motion'] = 'steering-pinion'
+        pinion['web_axis'] = [0, 1, 0]
+        pinion['web_gear_ratio'] = counts['large']['teeth'] / counts['pinion']['teeth']
+        # Put the object origin at the shaft centre, without changing triangles.
+        transform = worlds[pinion].copy()
+        local_center = transform.inverted() @ target
+        pinion.data.transform(Matrix.Translation(-local_center))
+        transform.translation = target; worlds[pinion] = transform
     records = []
     steering = None
     if role == 'swerve':
@@ -172,7 +223,7 @@ for role in ('pump', 'swerve'):
         world.translation -= centre
         obj.parent = None
         obj.matrix_world = world
-        if steering and '/Swerve_inner.' in src:
+        if steering and obj != pinion and '/Swerve_inner.' in src:
             obj.parent = steering
             obj.matrix_parent_inverse = steering.matrix_world.inverted()
             obj.matrix_world = world
@@ -219,24 +270,30 @@ for role in ('pump', 'swerve'):
                                     pump_point((-.015349267, -.031575434, .0095))]
                 obj['web_port_axis'] = [0, -1, 0]
             elif idx == 1428:
-                obj['web_motion'] = 'piston' if obj == piston else 'rod'
+                obj['web_motion'] = 'rod'
+                obj['web_rigid_piston'] = True
             elif idx == 1430:
-                obj['web_motion'] = 'big-end-bearing'
+                obj['web_motion'] = 'bearing-inner' if obj == bearing_inner else 'bearing-outer'
         else:
             wheel_axis = (worlds[nodes[31]].to_3x3() @ Vector((0, 0, 1))).normalized()
             layers = {35: .035, 37: .072, 39: .072, 40: .072, 38: .111,
                       41: .143, 42: -.037, 43: -.06, 44: -.087,
                       45: .168, 46: .168, 47: -.06, 31: .21}
             if idx in layers: offset = wheel_axis * layers[idx]
-            elif idx in (58, 62): offset = Vector((0, 0, .07 if idx == 58 else .04))
-            elif idx == 63: offset = Vector((0, 0, .10))
+            elif idx in (58, 62): offset = Vector((0, 0, .10 if idx == 58 else .065))
+            # Motor output points down. Move the complete motor farther up than
+            # the pinion, so their relative separation extends along that shaft.
+            elif idx == 61: offset = Vector((0, 0, .11))
+            elif idx == 63: offset = Vector((0, 0, .17))
+            if obj == pinion: offset = Vector((0, 0, .07))
             if idx == 31:
                 obj['web_motion'] = 'roll'
                 obj['web_axis'] = web_vector(wheel_axis)
             if idx in (35, 37, 38, 39, 40): obj['web_transmission'] = 'drive-input' if idx == 35 else 'drive-output' if idx == 38 else 'drive-compound'
+            if obj == pinion: obj['web_transmission'] = 'steering-input'
             if idx == 58: obj['web_transmission'] = 'steering-output'
             if idx in (35, 39, 38, 58): obj['web_guide'] = True
-            obj['web_structure'] = idx not in layers and idx not in (58, 62) and not obj['web_motor_intact']
+            obj['web_structure'] = obj != pinion and idx not in layers and idx not in (58, 62) and not obj['web_motor_intact']
             obj['web_explode'] = web_vector(offset)
         obj['web_motor_intact'] = 'MOTOR_' in src or 'DJ_M3508' in src
         # Keep original, auditable node names and component origins.
@@ -257,8 +314,14 @@ for role in ('pump', 'swerve'):
                               export_draco_normal_quantization=12,
                               export_yup=True)
     audit['modules'][role] = {'input': str(source),
+                             'up': '+Z' if role == 'pump' else '+Y',
                              'output': output.name, 'output_sha256': hashlib.sha256(output.read_bytes()).hexdigest(),
                              'source_centre': web_vector(centre), 'parts': records}
     audit['modules'][role]['excluded_electronics'] = excluded
+    if role == 'swerve':
+        audit['modules'][role]['steering_teeth'] = counts
+        spacing = worlds[nodes[61]].translation - worlds[nodes[58]].translation
+        audit['modules'][role]['steering_shaft_spacing_mm'] = math.hypot(spacing.x, spacing.y) * 1000
+        audit['modules'][role]['pinion_provenance'] = pinion['web_reconstruction']
 if args.audit: pathlib.Path(args.audit).write_text(json.dumps(audit, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
 print(json.dumps({role: {'parts': len(data['parts']), 'triangles': sum(p['triangles'] for p in data['parts'])} for role, data in audit['modules'].items()}))

@@ -11,6 +11,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
   const slider = root.querySelector<HTMLInputElement>('[data-explode-amount]');
   const output = root.querySelector<HTMLOutputElement>('[data-explode-output]');
   const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-explode-to]')];
+  const detail = root.querySelector<HTMLButtonElement>('[data-steering-detail]');
   const annotations = [...root.querySelectorAll<HTMLElement>('[data-mechanism-annotation]')];
   const phaseLabel = root.querySelector<HTMLElement>('[data-cycle-label]');
   let stage: MechanismStage | undefined, motion: ModuleMotion | undefined;
@@ -39,6 +40,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       root.dataset.pumpStroke = info.stroke;
       root.dataset.inletOpen = String(info.inletOpen); root.dataset.outletOpen = String(info.outletOpen);
       root.dataset.rodError = String(info.rodError); root.dataset.sliderError = String(info.sliderError);
+      root.dataset.bearingError = String(info.bearingError); root.dataset.pistonSwing = String(info.swing);
       root.dataset.pins = JSON.stringify(info.pins);
       annotations.forEach((item, index) => {
         const open = index === 0 ? info.inletOpen : info.outletOpen;
@@ -47,17 +49,23 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       });
     }
     stage.render();
+    detail?.setAttribute('aria-pressed', String(stage.isInspecting()));
     const points = motion.annotations();
     if (root.dataset.mechanism === 'swerve') {
-      let previousY = 8;
-      for (const point of [...points].sort((a, b) => a.y - b.y)) {
-        point.y = Math.min(90, Math.max(point.y, previousY + 8));
+      let previousY = 1;
+      const sorted = [...points].sort((a, b) => a.y - b.y);
+      for (const [index, point] of sorted.entries()) {
+        point.y = Math.min(88 - (sorted.length - 1 - index) * 9, Math.max(point.y, previousY + 9));
         previousY = point.y;
       }
     }
     points.forEach((point, index) => {
       const item = annotations[index]; if (!item) return;
-      item.hidden = !point.visible || (root.dataset.mechanism === 'swerve' && explode < .4);
+      item.hidden = !point.visible || (root.dataset.mechanism === 'swerve' && (explode < .4 || (stage!.isInspecting() && index < 3)));
+      if (!item.hidden) {
+        const margin = item.getBoundingClientRect().width / holder.clientWidth * 50 + 2;
+        point.x = Math.min(100 - margin, Math.max(margin, point.x));
+      }
       item.style.left = `${point.x}%`; item.style.top = `${point.y}%`;
     });
     root.dataset.cameraPosition = JSON.stringify(stage.camera.position.toArray());
@@ -67,13 +75,13 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
   const tick = (now: number) => {
     frame = 0;
     if (!visible || !stage || !cycle) return;
-    const dt = previous ? Math.min((now - previous) / 1000, .5) : 0;
+    const dt = previous ? Math.min((now - previous) / 1000, .1) : 0;
     previous = now;
     const automatic = playing && !holding && now - lastInteraction >= 5000;
     root.dataset.autoState = automatic ? 'playing' : playing ? 'interaction' : 'paused';
     if (automatic) {
       if (reconnect) {
-        phaseTime = cycle.cycleAtAmount(explode, phase === 'closing');
+        phaseTime = explode < .0001 ? 0 : explode > .9999 ? 3 : cycle.cycleAtAmount(explode, phase === 'closing');
         reconnect = false; blend = 0;
       }
       blend = Math.min(1, blend + dt);
@@ -83,10 +91,13 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
         phaseTime += dt * weight;
         const sample = cycle.explosionCycle(phaseTime);
         explode = sample.amount; target = explode; phase = sample.phase;
-        stage.autoOrbit(dt, elapsed, weight);
       }
+      stage.autoOrbit(dt, elapsed, weight);
     } else {
       const difference = target - explode;
+      if (Math.abs(difference) >= .001) phase = difference > 0 ? 'opening' : 'closing';
+      else if (explode < .001) phase = 'assembled';
+      else if (explode > .999) phase = 'exploded';
       explode = Math.abs(difference) < .001 ? target : explode + difference * (1 - Math.exp(-dt * 8));
     }
     sync();
@@ -94,8 +105,13 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
     else root.dataset.rendering = 'false';
     if (playing || explode !== target) frame = requestAnimationFrame(tick);
   };
-  const run = () => { if (!frame && visible && stage) frame = requestAnimationFrame(tick); };
+  const run = () => {
+    // A paused viewer has no ticking clock. Do not turn idle time into a large
+    // first animation step when the user next moves the slider or a button.
+    if (!frame && visible && stage) { previous = 0; frame = requestAnimationFrame(tick); }
+  };
   buttons.forEach(b => b.addEventListener('click', () => { interaction(); target = Number(b.dataset.explodeTo); sync(); run(); }));
+  detail?.addEventListener('click', () => { interaction(); target = 1; stage?.inspect(['steering-input', 'steering-output']); draw(); run(); });
   slider?.addEventListener('input', () => { interaction(); target = Number(slider.value) / 100; sync(); run(); });
   slider?.addEventListener('pointerdown', () => { holding = true; interaction(); });
   const endInteraction = () => { if (holding) { holding = false; interaction(); } };
