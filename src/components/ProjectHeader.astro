@@ -51,7 +51,7 @@ const { lang, drawing, title, lede, cover, titleBlock = [], stats = [], statsSou
           <li>
             <span class="num v">{s.value}{s.unit && <span class="u">{s.unit}</span>}</span>
             <span class="l">{t(s.label, lang)}</span>
-            {s.rank && <span class="num rank">{s.rank}</span>}
+            {s.rank && <span class:list={['num rank', { gold: s.rank === '1st', silver: s.rank === '2nd' }]}>{s.rank}</span>}
           </li>
         ))}
       </ul>
@@ -142,6 +142,9 @@ const { lang, drawing, title, lede, cover, titleBlock = [], stats = [], statsSou
     font-size: var(--t-xs);
     color: var(--amber);
   }
+  /* Medal colours carry the ranking; amber stays the only UI accent. */
+  .rank.gold { color: #ffd23f; }
+  .rank.silver { color: #c9d3de; }
   .stats-src { margin-top: 0.8rem; font-size: var(--t-xs); color: var(--ink-3); }
 
   @media (max-width: 900px) {
