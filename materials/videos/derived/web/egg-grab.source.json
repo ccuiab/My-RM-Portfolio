@@ -3,7 +3,7 @@
   "match": "RMUC 2025 全明星赛，第二局，港科大工程属于红方 INNOVATOR 创新者",
   "verifiedAt": "2026-10-12",
   "catalog": "materials/documents/derived/bilibili-video-catalog.json",
-  "evidence": "第四轮重新按源时间逐秒抽帧与关键位置精确 seek 核验。关键帧、页面截图和 02 的 1 fps 跟踪接触表位于 C:/Users/cch20/AppData/Local/Temp/rm-shots/eggs/。",
+  "evidence": "第五轮：逐秒精确抽帧和比赛倒计时核对；接触表与中英文页面截图：C:/Users/cch20/AppData/Local/Temp/rm-shots/eggs2/。",
   "segments": [
     {
       "source": "https://www.bilibili.com/video/BV1YFhLz4Evi/?p=10",
@@ -23,13 +23,32 @@
       "inputFile": "materials/videos/derived/inputs/egg-grab-pov.mp4",
       "evidence": "39:05 进入接触前的接近段；39:09–39:12 接触对方携带的黑色矿石；39:14–39:15 矿石向地面落下，39:18 矿石在镜头左下地面可见；39:19–39:24 连续调整末端、从地面吸取并抬升，39:24 黑色矿石在末端前方抬起。出点 39:25 包含抬升后的短暂余量，旧出点 39:14.80 过早。",
       "copyrightOwner": "RoboMaster赛事画面制作方；投稿与视角编排署名见 uploader"
+    },
+    {
+      "source": "https://www.bilibili.com/video/BV1Uvt3zKEt4/?p=1",
+      "bvid": "BV1Uvt3zKEt4",
+      "page": 1,
+      "title": "全明星赛 创新者 INNOVATOR战队 VS 缔造者 CREATOR战队 RMUC 2025",
+      "uploader": "RoboMaster机甲大师",
+      "uploaderId": 20554233,
+      "sourceFile": "materials/videos/source/bilibili/all-star/BV1Uvt3zKEt4-P01 - 全明星赛 创新者 INNOVATOR战队 VS 缔造者 CREATOR战队 RMUC 2025.mp4",
+      "sourceSha256FromCatalog": "169f4d845d5590a6815c43288998bbbc998ac04d970a933e1029d98673e30834",
+      "startSeconds": 2799.8,
+      "durationSeconds": 4.2,
+      "endSeconds": 2804.0,
+      "startTimecode": "00:46:39.80",
+      "endTimecode": "00:46:44.00",
+      "role": "官方第三视角：矿石再次吸起后两台工程分开，展示同一次交互的场地全景收尾。",
+      "inputFile": "materials/videos/derived/inputs/egg-grab-official.mp4",
+      "evidence": "逐秒核对：工程 POV 39:20 为 4:57、39:25 为 4:52；官方 46:35 为 4:57、46:40 为 4:52，源时间差 435 s。官方 46:39.8–46:44 的第三视角与 POV 尾端同一比赛时间衔接。",
+      "copyrightOwner": "RoboMaster赛事画面制作方；投稿与视角编排署名见 uploader"
     }
   ],
-  "transitionSeconds": 0,
+  "transitionSeconds": 0.2,
   "loop": {
-    "seamSeconds": 0,
-    "method": "动作按原速连续保留，片尾停稳/回收后直接回到片头循环；不裁掉首尾帧，不混合跟踪框。",
-    "expectedDurationSeconds": 20.0
+    "seamSeconds": 0.32,
+    "method": "尾段与片头重叠淡化 0.32 s，循环时间线从原片头 0.32 s 开始；接缝最后一帧接回同一源时间的下一帧。动作原速，所有源时段均在循环中呈现。",
+    "expectedDurationSeconds": 23.68
   },
   "playbackRate": 1,
   "output": {
@@ -40,17 +59,18 @@
     "fps": 25,
     "codec": "h264",
     "pixelFormat": "yuv420p",
-    "crf": 24,
+    "crf": 25,
     "audio": false,
     "faststart": true,
-    "maxBytes": 9000000,
-    "posterSeconds": 19.4
+    "maxBytes": 6000000,
+    "posterSeconds": 19.2,
+    "maxBitrateKbps": 1600
   },
   "copyright": {
-    "attribution": "保留原投稿与赛事转播水印，原画面版权归对应原投稿作者或赛事制作方；本项目仅制作静音节选与封面。",
-    "permissionStatus": "公开来源及署名已记录，未额外核实转载授权。"
+    "attribution": "页面与本来源记录保留原投稿者和官方赛事署名，画面权利归对应原作者或赛事制作方；裁剪等加工说明见各段记录。",
+    "permissionStatus": "公开来源及归属已记录；未将公开可访问视为已核实的转载授权。"
   },
-  "note": "采用 39:05–39:25 连续 POV，不插入旧版官方全景回看，避免倒计时回退。仅描述本段可见的接触、落地、再取和抬升；不宣称矿石最终成功兑换。官方同一交锋参考来源保留在 referenceViews。",
+  "note": "原有 39:05–39:25 第一视角内容及速度保持，接上同一倒计时的 4.2 s 官方第三视角收尾；0.2 s 转场、0.32 s 循环淡化，全部输出限制在 6 MB 内。",
   "crossChecks": [
     {
       "bvid": "BV1r6tjzME6L",
@@ -67,25 +87,5 @@
       "conclusion": "确认：第二局 5:09–5:02 左右的红蓝工程交锋，与所选原片动作相同。"
     }
   ],
-  "referenceViews": [
-    {
-      "source": "https://www.bilibili.com/video/BV1Uvt3zKEt4/?p=1",
-      "bvid": "BV1Uvt3zKEt4",
-      "page": 1,
-      "title": "全明星赛 创新者 INNOVATOR战队 VS 缔造者 CREATOR战队 RMUC 2025",
-      "uploader": "RoboMaster机甲大师",
-      "uploaderId": 20554233,
-      "sourceFile": "materials/videos/source/bilibili/all-star/BV1Uvt3zKEt4-P01 - 全明星赛 创新者 INNOVATOR战队 VS 缔造者 CREATOR战队 RMUC 2025.mp4",
-      "sourceSha256FromCatalog": "169f4d845d5590a6815c43288998bbbc998ac04d970a933e1029d98673e30834",
-      "startSeconds": 2785.6,
-      "durationSeconds": 4.8,
-      "endSeconds": 2790.4,
-      "startTimecode": "00:46:25.60",
-      "endTimecode": "00:46:30.40",
-      "role": "官方全场：同一次交锋的全景回看",
-      "inputFile": "materials/videos/derived/inputs/egg-grab-official.mp4",
-      "evidence": "官方 46:25.00 倒计时 5:07，红蓝 2 号工程在蓝方资源岛旁接触，接近 POV 39:09.00 的 5:08。46:25.60–46:30.40 重看交锋和分离；官方为全景，具体吸取以 POV 为主证据。",
-      "copyrightOwner": "RoboMaster赛事画面制作方；投稿与视角编排署名见 uploader"
-    }
-  ]
+  "referenceViews": []
 }

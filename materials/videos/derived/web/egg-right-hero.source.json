@@ -1,0 +1,132 @@
+{
+  "name": "egg-right-hero",
+  "match": "RMUC 2025 复活赛第 33 场 vs 哈尔滨工业大学（深圳），最后一局，港科大为蓝方",
+  "verifiedAt": "2026-10-12",
+  "catalog": "materials/documents/derived/bilibili-video-catalog.json",
+  "evidence": "B 站当前分 P 列表、官方记分栏、工程与英雄比赛计时器以及逐秒抽帧交叉核验。证据与接触表：C:/Users/cch20/AppData/Local/Temp/rm-shots/eggs2/。",
+  "segments": [
+    {
+      "source": "https://www.bilibili.com/video/BV1Aw8gzoEZd/?p=3",
+      "bvid": "BV1Aw8gzoEZd",
+      "page": 3,
+      "title": "[RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - B2SuqqreProject_0",
+      "uploader": "翔林魔主",
+      "uploaderId": 1568334988,
+      "sourceFile": "materials/videos/source/bilibili/engineer-pov/BV1Aw8gzoEZd-P03 - [RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - B2SuqqreProject_0.mp4",
+      "sourceSha256FromCatalog": "bd8ea8255494ebf4e2cd4a307cdd1fc40c56e36597ecac0fa39059dde301be22",
+      "startSeconds": 1092,
+      "durationSeconds": 25,
+      "endSeconds": 1117,
+      "startTimecode": "00:18:12.00",
+      "endTimecode": "00:18:37.00",
+      "role": "主画面：蓝方 2 号工程扶正蓝方 1 号英雄",
+      "inputFile": "materials/videos/derived/inputs/egg-right-hero-p03.mp4",
+      "evidence": "18:10（倒计时 2:15）英雄已侧翻；18:12–18:22 工程接触英雄并持续调整；18:24–18:32 英雄逐步翻回正姿态；18:33（1:52）英雄恢复行驶，18:35 前与工程分开。",
+      "copyrightOwner": "RoboMaster 赛事画面制作方；投稿与兵种视角编排：翔林魔主"
+    },
+    {
+      "source": "https://www.bilibili.com/video/BV1Aw8gzoEZd/?p=2",
+      "bvid": "BV1Aw8gzoEZd",
+      "page": 2,
+      "title": "[RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - B1Hero_0",
+      "uploader": "翔林魔主",
+      "uploaderId": 1568334988,
+      "sourceFile": "materials/videos/source/bilibili/engineer-pov/BV1Aw8gzoEZd-P02 - [RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - B1Hero_0.mp4",
+      "sourceSha256FromCatalog": "0bdfe839199d51255d6be53292b06a18f9d41c60a39ba6769df3967f867b246d",
+      "startSeconds": 1109,
+      "durationSeconds": 4.4,
+      "endSeconds": 1113.4,
+      "startTimecode": "00:18:29.00",
+      "endTimecode": "00:18:33.40",
+      "role": "右上角：蓝方 1 号英雄被扶正的同步第一视角",
+      "inputFile": "materials/videos/derived/inputs/egg-right-hero-p02.mp4",
+      "evidence": "英雄 18:29.0（1:53）对应工程 18:32.6（1:53）；菜单关闭后看见工程接近，视野恢复并与工程分开；细化文件偏移 -3.6 s。早期设置菜单遮挡不剪入。",
+      "copyrightOwner": "RoboMaster 赛事画面制作方；投稿与兵种视角编排：翔林魔主"
+    }
+  ],
+  "synchronization": {
+    "heroMinusEngineerSeconds": -3.6,
+    "officialMinusEngineerSeconds": -106,
+    "method": "逐秒计时器后再以 0.2 s 步长核验 1:53→1:52 的切秒边界；工程 1112.8 / 英雄 1109.2 都为 1:53，工程 1113.0 / 英雄 1109.4 都为 1:52，细化偏移为 -3.6 s。",
+    "clockChecks": [
+      {
+        "engineerSeconds": 1090,
+        "heroSeconds": 1086.4,
+        "officialSeconds": 984,
+        "remaining": "2:15"
+      },
+      {
+        "engineerSeconds": 1092,
+        "heroSeconds": 1088.4,
+        "officialSeconds": 986,
+        "remaining": "2:13"
+      },
+      {
+        "engineerSeconds": 1100,
+        "heroSeconds": 1096.4,
+        "officialSeconds": 994,
+        "remaining": "2:05"
+      },
+      {
+        "engineerSeconds": 1110,
+        "heroSeconds": 1106.4,
+        "officialSeconds": 1004,
+        "remaining": "1:55"
+      },
+      {
+        "engineerSeconds": 1112,
+        "heroSeconds": 1108.4,
+        "officialSeconds": 1006,
+        "remaining": "1:53"
+      },
+      {
+        "engineerSeconds": 1113,
+        "heroSeconds": 1109.4,
+        "officialSeconds": 1007,
+        "remaining": "1:52"
+      }
+    ],
+    "clockPhaseEvidence": [
+      "right-engineer-clock-phase-sheet.jpg",
+      "right-hero-clock-phase-sheet.jpg"
+    ]
+  },
+  "composition": {
+    "type": "picture-in-picture",
+    "mainPage": 3,
+    "insetPage": 2,
+    "width": 512,
+    "height": 288,
+    "x": 744,
+    "y": 72,
+    "reason": "工程完整大画面，收尾 4.4 s 在菜单关闭后显示同计时英雄视角；切秒边界细化后按 -3.6 s 偏移对齐。",
+    "insetStartSeconds": 20.6
+  },
+  "transitionSeconds": 0,
+  "loop": {
+    "seamSeconds": 0.32,
+    "method": "尾段与片头重叠淡化 0.32 s，循环时间线从原片头 0.32 s 开始；最后一帧接回同一源时间的下一帧。两路同步淡化。",
+    "expectedDurationSeconds": 24.68
+  },
+  "playbackRate": 1,
+  "output": {
+    "video": "materials/videos/derived/web/egg-right-hero.mp4",
+    "poster": "materials/images/derived/video-posters/egg-right-hero.jpg",
+    "width": 1280,
+    "height": 720,
+    "fps": 25,
+    "codec": "h264",
+    "pixelFormat": "yuv420p",
+    "crf": 25,
+    "maxBitrateKbps": 1600,
+    "audio": false,
+    "faststart": true,
+    "maxBytes": 6000000,
+    "posterSeconds": 20.8
+  },
+  "copyright": {
+    "attribution": "页面注明 UP 主翔林魔主，并分别链接工程 P03 与英雄 P02 原片；赛事原画面版权归对应赛事制作方。",
+    "permissionStatus": "公开来源和归属已记录，未把可访问视为已核实的转载授权。"
+  },
+  "note": "完整原片直接存入用户授权的主仓库 engineer-pov 目录；没有覆盖已有文件。英雄原片为当前公开接口可用的 852×480，工程原片为 1920×1080。网站只描述画面可见的扶正行为。 英雄原片设置菜单遮挡扶正早期，因此仅选菜单关闭后的末段 4.4 s，不能恢复被菜单盖住的画面。"
+}
