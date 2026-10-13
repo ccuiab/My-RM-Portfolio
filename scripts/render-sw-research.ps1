@@ -3,12 +3,12 @@
   [int]$Size = 1200,
   [string]$ViewMatrix = '',
   [switch]$ProbeOnly,
-  [string]$OutputDirectory = 'D:\AI_playground\rm-wt\shared-inputs\swimg',
+  [string]$OutputDirectory = (Join-Path $PSScriptRoot '../materials/documents/derived/audits/swimg/captures'),
   [switch]$Worker,
   [string]$GuardToken = ''
 )
 $ErrorActionPreference = 'Stop'
-$lockPath = 'D:\AI_playground\rm-wt\locks\heavy'
+$lockPath = (Join-Path $PSScriptRoot '../tmp/locks/heavy')
 $ownerPath = Join-Path $lockPath 'swimg-owner.json'
 $archive = 'D:\AI_playground\My-RM-Portfolio\scripts\asset-pipeline-archive'
 $source = if ($Asset -eq 'launcher') {

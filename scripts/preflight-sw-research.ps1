@@ -1,5 +1,5 @@
 ﻿param(
-  [string]$OutputDirectory = 'D:\AI_playground\rm-wt\shared-inputs\swimg',
+  [string]$OutputDirectory = (Join-Path $PSScriptRoot '../materials/documents/derived/audits/swimg/captures'),
   [switch]$WaitForMemory
 )
 $ErrorActionPreference = 'Stop'
@@ -38,7 +38,7 @@ $snapshot | ConvertTo-Json -Depth 6 | Set-Content -Encoding UTF8 -LiteralPath "$
 Write-Output "Source snapshot: $OutputDirectory\source-$stamp.json ($($files.Count) files)"
 if (-not $WaitForMemory) { return }
 
-$lockPath = 'D:\AI_playground\rm-wt\locks\heavy'
+$lockPath = (Join-Path $PSScriptRoot '../tmp/locks/heavy')
 $lockDeadline = (Get-Date).AddMinutes(40)
 $ownsLock = $false
 try {

@@ -37,7 +37,7 @@ function Encode([string[]]$Arguments) {
     if ($LASTEXITCODE -ne 0) { throw 'ffmpeg failed; no successful result is claimed.' }
 }
 function AcquireHeavyLock {
-    $lockPath = 'D:\AI_playground\rm-wt\locks\heavy'
+    $lockPath = (Join-Path $PSScriptRoot '../tmp/locks/heavy')
     $deadline = (Get-Date).AddMinutes(40)
     while ($true) {
         try { New-Item -ItemType Directory $lockPath -ErrorAction Stop | Out-Null; return $lockPath }

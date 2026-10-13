@@ -1,4 +1,4 @@
-param(
+﻿param(
   [string]$InputGlb = 'D:\AI_playground\My-RM-Portfolio\materials\models\derived\inputs\codex\task3_hero_raw.glb',
   [string]$Blender = 'D:\Blender Foundation\Blender 5.1\blender.exe',
   [string]$Audit = "$env:LOCALAPPDATA\Temp\rm-shots\launcher\fourth\render-audit.json",
@@ -9,7 +9,7 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 $worktreeRoot = Split-Path -Parent $PSScriptRoot
-$lockPath = 'D:\AI_playground\rm-wt\locks\heavy'
+$lockPath = (Join-Path $PSScriptRoot '../tmp/locks/heavy')
 $deadline = (Get-Date).AddMinutes(40)
 if ($View.Count -ne 0 -and $View.Count -ne 3) { throw 'View requires three coordinates' }
 while ($true) {
