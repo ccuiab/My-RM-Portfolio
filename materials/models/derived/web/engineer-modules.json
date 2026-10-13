@@ -84,7 +84,7 @@
       "input": "materials/models/derived/inputs/module-models/engineer-swerve-raw.glb",
       "input_sha256": "dcca8cc265cc32e1ffce458ea8ede14cf3b73ee14c97442b4307e4a0685d0ec6",
       "output": "engineer-swerve.glb",
-      "output_sha256": "af46f5e10dae82f1b6c64e7ff3deb7f62b2776b1d7cf61207e76ff8a9ea14c02",
+      "output_sha256": "604540f0206e986a592dcf98e0f7a67f143570ab1d1ccc18a0977ff122cb5fea",
       "source_centre": [
         -0.1724807620048523,
         -0.0029998943209648132,
@@ -92,874 +92,1170 @@
       ],
       "parts": [
         {
-          "node": "engineer_00024",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C-标准滑块.2025.10.1-2",
-          "source_index": 24,
-          "pivot": [
-            -0.019298166036605835,
-            0.005249887704849243,
-            0.05831141769886017
+          "node": "engineer_00061",
+          "source_index": 61,
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0,
+            0.14,
+            0
+          ],
+          "motor_intact": true,
+          "local_translation": [
+            0.04414227604866028,
+            0.09809989482164383,
+            -0.032456204295158386
+          ],
+          "explode_group": "steering",
+          "triangles": 49462,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/MOTOR_M3508_MKIV_III.2025.10.1-1"
+        },
+        {
+          "node": "engineer_00062",
+          "source_index": 62,
+          "local_translation": [
+            0.011686074547469616,
+            0.050999898463487625,
+            0
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            -0.04800000041723251,
-            0.0,
-            0.019999999552965164
+            0,
+            0.065,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "steering",
+          "motor_intact": false,
+          "triangles": 209968,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/STD_Bearing_61814ZZ.2025.10.1-1"
         },
         {
-          "node": "engineer_00025",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C_50mm.2025.10.1-2",
-          "source_index": 25,
-          "pivot": [
-            -0.019298166036605835,
-            0.013999886810779572,
-            0.05831141769886017
-          ],
+          "node": "engineer_00063",
+          "source_index": 63,
           "motion": null,
           "axis_local": [],
           "explode": [
-            -0.02199999988079071,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0.011686074547469616,
+            0.043999895453453064,
+            0
+          ],
+          "explode_group": "fixed",
+          "triangles": 27680,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Steering_outer.2025.10.1-1"
         },
         {
-          "node": "engineer_00026",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C_50mm.2025.10.1-4",
-          "source_index": 26,
-          "pivot": [
-            0.02283109724521637,
-            0.013999886810779572,
-            0.022954300045967102
+          "node": "steering_pinion_from_00035",
+          "source_index": 35,
+          "local_translation": [
+            0.04414227604866028,
+            0.0629998967051506,
+            -0.032456204295158386
           ],
-          "motion": null,
-          "axis_local": [],
-          "explode": [
-            0.02199999988079071,
-            0.0,
-            -0.0
-          ],
-          "motor_intact": false
-        },
-        {
-          "node": "engineer_00027",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C_50mm.2025.10.1-3",
-          "source_index": 27,
-          "pivot": [
-            -0.015740305185317993,
-            0.013999886810779572,
-            -0.02300490438938141
-          ],
-          "motion": null,
-          "axis_local": [],
-          "explode": [
-            -0.02199999988079071,
-            0.0,
-            -0.0
-          ],
-          "motor_intact": false
-        },
-        {
-          "node": "engineer_00028",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C-标准滑块.2025.10.1-3",
-          "source_index": 28,
-          "pivot": [
-            -0.015740305185317993,
-            0.005249887704849243,
-            -0.02300490438938141
-          ],
-          "motion": null,
-          "axis_local": [],
-          "explode": [
-            -0.04800000041723251,
-            0.0,
-            -0.019999999552965164
-          ],
-          "motor_intact": false
-        },
-        {
-          "node": "engineer_00029",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C-标准滑块.2025.10.1-4",
-          "source_index": 29,
-          "pivot": [
-            0.02283109724521637,
-            0.005249887704849243,
-            0.022954300045967102
-          ],
-          "motion": null,
-          "axis_local": [],
-          "explode": [
-            0.04800000041723251,
-            0.0,
-            0.019999999552965164
-          ],
-          "motor_intact": false
-        },
-        {
-          "node": "engineer_00031",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/5x2实心胎_NewGearBox.2025.10.1-1",
-          "source_index": 31,
-          "pivot": [
-            -0.017519235610961914,
-            -0.04800011217594147,
-            0.01765325665473938
-          ],
-          "motion": "roll",
+          "motion": "steering-pinion",
           "axis_local": [
             0,
             1,
             0
           ],
           "explode": [
-            -0.07276871800422668,
-            -2.3632310330867767e-08,
-            0.06107136979699135
+            0,
+            0.14,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "steering",
+          "motor_intact": false,
+          "reconstruction": "CAD node 35 instance; omitted steering pinion, positioned by measured motor axis and gear plane",
+          "triangles": 1648,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/M3508_WithGear_MKIV_III_250409.2025.10.1-1/STD_M3508_Gear_MKIV_III_corrected_250409.2025.10.1-1"
+        },
+        {
+          "node": "engineer_00024",
+          "source_index": 24,
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0,
+            0,
+            0
+          ],
+          "motor_intact": false,
+          "local_translation": [
+            0.030007552355527878,
+            -0.036750003695487976,
+            -0.02749176323413849
+          ],
+          "explode_group": "fixed",
+          "triangles": 916,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C-标准滑块.2025.10.1-2"
+        },
+        {
+          "node": "engineer_00025",
+          "source_index": 25,
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0,
+            0,
+            0
+          ],
+          "motor_intact": false,
+          "local_translation": [
+            0.030007552355527878,
+            -0.028000004589557648,
+            -0.02749176323413849
+          ],
+          "explode_group": "fixed",
+          "triangles": 1228,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C_50mm.2025.10.1-2"
+        },
+        {
+          "node": "engineer_00026",
+          "source_index": 26,
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0,
+            0,
+            0
+          ],
+          "motor_intact": false,
+          "local_translation": [
+            -0.024783596396446228,
+            -0.028000004589557648,
+            -0.032280392944812775
+          ],
+          "explode_group": "fixed",
+          "triangles": 1228,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C_50mm.2025.10.1-4"
+        },
+        {
+          "node": "engineer_00027",
+          "source_index": 27,
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0,
+            0,
+            0
+          ],
+          "motor_intact": false,
+          "local_translation": [
+            -0.030007556080818176,
+            -0.028000004589557648,
+            0.02749176323413849
+          ],
+          "explode_group": "fixed",
+          "triangles": 1228,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C_50mm.2025.10.1-3"
+        },
+        {
+          "node": "engineer_00028",
+          "source_index": 28,
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0,
+            0,
+            0
+          ],
+          "motor_intact": false,
+          "local_translation": [
+            -0.030007556080818176,
+            -0.036750003695487976,
+            0.02749176323413849
+          ],
+          "explode_group": "fixed",
+          "triangles": 916,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C-标准滑块.2025.10.1-3"
+        },
+        {
+          "node": "engineer_00029",
+          "source_index": 29,
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0,
+            0,
+            0
+          ],
+          "motor_intact": false,
+          "local_translation": [
+            -0.024783596396446228,
+            -0.036750003695487976,
+            -0.032280392944812775
+          ],
+          "explode_group": "fixed",
+          "triangles": 916,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C-标准滑块.2025.10.1-4"
+        },
+        {
+          "node": "engineer_00031",
+          "source_index": 31,
+          "motion": "roll",
+          "axis_local": [
+            0.9962025880813599,
+            -7.745183694396474e-08,
+            0.0870659351348877
+          ],
+          "explode": [
+            0.2888987505435943,
+            -2.246103271374977e-08,
+            0.02524912118911743
+          ],
+          "motor_intact": false,
+          "local_translation": [
+            0,
+            -0.09000000357627869,
+            0
+          ],
+          "explode_group": "drive",
+          "triangles": 12634,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/5x2实心胎_NewGearBox.2025.10.1-1"
         },
         {
           "node": "engineer_00034",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/M3508_WithGear_MKIV_III_250409.2025.10.1-1/MOTOR_M3508_MKIV_III_250409.2025.10.1-1",
           "source_index": 34,
-          "pivot": [
-            0.008983910083770752,
-            -0.04800010845065117,
-            -0.004589587450027466
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0,
+            0,
+            0
+          ],
+          "motor_intact": true,
+          "local_translation": [
+            -0.03446861356496811,
+            -0.09000000357627869,
+            -0.0030124783515930176
+          ],
+          "explode_group": "fixed",
+          "triangles": 49490,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/M3508_WithGear_MKIV_III_250409.2025.10.1-1/MOTOR_M3508_MKIV_III_250409.2025.10.1-1"
+        },
+        {
+          "node": "engineer_00035",
+          "source_index": 35,
+          "local_translation": [
+            0.0037855738773941994,
+            -0.09000000357627869,
+            0.000330854207277298
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0.0348670905828476,
+            -2.7108142930387662e-09,
+            0.0030473077297210696
           ],
-          "motor_intact": true
+          "explode_group": "drive",
+          "motor_intact": false,
+          "triangles": 1648,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/M3508_WithGear_MKIV_III_250409.2025.10.1-1/STD_M3508_Gear_MKIV_III_corrected_250409.2025.10.1-1"
+        },
+        {
+          "node": "engineer_00037",
+          "source_index": 37,
+          "local_translation": [
+            -0.0017857905477285385,
+            -0.07139889150857925,
+            0.003204628825187683
+          ],
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0.0717265863418579,
+            -5.576532259965461e-09,
+            0.006268747329711914
+          ],
+          "explode_group": "drive",
+          "motor_intact": false,
+          "triangles": 2086,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/#GearAssembly_250409.2025.10.1-1/STD_DualSpurGear_M0.6xT14_M0.6xT46_MKIV_III_250409.2025.10.1-2"
+        },
+        {
+          "node": "engineer_00038",
+          "source_index": 38,
+          "local_translation": [
+            0.0032874727621674538,
+            -0.09000000357627869,
+            0.00028732046484947205
+          ],
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0.11057848727703094,
+            -8.597153900780086e-09,
+            0.009664318799972534
+          ],
+          "explode_group": "drive",
+          "motor_intact": false,
+          "triangles": 2100,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/#GearAssembly_250409.2025.10.1-1/STD_InternalSpurGear_M0.6xT77_MKIV_III_250409.2025.10.1-1"
+        },
+        {
+          "node": "engineer_00039",
+          "source_index": 39,
+          "local_translation": [
+            5.399249494075775e-05,
+            -0.0964011624455452,
+            -0.01784607023000717
+          ],
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0.0717265863418579,
+            -5.576532259965461e-09,
+            0.006268747329711914
+          ],
+          "explode_group": "drive",
+          "motor_intact": false,
+          "triangles": 2086,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/#GearAssembly_250409.2025.10.1-1/STD_DualSpurGear_M0.6xT14_M0.6xT46_MKIV_III_250409.2025.10.1-1"
+        },
+        {
+          "node": "engineer_00040",
+          "source_index": 40,
+          "local_translation": [
+            -0.002751103602349758,
+            -0.10219995677471161,
+            0.014249656349420547
+          ],
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0.0717265863418579,
+            -5.576532259965461e-09,
+            0.006268747329711914
+          ],
+          "explode_group": "drive",
+          "motor_intact": false,
+          "triangles": 2086,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/#GearAssembly_250409.2025.10.1-1/STD_DualSpurGear_M0.6xT14_M0.6xT46_MKIV_III_250409.2025.10.1-3"
         },
         {
           "node": "engineer_00041",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/CNC_NW_GEARBOX_OutputInterLayer_MKIV_III_250409.2025.10.1-1",
           "source_index": 41,
-          "pivot": [
-            -0.02403011918067932,
-            -0.04800011217594147,
-            0.02311752736568451
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            -0.04800000041723251,
-            -0.03200000151991844,
-            0.02500000037252903
+            0.15939241409301758,
+            -1.2392293911034358e-08,
+            0.013930549621582031
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0.008467723615467548,
+            -0.09000000357627869,
+            0.0007400624454021454
+          ],
+          "explode_group": "drive",
+          "triangles": 4484,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/CNC_NW_GEARBOX_OutputInterLayer_MKIV_III_250409.2025.10.1-1"
         },
         {
           "node": "engineer_00042",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/CNC_NW_GEARBOX_BaseTopCover_MKIV_III_250409.2025.10.1-1",
           "source_index": 42,
-          "pivot": [
-            -0.027860045433044434,
-            -0.04800011217594147,
-            0.026331812143325806
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            -0.04800000041723251,
-            -0.03200000151991844,
-            0.02500000037252903
+            0.18927849173545838,
+            -1.47158490193533e-08,
+            0.016542527675628662
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0.013448734767735004,
+            -0.09000001102685928,
+            0.0011753924190998077
+          ],
+          "explode_group": "drive",
+          "triangles": 3550,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/CNC_NW_GEARBOX_BaseTopCover_MKIV_III_250409.2025.10.1-1"
         },
         {
           "node": "engineer_00043",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/CNC_NW_GEARBOX_BaseMount_MKIV_III_250409.2025.10.1-1",
           "source_index": 43,
-          "pivot": [
-            -0.008710384368896484,
-            -0.04800010845065117,
-            0.010260403156280518
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            -0.04800000041723251,
-            -0.03200000151991844,
-            0.02500000037252903
+            -0.05977215528488159,
+            4.647110216637884e-09,
+            -0.005223956108093262
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            -0.011456330306828022,
+            -0.09000000357627869,
+            -0.0010012537240982056
+          ],
+          "explode_group": "drive",
+          "triangles": 6176,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/CNC_NW_GEARBOX_BaseMount_MKIV_III_250409.2025.10.1-1"
         },
         {
           "node": "engineer_00044",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/CNC_NW_GEARBOX_BaseInterLayer_MKIV_III_250409.2025.10.1-1",
           "source_index": 44,
-          "pivot": [
-            -0.02403011918067932,
-            -0.04800011217594147,
-            0.02311752736568451
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            -0.04800000041723251,
-            -0.03200000151991844,
-            0.02500000037252903
+            0.13448734939098358,
+            -1.045599798743524e-08,
+            0.01175390124320984
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0.008467723615467548,
+            -0.09000000357627869,
+            0.0007400624454021454
+          ],
+          "explode_group": "drive",
+          "triangles": 3594,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/CNC_NW_GEARBOX_BaseInterLayer_MKIV_III_250409.2025.10.1-1"
         },
         {
           "node": "engineer_00045",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/CNC_NW_GEARBOX_OutputBase_MKIV_III_250409.2025.10.1-1",
           "source_index": 45,
-          "pivot": [
-            -0.010242357850074768,
-            -0.04800011217594147,
-            0.011546105146408081
+          "motion": null,
+          "axis_local": [],
+          "explode": [
+            0.2291265952587128,
+            -1.781392249711189e-08,
+            0.02002516508102417
+          ],
+          "motor_intact": false,
+          "local_translation": [
+            -0.00946392398327589,
+            -0.09000000357627869,
+            -0.0008271262049674988
+          ],
+          "explode_group": "drive",
+          "triangles": 1792,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/CNC_NW_GEARBOX_OutputBase_MKIV_III_250409.2025.10.1-1"
+        },
+        {
+          "node": "engineer_00046",
+          "source_index": 46,
+          "local_translation": [
+            -0.004981012083590031,
+            -0.09000000357627869,
+            -0.00043532997369766235
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            -0.04800000041723251,
-            -0.03200000151991844,
-            0.02500000037252903
+            0.2291265952587128,
+            -1.781392249711189e-08,
+            0.02002516508102417
           ],
-          "motor_intact": false
+          "explode_group": "drive",
+          "motor_intact": false,
+          "triangles": 5960,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/STD_BEARING_61712ZZ_MKIV_III_250409.2025.10.1-1"
         },
         {
           "node": "engineer_00047",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/GFB1_NW_Spacer (Recmmonded)_250409.2025.10.1-1",
           "source_index": 47,
-          "pivot": [
-            -0.004114463925361633,
-            -0.04800010845065117,
-            0.0064032673835754395
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            -0.04800000041723251,
-            -0.03200000151991844,
-            0.02500000037252903
+            -0.05977215528488159,
+            4.647110216637884e-09,
+            -0.005223956108093262
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            -0.017433546483516693,
+            -0.09000000357627869,
+            -0.0015236511826515198
+          ],
+          "explode_group": "drive",
+          "triangles": 2080,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/5x2Wheel_with_GearBox.2025.10.1-1/#NW_GEARBOX_MKIV_III_250409.2025.10.1-1/GFB1_NW_Spacer (Recmmonded)_250409.2025.10.1-1"
         },
         {
           "node": "engineer_00048",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/Suspension_downside.2025.10.1-1",
           "source_index": 48,
-          "pivot": [
-            -0.017519235610961914,
-            -0.04800011217594147,
-            0.01765325665473938
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            -0.02500000037252903,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0,
+            -0.09000000357627869,
+            0
+          ],
+          "explode_group": "fixed",
+          "triangles": 17566,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/Suspension_downside.2025.10.1-1"
         },
         {
           "node": "engineer_00049",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C_50mm.2025.10.1-1",
           "source_index": 49,
-          "pivot": [
-            -0.0578695684671402,
-            0.013999886810779572,
-            0.012352213263511658
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            -0.02199999988079071,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0.02478359267115593,
+            -0.028000004589557648,
+            0.032280392944812775
+          ],
+          "explode_group": "fixed",
+          "triangles": 1228,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C_50mm.2025.10.1-1"
         },
         {
           "node": "engineer_00051",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C-标准滑块.2025.10.1-1",
           "source_index": 51,
-          "pivot": [
-            -0.0578695684671402,
-            0.005249887704849243,
-            0.012352213263511658
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            -0.04800000041723251,
-            0.0,
-            0.019999999552965164
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0.02478359267115593,
+            -0.036750003695487976,
+            0.032280392944812775
+          ],
+          "explode_group": "fixed",
+          "triangles": 916,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/MGN7C-标准滑块.2025.10.1-1"
         },
         {
           "node": "engineer_00053",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/Gas_spring_L80_D15.2025.10.1-1/Gas_spring_L80_D15_base.2025.10.1-1",
           "source_index": 53,
-          "pivot": [
-            -0.041264817118644714,
-            0.03949988633394241,
-            0.037581801414489746
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.07500000298023224,
-            0.014999999664723873,
-            -0.02500000037252903
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0.03088228404521942,
+            -0.002500005066394806,
+            0.0026990436017513275
+          ],
+          "explode_group": "fixed",
+          "triangles": 3736,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/Gas_spring_L80_D15.2025.10.1-1/Gas_spring_L80_D15_base.2025.10.1-1"
         },
         {
           "node": "engineer_00054",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/Gas_spring_L80_D15.2025.10.1-1/Gas_spring_L80_D15_pole.2025.10.1-1",
           "source_index": 54,
-          "pivot": [
-            -0.041264817118644714,
-            -0.03950011357665062,
-            0.037581801414489746
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.07500000298023224,
-            0.014999999664723873,
-            -0.02500000037252903
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0.03088228404521942,
+            -0.08150000125169754,
+            0.0026990436017513275
+          ],
+          "explode_group": "fixed",
+          "triangles": 1530,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/Gas_spring_L80_D15.2025.10.1-1/Gas_spring_L80_D15_pole.2025.10.1-1"
         },
         {
           "node": "engineer_00055",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/Suspension_upside.2025.10.1-1",
           "source_index": 55,
-          "pivot": [
-            -0.017519235610961914,
-            -0.04800011217594147,
-            0.01765325665473938
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.02800000086426735,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0,
+            -0.09000000357627869,
+            0
+          ],
+          "explode_group": "fixed",
+          "triangles": 11220,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Suspension_part.2025.10.1-1/Suspension_upside.2025.10.1-1"
         },
         {
           "node": "engineer_00056",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/CNC_photoelectric cell.2025.10.1-1",
           "source_index": 56,
-          "pivot": [
-            -0.017519235610961914,
-            0.06339989602565765,
-            0.01765325665473938
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0,
+            0.021399997174739838,
+            0
+          ],
+          "explode_group": "fixed",
+          "sensor": "optical-target",
+          "triangles": 832,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/CNC_photoelectric cell.2025.10.1-1"
         },
         {
           "node": "engineer_00057",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Steering_inner.2025.10.1-1",
           "source_index": 57,
-          "pivot": [
-            -0.017519235610961914,
-            0.04199989140033722,
-            0.01765325665473938
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.03400000184774399,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0,
+            0,
+            0
+          ],
+          "explode_group": "fixed",
+          "triangles": 14569,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/Steering_inner.2025.10.1-1"
         },
         {
           "node": "engineer_00058",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/CNC_SW_SpurGear_M0.6_T136.2025.10.1-1",
           "source_index": 58,
-          "pivot": [
-            -0.017519235610961914,
-            0.06499989330768585,
-            0.01765325665473938
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.07999999821186066,
-            -0.0
+            0,
+            0.14,
+            0
           ],
-          "motor_intact": false
+          "motor_intact": false,
+          "local_translation": [
+            0,
+            0.022999994456768036,
+            0
+          ],
+          "explode_group": "steering",
+          "triangles": 4016,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/CNC_SW_SpurGear_M0.6_T136.2025.10.1-1"
         },
         {
           "node": "engineer_00059",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/HDW_SlipRing_MC260.2025.10.1-1",
           "source_index": 59,
-          "pivot": [
-            -0.017519235610961914,
-            0.05539989098906517,
-            0.01765325665473938
-          ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
-        },
-        {
-          "node": "engineer_00061",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/MOTOR_M3508_MKIV_III.2025.10.1-1",
-          "source_index": 61,
-          "pivot": [
-            -0.017519235610961914,
-            0.09809989482164383,
-            0.06355325877666473
+          "motor_intact": false,
+          "local_translation": [
+            0,
+            0.013399995863437653,
+            0
           ],
-          "motion": null,
-          "axis_local": [],
-          "explode": [
-            0.0,
-            0.0,
-            -0.0
-          ],
-          "motor_intact": true
-        },
-        {
-          "node": "engineer_00063",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Steering_outer.2025.10.1-1",
-          "source_index": 63,
-          "pivot": [
-            -0.017519235610961914,
-            0.043999895453453064,
-            0.01765325665473938
-          ],
-          "motion": null,
-          "axis_local": [],
-          "explode": [
-            -0.03999999910593033,
-            0.04399999976158142,
-            -0.0
-          ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "sensor": "slip-ring",
+          "triangles": 4640,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_inner.2025.10.1-1/HDW_SlipRing_MC260.2025.10.1-1"
         },
         {
           "node": "engineer_00067",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/R_0603_1608Metric.step-1/R_0603_1608Metric-1.step-1",
           "source_index": 67,
-          "pivot": [
-            -0.04054376482963562,
-            0.07764989137649536,
-            0.005951404571533203
+          "local_translation": [
+            0.019692393781241102,
+            0.07764988873946682,
+            0.024555263772101925
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 244,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/R_0603_1608Metric.step-1/R_0603_1608Metric-1.step-1"
         },
         {
           "node": "engineer_00069",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/D_SMF.step-1/D_SMF-2.step-1",
           "source_index": 69,
-          "pivot": [
-            -0.04119023680686951,
-            0.07764989137649536,
-            0.009471982717514038
+          "local_translation": [
+            0.022638957369436663,
+            0.07764988857783692,
+            0.0225229582362624
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 84,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/D_SMF.step-1/D_SMF-2.step-1"
         },
         {
           "node": "engineer_00071",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/R_0603_1608Metric.step-2/R_0603_1608Metric-1.step-1",
           "source_index": 71,
-          "pivot": [
-            -0.0382600873708725,
-            0.07764989137649536,
-            0.012850463390350342
+          "local_translation": [
+            0.022955987161650593,
+            0.07764988798989564,
+            0.01806207141256299
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 244,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/R_0603_1608Metric.step-2/R_0603_1608Metric-1.step-1"
         },
         {
           "node": "engineer_00073",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical.step-3/JST_BM02B_GHS_TBT.step-1",
           "source_index": 73,
-          "pivot": [
-            -0.053404465317726135,
-            0.07764988392591476,
-            0.017401397228240967
+          "local_translation": [
+            0.03688265180082617,
+            0.07764988952529261,
+            0.025552770879456947
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 484,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical.step-3/JST_BM02B_GHS_TBT.step-1"
         },
         {
           "node": "engineer_00075",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/LED_0603_1608Metric.step-1/LED_0603_1608Metric-1.step-1",
           "source_index": 75,
-          "pivot": [
-            -0.04002177715301514,
-            0.07764988392591476,
-            0.016450315713882446
+          "local_translation": [
+            0.026747171373025513,
+            0.07764988795880756,
+            0.016762315078081423
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 328,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/LED_0603_1608Metric.step-1/LED_0603_1608Metric-1.step-1"
         },
         {
           "node": "engineer_00077",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/Fuse_0603_1608Metric.step-1/Fuse_0603_1608Metric-2.step-1",
           "source_index": 77,
-          "pivot": [
-            -0.04103173315525055,
-            0.07764989137649536,
-            0.011702418327331543
+          "local_translation": [
+            0.02410403904188424,
+            0.07764988840618503,
+            0.02083371575280018
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 244,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/Fuse_0603_1608Metric.step-1/Fuse_0603_1608Metric-2.step-1"
         },
         {
           "node": "engineer_00079",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical.step-1/JST_BM02B_GHS_TBT.step-1",
           "source_index": 79,
-          "pivot": [
-            -0.043072015047073364,
-            0.07764989137649536,
-            -0.007543355226516724
+          "local_translation": [
+            0.011937902437164749,
+            0.07764988996930425,
+            0.035885217843076155
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 484,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical.step-1/JST_BM02B_GHS_TBT.step-1"
         },
         {
           "node": "engineer_00081",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical.step-2/JST_BM02B_GHS_TBT.step-1",
           "source_index": 81,
-          "pivot": [
-            -0.05738532543182373,
-            0.07764989137649536,
-            -0.01022493839263916
+          "local_translation": [
+            0.020162781635397142,
+            0.07764989189733992,
+            0.04790244904521209
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 484,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical.step-2/JST_BM02B_GHS_TBT.step-1"
         },
         {
           "node": "engineer_00083",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/R_0603_1608Metric.step-3/R_0603_1608Metric-1.step-1",
           "source_index": 83,
-          "pivot": [
-            -0.03835293650627136,
-            0.07764989137649536,
-            0.005235269665718079
+          "local_translation": [
+            0.01763688307416439,
+            0.07764988852129912,
+            0.02351249777092148
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 244,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/R_0603_1608Metric.step-3/R_0603_1608Metric-1.step-1"
         },
         {
           "node": "engineer_00085",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/LED_0603_1608Metric.step-2/LED_0603_1608Metric-1.step-1",
           "source_index": 85,
-          "pivot": [
-            -0.034281522035598755,
-            0.07764989137649536,
-            0.002592131495475769
+          "local_translation": [
+            0.012888978046929067,
+            0.07764988820548069,
+            0.022502563074401787
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 328,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/LED_0603_1608Metric.step-2/LED_0603_1608Metric-1.step-1"
         },
         {
           "node": "engineer_00087",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/R_0603_1608Metric.step-4/R_0603_1608Metric-1.step-1",
           "source_index": 87,
-          "pivot": [
-            -0.04111778736114502,
-            0.07764989137649536,
-            0.007337212562561035
+          "local_translation": [
+            0.021078208983787428,
+            0.07764988871479961,
+            0.023981240683197035
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 244,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/R_0603_1608Metric.step-4/R_0603_1608Metric-1.step-1"
         },
         {
           "node": "engineer_00089",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/R_0603_1608Metric.step-5/R_0603_1608Metric-1.step-1",
           "source_index": 89,
-          "pivot": [
-            -0.03558129072189331,
-            0.07764989137649536,
-            0.0063833147287368774
+          "local_translation": [
+            0.016488831193930742,
+            0.07764988810500975,
+            0.020740853430684318
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 244,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/R_0603_1608Metric.step-5/R_0603_1608Metric-1.step-1"
         },
         {
           "node": "engineer_00091",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical.step-6/JST_BM02B_GHS_TBT.step-1",
           "source_index": 91,
-          "pivot": [
-            -0.0654216855764389,
-            0.07764988392591476,
-            0.009176522493362427
+          "local_translation": [
+            0.03956424953855664,
+            0.07764989155199761,
+            0.039866102990848244
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 484,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical.step-6/JST_BM02B_GHS_TBT.step-1"
         },
         {
           "node": "engineer_00093",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM07B-GHS-TBT_1x07-1MP_P1.25mm_Vertical.step-1/JST_BM07B_GHS_TBT.step-1",
           "source_index": 93,
-          "pivot": [
-            -0.06417515873908997,
-            0.07764989137649536,
-            -0.0016722828149795532
+          "local_translation": [
+            0.031011564615998632,
+            0.0776498921409571,
+            0.046655913474828094
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 1138,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM07B-GHS-TBT_1x07-1MP_P1.25mm_Vertical.step-1/JST_BM07B_GHS_TBT.step-1"
         },
         {
           "node": "engineer_00095",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/CP_Radial_D8.0mm_P3.50mm.step-1/CP_Radial_D80mm_P350mm.step-1",
           "source_index": 95,
-          "pivot": [
-            -0.05045798420906067,
-            0.07764989137649536,
-            0.004009559750556946
+          "local_translation": [
+            0.025329733674887278,
+            0.0776498900806967,
+            0.03293875065208957
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 7590,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/CP_Radial_D8.0mm_P3.50mm.step-1/CP_Radial_D80mm_P350mm.step-1"
         },
         {
           "node": "engineer_00097",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical.step-5/JST_BM02B_GHS_TBT.step-1",
           "source_index": 97,
-          "pivot": [
-            -0.049539148807525635,
-            0.07764989137649536,
-            -0.010222136974334717
+          "local_translation": [
+            0.014616684455286022,
+            0.07764989094064406,
+            0.042352374203417704
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 484,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical.step-5/JST_BM02B_GHS_TBT.step-1"
         },
         {
           "node": "engineer_00098",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/Swerve_Drive_Board_PCB.step-1",
           "source_index": 98,
-          "pivot": [
-            -0.15965604782104492,
-            0.07599989324808121,
-            0.09948918223381042
+          "local_translation": [
+            0.17005871515721088,
+            0.0759998969733715,
+            0.04263914003968238
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 6536,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/Swerve_Drive_Board_PCB.step-1"
         },
         {
           "node": "engineer_00100",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/SOT-23.step-1/SOT_23.step-1",
           "source_index": 100,
-          "pivot": [
-            -0.03663367033004761,
-            0.07764989137649536,
-            0.008923977613449097
+          "local_translation": [
+            0.019029494693078686,
+            0.07764988805978643,
+            0.019688476817288046
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 472,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/SOT-23.step-1/SOT_23.step-1"
         },
         {
           "node": "engineer_00102",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/R_0603_1608Metric.step-6/R_0603_1608Metric-1.step-1",
           "source_index": 102,
-          "pivot": [
-            -0.03875204920768738,
-            0.07764989137649536,
-            0.007505327463150024
+          "local_translation": [
+            0.0195242707813838,
+            0.07764988841491657,
+            0.02218951956297934
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 244,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/R_0603_1608Metric.step-6/R_0603_1608Metric-1.step-1"
         },
         {
           "node": "engineer_00104",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical.step-4/JST_BM02B_GHS_TBT.step-1",
           "source_index": 104,
-          "pivot": [
-            -0.059871599078178406,
-            0.07764988392591476,
-            0.014722615480422974
+          "local_translation": [
+            0.039561433818947445,
+            0.07764989049663243,
+            0.03201992723979854
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 484,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/JST_GH_BM02B-GHS-TBT_1x02-1MP_P1.25mm_Vertical.step-4/JST_BM02B_GHS_TBT.step-1"
         },
         {
           "node": "engineer_00106",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/D_SMC.step-1/D_SMC-5.step-1",
           "source_index": 106,
-          "pivot": [
-            -0.06302031874656677,
-            0.07594988495111465,
-            -0.0011939257383346558
+          "local_translation": [
+            0.0305332111194635,
+            0.07594989207305852,
+            0.04550106515331038
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 212,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/D_SMC.step-1/D_SMC-5.step-1"
         },
         {
           "node": "engineer_00108",
-          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/C_0603_1608Metric.step-1/C_0603_1608Metric-4.step-1",
           "source_index": 108,
-          "pivot": [
-            -0.037686049938201904,
-            0.07764989137649536,
-            0.011464640498161316
+          "local_translation": [
+            0.02157015819222663,
+            0.07764988801456313,
+            0.018636100203891746
           ],
           "motion": null,
           "axis_local": [],
           "explode": [
-            0.0,
-            0.0,
-            -0.0
+            0,
+            0,
+            0
           ],
-          "motor_intact": false
+          "explode_group": "fixed",
+          "motor_intact": false,
+          "sensor": "optical-pcb",
+          "triangles": 332,
+          "source": "3508_3508_Swerve_drive_v2.2025.10.1-3/Swerve_outer.2025.10.1-1/Swerve_Drive_Board.2025.10.1-1/Swerve_Drive_Board.step-1/C_0603_1608Metric.step-1/C_0603_1608Metric-4.step-1"
         }
-      ]
+      ],
+      "explosion_policy": "scripts/swerve_explosion.py",
+      "metadata_source": "Actual GLB extras; translations are relative to the GLB parent, not world pivots.",
+      "geometry_buffer_sha256": "bb641d901f322f0e5cc5034de0ec9c2c2f55579a8f30bb9e868b05f19fba18b4",
+      "optical_detection": {
+        "source": "materials/models/derived/inputs/codex/engineer_tagged.glb",
+        "pcb_assembly_root": 64,
+        "pcb_anchor": 98,
+        "slip_ring": 59,
+        "cnc_target": 56,
+        "identification": "User identified the PCB and CNC aluminium optical-detection target on 2026-10-13. No individual sensor package, homing function or trigger angle inferred."
+      }
     }
   }
 }

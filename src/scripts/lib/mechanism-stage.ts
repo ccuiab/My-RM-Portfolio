@@ -56,9 +56,19 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   canvas.tabIndex = 0;
   const bounds = new THREE.Box3().setFromObject(model, true);
   const sphere = bounds.getBoundingSphere(new THREE.Sphere());
+  // The exploded wheel stack is asymmetric. Its bounds center is a framing
+  // aid, never the physical axis about which the complete module turns.
+  let steeringAxisOrigin: THREE.Vector3 | undefined;
+  if (isSwerve) model.traverse(object => {
+    if (object.userData.web_motion === 'steer') steeringAxisOrigin = object.getWorldPosition(new THREE.Vector3());
+  });
+  const centerOnSteeringAxis = (center: THREE.Vector3) => {
+    if (steeringAxisOrigin) { center.x = steeringAxisOrigin.x; center.z = steeringAxisOrigin.z; }
+    return center;
+  };
   // View the linkage across the transparent pump head, with both ports at right.
-  const initialDirection = (isPump ? new THREE.Vector3(.2, -1, .35) : new THREE.Vector3(1, .55, 1.6)).normalize();
-  let radius = sphere.radius * 1.13;
+  const initialDirection = (isPump ? new THREE.Vector3(.2, -1, .35) : new THREE.Vector3(.65, .65, 1.8)).normalize();
+  let radius = sphere.radius * (isSwerve ? 1 : 1.13);
   controls.target.copy(sphere.center);
   // Spherical uses Y up. Match OrbitControls' Z-up frame for the pump only.
   const pumpOrbitFrame = new THREE.Quaternion().setFromUnitVectors(camera.up, new THREE.Vector3(0, 1, 0));
@@ -76,6 +86,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   let fitDistance = 0;
   let zoomFactor = 1;
   let inspection: Set<THREE.Mesh> | undefined;
+  let inspectionKey: string | undefined;
   let inspectionBlend = 0;
   const inspectionMaterials = new Map<THREE.Material, { opacity: number; transparent: boolean; depthWrite: boolean }>();
   const corners: { mesh: THREE.Mesh; point: THREE.Vector3 }[] = [];
@@ -86,14 +97,15 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     const { min, max } = mesh.geometry.boundingBox!;
     for (const x of [min.x, max.x]) for (const y of [min.y, max.y]) for (const z of [min.z, max.z]) corners.push({ mesh, point: new THREE.Vector3(x, y, z) });
   });
+  let swerveEnvelope: THREE.Vector3[] | undefined;
   const fit = (reset = false) => {
     if (reset) zoomFactor = 1;
     direction.copy(camera.position).sub(controls.target);
     if (!direction.lengthSq()) direction.copy(initialDirection);
     direction.normalize();
     model.updateMatrixWorld(true);
-    const points = corners.map(({ mesh, point }) => point.clone().applyMatrix4(mesh.matrixWorld));
-    const center = new THREE.Box3().setFromPoints(points).getCenter(new THREE.Vector3());
+    const points = swerveEnvelope && !inspectionBlend ? swerveEnvelope : corners.map(({ mesh, point }) => point.clone().applyMatrix4(mesh.matrixWorld));
+    const center = centerOnSteeringAxis(new THREE.Box3().setFromPoints(points).getCenter(new THREE.Vector3()));
     const vertical = THREE.MathUtils.degToRad(camera.fov / 2);
     const horizontal = Math.atan(Math.tan(vertical) * camera.aspect);
     const right = new THREE.Vector3().crossVectors(camera.up, direction).normalize();
@@ -104,7 +116,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       for (const point of occupied) {
         const p = point.clone().sub(origin).multiplyScalar(radius / sphere.radius);
         const depth = p.dot(direction);
-        distance = Math.max(distance, depth + Math.abs(p.dot(right)) / (Math.tan(horizontal) * .86), depth + Math.abs(p.dot(up)) / (Math.tan(vertical) * .8));
+        distance = Math.max(distance, depth + Math.abs(p.dot(right)) / (Math.tan(horizontal) * (isSwerve ? .9 : .86)), depth + Math.abs(p.dot(up)) / (Math.tan(vertical) * (isSwerve ? .9 : .8)));
       }
       return distance;
     };
@@ -141,26 +153,27 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   });
   // Cache anchors in each original part's local frame. They follow both the
   // explosion and the steering parent, without moving a label onto the mesh.
-  const swerveKeys = ['steering-input', 'steering-output', 'rail', 'gas-spring', 'drive-input', 'drive-compound', 'drive-output'];
+  const swerveKeys = ['steering-input', 'steering-output', 'rail', 'gas-spring', 'drive-input', 'drive-compound', 'drive-output', 'slip-ring', 'optical-pcb', 'optical-target'];
   const swerveAnchors = isSwerve ? swerveKeys.map(key => {
     let part: THREE.Object3D | undefined;
     model.traverse(object => {
       if (part) return;
       const data = object.userData;
-      if (data.web_transmission === key || (data.web_suspension === key && data.source_node_index === (key === 'rail' ? 25 : 53))) part = object;
+      if (data.web_transmission === key || (data.web_suspension === key && data.source_node_index === (key === 'rail' ? 25 : 53)) ||
+          (data.web_sensor === key && (key !== 'optical-pcb' || data.source_node_index === 98))) part = object;
     });
     if (!part) return undefined;
     const point = part.worldToLocal(new THREE.Box3().setFromObject(part).getCenter(new THREE.Vector3()));
     return { part, point };
   }) : [];
   const restoreInspectionMaterials = () => {
-    for (const [material, saved] of inspectionMaterials) { Object.assign(material, saved); material.needsUpdate = true; }
+    for (const [material, saved] of inspectionMaterials) { Object.assign(material, material.userData.motionAppearance ?? saved); material.needsUpdate = true; }
     inspectionMaterials.clear();
   };
   const updateInspectionMaterials = () => {
     if (inspectionBlend < .0001) { restoreInspectionMaterials(); return; }
     for (const [material, saved] of inspectionMaterials) {
-      material.opacity = THREE.MathUtils.lerp(saved.opacity, .025, inspectionBlend);
+      material.opacity = THREE.MathUtils.lerp(material.userData.motionAppearance?.opacity ?? saved.opacity, inspectionKey === 'optical-pcb' ? .006 : .025, inspectionBlend);
       if (!material.transparent) { material.transparent = true; material.needsUpdate = true; }
       material.depthWrite = false;
     }
@@ -197,15 +210,15 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       material.emissive.copy(amber); material.emissiveIntensity = .85;
     }
     let namedPart: THREE.Object3D | null = hit;
-    if (isSwerve) while (namedPart && !namedPart.userData.web_transmission && !namedPart.userData.web_suspension) namedPart = namedPart.parent;
-    const key = namedPart?.userData.web_transmission ?? namedPart?.userData.web_suspension;
+    if (isSwerve) while (namedPart && !namedPart.userData.web_transmission && !namedPart.userData.web_suspension && !namedPart.userData.web_sensor) namedPart = namedPart.parent;
+    const key = namedPart?.userData.web_transmission ?? namedPart?.userData.web_suspension ?? namedPart?.userData.web_sensor;
     const caption = isSwerve && key ? canvas.closest('[data-mechanism]')?.querySelectorAll('[data-mechanism-annotation]')[swerveKeys.indexOf(key)]?.textContent : undefined;
     label.textContent = caption || cleanPartName(source?.split('/').pop() ?? hit.name);
     label.hidden = false;
   };
   const render = (fitView = true) => {
     if (!canRender()) return;
-    if (fitView) fit();
+    if (fitView && (!isSwerve || inspectionBlend > 0)) fit();
     updateInspectionMaterials();
     model.updateMatrixWorld(true);
     updateHover();
@@ -250,6 +263,24 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   return {
     scene, model, camera, controls, amber, sphere,
     render, fitView: fit,
+    reserveSwerveView(sample: (time: number, amount: number) => void, period: number) {
+      if (!isSwerve) return;
+      swerveEnvelope = [];
+      for (const amount of [0, 1]) for (let i = 0; i < 16; i++) {
+        sample(period * i / 16, amount); model.updateMatrixWorld(true);
+        for (const { mesh, point } of corners) swerveEnvelope.push(point.clone().applyMatrix4(mesh.matrixWorld));
+      }
+      // Reserve the entire orbit once, avoiding camera breathing as it turns.
+      const envelopeBounds = new THREE.Box3().setFromPoints(swerveEnvelope);
+      const center = centerOnSteeringAxis(envelopeBounds.getCenter(new THREE.Vector3()));
+      const radius = Math.max(...swerveEnvelope.map(p => Math.hypot(p.x - center.x, p.z - center.z)));
+      swerveEnvelope = [];
+      for (const y of [envelopeBounds.min.y, envelopeBounds.max.y]) for (let i = 0; i < 64; i++) {
+        const a = i * Math.PI * 2 / 64;
+        swerveEnvelope.push(new THREE.Vector3(center.x + radius * Math.cos(a), y, center.z + radius * Math.sin(a)));
+      }
+      sample(0, 0); fit(true);
+    },
     onSwerveViewChange(listener: () => void) { if (isSwerve) swerveViewChange = listener; },
     onPumpViewChange(listener: () => void) { if (isPump) pumpViewChange = listener; },
     swerveAnchors() {
@@ -288,14 +319,15 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     setRadius(value: number) { radius = value; fit(); },
     inspect(transmissions: string[]) {
       clearHover(); restoreInspectionMaterials();
+      inspectionKey = transmissions[0];
       const groups: THREE.Object3D[] = [];
       inspection = new Set();
       model.traverse(object => {
-        if (!transmissions.includes(object.userData.web_transmission) && !(isSwerve && transmissions.includes(object.userData.web_suspension))) return;
+        if (!transmissions.includes(object.userData.web_transmission) && !(isSwerve && (transmissions.includes(object.userData.web_suspension) || transmissions.includes(object.userData.web_sensor)))) return;
         groups.push(object);
         object.traverse(child => { if ((child as THREE.Mesh).isMesh) inspection!.add(child as THREE.Mesh); });
       });
-      if (!inspection.size) { inspection = undefined; return; }
+      if (!inspection.size) { inspection = undefined; inspectionKey = undefined; inspectionBlend = 0; return; }
       inspectionBlend = 1; zoomFactor = 1;
       for (const mesh of meshes) {
         if (inspection.has(mesh)) continue;
@@ -310,12 +342,33 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
         side.addScaledVector(camera.up, -side.dot(camera.up)).normalize().addScaledVector(camera.up, isSwerve ? 2.2 : .8).normalize();
         camera.position.copy(controls.target).add(side);
       }
+      if (isSwerve && transmissions.includes('optical-pcb')) {
+        const pcb = groups.find(group => group.userData.source_node_index === 98);
+        const ring = groups.find(group => group.userData.web_sensor === 'slip-ring');
+        if (pcb && ring) {
+          // View obliquely from the board's side, showing the adjacent target
+          // and central ring without changing any original part placement.
+          const boardCenter = new THREE.Box3().setFromObject(pcb).getCenter(new THREE.Vector3());
+          const ringCenter = new THREE.Box3().setFromObject(ring).getCenter(new THREE.Vector3());
+          const side = boardCenter.sub(ringCenter); side.addScaledVector(camera.up, -side.dot(camera.up));
+          if (side.lengthSq() < 1e-8) side.copy(initialDirection);
+          side.normalize().applyAxisAngle(camera.up, -.6).addScaledVector(camera.up, .7).normalize();
+          camera.position.copy(controls.target).add(side);
+        }
+      }
       fit(true); render();
     },
-    isInspecting: () => inspectionBlend > .5,
+    isInspecting: (key?: string) => inspectionBlend > .5 && (!key || key === inspectionKey),
     autoOrbit(dt: number, time: number, weight: number) {
+      if (isSwerve) {
+        if (inspectionBlend > .0001) return;
+        const s = new THREE.Spherical().setFromVector3(orbitOffset());
+        s.theta += dt * Math.PI * 2 / 40 * weight;
+        placeOrbit(s); camera.lookAt(controls.target);
+        return;
+      }
       const s = new THREE.Spherical().setFromVector3(orbitOffset());
-      s.theta += dt * Math.PI * 2 / 40 * weight;
+      s.theta += dt * Math.PI * 2 / (isPump ? 47 : 40) * weight;
       const goal = Math.acos(isPump ? initialDirection.z : initialDirection.y) + Math.sin(time * Math.PI * 2 / 24) * THREE.MathUtils.degToRad(8);
       s.phi += (goal - s.phi) * (1 - Math.exp(-dt * weight * 1.5));
       // Restore a complete view gradually after a user's close inspection.
@@ -324,7 +377,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       placeOrbit(s);
       camera.lookAt(controls.target);
     },
-    resetView() { inspection = undefined; inspectionBlend = 0; restoreInspectionMaterials(); camera.position.copy(controls.target).add(initialDirection); fit(true); controls.update(); render(); },
+    resetView() { inspection = undefined; inspectionKey = undefined; inspectionBlend = 0; restoreInspectionMaterials(); camera.position.copy(controls.target).add(initialDirection); fit(true); controls.update(); render(); },
     dispose() {
       events.abort(); resizeObserver.disconnect(); controls.dispose(); clearHover();
       const geometries = new Set<THREE.BufferGeometry>();

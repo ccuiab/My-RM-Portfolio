@@ -16,6 +16,8 @@ import tempfile
 import bpy
 import bmesh
 from mathutils import Vector, Matrix
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from swerve_explosion import DRIVE_LAYERS, explosion_metadata, sensor_metadata
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--input-root', required=True)
@@ -87,6 +89,7 @@ def palette():
              'alu_silver': ([.54, .58, .62, 1], .85, .29),
              'carbon': ([.018, .022, .028, 1], .18, .47),
              'print_black': ([.032, .036, .042, 1], 0, .68),
+             'pcb_carbon_blue': ([.035, .065, .09, 1], .05, .55),
              'rubber': ([.023, .026, .031, 1], 0, .82)}
     result = {}
     for name, (color, metal, rough) in specs.items():
@@ -135,18 +138,20 @@ for role in ('pump', 'swerve'):
     meshes = [o for o in bpy.data.objects if o.type == 'MESH']
     excluded = []
     if role == 'swerve':
-        # Control-board electronics do not explain either reduction path.
-        # Keep suspension and mechanical homing hardware, grouped at assembly.
+        # Keep the original optical-detection PCB assembly (64..108), including
+        # its components. Node 50 is the unrelated motor ESC.
         for obj in list(meshes):
             idx = obj.get('source_node_index', -1)
-            if idx == 50 or idx >= 64:
+            if idx == 50:
                 excluded.append(obj.get('source_node_name', obj.name))
                 meshes.remove(obj); bpy.data.objects.remove(obj, do_unlink=True)
     nodes = {o.get('source_node_index'): o for o in bpy.data.objects}
     orient = Matrix.Rotation(-math.pi / 2, 4, 'Z') if role == 'pump' else Matrix.Identity(4)
     worlds = {o: orient @ o.matrix_world for o in meshes}
     # Keep the existing centred web frames: swerve +Y up, pump +Z up.
-    points = [worlds[o] @ v.co for o in meshes for v in o.data.vertices]
+    # Preserve the established coordinate frame when restoring the PCB.
+    frame_meshes = [o for o in meshes if role != 'swerve' or not 64 <= o.get('source_node_index', -1) <= 108]
+    points = [worlds[o] @ v.co for o in frame_meshes for v in o.data.vertices]
     minimum = Vector([min(p[i] for p in points) for i in range(3)])
     maximum = Vector([max(p[i] for p in points) for i in range(3)])
     centre = (minimum + maximum) / 2
@@ -237,7 +242,10 @@ for role in ('pump', 'swerve'):
         obj.data = obj.data.copy()
         slots = max(1, len(obj.data.materials))
         obj.data.materials.clear()
-        for _ in range(slots): obj.data.materials.append(materials[material_class(src)])
+        material_name = material_class(src)
+        if role == 'swerve' and 64 <= obj.get('source_node_index', -1) <= 108:
+            material_name = 'pcb_carbon_blue' if obj.get('source_node_index') == 98 else 'alu_silver'
+        for _ in range(slots): obj.data.materials.append(materials[material_name])
         bm = bmesh.new(); bm.from_mesh(obj.data)
         bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=0.0000005)
         bmesh.ops.dissolve_degenerate(bm, edges=list(bm.edges), dist=0.0000001)
@@ -282,31 +290,13 @@ for role in ('pump', 'swerve'):
                 obj['web_motion'] = 'bearing-inner' if obj == bearing_inner else 'bearing-outer'
         else:
             wheel_axis = (worlds[nodes[31]].to_3x3() @ Vector((0, 0, 1))).normalized()
-            # Native rail/carriage origins verify the suspension sliding axis.
-            # Keep all four rail/carriage pairs together as one explosion level.
-            rail_axis = (worlds[nodes[25]].translation - worlds[nodes[24]].translation).normalized()
             rail_nodes = (24, 25, 26, 27, 28, 29, 49, 51)
             spring_nodes = (53, 54)
-            layers = {35: .035, 37: .072, 39: .072, 40: .072, 38: .111,
-                      41: .143, 42: -.037, 43: -.06, 44: -.087,
-                      45: .168, 46: .168, 47: -.06, 31: .21}
-            if idx in layers: offset = wheel_axis * layers[idx]
-            elif idx == 58: offset = Vector((0, 0, .18))
-            elif idx == 62: offset = Vector((0, 0, .065))
-            # Both complete motors and the outer frame retain their CAD pose.
-            if idx in layers and idx != 31: offset += Vector((0, 0, .052))
+            layers = DRIVE_LAYERS
             if idx in rail_nodes:
-                # Small motion along the verified slide axis within one layer.
-                offset = Vector((0, 0, .13)) - rail_axis * (.012 if idx in (24, 28, 29, 51) else .006)
                 obj['web_suspension'] = 'rail'
             elif idx in spring_nodes:
-                # Translate the original cylinder and rod by the same vector:
-                # this is the complete CAD spring, never a cutaway or extension.
-                offset = Vector((.015, 0, .13))
                 obj['web_suspension'] = 'gas-spring'
-            # One axial translation preserves the steering gears' centre
-            # distance, common tooth plane and relative mesh phase.
-            if obj == pinion: offset = Vector((0, 0, .18))
             if idx == 31:
                 obj['web_motion'] = 'roll'
                 obj['web_axis'] = web_vector(wheel_axis)
@@ -316,13 +306,18 @@ for role in ('pump', 'swerve'):
             if idx == 58: obj['web_gear_teeth'] = counts['large']['teeth']
             if idx in (35, 39, 38, 58, 25, 53): obj['web_guide'] = True
             obj['web_structure'] = obj != pinion and idx not in layers and idx not in (58, 62) + rail_nodes + spring_nodes and not obj['web_motor_intact']
-            obj['web_explode'] = web_vector(offset)
+            for key, value in explosion_metadata(idx, obj == pinion, web_vector(wheel_axis)).items():
+                obj[key] = value
+            for key, value in sensor_metadata(idx).items():
+                obj[key] = value
         obj['web_motor_intact'] = 'MOTOR_' in src or 'DJ_M3508' in src
         # Keep original, auditable node names and component origins.
         records.append({'node': obj.name, 'source': src, 'source_index': idx,
                         'pivot': web_vector(world.translation),
                         'motion': obj.get('web_motion'), 'axis_local': list(obj.get('web_axis', [])),
                         'explode': list(obj.get('web_explode', [])),
+                        'explode_group': obj.get('web_explode_group'),
+                        'sensor': obj.get('web_sensor'),
                         'motor_intact': bool(obj['web_motor_intact'])})
         records[-1]['triangles'] = sum(len(p.vertices) - 2 for p in obj.data.polygons)
     for obj in list(bpy.data.objects):

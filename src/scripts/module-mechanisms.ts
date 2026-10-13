@@ -2,8 +2,8 @@ import type { MechanismStage } from './lib/mechanism-stage';
 import type { ModuleMotion } from './module-motion';
 import { mountViewportScene } from './lib/viewport-scene';
 
-/** Both rails live outside the canvas. Sort endpoints vertically on each side
- * so the leaders and labels remain readable from any orbit angle. */
+/** Labels live outside the canvas. Pump valves share the right-hand rail;
+ * sort endpoints vertically so the leaders stay readable while orbiting. */
 function layoutMechanismAnnotations(root: HTMLElement, points: { x: number; y: number; visible: boolean }[], show: boolean) {
   const holder = root.querySelector<HTMLElement>('[data-mechanism-canvas]')!;
   const view = root.querySelector<HTMLElement>('[data-mechanism-view]')!;
@@ -21,9 +21,11 @@ function layoutMechanismAnnotations(root: HTMLElement, points: { x: number; y: n
     return [{ item, index, x: canvas.left - frame.left + point.x / 100 * canvas.width,
       y: canvas.top - frame.top + point.y / 100 * canvas.height }];
   }).sort((a, b) => a.x - b.x || a.index - b.index);
-  // Balanced columns guarantee enough room even at the smallest desktop size.
+  // Swerve uses balanced columns; both pump valves stay on the same side.
   const middle = Math.ceil(rows.length / 2);
-  for (const [side, group] of [['left', rows.slice(0, middle)], ['right', rows.slice(middle)]] as const) {
+  const columns = root.dataset.mechanism === 'pump' ? [['right', rows]] as const
+    : [['left', rows.slice(0, middle)], ['right', rows.slice(middle)]] as const;
+  for (const [side, group] of columns) {
     group.sort((a, b) => a.y - b.y || a.index - b.index);
     // A shared inner lane preserves endpoint order before the final horizontal
     // legs. Different anchor depths can otherwise make diagonal leaders cross.
@@ -42,9 +44,7 @@ function layoutMechanismAnnotations(root: HTMLElement, points: { x: number; y: n
       const center = y + heights[index] / 2;
       const leader = leaders[row.index];
       leader?.removeAttribute('hidden');
-      leader?.querySelector('path')?.setAttribute('d', root.dataset.mechanism === 'swerve'
-        ? `M ${edge} ${center} H ${elbow} L ${innerLane} ${row.y} H ${row.x}`
-        : `M ${edge} ${center} H ${elbow} L ${row.x} ${row.y}`);
+      leader?.querySelector('path')?.setAttribute('d', `M ${edge} ${center} H ${elbow} L ${innerLane} ${row.y} H ${row.x}`);
       const dot = leader?.querySelector('circle'); dot?.setAttribute('cx', String(row.x)); dot?.setAttribute('cy', String(row.y));
       next = y + heights[index] + gap;
     });
@@ -52,7 +52,10 @@ function layoutMechanismAnnotations(root: HTMLElement, points: { x: number; y: n
 }
 
 export function layoutSwerveAnnotations(root: HTMLElement, stage: MechanismStage, amount: number, phase: string) {
-  layoutMechanismAnnotations(root, stage.swerveAnchors(), amount >= .72 && (phase === 'opening' || phase === 'exploded'));
+  const demo = phase === 'articulation';
+  const points = stage.swerveAnchors().map((point, index) => ({ ...point,
+    visible: point.visible && (stage.isInspecting('optical-pcb') || (demo ? index < 4 : (index < 2 || index >= 7 ? amount > .12 : index < 4 ? amount > .3 : amount > .48))) }));
+  layoutMechanismAnnotations(root, points, stage.isInspecting('optical-pcb') || demo || amount > .02);
 }
 
 export function layoutPumpAnnotations(root: HTMLElement, motion: ModuleMotion) {
@@ -69,6 +72,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
   const output = root.querySelector<HTMLOutputElement>('[data-explode-output]');
   const buttons = [...root.querySelectorAll<HTMLButtonElement>('[data-explode-to]')];
   const detail = root.querySelector<HTMLButtonElement>('[data-steering-detail]');
+  const sensorDetail = root.querySelector<HTMLButtonElement>('[data-sensor-detail]');
   const annotations = [...root.querySelectorAll<HTMLElement>('[data-mechanism-annotation]')];
   const phaseLabel = root.querySelector<HTMLElement>('[data-cycle-label]');
   let stage: MechanismStage | undefined, motion: ModuleMotion | undefined;
@@ -89,12 +93,22 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
   };
   const draw = () => {
     if (!visible || !stage || !motion) return;
-    motion.update(elapsed, explode);
+    const presentation = cycle?.swervePresentation(phaseTime);
+    const isSwerve = root.dataset.mechanism === 'swerve';
+    motion.update(isSwerve ? presentation!.motionTime : elapsed, explode, isSwerve && explode < .0001 ? presentation : undefined);
+    if (isSwerve) {
+      root.dataset.suspensionOffset = String(explode < .0001 ? presentation!.suspension : 0);
+      root.dataset.steeringDemoAngle = String(explode < .0001 ? presentation!.steering : 0);
+      root.dataset.presentationTime = String(phaseTime);
+    }
     root.dataset.motionTime = elapsed.toFixed(3);
     if (root.dataset.mechanism === 'pump') {
       const info = motion.diagnostics();
-      root.dataset.crankAngle = ((elapsed * 2.8) % (Math.PI * 2)).toFixed(3);
+      root.dataset.crankAngle = info.crankAngle.toFixed(3);
+      root.dataset.pumpSpeedMultiplier = info.speedMultiplier.toFixed(3); root.dataset.pumpSpeedPhase = info.speedPhase;
+      root.style.setProperty('--pump-annotation-opacity', info.annotationOpacity.toFixed(4));
       root.dataset.pumpStroke = info.stroke;
+      root.dataset.pumpGhostAmount = info.ghostAmount.toFixed(3); root.dataset.pumpGhostPhase = info.ghostPhase;
       root.dataset.inletOpen = String(info.inletOpen); root.dataset.outletOpen = String(info.outletOpen);
       root.dataset.rodError = String(info.rodError); root.dataset.sliderError = String(info.sliderError);
       root.dataset.bearingError = String(info.bearingError); root.dataset.pistonSwing = String(info.swing);
@@ -106,8 +120,11 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       });
     }
     stage.render();
-    detail?.setAttribute('aria-pressed', String(stage.isInspecting()));
+    detail?.setAttribute('aria-pressed', String(stage.isInspecting('steering-input')));
+    sensorDetail?.setAttribute('aria-pressed', String(stage.isInspecting('optical-pcb')));
+    root.dataset.inspection = stage.isInspecting('optical-pcb') ? 'optical-pcb' : stage.isInspecting('steering-input') ? 'steering-input' : 'none';
     root.dataset.cameraPosition = JSON.stringify(stage.camera.position.toArray());
+    root.dataset.orbitTarget = JSON.stringify(stage.controls.target.toArray());
     root.dataset.screenBounds = JSON.stringify(stage.screenBounds());
   };
   const stop = () => { cancelAnimationFrame(frame); frame = 0; previous = 0; root.dataset.rendering = 'false'; };
@@ -116,6 +133,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
     if (!visible || !stage || !cycle) return;
     const dt = previous ? Math.min((now - previous) / 1000, .1) : 0;
     previous = now;
+    const previousExplode = explode;
     const automatic = playing && !holding && now - lastInteraction >= 5000;
     root.dataset.autoState = automatic ? 'playing' : playing ? 'interaction' : 'paused';
     if (automatic) {
@@ -128,10 +146,11 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       elapsed += dt * weight;
       if (root.dataset.mechanism === 'swerve') {
         phaseTime += dt * weight;
-        const sample = cycle.explosionCycle(phaseTime);
+        const sample = cycle.swervePresentation(phaseTime);
         explode = sample.amount; target = explode; phase = sample.phase;
+        stage.autoOrbit(dt, elapsed, weight * sample.orbitWeight);
       }
-      stage.autoOrbit(dt, elapsed, weight);
+      if (root.dataset.mechanism !== 'swerve') stage.autoOrbit(dt, elapsed, weight);
     } else {
       const difference = target - explode;
       if (Math.abs(difference) >= .001) phase = difference > 0 ? 'opening' : 'closing';
@@ -140,7 +159,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       explode = Math.abs(difference) < .001 ? target : explode + difference * (1 - Math.exp(-dt * 8));
     }
     sync();
-    if (automatic || explode !== target || dt === 0) { draw(); root.dataset.rendering = 'true'; }
+    if (automatic || explode !== previousExplode || dt === 0) { draw(); root.dataset.rendering = 'true'; }
     else root.dataset.rendering = 'false';
     if (playing || explode !== target) frame = requestAnimationFrame(tick);
   };
@@ -151,6 +170,12 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
   };
   buttons.forEach(b => b.addEventListener('click', () => { interaction(); target = Number(b.dataset.explodeTo); sync(); run(); }));
   detail?.addEventListener('click', () => { interaction(); target = 1; stage?.inspect(['steering-input', 'steering-output']); draw(); run(); });
+  sensorDetail?.addEventListener('click', () => {
+    interaction();
+    if (stage?.isInspecting('optical-pcb')) stage.resetView();
+    else stage?.inspect(['optical-pcb', 'slip-ring', 'optical-target']);
+    draw(); run();
+  });
   slider?.addEventListener('input', () => { interaction(); target = Number(slider.value) / 100; sync(); run(); });
   slider?.addEventListener('pointerdown', () => { holding = true; interaction(); });
   const endInteraction = () => { if (holding) { holding = false; interaction(); } };
@@ -183,6 +208,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       const next = await loadMechanismStage(canvas, import.meta.env.BASE_URL, root.dataset.model!, label, () => visible, signal);
       try {
         stage = next; motion = module.createModuleMotion(stage, root.dataset.mechanism as 'pump' | 'swerve');
+        if (root.dataset.mechanism === 'swerve') stage.reserveSwerveView(motion.update, module.CYCLE_DURATION);
         if (root.dataset.mechanism === 'swerve') stage.onSwerveViewChange(() => layoutSwerveAnnotations(root, next, explode, phase));
         else stage.onPumpViewChange(() => { if (motion) layoutPumpAnnotations(root, motion); });
       }

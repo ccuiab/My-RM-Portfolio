@@ -3,7 +3,28 @@
   "prompt": "Remove only the white/light grey background and ground shadow. Preserve mechanical parts, holes, outlines, original colors, viewpoint and proportions; retain silver faces. No redesign or added details.",
   "source_directory": "../../inputs/site",
   "presentation_grading": "CSS saturate(.42) brightness(1.28) contrast(.92); transparent PNG alpha preserved.",
-  "note": "AI-assisted cutouts for presentation; current native CAD inputs and received historical screenshots are stored separately. Earlier capture and source records are retained in the audit directory.",
+  "note": "Per-file overrides below take precedence. Other cutouts retain their earlier source/capture records.",
   "historical_source_directory": "../../../source/historical/research",
-  "capture_audit": "../../../../documents/derived/audits/image-refresh/sw/final-manifest.json"
+  "capture_audit": "../../../../documents/derived/audits/image-refresh/sw/final-manifest.json",
+  "overrides": {
+    "hero-launcher-core.png": {
+      "method": "SolidWorks native SaveBMP with shaded edges; non-generative white/black difference matte",
+      "source": "D:\\RM2025\\New_Hero_gimbal_2.0\\Main_assembly\\发机_4310pitch.SLDASM",
+      "source_sha256": "564bafb94a2be2be67d37eee3df23b4893c2096ee20e6e63929acf7691bb9e60",
+      "capture_size": [
+        4000,
+        4000
+      ],
+      "output_size": [
+        2400,
+        1400
+      ],
+      "plates": "Roof and its exclusive fittings hidden; seven middle/reinforcement/side plates retain native colour with 0.82 transparency; bottom plate and three friction-wheel assemblies stay solid.",
+      "view": "Muzzle points left with its front aperture visible; 40 degree azimuth, 5 degree elevation. Camera moved 17 degrees toward the side to align the A1 presentation with A2/A3.",
+      "assembly": "Native wheel, motor, cable and shaft poses unchanged.",
+      "capture_audit": "../../../../documents/derived/audits/swimg-a1-side-20261013/native/",
+      "matte_audit": "../../../../documents/derived/audits/swimg-a1-side-20261013/matte-audit.json",
+      "output_sha256": "7c34c09f2e2706177be74aaf606f47101d4930145860ecacaf24522bc47e3f8d"
+    }
+  }
 }

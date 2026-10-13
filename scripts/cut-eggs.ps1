@@ -428,7 +428,20 @@ try {
                 $filters += "[s0][cropped]overlay=x=$($pip.x):y=$($pip.y):eof_action=pass:repeatlast=0:enable='lt(t,$(Number ($switch+$fade)))'[withCrop]"
                 $filters += "[withCrop][full]overlay=x=$($pip.x):y=$($pip.y):eof_action=pass:repeatlast=0:enable='gte(t,$(Number $switch))'[edit]"
             } else {
-                $filters += "[s1]scale=$($pip.width):$($pip.height),pad=iw+4:ih+4:2:2:color=0xf2b53a,setpts=PTS-STARTPTS+$(Number $insetStart)/TB[inset]"
+                $insetTreatment = "pad=iw+4:ih+4:2:2:color=0xf2b53a"
+                if ($pip.insetLabelKey) {
+                    $copy = [IO.File]::ReadAllText((WorkspacePath 'src/data/content.ts'))
+                    $match = [regex]::Match($copy, "(?s)index: '04'.*?$($pip.insetLabelKey): \{ zh: '([^']+)', en: '([^']+)' \}")
+                    if (-not $match.Success -or $pip.captionHeight -lt 22) { throw '04 inset caption must use bilingual content.ts and fit below the complete frame.' }
+                    $relative = 'materials/videos/derived/inputs/egg-right-hero-inset-label.txt'
+                    [IO.File]::WriteAllText((WorkspacePath $relative), "$($match.Groups[1].Value) / $($match.Groups[2].Value)", $utf8)
+                    $insetTreatment += ",pad=iw:ih+$($pip.captionHeight):0:0:color=0x0b1420,drawtext=fontfile='C\:/Windows/Fonts/msyh.ttc':textfile='$relative':fontcolor=0xf2b53a:fontsize=14:x=10:y=$($pip.height+7)"
+                }
+                if ($pip.insetFadeSeconds -gt 0) {
+                    if ($pip.insetFadeSeconds -gt .3) { throw 'Inset entry fade must remain brief.' }
+                    $insetTreatment += ",format=yuva420p,fade=t=in:st=0:d=$(Number $pip.insetFadeSeconds):alpha=1"
+                }
+                $filters += "[s1]scale=$($pip.width):$($pip.height):flags=lanczos,${insetTreatment},setpts=PTS-STARTPTS+$(Number $insetStart)/TB[inset]"
                 $filters += "[s0][inset]overlay=x=$($pip.x):y=$($pip.y):eof_action=pass:repeatlast=0:enable='gte(t,$(Number $insetStart))'[edit]"
             }
             $total = [double]$edit.segments[0].durationSeconds

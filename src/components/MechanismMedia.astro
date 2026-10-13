@@ -14,7 +14,7 @@ const L = sceneCopy[kind];
     <div class="model" data-mechanism-canvas></div>
     <span class="badge">{t(L.badge, lang)}</span>
     {kind === 'swerve' && <>
-      <output class="cycle" data-cycle-label data-assembled={t(sceneCopy.swerve.phases.assembled, lang)} data-opening={t(sceneCopy.swerve.phases.opening, lang)} data-exploded={t(sceneCopy.swerve.phases.exploded, lang)} data-closing={t(sceneCopy.swerve.phases.closing, lang)}></output>
+      <output class="cycle" data-cycle-label data-assembled={t(sceneCopy.swerve.phases.assembled, lang)} data-opening={t(sceneCopy.swerve.phases.opening, lang)} data-exploded={t(sceneCopy.swerve.phases.exploded, lang)} data-closing={t(sceneCopy.swerve.phases.closing, lang)} data-articulation={t(sceneCopy.swerve.phases.articulation, lang)}></output>
       <svg class="annotation-leaders" data-swerve-leaders aria-hidden="true" hidden>
         {sceneCopy.swerve.stages.map(() => <g data-annotation-leader hidden><path /><circle r="2" /></g>)}
       </svg>
@@ -36,8 +36,11 @@ const L = sceneCopy[kind];
     {kind === 'swerve' && <>
       <div class="states" role="group" aria-label={t(sceneCopy.swerve.amount, lang)}>
         <button type="button" data-explode-to="0" aria-pressed="true">{t(sceneCopy.swerve.assemble, lang)}</button>
+        <button type="button" data-explode-to="0.37" aria-pressed="false">{t(sceneCopy.swerve.steeringStep, lang)}</button>
+        <button type="button" data-explode-to="0.9" aria-pressed="false">{t(sceneCopy.swerve.driveStep, lang)}</button>
         <button type="button" data-explode-to="1" aria-pressed="false">{t(sceneCopy.swerve.explode, lang)}</button>
         <button type="button" data-steering-detail aria-pressed="false">{t(sceneCopy.swerve.detail, lang)}</button>
+        <button type="button" data-sensor-detail aria-pressed="false">{t(sceneCopy.swerve.sensorDetail, lang)}</button>
       </div>
       <label class="amount"><span>{t(sceneCopy.swerve.amount, lang)}</span><input type="range" min="0" max="100" step="1" value="0" data-explode-amount /><output data-explode-output>0%</output></label>
     </>}
@@ -45,7 +48,7 @@ const L = sceneCopy[kind];
     <button type="button" data-mechanism-reset>{t(sceneCopy.interaction.reset, lang)}</button>
     <span class="hint">{t(L.hint, lang)}</span>
   </div>
-  <figcaption>{t(pic.alt, lang)}<small>{t(L.note, lang)}</small></figcaption>
+  <figcaption>{t(pic.alt, lang)}<small>{t(L.note, lang)}</small>{kind === 'swerve' && <small>{t(sceneCopy.swerve.sensorNote, lang)}</small>}</figcaption>
 </figure>
 <script>
   import '../scripts/module-mechanisms';
@@ -73,6 +76,7 @@ const L = sceneCopy[kind];
   .annotation-leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
   .annotation-leaders path { fill: none; stroke: var(--amber); stroke-width: .7px; opacity: .5; }
   .annotation-leaders circle { fill: var(--amber); opacity: .85; }
+  [data-mechanism="pump"] :is(.annotation, .annotation-leaders) { opacity: var(--pump-annotation-opacity, 1); }
   [data-mechanism="pump"] .annotation.valve { color: var(--ink-3); border-color: var(--rule); }
   [data-mechanism="pump"] .valve[data-open="true"] { color: var(--amber); border-color: var(--amber); }
   .hover { position: absolute; bottom: 1rem; left: 1rem; right: 1rem; width: fit-content; max-width: calc(100% - 2rem); padding: .5rem .7rem; color: var(--amber); border: 1px solid var(--amber); background: var(--ground); font-family: var(--f-mono); font-size: var(--t-xs); overflow-wrap: anywhere; pointer-events: none; }

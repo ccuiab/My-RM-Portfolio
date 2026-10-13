@@ -1,9 +1,9 @@
 {
   "name": "egg-right-hero",
   "match": "RMUC 2025 复活赛第 33 场 vs 哈尔滨工业大学（深圳），最后一局，港科大为蓝方",
-  "verifiedAt": "2026-10-12",
+  "verifiedAt": "2026-10-13",
   "catalog": "materials/documents/derived/bilibili-video-catalog.json",
-  "evidence": "eggs4：两路原片 1 fps 接触表、关键时刻 0.2 s 抽帧、成片逐秒及转场抽帧、中英文桌面/手机截图：C:/Users/cch20/AppData/Local/Temp/rm-shots/eggs4/。",
+  "evidence": "2026-10-13 从完整 P02/P03 原片重剪与小窗验收见 materials/documents/derived/audits/hero-recut-20261013/；用户随后要求缩短扶正后的尾段，本轮成片、循环及网页验收见 materials/documents/derived/audits/hero-trim-20261013/。原片检查帧见 tmp/hero-source-check/。",
   "segments": [
     {
       "source": "https://www.bilibili.com/video/BV1Aw8gzoEZd/?p=3",
@@ -15,11 +15,11 @@
       "sourceFile": "materials/videos/source/bilibili/engineer-pov/BV1Aw8gzoEZd-P03 - [RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - B2SuqqreProject_0.mp4",
       "sourceSha256FromCatalog": "bd8ea8255494ebf4e2cd4a307cdd1fc40c56e36597ecac0fa39059dde301be22",
       "startSeconds": 1092,
-      "durationSeconds": 30,
-      "endSeconds": 1122,
+      "durationSeconds": 23.2,
+      "endSeconds": 1115.2,
       "startTimecode": "00:18:12.00",
-      "endTimecode": "00:18:42.00",
-      "role": "前段工程单视角；最后一次抬起前同步分屏左侧工程视角",
+      "endTimecode": "00:18:35.20",
+      "role": "全程全屏主画面，展示接近、扶正和短暂恢复行驶",
       "inputFile": "materials/videos/derived/inputs/egg-right-hero-p03.mp4",
       "evidence": "工程 18:24 左右接近并接触；18:29.6 左右开始最后一次连续扶起，18:32.4 左右英雄翻正，18:33 后恢复行驶。",
       "copyrightOwner": "RoboMaster 赛事画面制作方；投稿与兵种视角编排：翔林魔主"
@@ -33,14 +33,14 @@
       "uploaderId": 1568334988,
       "sourceFile": "materials/videos/source/bilibili/engineer-pov/BV1Aw8gzoEZd-P02 - [RM复活赛]第三十三场哈尔滨工业大学（深圳）VS香港科技大学全兵种视角回放 - B1Hero_0.mp4",
       "sourceSha256FromCatalog": "0bdfe839199d51255d6be53292b06a18f9d41c60a39ba6769df3967f867b246d",
-      "startSeconds": 1104.4,
-      "durationSeconds": 14,
-      "endSeconds": 1118.4,
-      "startTimecode": "00:18:24.40",
-      "endTimecode": "00:18:38.40",
-      "role": "从抬起前约 1.6 s 加入；菜单期放大未遮挡的车体/路面，菜单关闭后英雄全屏",
-      "inputFile": "materials/videos/derived/inputs/egg-right-hero-p02.mp4",
-      "evidence": "英雄 18:26.0 左右车体/路面开始明显连续倾转；18:28.6 仍有菜单，18:28.7 已关闭；18:28.8 使用完整安全画面，随后持续显示恢复行驶到 18:38.4。",
+      "startSeconds": 1104,
+      "durationSeconds": 7.6,
+      "endSeconds": 1111.6,
+      "startTimecode": "00:18:24.00",
+      "endTimecode": "00:18:31.60",
+      "role": "最后一次扶起前约 2 s 淡入右上角完整 16:9 小窗，翻正后保留约 2 s 恢复行驶确认；保留原画面及菜单",
+      "inputFile": "materials/videos/derived/inputs/egg-right-hero-p02-recut-20261013.mp4",
+      "evidence": "直接读取完整 P02 重新截取，未使用旧英雄剪辑。18:26.0 左右开始最后一次明显连续倾转；18:28.64 菜单仍在，18:28.68 已关闭。中央被遮挡内容无法恢复；按用户确认完整保留原画面。用户随后要求缩短尾段，英雄画面截止至 18:31.6，保留翻正后短暂恢复行驶。",
       "copyrightOwner": "RoboMaster 赛事画面制作方；投稿与兵种视角编排：翔林魔主"
     }
   ],
@@ -92,42 +92,35 @@
     ]
   },
   "composition": {
-    "type": "staged-split-to-hero",
-    "heroStartSeconds": 16,
-    "fullHeroStartSeconds": 20.4,
-    "introFadeSeconds": 0.24,
-    "fullHeroFadeSeconds": 0.2,
-    "splitPanelWidth": 640,
-    "engineerFit": "完整 16:9 工程画面等比放入左半；无横向裁切",
-    "heroMenuFit": "仅真实可见的车体/地面，等比放大至右半 640 px 宽；不拉伸、不复原遮挡",
-    "menuCrop": {
-      "x": 214,
-      "y": 354,
-      "width": 432,
-      "height": 94
-    },
-    "labelsFrom": "src/data/content.ts engineer.eggs.items[04].povLabel / engineerPovLabel",
-    "reason": "先保留工程接近，最终扶起前约 1.6 s 切入同步分屏；菜单遮挡期由工程画面交代机械臂动作，英雄区域展示真实倾转；菜单消失后切为 1280×720 英雄全屏，避免小画中画并持续展示恢复行驶。",
+    "type": "picture-in-picture",
+    "insetStartSeconds": 15.6,
+    "insetFadeSeconds": 0.24,
+    "x": 844,
+    "y": 16,
+    "width": 416,
+    "height": 234,
+    "captionHeight": 24,
+    "insetLabelKey": "povLabel",
+    "engineerFit": "完整工程视角始终铺满 1280×720 主画面",
+    "heroFit": "完整英雄视角等比放入 416×234 小窗，保留菜单、原 HUD 和操作手画面；2 px 琥珀边框，下方独立标签条",
+    "labelsFrom": "src/data/content.ts engineer.eggs.items[04].povLabel",
+    "reason": "用户确认：从完整 P02 重剪；小窗仅在扶正及恢复行驶阶段出现；右上角约三分之一宽；完整保留原画面及菜单。主动作在中下部，小窗避开接触/扶起区域、左下操作手与右下小地图。",
     "sourceClockAtHeroEntry": {
-      "engineerSeconds": 1108,
-      "heroSeconds": 1104.4
-    },
-    "sourceClockAtFullHero": {
-      "engineerSeconds": 1112.4,
-      "heroSeconds": 1108.8
+      "engineerSeconds": 1107.6,
+      "heroSeconds": 1104
     },
     "outputClockAfterLoopRotation": {
-      "heroFadeStartSeconds": 15.68,
-      "heroFadeEndSeconds": 15.92,
-      "fullHeroFadeStartSeconds": 20.08,
-      "fullHeroFadeEndSeconds": 20.28
+      "heroFadeStartSeconds": 15.28,
+      "heroFadeEndSeconds": 15.52,
+      "finalLiftStartSeconds": 17.28,
+      "menuCloseSeconds": 19.96
     }
   },
   "transitionSeconds": 0,
   "loop": {
     "seamSeconds": 0.32,
     "method": "尾段与片头重叠淡化 0.32 s，循环时间线从原片头 0.32 s 开始；最后一帧接回同一源时间的下一帧。两路同步淡化。",
-    "expectedDurationSeconds": 29.68
+    "expectedDurationSeconds": 22.88
   },
   "playbackRate": 1,
   "output": {
@@ -143,11 +136,11 @@
     "audio": false,
     "faststart": true,
     "maxBytes": 6000000,
-    "posterSeconds": 22
+    "posterSeconds": 20.8
   },
   "copyright": {
     "attribution": "页面注明 UP 主翔林魔主，并分别链接工程 P03 与英雄 P02 原片；赛事原画面版权归对应赛事制作方。",
     "permissionStatus": "用户 2026-10-12 确认：可以转载，条件是标明来源并提供原片跳转链接。"
   },
-  "note": "主仓库 P03/P02 原片只读、直接重新截取；P03 1092–1122 s，P02 1104.4–1118.4 s，保持英雄文件时间=工程文件时间−3.6 s。前半段只有工程；抬起前加入分屏，菜单关闭后英雄全屏。中央遮挡无法恢复，裁剪只保留真实可见内容。重叠循环接缝 0.32 s，输出 29.68 s。"
+  "note": "2026-10-13 缩短尾段：完整 P03/P02 原片只读重新截取；工程 1092–1115.2 s 为全程主画面，英雄 1104–1111.6 s 为右上小窗，英雄文件时间=工程文件时间−3.6 s。保留完整原画面及菜单，最后扶起前约 2 s 加入；翻正并恢复行驶后约 2 s 收尾。重叠循环接缝 0.32 s，输出 22.88 s，相比上一版减少 6.8 s。"
 }

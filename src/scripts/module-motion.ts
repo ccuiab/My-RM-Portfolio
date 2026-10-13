@@ -3,11 +3,53 @@ import type { MechanismStage } from './lib/mechanism-stage';
 
 const TAU = Math.PI * 2;
 // Assembled hold, slow open, long exploded hold, slow close (seconds).
-const HOLD_ASSEMBLED = 2, OPEN = 3.4, HOLD_EXPLODED = 3.2, CLOSE = 3.4;
+const HOLD_ASSEMBLED = 6, OPEN = 6, HOLD_EXPLODED = 3, CLOSE = 6;
 export const CYCLE_DURATION = HOLD_ASSEMBLED + OPEN + HOLD_EXPLODED + CLOSE;
 /** Cycle time at which the exploded hold begins. */
 export const EXPLODED_START = HOLD_ASSEMBLED + OPEN;
 const ease = (x: number) => x * x * x * (x * (x * 6 - 15) + 10);
+const HOLD_SOLID = 2, FADE_OUT = 3, HOLD_GHOSTED = 4, FADE_IN = 3;
+export const PUMP_CYCLE_DURATION = HOLD_SOLID + FADE_OUT + HOLD_GHOSTED + FADE_IN;
+/** The pump keeps its current ghosted appearance at the transparent endpoint. */
+export function pumpTransparencyCycle(time: number) {
+  const t = ((time % PUMP_CYCLE_DURATION) + PUMP_CYCLE_DURATION) % PUMP_CYCLE_DURATION;
+  if (t < HOLD_SOLID) return { amount: 0, phase: 'solid' };
+  if (t < HOLD_SOLID + FADE_OUT) return { amount: ease((t - HOLD_SOLID) / FADE_OUT), phase: 'fading-out' };
+  if (t < HOLD_SOLID + FADE_OUT + HOLD_GHOSTED) return { amount: 1, phase: 'ghosted' };
+  return { amount: 1 - ease((t - HOLD_SOLID - FADE_OUT - HOLD_GHOSTED) / FADE_IN), phase: 'fading-in' };
+}
+const PUMP_SLOW = 7, PUMP_ACCELERATE = 1, PUMP_FAST = 2, PUMP_DECELERATE = 2;
+const PUMP_BASE_SPEED = 2.8, PUMP_PEAK_MULTIPLIER = 4;
+export const PUMP_DRIVE_DURATION = PUMP_SLOW + PUMP_ACCELERATE + PUMP_FAST + PUMP_DECELERATE;
+// Integral of the same quintic easing curve; its value at 1 is 1/2.
+const integratedEase = (x: number) => x * x * x * x * (x * x - 3 * x + 2.5);
+/** Brief speed pulse on its own clock. Integrate velocity so neither changes
+ * in speed nor wrapping the cycle can jump or reverse the crank angle. */
+export function pumpDriveCycle(time: number) {
+  const cycles = Math.floor(time / PUMP_DRIVE_DURATION);
+  const t = ((time % PUMP_DRIVE_DURATION) + PUMP_DRIVE_DURATION) % PUMP_DRIVE_DURATION;
+  const boost = PUMP_PEAK_MULTIPLIER - 1;
+  const rampAverage = (1 + PUMP_PEAK_MULTIPLIER) / 2;
+  let travel = t, speedMultiplier = 1, annotationOpacity = 1;
+  let phase = 'slow';
+  if (t >= PUMP_SLOW && t < PUMP_SLOW + PUMP_ACCELERATE) {
+    const x = (t - PUMP_SLOW) / PUMP_ACCELERATE, amount = ease(x);
+    phase = 'accelerating'; speedMultiplier = 1 + boost * amount; annotationOpacity = 1 - amount;
+    travel = PUMP_SLOW + PUMP_ACCELERATE * (x + boost * integratedEase(x));
+  } else if (t >= PUMP_SLOW + PUMP_ACCELERATE && t < PUMP_SLOW + PUMP_ACCELERATE + PUMP_FAST) {
+    phase = 'fast'; speedMultiplier = PUMP_PEAK_MULTIPLIER; annotationOpacity = 0;
+    travel = PUMP_SLOW + PUMP_ACCELERATE * rampAverage
+      + (t - PUMP_SLOW - PUMP_ACCELERATE) * PUMP_PEAK_MULTIPLIER;
+  } else if (t >= PUMP_SLOW + PUMP_ACCELERATE + PUMP_FAST) {
+    const x = (t - PUMP_SLOW - PUMP_ACCELERATE - PUMP_FAST) / PUMP_DECELERATE, amount = ease(x);
+    phase = 'decelerating'; speedMultiplier = PUMP_PEAK_MULTIPLIER - boost * amount; annotationOpacity = amount;
+    travel = PUMP_SLOW + PUMP_ACCELERATE * rampAverage + PUMP_FAST * PUMP_PEAK_MULTIPLIER
+      + PUMP_DECELERATE * (PUMP_PEAK_MULTIPLIER * x - boost * integratedEase(x));
+  }
+  const cycleTravel = PUMP_SLOW + (PUMP_ACCELERATE + PUMP_DECELERATE) * rampAverage + PUMP_FAST * PUMP_PEAK_MULTIPLIER;
+  const cumulativeAngle = (cycles * cycleTravel + travel) * PUMP_BASE_SPEED;
+  return { angle: ((cumulativeAngle % TAU) + TAU) % TAU, cumulativeAngle, speedMultiplier, annotationOpacity, phase };
+}
 export function explosionCycle(time: number) {
   const t = ((time % CYCLE_DURATION) + CYCLE_DURATION) % CYCLE_DURATION;
   if (t < HOLD_ASSEMBLED) return { amount: 0, phase: 'assembled' };
@@ -15,10 +57,28 @@ export function explosionCycle(time: number) {
   if (t < EXPLODED_START + HOLD_EXPLODED) return { amount: 1, phase: 'exploded' };
   return { amount: 1 - ease((t - EXPLODED_START - HOLD_EXPLODED) / CLOSE), phase: 'closing' };
 }
+export const SWERVE_PRESENTATION_DURATION = CYCLE_DURATION;
+/** Every assembled phase shows three suspension strokes with steering while orbiting. */
+export function swervePresentation(time: number) {
+  const t = ((time % CYCLE_DURATION) + CYCLE_DURATION) % CYCLE_DURATION;
+  if (t >= HOLD_ASSEMBLED) return { ...explosionCycle(t),
+    motionTime: (t - HOLD_ASSEMBLED) / (CYCLE_DURATION - HOLD_ASSEMBLED) * CYCLE_DURATION,
+    suspension: 0, steering: 0, demo: false, orbitWeight: 1 };
+  // Three smooth 2-second strokes; 10 mm is illustrative, not a travel limit.
+  const suspension = .01 * Math.sin(Math.PI * t / 2) ** 2;
+  const steering = .48 * Math.sin(TAU * ease(t / HOLD_ASSEMBLED));
+  return { amount: 0, phase: 'articulation', motionTime: 0,
+    suspension, steering, demo: true, orbitWeight: 1 };
+}
 /** Bounded, periodic demonstration: closing never unwinds accumulated turns. */
-export function swerveAngles(time: number, explode: number) {
+export function swerveAngles(time: number, _explode: number) {
   const phase = ((time % CYCLE_DURATION) + CYCLE_DURATION) % CYCLE_DURATION / CYCLE_DURATION * TAU;
-  return { roll: Math.sin(phase) * .48 * explode, steer: Math.sin(phase) * .18 * explode };
+  return { roll: Math.sin(phase) * .48, steer: Math.sin(phase) * .18 };
+}
+/** Steering clears first; the wheel-axis stack follows. Reverse is identical. */
+export function swervePartProgress(amount: number, group?: string) {
+  const interval = group === 'steering' ? [0, .32] : group === 'drive' ? [.42, .9] : [0, 1];
+  return ease(THREE.MathUtils.clamp((amount - interval[0]) / (interval[1] - interval[0]), 0, 1));
 }
 /** Invert the eased leg, so an idle resume starts at the user's current amount. */
 export function cycleAtAmount(amount: number, closing: boolean) {
@@ -54,8 +114,8 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
       const mesh = child as THREE.Mesh;
       if (!mesh.isMesh) return;
       for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-        // Keep the complete motor in its CAD position, with the linkage visible
-        // even when the user orbits onto the motor side.
+        // The ghosted endpoint reveals the linkage even from the motor side;
+        // the complete motor remains in its original CAD position.
         material.transparent = true; material.opacity = .08; material.depthWrite = false;
         material.side = THREE.FrontSide; material.needsUpdate = true;
       }
@@ -74,8 +134,11 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
         if (data.web_transmission || data.web_motion === 'crank' || data.web_motion === 'rod') {
           m.color.lerp(stage.amber, .28); m.emissive.copy(stage.amber); m.emissiveIntensity = .06;
         }
+        if (data.web_sensor && data.web_sensor !== 'optical-pcb') {
+          m.emissive.copy(stage.amber); m.emissiveIntensity = .08;
+        }
         if (data.web_structure) {
-          m.transparent = true; m.opacity = .36; m.depthWrite = false; m.needsUpdate = true;
+          m.transparent = true; m.opacity = kind === 'swerve' ? .18 : .36; m.depthWrite = false; m.needsUpdate = true;
         }
       }
     });
@@ -161,6 +224,16 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
     });
     details.forEach(({ parent, mesh }) => parent.add(mesh));
   }
+  const ghostedMaterials = new Map<THREE.Material, number>();
+  stage.model.traverse(object => {
+    const mesh = object as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      // Capture only existing translucent CAD surfaces, including tube details,
+      // before adding the separate illustrative airflow particles and arrows.
+      if (material.transparent && material.opacity < 1) ghostedMaterials.set(material, material.opacity);
+    }
+  });
   const count = 9, positions = new Float32Array(count * 3);
   let particles: THREE.Points | undefined;
   const arrows: THREE.ArrowHelper[] = [];
@@ -188,19 +261,36 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
     return { x: (ndc.x + 1) * 50, y: (1 - ndc.y) * 50, visible: ndc.z > -1 && ndc.z < 1 };
   };
   let diagnostics = { stroke: 'intake', inletOpen: true, outletOpen: false, rodError: 0, sliderError: 0,
-    bearingError: 0, swing: 0, rodAngle: 0, pins: [] as number[][] };
+    bearingError: 0, swing: 0, rodAngle: 0, pins: [] as number[][], ghostAmount: 0, ghostPhase: 'solid',
+    crankAngle: 0, speedMultiplier: 1, speedPhase: 'slow', annotationOpacity: 1 };
   return {
-    update(time: number, explode: number) {
-      const angle = (time * 2.8) % TAU;
-      const swerve = swerveAngles(time, explode);
+    update(time: number, explode: number, demonstration?: ReturnType<typeof swervePresentation>) {
+      const ghost = kind === 'pump' ? pumpTransparencyCycle(time) : { amount: ease(THREE.MathUtils.clamp(explode, 0, 1)), phase: 'explosion' };
+      for (const [material, opacity] of ghostedMaterials) {
+        material.opacity = THREE.MathUtils.lerp(1, opacity, ghost.amount);
+        const transparent = ghost.amount > 0;
+        if (material.transparent !== transparent) { material.transparent = transparent; material.needsUpdate = true; }
+        material.depthWrite = !transparent;
+        material.userData.motionAppearance = { opacity: material.opacity, transparent, depthWrite: !transparent };
+      }
+      const drive = pumpDriveCycle(time);
+      const angle = kind === 'pump' ? drive.angle : (time * PUMP_BASE_SPEED) % TAU;
+      const swerve = demonstration?.demo ? { roll: 0, steer: demonstration.steering } : swerveAngles(time, explode);
       const pose = sliderCrank(angle, origin, big, small);
       const next = sliderCrank(angle + .0001, origin, big, small);
       // Positive travel toward the pump head reduces chamber volume.
       const intake = next.small.x < pose.small.x;
       for (const p of parts) {
         p.object.position.copy(p.position); p.object.quaternion.copy(p.quaternion);
-        p.object.position.addScaledVector(p.offset, explode);
+        p.object.position.addScaledVector(p.offset, kind === 'swerve' ? swervePartProgress(explode, p.object.userData.web_explode_group) : explode);
         if (kind === 'swerve') {
+          const id = p.object.userData.source_node_index;
+          // Only parts attached to the inner steering assembly move; the
+          // separate motor-side pinion also has source index 35.
+          if (p.object.parent?.userData.web_motion === 'steer' &&
+              ([24, 28, 29, 48, 51, 54].includes(id) || (id >= 31 && id <= 47))) {
+            p.object.position.y += demonstration?.suspension ?? 0;
+          }
           const value = p.motion === 'roll' ? swerve.roll : p.motion === 'steer' ? swerve.steer :
             p.motion === 'steering-pinion' ? -swerve.steer * steeringRatio : 0;
           // Axes are expressed in the part parent's frame, not the mesh frame.
@@ -245,7 +335,9 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
         sliderError: Math.hypot(measuredSmall.y - small.y, measuredSmall.z - small.z),
         bearingError: Math.max(innerCenter.distanceTo(outerCenter), innerCenter.distanceTo(measuredBig)),
         swing: pose.swing, rodAngle: pose.rodAngle,
-        pins: [measuredBig.toArray(), measuredSmall.toArray(), innerCenter.toArray(), outerCenter.toArray()] };
+        pins: [measuredBig.toArray(), measuredSmall.toArray(), innerCenter.toArray(), outerCenter.toArray()],
+        ghostAmount: ghost.amount, ghostPhase: ghost.phase, crankAngle: angle,
+        speedMultiplier: drive.speedMultiplier, speedPhase: drive.phase, annotationOpacity: drive.annotationOpacity };
     },
     diagnostics: () => diagnostics,
     annotations() {

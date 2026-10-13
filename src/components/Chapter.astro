@@ -89,6 +89,7 @@ const pics = c.pics ?? [];
   .ch-grid:not(.with-media) .ch-copy { grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: var(--column-gap); }
   .ch-media .wide, .ch-media .pics { margin-top: 0; }
   .ch-media :global(.media-view) { height: clamp(300px, 25vw, 360px); }
+  #chassis .ch-media :global(.media-view) { height: clamp(360px, 42vw, 560px); }
   .ch-grid::before { content: ''; position: absolute; top: 0; left: var(--gutter); right: var(--gutter); height: 1px; background: var(--rule); }
   .ch-head {
     position: static;

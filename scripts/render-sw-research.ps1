@@ -36,10 +36,13 @@ if ($Worker) {
   Add-Type -Path "$archive\sw-probe\SwProbe.cs","$archive\codex\Task2Sw.cs","$archive\codex\Task3Sw.cs","$archive\image-refresh\sw\SwImage.cs",(Join-Path $PSScriptRoot 'render-sw-research.cs') -ReferencedAssemblies $references
   $sw = $null; $old = $null; $viewPrepared = $false
   try {
+    Write-Output 'Starting isolated SolidWorks instance.'
     $sw = New-Object -ComObject SldWorks.Application
     [ResearchSwCapture]::ProcessId($sw) | Set-Content -LiteralPath "$OutputDirectory\owned-sw.pid"
+    $originalFrame = [SwImage]::GetFrame($sw)
+    [SwImage]::ShowApp($sw)
     $old = @{
-      frame=[SwImage]::GetFrame($sw); ints=[SwImage]::GetInts($sw); doubles=[SwImage]::GetDoubles($sw)
+      frame=$originalFrame; ints=[SwImage]::GetInts($sw); doubles=[SwImage]::GetDoubles($sw)
       folders=[Task3Sw]::GetFolders($sw); search=[Task3Sw]::GetSearch($sw); readOnly=[Task2Sw]::GetRO($sw)
       global=[ResearchSwCapture]::GlobalPreferences($sw)
     }
@@ -50,37 +53,51 @@ if ($Worker) {
     $folders = @($root) + @(Get-ChildItem -LiteralPath $root -Directory -Recurse | Select-Object -ExpandProperty FullName)
     [void][Task3Sw]::SetFolders($sw,($folders -join ';')); [Task3Sw]::SetSearch($sw,$true)
     [SwImage]::ShowApp($sw); [SwProbe]::SetUserControlBackground($sw,$true)
+    Write-Output 'Opening launcher assembly read-only.'
     $opened = [SwProbe]::Open($sw,$source,67) | ConvertFrom-Json
     $opened | ConvertTo-Json -Depth 7 | Set-Content -Encoding UTF8 -LiteralPath "$OutputDirectory\$Asset-open.json"
     if (-not $opened.ok -or -not $opened.info.readOnly) { throw 'Source did not open read-only.' }
     [Task2Sw]::MarkAllRO($sw)
+    Write-Output 'Resolving and auditing native components.'
     [SwProbe]::ResolveLightweight($sw,$source) | Set-Content -LiteralPath "$OutputDirectory\$Asset-resolved.txt"
     [Task2Sw]::MarkAllRO($sw)
     [SwProbe]::Components($sw,$source) | Set-Content -Encoding UTF8 -LiteralPath "$OutputDirectory\$Asset-components-before.json"
     [SwProbe]::Dependencies($sw,$source) | Set-Content -Encoding UTF8 -LiteralPath "$OutputDirectory\$Asset-dependencies.json"
+    [ResearchSwCapture]::ReadOnlyDocuments($sw) | Set-Content -Encoding UTF8 -LiteralPath "$OutputDirectory\$Asset-readonly-documents.json"
+    Write-Output 'Preparing native shaded-with-edges display.'
     [ResearchSwCapture]::Prepare($sw,$source); $viewPrepared=$true
     if (-not $ProbeOnly -and $Asset -eq 'launcher') {
       $plan = Get-Content -Encoding UTF8 -Raw -LiteralPath (Join-Path $PSScriptRoot 'render-sw-research-components.json') | ConvertFrom-Json
-      [ResearchSwCapture]::LauncherComponents($sw,$source,[string[]]$plan.hidden,[string[]]$plan.translucent) | Set-Content -Encoding UTF8 -LiteralPath "$OutputDirectory\$Asset-components-capture.json"
+      Write-Output 'Isolating verified launcher core and applying native transparency.'
+      [ResearchSwCapture]::LauncherComponents($sw,$source,[string[]]$plan.hidden,[string[]]$plan.translucent,[string[]]$plan.solid) | Set-Content -Encoding UTF8 -LiteralPath "$OutputDirectory\$Asset-components-capture.json"
+      [ResearchSwCapture]::ValidateLauncher($sw,$source) | Set-Content -Encoding UTF8 -LiteralPath "$OutputDirectory\$Asset-core-verified.json"
     }
     if ($rotation.Count) { [ResearchSwCapture]::Orient($sw,$source,[double[]]$rotation) | Set-Content -Encoding UTF8 -LiteralPath "$OutputDirectory\$Asset-view.json" }
     $viewBefore = [ResearchSwCapture]::View($sw,$source)
+    Write-Output 'Capturing aligned white and black native viewports.'
     [ResearchSwCapture]::Bmp($sw,$source,"$OutputDirectory\$Asset-white.bmp",$Size,$true)
     [ResearchSwCapture]::Bmp($sw,$source,"$OutputDirectory\$Asset-black.bmp",$Size,$false)
     if ($viewBefore -ne [ResearchSwCapture]::View($sw,$source)) { throw 'View changed between backgrounds.' }
     $viewBefore | Set-Content -Encoding UTF8 -LiteralPath "$OutputDirectory\$Asset-view.json"
+    if (-not $ProbeOnly -and $Asset -eq 'launcher') {
+      [ResearchSwCapture]::OpaqueCaptures($sw,$source,[string[]]$plan.translucent,$OutputDirectory,$Size)
+      if ($viewBefore -ne [ResearchSwCapture]::View($sw,$source)) { throw 'View changed during independent opaque captures.' }
+    }
   } finally {
     if ($sw) {
       try {
-        if ($viewPrepared) { [ResearchSwCapture]::RestoreView($sw,$source) }
+        # Free the native model/bitmap caches before changing display preferences.
+        # Read-only source view/material edits are discarded without saving CAD.
+        Write-Output 'Discarding read-only documents before restoring application preferences.'
         [void][SwProbe]::CloseAll($sw)
         if ($old) {
           [void][Task3Sw]::SetFolders($sw,$old.folders); [Task3Sw]::SetSearch($sw,$old.search); [Task2Sw]::SetRO($sw,$old.readOnly)
-          [SwImage]::Restore($sw,$old.ints,$old.doubles); [SwImage]::RestoreFrame($sw,$old.frame)
+          [SwImage]::Restore($sw,$old.ints,$old.doubles); [ResearchSwCapture]::RestoreFrameKeepingServerAlive($sw,$old.frame)
           [ResearchSwCapture]::RestoreGlobalPreferences($sw,$old.global)
           $after = @{ frame=[SwImage]::GetFrame($sw); ints=[SwImage]::GetInts($sw); doubles=[SwImage]::GetDoubles($sw); folders=[Task3Sw]::GetFolders($sw); search=[Task3Sw]::GetSearch($sw); readOnly=[Task2Sw]::GetRO($sw); global=[ResearchSwCapture]::GlobalPreferences($sw) }
           $after | ConvertTo-Json -Depth 7 | Set-Content -Encoding UTF8 -LiteralPath "$OutputDirectory\$Asset-preferences-after.json"
         }
+        Write-Output 'Application preferences restored.'
       } finally { [SwProbe]::Exit($sw); [void][Runtime.InteropServices.Marshal]::FinalReleaseComObject($sw) }
     }
   }
@@ -123,7 +140,11 @@ try {
   if ($ownsLock -and (Test-Path -LiteralPath $pidFile)) {
     $ownedPid=[int](Get-Content -LiteralPath $pidFile)
     $ownedSW=Get-Process -Id $ownedPid -ErrorAction SilentlyContinue
-    if ($ownedSW -and $ownedSW.ProcessName -eq 'SLDWORKS') { Stop-Process -Id $ownedPid -Force }
+    if ($ownedSW -and $ownedSW.ProcessName -eq 'SLDWORKS') {
+      $null = $ownedSW.Handle
+      Stop-Process -Id $ownedPid -Force
+      if (-not $ownedSW.WaitForExit(30000)) { throw 'Owned SolidWorks process did not exit before source verification.' }
+    }
   }
   if ($ownsLock) {
     try { & (Join-Path $PSScriptRoot 'preflight-sw-research.ps1') -OutputDirectory $OutputDirectory }

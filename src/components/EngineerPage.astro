@@ -46,7 +46,7 @@ const p = engineer;
     <Chapter
       lang={lang}
       chapter={c}
-      layout={c.id === 'layout' || c.id === 'arm' ? 'expanded' : 'standard'}
+      layout={c.id === 'layout' || c.id === 'arm' || c.id === 'chassis' ? 'expanded' : 'standard'}
       hasWideMedia={c.scene === 'arm-unfold' || c.id === 'arm'}
     >
       {c.scene === 'arm-unfold' && <ArmExchange lang={lang} slot="wide" />}
