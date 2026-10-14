@@ -1,9 +1,10 @@
 import * as THREE from 'three';
 import type { MechanismStage } from './lib/mechanism-stage';
+import { setCadOpacity } from './lib/cad-opacity.ts';
 
 const TAU = Math.PI * 2;
 // Assembled hold, slow open, long exploded hold, slow close (seconds).
-const HOLD_ASSEMBLED = 6, OPEN = 6, HOLD_EXPLODED = 3, CLOSE = 6;
+const HOLD_ASSEMBLED = 8, OPEN = 6, HOLD_EXPLODED = 3, CLOSE = 6;
 export const CYCLE_DURATION = HOLD_ASSEMBLED + OPEN + HOLD_EXPLODED + CLOSE;
 /** Cycle time at which the exploded hold begins. */
 export const EXPLODED_START = HOLD_ASSEMBLED + OPEN;
@@ -58,17 +59,44 @@ export function explosionCycle(time: number) {
   return { amount: 1 - ease((t - EXPLODED_START - HOLD_EXPLODED) / CLOSE), phase: 'closing' };
 }
 export const SWERVE_PRESENTATION_DURATION = CYCLE_DURATION;
-/** Every assembled phase shows three suspension strokes with steering while orbiting. */
+/** Smooth, compact response: fast compression, smaller rebounds, then exact rest. */
+function sampleKeys(time: number, keys: readonly (readonly [number, number])[]) {
+  for (let i = 1; i < keys.length; i++) {
+    const [end, value] = keys[i], [start, previous] = keys[i - 1];
+    if (time <= end) return THREE.MathUtils.lerp(previous, value, ease(THREE.MathUtils.clamp((time - start) / (end - start), 0, 1)));
+  }
+  return keys[keys.length - 1][1];
+}
+const impactResponse = [[0, 0], [.085, 1], [.24, .12], [.34, .32], [.49, .035], [.6, .09], [.8, 0]] as const;
+/** Seeded road events vary between rounds, not between frames. This is a bounded
+ * visual response, not a calibrated spring/damper or a claimed physical limit. */
 export function swervePresentation(time: number) {
   const t = ((time % CYCLE_DURATION) + CYCLE_DURATION) % CYCLE_DURATION;
   if (t >= HOLD_ASSEMBLED) return { ...explosionCycle(t),
     motionTime: (t - HOLD_ASSEMBLED) / (CYCLE_DURATION - HOLD_ASSEMBLED) * CYCLE_DURATION,
-    suspension: 0, steering: 0, demo: false, orbitWeight: 1 };
-  // Three smooth 2-second strokes; 10 mm is illustrative, not a travel limit.
-  const suspension = .01 * Math.sin(Math.PI * t / 2) ** 2;
-  const steering = .48 * Math.sin(TAU * ease(t / HOLD_ASSEMBLED));
+    suspension: 0, steering: 0, roll: 0, demo: false, orbitWeight: 1 };
+  const round = Math.floor(time / CYCLE_DURATION);
+  const noise = (index: number) => {
+    const x = Math.sin(round * 127.1 + index * 311.7 + 17.3) * 43758.5453;
+    return x - Math.floor(x);
+  };
+  let suspension = 0;
+  // One pronounced bump, a short rough patch, then a final bump and long rest.
+  const events = [[.7, .009], [2.1, .0045], [2.48, .005], [4.85, .01]];
+  events.forEach(([start, amplitude], i) => {
+    const age = t - start - (noise(i) - .5) * .18;
+    const responseTime = age / (.8 + .3 * noise(i + 10));
+    if (responseTime >= 0 && responseTime <= .8) suspension += amplitude * (.8 + .2 * noise(i + 5)) * sampleKeys(responseTime, impactResponse);
+  });
+  const direction = round % 2 ? -1 : 1;
+  const steering = direction * sampleKeys(t, [[0, 0], [.3, 0], [.95, 1.15], [1.65, 1.15],
+    [2.45, -.95], [3.25, -.95], [3.7, -.65], [4.4, -.65], [5.05, 1.05], [6.3, 1.05], [7.15, 0], [8, 0]]);
+  // Rolling gives the direction changes a purpose. End at one full turn so
+  // returning to the exploded-view pose is continuous, with no reverse snap.
+  const roll = sampleKeys(t, [[0, 0], [.3, 0], [1.35, 1.25], [1.8, 1.25],
+    [3, 3.1], [3.9, 3.1], [5.3, 5.4], [6.8, TAU], [8, TAU]]);
   return { amount: 0, phase: 'articulation', motionTime: 0,
-    suspension, steering, demo: true, orbitWeight: 1 };
+    suspension, steering, roll, demo: true, orbitWeight: 1 };
 }
 /** Bounded, periodic demonstration: closing never unwinds accumulated turns. */
 export function swerveAngles(time: number, _explode: number) {
@@ -267,15 +295,12 @@ export function createModuleMotion(stage: MechanismStage, kind: 'pump' | 'swerve
     update(time: number, explode: number, demonstration?: ReturnType<typeof swervePresentation>) {
       const ghost = kind === 'pump' ? pumpTransparencyCycle(time) : { amount: ease(THREE.MathUtils.clamp(explode, 0, 1)), phase: 'explosion' };
       for (const [material, opacity] of ghostedMaterials) {
-        material.opacity = THREE.MathUtils.lerp(1, opacity, ghost.amount);
-        const transparent = ghost.amount > 0;
-        if (material.transparent !== transparent) { material.transparent = transparent; material.needsUpdate = true; }
-        material.depthWrite = !transparent;
-        material.userData.motionAppearance = { opacity: material.opacity, transparent, depthWrite: !transparent };
+        setCadOpacity(material, THREE.MathUtils.lerp(1, opacity, ghost.amount));
+        material.userData.motionAppearance = { opacity: material.opacity, transparent: true, depthWrite: true, alphaHash: false };
       }
       const drive = pumpDriveCycle(time);
       const angle = kind === 'pump' ? drive.angle : (time * PUMP_BASE_SPEED) % TAU;
-      const swerve = demonstration?.demo ? { roll: 0, steer: demonstration.steering } : swerveAngles(time, explode);
+      const swerve = demonstration?.demo ? { roll: demonstration.roll, steer: demonstration.steering } : swerveAngles(time, explode);
       const pose = sliderCrank(angle, origin, big, small);
       const next = sliderCrank(angle + .0001, origin, big, small);
       // Positive travel toward the pump head reduces chamber volume.

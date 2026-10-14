@@ -58,3 +58,20 @@ CAD 原件在 `D:\RM2025` 和 OneDrive，只读使用，入口见 [models/source
 历史报告保留当时的路径。先查 `documents/derived/audits/reorganization/migration.json`，再查 `cleanup.json`，确认文件现位置或删除原因。`scripts/asset-pipeline-archive/` 是历史脚本记录，旧路径须按清单定位后再使用。
 
 新增原片归 `source/`；提取、编辑和生成结果归 `derived/`，并保存来源记录。素材变更后运行 `npm run materials:inventory`，重新扫描全部本地文件、计算 SHA-256，并保留已有清单中的来源、作者、分 P 和迁移字段。独立历史网页由 [publish/](../publish/) 管理。
+
+
+## B 章装配与传动解析（2026-10-14）
+
+B 章采用原画布尺寸的单一主视图，按 J0、J1、J2、J3、限位/UWB、J4、腕部的顺序逐组讲解，一轮 116.6 秒。J1/J2 分开，腕部只展开一次；每组复原后展示关节运动，最后以 14 秒七轴联动收尾。J0 仰视、J2/J3 面向输出轴，腕部镜头经过上方、下方及另一侧。镜头先到位，再展开外盖与轴系；当前组复原后才移动到下一组，整机其余部分淡化保留。桌面画布高度为 `clamp(420px, 38vw, 540px)`，手机为 340px。拖动、缩放后空闲五秒平滑续播，也可暂停、选择章节或恢复整机。
+
+模型仍为 `models/derived/web/arm-parts.glb` 与 `arm-parts.json`。生成链为 `scripts/build-arm-parts.py` → `scripts/arm-explosion-layout.py` → `scripts/render-arm-study.py`；运镜与阶段时间位于 `src/scripts/arm-study-story.ts`。恢复了两条各 82 节的 J0/J1 外部链与 16 个 UWB 来源网格，腕部同名电机按实例区分。源节点 `arm:502` 的六个连通实体分别向两侧展开，每个来源面恰好保留一次。电机保持完整，紧固件随安装体移动。
+
+`images/derived/site/cad-cutouts/arm-exploded.png` 和 `images/derived/web/arm-study/detail-0.png` 至 `detail-8.png` 是同模型的备用渲染；手机默认仍为实时 3D。减少动态效果或加载失败时只显示一个可切换的静态视图。来源、几何检查、分镜检查和最终截图见 `documents/derived/audits/arm-study-20261014/`。该目录的 `superseded-multiview/` 仅保留已被用户否决的中间方案证据，不是当前页面。原始 CAD 与两个 tagged GLB 输入保持只读。
+
+当前模型 schema 6，1043 个唯一来源网格、221 个显示部件、7 个完整电机。UWB 安装板 arm:370 已恢复；运动变换位于 `src/scripts/lib/arm-study-motion.ts`，轴点与从属关系记录在模型元数据及验收报告中。运动是未标定硬件限位的展示示意。
+
+### B 章整车上下文补充
+
+当前循环 154.4 秒，开场从整车分离总成；J0 归位后保留底盘参照。新增 `models/derived/web/arm-context.glb/json` 由 `scripts/build-arm-context.py` 从只读 tagged GLB 派生，排除 B 已显示的来源件。两套前部双齿条、滑台、齿轮、末端齿条和滚轮分别分组，支撑一级台阶的结构用途演示；不替代 A 章功能视频。详见当前验收报告顶部及 `context-checks.json`。腕部三色线路和小幅稳定运镜由实时页面生成；备用静态图不模拟动态线路。限位边界为明确标识的示意，未补造缺失限位板。
+
+最新 B 章修订：底盘恢复与云台一致的来源材质族；一级台阶与七轴联动合并为 28 秒“整车协同”，全轮 148.2 秒。J0 先朝实际车尾，前部双升降和末端轮连续配合，最后协调收回。详情见验收报告顶部。

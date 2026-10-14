@@ -52,10 +52,10 @@ function layoutMechanismAnnotations(root: HTMLElement, points: { x: number; y: n
 }
 
 export function layoutSwerveAnnotations(root: HTMLElement, stage: MechanismStage, amount: number, phase: string) {
-  const demo = phase === 'articulation';
+  const detail = stage.isInspecting('optical-pcb');
   const points = stage.swerveAnchors().map((point, index) => ({ ...point,
-    visible: point.visible && (stage.isInspecting('optical-pcb') || (demo ? index < 4 : (index < 2 || index >= 7 ? amount > .12 : index < 4 ? amount > .3 : amount > .48))) }));
-  layoutMechanismAnnotations(root, points, stage.isInspecting('optical-pcb') || demo || amount > .02);
+    visible: point.visible && (detail || (index < 2 || index >= 7 ? amount > .12 : index < 4 ? amount > .3 : amount > .48)) }));
+  layoutMechanismAnnotations(root, points, detail || amount > .02);
 }
 
 export function layoutPumpAnnotations(root: HTMLElement, motion: ModuleMotion) {
@@ -208,7 +208,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       const next = await loadMechanismStage(canvas, import.meta.env.BASE_URL, root.dataset.model!, label, () => visible, signal);
       try {
         stage = next; motion = module.createModuleMotion(stage, root.dataset.mechanism as 'pump' | 'swerve');
-        if (root.dataset.mechanism === 'swerve') stage.reserveSwerveView(motion.update, module.CYCLE_DURATION);
+        if (root.dataset.mechanism === 'swerve') stage.reserveSwerveView((time, amount) => motion!.update(time, amount, amount === 0 ? module.swervePresentation(time) : undefined), module.CYCLE_DURATION);
         if (root.dataset.mechanism === 'swerve') stage.onSwerveViewChange(() => layoutSwerveAnnotations(root, next, explode, phase));
         else stage.onPumpViewChange(() => { if (motion) layoutPumpAnnotations(root, motion); });
       }

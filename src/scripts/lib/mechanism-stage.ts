@@ -3,6 +3,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { cleanPartName } from './part-name';
+import { setCadOpacity } from './cad-opacity';
 
 /** Shared part viewer. Its owner decides when rendering is allowed. */
 export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string, file: string, label: HTMLElement, canRender: () => boolean, signal: AbortSignal) {
@@ -88,7 +89,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   let inspection: Set<THREE.Mesh> | undefined;
   let inspectionKey: string | undefined;
   let inspectionBlend = 0;
-  const inspectionMaterials = new Map<THREE.Material, { opacity: number; transparent: boolean; depthWrite: boolean }>();
+  const inspectionMaterials = new Map<THREE.Material, { opacity: number; transparent: boolean; depthWrite: boolean; alphaHash: boolean }>();
   const corners: { mesh: THREE.Mesh; point: THREE.Vector3 }[] = [];
   model.traverse(object => {
     const mesh = object as THREE.Mesh;
@@ -173,9 +174,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   const updateInspectionMaterials = () => {
     if (inspectionBlend < .0001) { restoreInspectionMaterials(); return; }
     for (const [material, saved] of inspectionMaterials) {
-      material.opacity = THREE.MathUtils.lerp(material.userData.motionAppearance?.opacity ?? saved.opacity, inspectionKey === 'optical-pcb' ? .006 : .025, inspectionBlend);
-      if (!material.transparent) { material.transparent = true; material.needsUpdate = true; }
-      material.depthWrite = false;
+      setCadOpacity(material, THREE.MathUtils.lerp(material.userData.motionAppearance?.opacity ?? saved.opacity, inspectionKey === 'optical-pcb' ? .006 : .025, inspectionBlend));
     }
   };
   const provenance = (object: THREE.Object3D) => {
@@ -193,6 +192,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     saved = []; hovered = undefined; label.hidden = true; label.textContent = '';
   };
   const updateHover = () => {
+    if (isSwerve && !inspection && Number(canvas.closest<HTMLElement>('[data-mechanism]')?.dataset.explode ?? 0) <= .02) { clearHover(); return; }
     if (dragging) return;
     raycaster.setFromCamera(pointer, camera);
     const selectable = inspection && inspectionBlend > .5 ? meshes.filter(mesh => inspection!.has(mesh)) : meshes;
@@ -332,7 +332,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       for (const mesh of meshes) {
         if (inspection.has(mesh)) continue;
         for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-          inspectionMaterials.set(material, { opacity: material.opacity, transparent: material.transparent, depthWrite: material.depthWrite });
+          inspectionMaterials.set(material, { opacity: material.opacity, transparent: material.transparent, depthWrite: material.depthWrite, alphaHash: material.alphaHash });
         }
       }
       groups.sort((a, b) => transmissions.indexOf(a.userData.web_transmission) - transmissions.indexOf(b.userData.web_transmission));

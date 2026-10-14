@@ -1,8 +1,8 @@
 # 素材总清单
 
-生成时间：2026-10-13T18:31:51.844+08:00（北京时间）。
+生成时间：2026-10-14T14:25:26.394+08:00（北京时间）。
 
-本地 materials/ 共 **1,600 个文件，12.73 GiB**。包含 Git 忽略的本地素材；本清单和 inventory.csv 不计入统计。每个文件均重新计算 SHA-256。
+本地 materials/ 共 **1,695 个文件，12.75 GiB**。包含 Git 忽略的本地素材；本清单和 inventory.csv 不计入统计。每个文件均重新计算 SHA-256。
 
 原始输入与二级材料的定义、使用方式见 [README.md](README.md)。完整文件、层级、分类依据、来源和校验值见 [inventory.csv](inventory.csv)。
 
@@ -14,11 +14,11 @@
 | 原始输入 | 视频 | 35 | 10.04 GiB | [videos/source/](videos/source/) |
 | 原始输入 | 字体 | 1 | 2.51 MiB | [fonts/source/](fonts/source/) |
 | 原始输入 | 资料与审计 | 72 | 12.77 MiB | [documents/source/](documents/source/) |
-| 二级材料 | 图片 | 46 | 44.27 MiB | [images/derived/](images/derived/) |
-| 二级材料 | 模型 | 74 | 1.46 GiB | [models/derived/](models/derived/) |
+| 二级材料 | 图片 | 55 | 54.37 MiB | [images/derived/](images/derived/) |
+| 二级材料 | 模型 | 76 | 1.46 GiB | [models/derived/](models/derived/) |
 | 二级材料 | 视频 | 24 | 126.83 MiB | [videos/derived/](videos/derived/) |
-| 二级材料 | 字体 | 1 | 92.41 KiB | [fonts/derived/](fonts/derived/) |
-| 二级材料 | 资料与审计 | 1289 | 1.04 GiB | [documents/derived/](documents/derived/) |
+| 二级材料 | 字体 | 1 | 97.47 KiB | [fonts/derived/](fonts/derived/) |
+| 二级材料 | 资料与审计 | 1373 | 1.04 GiB | [documents/derived/](documents/derived/) |
 
 ## 当前展示与处理输入
 
@@ -38,24 +38,26 @@
 | 字体原件 | 1 | 2.51 MiB |
 | 官方文章原图 | 5 | 671.09 KiB |
 | 投稿原封面 | 36 | 9.05 MiB |
-| 来源与审计支撑 | 1286 | 1.04 GiB |
+| 来源与审计支撑 | 1370 | 1.04 GiB |
 | 模型处理输入 | 47 | 1.43 GiB |
 | 模型说明 | 1 | 6.80 KiB |
-| 目录索引 | 1 | 9.17 KiB |
-| 网页使用 | 30 | 38.34 MiB |
+| 目录索引 | 1 | 12.04 KiB |
+| 网页使用 | 30 | 38.35 MiB |
 | 网页运行依赖 | 5 | 760.81 KiB |
-| 说明与索引 | 33 | 82.85 MiB |
+| 说明与索引 | 44 | 98.76 MiB |
 | 运动学交付 | 9 | 10.83 MiB |
 
 ## 当前模型与视频
 
 | 文件 | 用途 | 大小 |
 | --- | --- | ---: |
+| [arm-context.glb](models/derived/web/arm-context.glb) | 说明与索引 | 4.65 MiB |
+| [arm-context.json](models/derived/web/arm-context.json) | 说明与索引 | 11.36 KiB |
 | [arm-joints.json](models/derived/web/arm-joints.json) | 网页使用 | 100.03 KiB |
-| [arm-parts.glb](models/derived/web/arm-parts.glb) | 说明与索引 | 4.86 MiB |
-| [arm-parts.json](models/derived/web/arm-parts.json) | 说明与索引 | 2.04 MiB |
+| [arm-parts.glb](models/derived/web/arm-parts.glb) | 说明与索引 | 5.17 MiB |
+| [arm-parts.json](models/derived/web/arm-parts.json) | 说明与索引 | 2.88 MiB |
 | [arm.glb](models/derived/web/arm.glb) | 网页使用 | 1.03 MiB |
-| [engineer-modules.json](models/derived/web/engineer-modules.json) | 说明与索引 | 42.10 KiB |
+| [engineer-modules.json](models/derived/web/engineer-modules.json) | 说明与索引 | 42.15 KiB |
 | [engineer-pump.glb](models/derived/web/engineer-pump.glb) | 网页使用 | 312.86 KiB |
 | [engineer-swerve.glb](models/derived/web/engineer-swerve.glb) | 网页使用 | 2.49 MiB |
 | [engineer.glb](models/derived/web/engineer.glb) | 网页使用 | 1.82 MiB |

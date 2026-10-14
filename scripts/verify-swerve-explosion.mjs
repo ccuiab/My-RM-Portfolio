@@ -55,7 +55,7 @@ for (let t = 0; t <= CYCLE_DURATION; t += CYCLE_DURATION / 16) {
     assert.ok(Math.abs(world(input).distanceTo(world(output)) - centerDistance) < 1e-7, 'steering center distance changed');
     motors.forEach(motor => {
       const expected = initial[objects.indexOf(motor)].p.clone();
-      if (motor.userData.source_node_index === 61) expected.y += .14 * swervePartProgress(amount, 'steering');
+      expected.addScaledVector(new THREE.Vector3().fromArray(motor.userData.web_explode), swervePartProgress(amount, motor.userData.web_explode_group));
       assert.ok(motor.position.distanceTo(expected) < 1e-10);
     });
     samples++;
@@ -80,16 +80,14 @@ const mountedDelta = driveMotor.position.clone().sub(lower.position);
 for (let t = 0; t <= SWERVE_PRESENTATION_DURATION; t += .125) {
   const sample = swervePresentation(t);
   motion.update(sample.motionTime, sample.amount, sample);
-  assert.ok(driveMotor.position.clone().sub(lower.position).distanceTo(mountedDelta) < 1e-9);
+  if (sample.demo) assert.ok(driveMotor.position.clone().sub(lower.position).distanceTo(mountedDelta) < 1e-9);
   for (const object of objects.filter(o => o.isMesh && o.userData.web_structure)) {
     assert.equal(object.material.opacity === 1, sample.amount === 0, 'assembly must be solid');
-    assert.equal(object.material.depthWrite, sample.amount === 0);
+    assert.equal(object.material.depthWrite, true);
   }
   if (sample.demo) { assert.equal(sample.amount, 0); assert.equal(sample.orbitWeight, 1); }
   if (sample.demo && sample.suspension > .0001 && Math.abs(sample.steering) > .01) assert.equal(sample.phase, 'articulation');
 }
-for (const t of [1, 3, 5, 22, 24, 26]) assert.equal(swervePresentation(t).suspension, .01);
-for (const t of [0, 2, 4, 6, 21]) assert.ok(swervePresentation(t).suspension < 1e-12);
 for (const id of [42, 44]) {
   const cover = objects.find(o => o.userData.source_node_index === id);
   assert.ok(new THREE.Vector3().fromArray(cover.userData.web_explode).dot(new THREE.Vector3().fromArray(wheel.userData.web_axis)) > 0, 'cover must move away from drive motor');
@@ -118,14 +116,32 @@ const coverClearance = [42, 44].map(id => {
 });
 console.log(JSON.stringify({ samples, wheelAxis: 'pass', suspensionPairs: 'pass', intactMotors: motors.length,
   steeringPair: 'pass', exactRestore: 'pass', reverseAndResume: 'pass', auditHash: 'pass', pcbComponents: pcb.length, sensorAssembly: 'pass',
-  presentationSamples: 169, solidOnAssembly: 'pass', suspensionMounts: 'pass', coverClearance }, null, 2));
+  presentationSamples: 185, solidOnAssembly: 'pass', suspensionMounts: 'pass', coverClearance }, null, 2));
 
-assert.ok(swervePresentation(1.5).suspension > .001 && swervePresentation(1.5).steering > .1, 'suspension and steering must move together');
-assert.equal(CYCLE_DURATION, 21);
-for (const round of [0, 21, 42]) {
-  for (const [time, phase] of [[0, 'articulation'], [5.9, 'articulation'], [6, 'opening'], [12, 'exploded'], [15, 'closing']]) {
+assert.equal(CYCLE_DURATION, 23);
+for (const round of [0, 23, 46]) {
+  for (const [time, phase] of [[0, 'articulation'], [7.9, 'articulation'], [8, 'opening'], [14, 'exploded'], [17, 'closing']]) {
     const sample = swervePresentation(round + time);
     assert.equal(sample.phase, phase);
-    assert.equal(sample.orbitWeight, 1, 'orbit must continue during every phase');
+    assert.equal(sample.orbitWeight, 1);
   }
+  let rest = 0, maxSpeed = 0, previous = swervePresentation(round);
+  for (let t = .002; t < 8; t += .002) {
+    const sample = swervePresentation(round + t);
+    assert.ok(sample.suspension >= 0 && sample.suspension <= .01001, 'bounded rail travel');
+    assert.ok(Math.abs(sample.suspension - previous.suspension) < .0006, 'continuous impact response');
+    if (sample.suspension === 0) rest += .002;
+    maxSpeed = Math.max(maxSpeed, Math.abs(sample.steering - previous.steering) / .002);
+    previous = sample;
+  }
+  assert.ok(rest > 3, 'visible suspension rest gaps');
+  assert.ok(maxSpeed > 3 && maxSpeed < 6, 'responsive but eased steering');
+  assert.equal(swervePresentation(round + 7.9).suspension, 0);
+  assert.ok(Math.abs(swervePresentation(round + 7.9).steering) < 1e-12);
 }
+assert.notDeepEqual([.7, .8, .9, 1].map(t => swervePresentation(t).suspension), [.7, .8, .9, 1].map(t => swervePresentation(t + 23).suspension), 'vary road events between rounds');
+assert.ok(swervePresentation(2).roll > 1, 'wheel rolls during assembled driving');
+assert.ok(Math.abs(swervePresentation(7.9).roll - Math.PI * 2) < 1e-9, 'wheel returns to the same orientation before explosion');
+const mount = objects.find(o => o.userData.source_node_index === 43);
+assert.deepEqual(mount.userData.web_explode, driveMotor.userData.web_explode, 'motor and mount stay together');
+console.log('23-second irregular suspension and responsive steering checks passed');

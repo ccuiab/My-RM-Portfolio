@@ -3,9 +3,9 @@
 Used by Blender export and the metadata-only updater. Geometry, CAD poses,
 motor placement and the steering hierarchy are never changed here.
 """
-DRIVE_LAYERS = {35: .035, 37: .072, 39: .072, 40: .072, 38: .111,
-                41: .16, 42: .19, 43: -.06, 44: .135,
-                45: .23, 46: .23, 47: -.06, 31: .29}
+DRIVE_LAYERS = {34: -.19, 35: .035, 37: .072, 39: .072, 40: .072, 38: .111,
+                41: .16, 42: .19, 43: -.19, 44: .135,
+                45: .23, 46: .23, 47: -.19, 31: .26}
 
 
 def sensor_metadata(index):
@@ -20,7 +20,7 @@ def explosion_metadata(index, pinion, wheel_axis):
         return {'web_explode': [0, .065, 0], 'web_explode_group': 'steering', 'web_guide': True}
     if index in DRIVE_LAYERS:
         return {'web_explode': [v * DRIVE_LAYERS[index] for v in wheel_axis],
-                'web_explode_group': 'drive', 'web_guide': index in (31, 35, 38, 39)}
+                'web_explode_group': 'drive', 'web_guide': index in (31, 34, 35, 38, 39)}
     # Keep the suspension on its actual supports, including rail/carriage pairs
     # and both gas-spring parts. The frame is ghosted by the viewer.
     return {'web_explode': [0, 0, 0], 'web_explode_group': 'fixed', 'web_guide': False}

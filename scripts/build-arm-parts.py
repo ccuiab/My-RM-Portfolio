@@ -131,6 +131,8 @@ for i in known:
     known_by_branch.setdefault(branch, []).append(i)
 
 def link_for(i):
+    if any(n.startswith('图传uwb模块') for n in [arm.name(k) for k in arm.ancestry(i)]):
+        return 'link_uwb'
     if i in known:
         return known[i]['link']
     chain = arm.ancestry(i)
@@ -147,9 +149,11 @@ def link_for(i):
     return known[min(anchors, key=lambda k: float(np.linalg.norm(center(arm_bounds[k]) - center(arm_bounds[i]))))]['link']
 
 def arm_exclusion(i):
+    if i == 370:  # UWB structural bracket, confirmed by arm_mates 275/276 and root mates 19-21.
+        return None
     hierarchy = [arm.name(k) for k in arm.ancestry(i)]
     if any(n.startswith('图传uwb模块') for n in hierarchy):
-        return 'Peripheral UWB/video transmitter subtree, outside L0–L6 mechanical chain.'
+        return None
     if any(s in arm.name(i) for s in ['realsense', 'RealSense', '图传', 'VT03']):
         return 'Peripheral sensor/transmitter or sensor-only bracket, not a joint or transmission body.'
     return None
@@ -180,7 +184,16 @@ for i, node in enumerate(engineer.data['nodes']):
     direct_gimbal = engineer.parents.get(i) == gimbal_root
     j0_hardware = direct_gimbal and bool(re.search(r'螺|垫|Screw|Nut|Washer', name, re.I)) and low[0] > -.11 and high[0] < .03 and low[2] > -.29 and high[2] < -.16
     is_j0 = turntable_root in chain or i in j0_named or j0_hardware
-    selected = is_j0 or (left_region and not any(token in name for token in ['RM_主控', 'J0', '04C链节']))
+    # Two distinct closed loops: J0 lies at Y=-78 mm, J1 at Y=-89.8 mm.
+    # Source chain plates share each sprocket's plane; never classify by name alone.
+    chain_y = float(center(box)[1])
+    is_chain = '04C链节' in name
+    chain_j0 = is_chain and abs(chain_y + .078) < .001
+    chain_j1 = is_chain and abs(chain_y + .0898) < .001
+    if is_chain and not (chain_j0 or chain_j1):
+        raise RuntimeError(f'Unclassified external chain node {i}: {box}')
+    is_j0 = is_j0 or chain_j0
+    selected = is_j0 or chain_j1 or (left_region and not any(token in name for token in ['RM_主控', 'J0', '04C链节']))
     if selected:
         extra_nodes.append(i)
         is_mount = 'RA6008' in name or '30teeth_从动轮' in name or '6706' in name
@@ -291,7 +304,9 @@ for asset, filename in [('arm', 'arm_tagged.glb'), ('engineer', 'engineer_tagged
             node.pop(prop, None)
         world = (np.eye(4) if asset == 'arm' else engineer_to_arm) @ cad.matrix(i)
         node['matrix'] = world.T.reshape(-1).tolist()
-        node['extras']['motor_assembly'] = next((cad.name(k) for k in reversed(cad.ancestry(i)) if re.match(r'^(MG4010|MG8010|MG8016|M3508|M2006)', cad.name(k))), '')
+        motor_root = next((k for k in reversed(cad.ancestry(i)) if re.match(r'^(MG4010|MG8010|MG8016|M3508|M2006)', cad.name(k))), None)
+        node['extras']['motor_assembly'] = cad.name(motor_root) if motor_root is not None else ''
+        node['extras']['motor_instance'] = str(motor_root) if motor_root is not None else ''
         nodes.append(node)
     gltf['nodes'] = nodes
     gltf['scenes'] = [{'nodes': list(range(len(nodes)))}]
@@ -321,19 +336,70 @@ for name, color, metal, rough in [
     palette[name] = mat
 
 by_source = {(o.get('source_asset'), o.get('source_node_index')): o for o in bpy.context.scene.objects if o.type == 'MESH'}
-groups = {}
+# The exported wrist side-frame node contains six disconnected physical bodies.
+# Partition by mesh connectivity, never cut a connected surface or invent a plane.
+# Each face belongs to exactly one child; provenance retains its source face indices.
+geometry_mapping = []
+partition_audit = []
 for item in mapping:
-    obj = by_source[(item['source_asset'], item['source_node_index'])]
+    source_key = (item['source_asset'], item['source_node_index'])
+    if source_key != ('arm', 502):
+        geometry_mapping.append(item)
+        continue
+    original = by_source[source_key]
+    bm = bmesh.new(); bm.from_mesh(original.data)
+    bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=1e-8)
+    bm.to_mesh(original.data); bm.free()
+    mesh = original.data
+    parent = list(range(len(mesh.vertices)))
+    def find(v):
+        while parent[v] != v:
+            parent[v] = parent[parent[v]]; v = parent[v]
+        return v
+    for edge in mesh.edges:
+        parent[find(edge.vertices[1])] = find(edge.vertices[0])
+    islands = {}
+    for face in mesh.polygons:
+        islands.setdefault(find(face.vertices[0]), []).append(face.index)
+    covered = set()
+    for number, faces in enumerate(sorted(islands.values(), key=lambda f: -len(f))):
+        used = sorted({v for f in faces for v in mesh.polygons[f].vertices})
+        remap = {v: i for i, v in enumerate(used)}
+        data = bpy.data.meshes.new(f'Wrist frame body {number}')
+        data.from_pydata([mesh.vertices[v].co for v in used], [], [[remap[v] for v in mesh.polygons[f].vertices] for f in faces]); data.update()
+        obj = bpy.data.objects.new(f'Wrist frame body {number}', data)
+        bpy.context.collection.objects.link(obj); obj.matrix_world = original.matrix_world.copy()
+        for k in original.keys(): obj[k] = original[k]
+        by_source[(*source_key, number)] = obj
+        geometry_mapping.append({**item, 'source_partition': number})
+        assert not covered.intersection(faces); covered.update(faces)
+        partition_audit.append({'asset': 'arm', 'index': 502, 'partition': number, 'face_indices': faces, 'source_face_count': len(mesh.polygons)})
+    assert len(covered) == len(mesh.polygons)
+    bpy.data.objects.remove(original, do_unlink=True)
+coverage['geometry_partitions'] = partition_audit
+groups = {}
+for item in geometry_mapping:
+    key = (item['source_asset'], item['source_node_index'])
+    obj = by_source[(*key, item['source_partition']) if 'source_partition' in item else key]
     motor = obj.get('motor_assembly', '')
     name = item['source_node_name']
     # A toothed belt is one purchased part; CAD exported its individual teeth.
     belt = 'Synchronousbelt' in name
     chain = '04C链节' in name
-    key = f"motor_{item['source_asset']}_{item['link']}_{motor}" if motor else f"belt_{item['link']}_{name.split('-')[0]}" if belt else f"chain_{item['link']}" if chain else obj.name
+    key = f"motor_{item['source_asset']}_{obj.get('motor_instance')}" if motor else f"belt_{item['link']}_{name.split('-')[0]}" if belt else f"chain_{item['source_asset']}_{item['link']}" if chain else obj.name
     group = groups.setdefault(key, {'objects': [], 'members': [], 'name': motor if motor else '04C链节' if chain else name,
                                     'link': item['link'], 'motor': bool(motor), 'belt': belt})
+    cad = arm if item['source_asset'] == 'arm' else engineer
+    primitive = cad.data['meshes'][cad.data['nodes'][item['source_node_index']]['mesh']]['primitives'][0]
+    accessor = cad.data['accessors'][primitive['attributes']['POSITION']]
+    dims = np.array(accessor['max']) - accessor['min']
+    cylinder_axis = min(range(3), key=lambda k: abs(dims[(k+1)%3]-dims[(k+2)%3]) / max(dims[(k+1)%3],dims[(k+2)%3],1e-9))
+    frame = (np.eye(4) if item['source_asset']=='arm' else engineer_to_arm) @ cad.matrix(item['source_node_index'])
+    axis = frame[:3,cylinder_axis]; axis = axis / max(float(np.linalg.norm(axis)),1e-12)
+    group.setdefault('fastener_axis', axis.tolist())
     group['objects'].append(obj)
-    group['members'].append({'asset': item['source_asset'], 'index': item['source_node_index'], 'node_name': name})
+    group['members'].append({'asset': item['source_asset'], 'index': item['source_node_index'], 'node_name': name,
+                             **({'partition': item['source_partition']} if 'source_partition' in item else {})})
     world = obj.matrix_world.copy()
     obj.data = obj.data.copy()
     obj.parent = None
@@ -424,8 +490,22 @@ for index, (key, group) in enumerate(groups.items()):
     obj['motor'] = group['motor']
     records = [n for n in source_nodes if (n['source_asset'], n['source_node_index']) in {(m['asset'], m['index']) for m in group['members']}]
     geometric_volume = sum(n['mesh_volume_m3'] for n in records)
+    if any('partition' in m for m in group['members']):
+        # The source-wide value cannot be duplicated on each disconnected child.
+        obj.data.calc_loop_triangles()
+        vertices = np.array([v.co[:] for v in obj.data.vertices], dtype=np.float64)
+        face_indices = np.array([t.vertices[:] for t in obj.data.loop_triangles])
+        tris = vertices[face_indices]
+        geometric_volume = abs(float(np.einsum('ij,ij->i',tris[:,0],np.cross(tris[:,1],tris[:,2])).sum()/6))
     geometric_center = [sum(n['mesh_centroid_m'][i] * n['mesh_volume_m3'] for n in records) / max(geometric_volume, 1e-20) for i in range(3)]
+    if any('partition' in m for m in group['members']):
+        signed = np.einsum('ij,ij->i',tris[:,0],np.cross(tris[:,1],tris[:,2]))/6
+        total = float(signed.sum())
+        local_center = (signed[:,None]*tris.sum(axis=1)/4).sum(axis=0)/total if abs(total)>1e-15 else vertices.mean(axis=0)
+        geometric_center = list(C.transposed() @ Vector(local_center))
     parts.append({'key': obj.name, 'node_name': group['name'], 'link': group['link'], 'motor': group['motor'],
+                  'fastener_axis': group['fastener_axis'],
+                  'source_frame': ((np.eye(4) if group['members'][0]['asset'] == 'arm' else engineer_to_arm) @ (arm if group['members'][0]['asset'] == 'arm' else engineer).matrix(group['members'][0]['index']))[:3, :3].tolist(),
                   'geometry_volume_m3': geometric_volume, 'geometry_centroid_m': geometric_center,
                   'members': group['members'], 'material': group['material'], 'source_materials': sorted(group['source_materials']), 'source_triangles': count,
                   'removed_faces': removed, 'triangles': triangles(obj)})
@@ -473,8 +553,7 @@ for batch in merge_groups.values():
     host['geometry_centroid_m'] = centroid
     merged.append(host)
 parts = merged
-# Refit the same radial plan to the final rigid bundles, matching the runtime metadata exactly.
-layout.plan(parts, joints)
+# Preserve the per-source assembly plan; merging must never re-infer screw ownership.
 
 bpy.ops.object.select_all(action='SELECT')
 bpy.ops.export_scene.gltf(filepath=str(out / 'arm-parts.glb'), export_format='GLB', use_selection=True,
@@ -490,21 +569,21 @@ for node in gltf['nodes']:
     if key in by_key:
         node['name'] = by_key[key]['node_name']
 write_glb(out / 'arm-parts.glb', gltf, binary)
-if (out / 'arm-parts.glb').stat().st_size > 5 * 1024 * 1024:
-    raise RuntimeError('Arm model exceeds the 5 MiB web budget')
+if (out / 'arm-parts.glb').stat().st_size > 6 * 1024 * 1024:
+    raise RuntimeError('Arm model exceeds the 6 MiB web budget')
 exported_keys = {n.get('extras', {}).get('part_key') for n in gltf['nodes']}
 retained = {(m['asset'], m['index']) for p in parts for m in p['members']}
 expected = {(m['source_asset'], m['source_node_index']) for m in mapping}
 coverage['missing_count_after_export'] = len(expected - retained)
 if coverage['missing_count_after_export'] or not set(by_key).issubset(exported_keys):
     raise RuntimeError('Audited source nodes or exported mounting bundles are missing')
-meta = {'schema_version': 4, 'units': 'metres', 'coordinate_frame': joints['coordinate_frame'],
-        'sources': sources, 'mapping_source': 'Audited L0–L6 arm_tagged nodes; engineer_tagged J1 mounting bodies and explicit J0/turntable assembly. Peripheral sensors and external gimbal chain excluded with per-node evidence.',
+meta = {'schema_version': 6, 'units': 'metres', 'coordinate_frame': joints['coordinate_frame'],
+        'sources': sources, 'mapping_source': 'Audited arm, final chain linkage and UWB subtree; engineer J0/J1 mounting assemblies and two separately classified external chain loops.',
         'joint_source': 'arm-joints.json', 'motor_policy': 'Complete source motor assemblies; rigid translation with the owning link, no internal separation.',
         'belt_policy': 'CAD tooth segments joined into one belt part per link and belt specification.',
-        'explosion_policy': 'Two stages: radial CAD group separation about the complete arm volume-weighted geometric center, then small mounting-axis part offsets. Close in reverse stage order. Complete motors and mounting bundles remain rigid.',
+        'explosion_policy': 'Compact functional overview, intact J4-J6 wrist. Local covers clear first; named assembly-axis stacks open second. Complete motor instances stay at their assembly locations. Bearings remain inspectable; fasteners follow qualified mounting bodies.',
         'quality_policy': {'position_bits': 11, 'normal_bits': 7, 'protected': 'Structural parts, motors, bearings, chains, gears and pulleys retain cleaned source tessellation. Screw/nut thread detail is limited to 600 triangles per source object.', 'normals': '35 degree smoothing; area-weighted planar normals except motors.', 'merge': 'Same material within rigid mounting bundles only.'},
-        'groups': layout.groups(parts), 'coverage': coverage, 'source_nodes': source_nodes,
+        'groups': layout.groups(parts), 'details': layout.details(parts, joints), 'motion': layout.motion_contract(joints), 'coverage': coverage, 'source_nodes': source_nodes,
         'parts': parts, 'triangles': sum(p['triangles'] for p in parts),
         'draco_bytes': (out / 'arm-parts.glb').stat().st_size}
 (out / 'arm-parts.json').write_text(json.dumps(meta, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
