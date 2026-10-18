@@ -14,6 +14,7 @@ dist/
 # local working files
 output/
 .playwright-mcp/
+.codex/
 
 # local dev-only pages
 src/pages/dev-*/
@@ -25,6 +26,8 @@ materials/images/source/bilibili/
 materials/images/source/official-article/
 materials/images/derived/inputs/cad-captures/
 materials/models/derived/inputs/
+materials/models/source/robomaster/**/*.stp
+materials/models/source/robomaster/**/*.download-state.json
 materials/videos/source/
 materials/videos/derived/inputs/
 materials/documents/source/bilibili/

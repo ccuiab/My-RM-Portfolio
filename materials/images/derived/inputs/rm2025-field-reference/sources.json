@@ -1,0 +1,174 @@
+{
+  "source_pdf": "materials/documents/source/robomaster/2025/rm2025-university-championship-rules-v2.1.0.pdf",
+  "source_sha256": "aa78661e37432219958621c3f39f9dbd5e630228cef2ab146147dd6b98e4db98",
+  "page_numbering": "1-based PDF page; agrees with printed page on inspected reference pages",
+  "render_command": "pdftoppm -f PAGE -l PAGE -scale-to 1800 -png -singlefile SOURCE PREFIX",
+  "reference_groups": {
+    "version_change": [
+      3,
+      4
+    ],
+    "field_overview": [
+      35,
+      36,
+      37
+    ],
+    "exchange_station_and_slot": [
+      55,
+      56,
+      57,
+      58,
+      87,
+      88,
+      89,
+      90,
+      91,
+      92,
+      93
+    ],
+    "central_highland_and_crossing": [
+      60,
+      61,
+      109,
+      112
+    ],
+    "gold_resource_island": [
+      62,
+      63
+    ],
+    "silver_resource_island": [
+      64
+    ],
+    "ores": [
+      72,
+      73
+    ]
+  },
+  "pages": [
+    {
+      "pdf_page": 3,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p003.png",
+      "sha256": "362a1323991b86701ef48d3663ee1c5188ea4624b47f3db37908951333f773ba"
+    },
+    {
+      "pdf_page": 4,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p004.png",
+      "sha256": "f0874a181ab15bafb501b07813737dc2a7ddb7a36a7641018acbb81560779dab"
+    },
+    {
+      "pdf_page": 35,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p035.png",
+      "sha256": "901bd6936267810fed48f7cfb284f3c5c1b66057087df04b27bf95e87f9cecdd"
+    },
+    {
+      "pdf_page": 36,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p036.png",
+      "sha256": "2e08d974af975f0cff3ca510f1497967716ef51385016b10b83634cbc59c9014"
+    },
+    {
+      "pdf_page": 37,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p037.png",
+      "sha256": "f445b159af30dbb78aef1a50ec655341e23d97fb8eaed1fedf12efa9387dbe51"
+    },
+    {
+      "pdf_page": 55,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p055.png",
+      "sha256": "5bbcd2bf1b8f177d26f16a8dca64138defab9953ee1322953b859e9cbe6c4c89"
+    },
+    {
+      "pdf_page": 56,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p056.png",
+      "sha256": "8e3c7f98f49b2704f4efc2cc9d5709696d2934b83d061125660bbbea09f5af4f"
+    },
+    {
+      "pdf_page": 57,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p057.png",
+      "sha256": "618315915372f85c13f09e899db6f3c40f33b772492d6639697de59477e65278"
+    },
+    {
+      "pdf_page": 58,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p058.png",
+      "sha256": "0bf3660b60f610302afd6d8e5bfde1699b9db1da3ebc75686280dd28f86d4635"
+    },
+    {
+      "pdf_page": 60,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p060.png",
+      "sha256": "bc1aab9a5a992276eccda6b63c833f9343ec436f094e1a436f56fd76003e5994"
+    },
+    {
+      "pdf_page": 61,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p061.png",
+      "sha256": "55373e24ef0da01fe97b3d935ec340725c183780b4c81c325f3cfc82f837db5b"
+    },
+    {
+      "pdf_page": 62,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p062.png",
+      "sha256": "7dec7644558d46ef72e9bb2403835da1bae51586c480d015a9587fef07934da3"
+    },
+    {
+      "pdf_page": 63,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p063.png",
+      "sha256": "93ea8c6e3feaa796d933c4f23284c7e79a89bd79211b0d72ee9005a0aa04c1ff"
+    },
+    {
+      "pdf_page": 64,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p064.png",
+      "sha256": "bb1da057b5261d55e465e7004aa1e2a09b022f88e426470a61e17604b8a5441f"
+    },
+    {
+      "pdf_page": 72,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p072.png",
+      "sha256": "84a7162150d041c55a310680f85f33d508ee51effb5699162fe8fb32d2637c07"
+    },
+    {
+      "pdf_page": 73,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p073.png",
+      "sha256": "ba8610c3bd10f37d95120b43824d4b83bff489f4a0eb3a01c1a9515ebebebc54"
+    },
+    {
+      "pdf_page": 87,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p087.png",
+      "sha256": "b0720c826ee11d80717f9072541940b606a4fba328dca08f2309035ab5a0679d"
+    },
+    {
+      "pdf_page": 88,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p088.png",
+      "sha256": "7283a681acb4d4c0a9fd93062c38abdd0cd3548ae738691307d9fa00abf32837"
+    },
+    {
+      "pdf_page": 89,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p089.png",
+      "sha256": "5213b2d5113dbf332ee93cff4127732d6bed640d0ea9cfbfa1ef3c3bceaa70dd"
+    },
+    {
+      "pdf_page": 90,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p090.png",
+      "sha256": "e45e4f6c56510b7a0aa92c7976d6d4dce2090e7e484236a66635443c02f0f98b"
+    },
+    {
+      "pdf_page": 91,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p091.png",
+      "sha256": "9b3db8601526824672e1567e549e1e37e48b6c3c420c5190c8ec3bded2c89a25"
+    },
+    {
+      "pdf_page": 92,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p092.png",
+      "sha256": "1a8352c5827add7223f74bfc0589e5b8019f0676efa1f39322fd19ac168d4c99"
+    },
+    {
+      "pdf_page": 93,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p093.png",
+      "sha256": "df3790c68fc3959045db6aba5d53d0627c18df5b6172b436f98857bba254e571"
+    },
+    {
+      "pdf_page": 109,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p109.png",
+      "sha256": "db17e388bd2a44579a3e1d7492d1d9c43044801326101659d1b564b830243a6a"
+    },
+    {
+      "pdf_page": 112,
+      "path": "materials/images/derived/inputs/rm2025-field-reference/rules-p112.png",
+      "sha256": "0d46a356c71cbb4dd52d905d961c8400cd0e2dfb2b8484d17a4e8d50461c37a7"
+    }
+  ]
+}

@@ -14,7 +14,7 @@ const L = sceneCopy[kind];
     <div class="model" data-mechanism-canvas></div>
     <span class="badge">{t(L.badge, lang)}</span>
     {kind === 'swerve' && <>
-      <output class="cycle" data-cycle-label data-assembled={t(sceneCopy.swerve.phases.assembled, lang)} data-opening={t(sceneCopy.swerve.phases.opening, lang)} data-exploded={t(sceneCopy.swerve.phases.exploded, lang)} data-closing={t(sceneCopy.swerve.phases.closing, lang)} data-articulation={t(sceneCopy.swerve.phases.articulation, lang)}></output>
+      <output class="cycle" data-cycle-label data-overview={t(sceneCopy.swerve.phases.overview, lang)} data-focus={t(sceneCopy.swerve.phases.focus, lang)} data-pullback={t(sceneCopy.swerve.phases.pullback, lang)} data-returning={t(sceneCopy.swerve.phases.returning, lang)} data-assembled={t(sceneCopy.swerve.phases.assembled, lang)} data-opening={t(sceneCopy.swerve.phases.opening, lang)} data-exploded={t(sceneCopy.swerve.phases.exploded, lang)} data-closing={t(sceneCopy.swerve.phases.closing, lang)} data-articulation={t(sceneCopy.swerve.phases.articulation, lang)}></output>
       <svg class="annotation-leaders" data-swerve-leaders aria-hidden="true" hidden>
         {sceneCopy.swerve.stages.map(() => <g data-annotation-leader hidden><path /><circle r="2" /></g>)}
       </svg>

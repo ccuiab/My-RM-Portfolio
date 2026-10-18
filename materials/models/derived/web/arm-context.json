@@ -41,9 +41,6 @@
         18,
         19,
         20,
-        48,
-        50,
-        59,
         67,
         69,
         71,
@@ -66,9 +63,6 @@
         104,
         106,
         108,
-        177,
-        206,
-        207,
         220,
         222,
         224,
@@ -116,9 +110,6 @@
         332,
         334,
         336,
-        365,
-        367,
-        373,
         383,
         385,
         387,
@@ -141,13 +132,10 @@
         420,
         422,
         424,
-        433,
-        458,
-        459,
         463
       ],
-      "source_triangles": 462640,
-      "triangles": 55555
+      "source_triangles": 268608,
+      "triangles": 37341
     },
     {
       "group": "chassis",
@@ -157,6 +145,44 @@
         12,
         15,
         16,
+        62,
+        158,
+        160,
+        172,
+        216,
+        268,
+        278,
+        279,
+        290,
+        379
+      ],
+      "source_triangles": 860140,
+      "triangles": 119576
+    },
+    {
+      "group": "chassis",
+      "material": "carbon",
+      "source_nodes": [
+        13,
+        14,
+        63,
+        168,
+        215,
+        280,
+        291,
+        378,
+        464,
+        465,
+        466,
+        467
+      ],
+      "source_triangles": 399256,
+      "triangles": 55504
+    },
+    {
+      "group": "main_0_steer",
+      "material": "aluminium",
+      "source_nodes": [
         24,
         25,
         26,
@@ -178,150 +204,63 @@
         53,
         54,
         56,
-        58,
-        62,
-        158,
-        160,
-        172,
-        179,
-        180,
-        181,
-        182,
-        183,
-        184,
-        186,
-        187,
-        195,
-        196,
-        197,
-        198,
-        199,
-        200,
-        201,
-        202,
-        203,
-        204,
-        208,
-        209,
-        211,
-        212,
-        216,
-        268,
-        278,
-        279,
-        290,
-        338,
-        340,
-        341,
-        342,
-        343,
-        344,
-        345,
-        346,
-        354,
-        355,
-        356,
-        357,
-        358,
-        359,
-        360,
-        361,
-        362,
-        363,
-        369,
-        370,
-        371,
-        372,
-        379,
-        427,
-        428,
-        429,
-        430,
-        431,
-        432,
-        434,
-        436,
-        444,
-        445,
-        446,
-        447,
-        448,
-        449,
-        450,
-        451,
-        452,
-        453,
-        456,
-        457,
-        460,
-        461
+        58
       ],
-      "source_triangles": 1070668,
-      "triangles": 128568
+      "source_triangles": 52632,
+      "triangles": 4085
     },
     {
-      "group": "chassis",
-      "material": "carbon",
-      "source_nodes": [
-        13,
-        14,
-        47,
-        55,
-        57,
-        63,
-        168,
-        176,
-        205,
-        210,
-        215,
-        280,
-        291,
-        364,
-        366,
-        374,
-        378,
-        435,
-        454,
-        462,
-        464,
-        465,
-        466,
-        467
-      ],
-      "source_triangles": 511016,
-      "triangles": 61364
-    },
-    {
-      "group": "chassis",
+      "group": "main_0_tire",
       "material": "rubber",
       "source_nodes": [
-        31,
-        189,
-        348,
-        438
+        31
       ],
-      "source_triangles": 50536,
-      "triangles": 6068
+      "source_triangles": 12634,
+      "triangles": 12634
+    },
+    {
+      "group": "main_0_steer",
+      "material": "motor",
+      "source_nodes": [
+        34,
+        35
+      ],
+      "source_triangles": 51256,
+      "triangles": 3979
+    },
+    {
+      "group": "main_0_steer",
+      "material": "carbon",
+      "source_nodes": [
+        47,
+        55,
+        57
+      ],
+      "source_triangles": 27940,
+      "triangles": 2169
+    },
+    {
+      "group": "main_0_steer",
+      "material": "print_black",
+      "source_nodes": [
+        48,
+        50,
+        59
+      ],
+      "source_triangles": 48508,
+      "triangles": 3765
     },
     {
       "group": "chassis",
       "material": "motor",
       "source_nodes": [
-        34,
-        35,
         61,
-        192,
-        193,
         214,
         289,
-        351,
-        352,
-        377,
-        441,
-        442
+        377
       ],
-      "source_triangles": 403396,
-      "triangles": 48441
+      "source_triangles": 198372,
+      "triangles": 27577
     },
     {
       "group": "left_foot",
@@ -395,6 +334,77 @@
       "triangles": 1200
     },
     {
+      "group": "main_1_steer",
+      "material": "carbon",
+      "source_nodes": [
+        176,
+        205,
+        210
+      ],
+      "source_triangles": 27940,
+      "triangles": 2169
+    },
+    {
+      "group": "main_1_steer",
+      "material": "print_black",
+      "source_nodes": [
+        177,
+        206,
+        207
+      ],
+      "source_triangles": 48508,
+      "triangles": 3765
+    },
+    {
+      "group": "main_1_steer",
+      "material": "aluminium",
+      "source_nodes": [
+        179,
+        180,
+        181,
+        182,
+        183,
+        184,
+        186,
+        187,
+        195,
+        196,
+        197,
+        198,
+        199,
+        200,
+        201,
+        202,
+        203,
+        204,
+        208,
+        209,
+        211,
+        212
+      ],
+      "source_triangles": 52632,
+      "triangles": 4085
+    },
+    {
+      "group": "main_1_tire",
+      "material": "rubber",
+      "source_nodes": [
+        189
+      ],
+      "source_triangles": 12634,
+      "triangles": 12634
+    },
+    {
+      "group": "main_1_steer",
+      "material": "motor",
+      "source_nodes": [
+        192,
+        193
+      ],
+      "source_triangles": 51256,
+      "triangles": 3979
+    },
+    {
       "group": "right_foot",
       "material": "aluminium",
       "source_nodes": [
@@ -465,6 +475,148 @@
       ],
       "source_triangles": 1612,
       "triangles": 1612
+    },
+    {
+      "group": "main_2_steer",
+      "material": "aluminium",
+      "source_nodes": [
+        338,
+        340,
+        341,
+        342,
+        343,
+        344,
+        345,
+        346,
+        354,
+        355,
+        356,
+        357,
+        358,
+        359,
+        360,
+        361,
+        362,
+        363,
+        369,
+        370,
+        371,
+        372
+      ],
+      "source_triangles": 52632,
+      "triangles": 4085
+    },
+    {
+      "group": "main_2_tire",
+      "material": "rubber",
+      "source_nodes": [
+        348
+      ],
+      "source_triangles": 12634,
+      "triangles": 12634
+    },
+    {
+      "group": "main_2_steer",
+      "material": "motor",
+      "source_nodes": [
+        351,
+        352
+      ],
+      "source_triangles": 51256,
+      "triangles": 3979
+    },
+    {
+      "group": "main_2_steer",
+      "material": "carbon",
+      "source_nodes": [
+        364,
+        366,
+        374
+      ],
+      "source_triangles": 27940,
+      "triangles": 2169
+    },
+    {
+      "group": "main_2_steer",
+      "material": "print_black",
+      "source_nodes": [
+        365,
+        367,
+        373
+      ],
+      "source_triangles": 48508,
+      "triangles": 3765
+    },
+    {
+      "group": "main_3_steer",
+      "material": "aluminium",
+      "source_nodes": [
+        427,
+        428,
+        429,
+        430,
+        431,
+        432,
+        434,
+        436,
+        444,
+        445,
+        446,
+        447,
+        448,
+        449,
+        450,
+        451,
+        452,
+        453,
+        456,
+        457,
+        460,
+        461
+      ],
+      "source_triangles": 52632,
+      "triangles": 4085
+    },
+    {
+      "group": "main_3_steer",
+      "material": "print_black",
+      "source_nodes": [
+        433,
+        458,
+        459
+      ],
+      "source_triangles": 48508,
+      "triangles": 3765
+    },
+    {
+      "group": "main_3_steer",
+      "material": "carbon",
+      "source_nodes": [
+        435,
+        454,
+        462
+      ],
+      "source_triangles": 27940,
+      "triangles": 2169
+    },
+    {
+      "group": "main_3_tire",
+      "material": "rubber",
+      "source_nodes": [
+        438
+      ],
+      "source_triangles": 12634,
+      "triangles": 12634
+    },
+    {
+      "group": "main_3_steer",
+      "material": "motor",
+      "source_nodes": [
+        441,
+        442
+      ],
+      "source_triangles": 51256,
+      "triangles": 3979
     },
     {
       "group": "gimbal_context",
@@ -694,5 +846,5 @@
       0.329394785
     ]
   ],
-  "evidence": "engineer_mates[347,621]: carriage 60.28246 mm, allowed 7..120 mm. Demonstration stroke 0..48 mm down; second rack 2x inferred from opposed rack/pinion geometry, not calibrated. Excludes every B engineer source and the complete arm subtree."
+  "evidence": "engineer_mates[347,621]: carriage 60.28246 mm, allowed 7..120 mm. Demonstration stroke 0..52 mm down; second rack 2x inferred from opposed rack/pinion geometry, not calibrated. Excludes every B engineer source and the complete arm subtree."
 }

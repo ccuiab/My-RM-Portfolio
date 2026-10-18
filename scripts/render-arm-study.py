@@ -10,7 +10,7 @@ out=root/'materials/images/derived/web/arm-study';out.mkdir(parents=True,exist_o
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=str(root/'materials/models/derived/web/arm-parts.glb'))
 scene=bpy.context.scene
-scene.render.engine='CYCLES';scene.cycles.samples=24;scene.cycles.use_denoising=True
+scene.render.engine='BLENDER_EEVEE' if '--eevee' in sys.argv else 'CYCLES';scene.cycles.samples=24;scene.cycles.use_denoising=True
 scene.render.resolution_x=1400;scene.render.resolution_y=900;scene.render.resolution_percentage=100
 scene.render.image_settings.file_format='PNG';scene.render.film_transparent=True
 scene.world=bpy.data.worlds.new('Studio');scene.world.use_nodes=True
@@ -43,11 +43,11 @@ def shot(view_id):
  keys=set(view['part_keys']) if view else set(objects)
  points=[]
  for k,o in objects.items():
-  p=records[k];o.hide_render=k not in keys;o.location=rests[k]+C(p['detail_offset_m'] if view else p['group_offset_m'])
+  p=records[k];o.hide_render=k not in keys or (p['stage']==0 and view_id not in (1,6));o.location=rests[k]+C([0,0,0] if view_id in (1,6) or view_id==9 and p['stage']!=0 else p['detail_offset_m'] if view else p['group_offset_m'])
   if k in original_materials:
    o.data.materials.clear()
    for original in original_materials[k]:
-    if view and p['stage']==1:
+    if view and ((view_id==9 and p['stage']!=0 and not any(m['asset']=='arm' and 11<=m['index']<=18 for m in p['members'])) or (view_id!=9 and p['stage']==1)):
      mat=original.copy();nodes=mat.node_tree.nodes;links=mat.node_tree.links;output=nodes.get('Material Output');old=output.inputs['Surface'].links[0].from_socket
      mix=nodes.new('ShaderNodeMixShader');transparent=nodes.new('ShaderNodeBsdfTransparent');mix.inputs[0].default_value=.07
      links.new(transparent.outputs[0],mix.inputs[1]);links.new(old,mix.inputs[2]);links.new(mix.outputs[0],output.inputs['Surface']);o.data.materials.append(mat)
@@ -55,25 +55,29 @@ def shot(view_id):
   if k in keys:
    points.extend(o.matrix_world@Vector(corner)+C(p['detail_offset_m'] if view else p['group_offset_m']) for corner in o.bound_box)
  bpy.context.view_layer.update()
- points=[o.matrix_world@Vector(corner) for k,o in objects.items() if k in keys and (not view or records[k]['stage']!=1) for corner in o.bound_box]
+ points=[o.matrix_world@Vector(corner) for k,o in objects.items() if k in keys and not o.hide_render and (not view or records[k]['stage']!=1) for corner in o.bound_box]
  low=Vector([min(p[i] for p in points) for i in range(3)]);high=Vector([max(p[i] for p in points) for i in range(3)]);target=(low+high)/2
  direction=C(view['camera'] if view else [1,.65,1.5]).normalized();cam.location=target+direction*3;cam.rotation_euler=(target-cam.location).to_track_quat('-Z','Y').to_euler()
  right=cam.rotation_euler.to_matrix()@Vector((1,0,0));up=cam.rotation_euler.to_matrix()@Vector((0,1,0))
  xs=[(p-target).dot(right) for p in points];ys=[(p-target).dot(up) for p in points]
  target+=right*((min(xs)+max(xs))/2)+up*((min(ys)+max(ys))/2);cam.location=target+direction*3
  cam_data.ortho_scale=max(max(xs)-min(xs),(max(ys)-min(ys))*1400/900)*1.18
- if view:
+ if view and view_id not in (1,6,9):
   for k in keys:
    p=records[k];d=C(p['detail_offset_m'])
    if p['stage']!=2 or d.length<.003:continue
    a=center(p);b=a+d;n=max(1,int(d.length/.01))
    for i in range(n):line(a+d*(i/n),a+d*min(1,(i+.4)/n),.0003)
-  route=[k for k in view['route_keys'] if k in keys]
+  route=[k for k in view['route_keys'] if k in keys] if view_id in (3,4,5) else []
   path=[center(records[k])+C(records[k]['detail_offset_m']) for k in route]
   for a,b in view['route_edges']:line(path[a],path[b])
   for i,p in enumerate(path):
    text=bpy.data.curves.new('Route number','FONT');text.body=str(i+1);text.size=cam_data.ortho_scale*.019;text.align_x='CENTER';o=bpy.data.objects.new('Route number',text);scene.collection.objects.link(o);o.location=p+up*.008+right*.009+direction*.035;o.rotation_euler=cam.rotation_euler; o.data.materials.append(amber);annotations.append(o)
  filename=out/f'detail-{view_id}.png' if view else root/'materials/images/derived/site/cad-cutouts/arm-exploded.png'
- scene.render.filepath=str(filename);bpy.ops.render.render(write_still=True);print('RENDERED',filename,flush=True)
+ # Render to a fresh file, then replace the served image after the writer closes.
+ staging=root/'tmp/arm-revision-stills';staging.mkdir(parents=True,exist_ok=True)
+ temporary=staging/f'detail-{view_id}.png'
+ scene.render.filepath=str(temporary);bpy.ops.render.render(write_still=True)
+ temporary.replace(filename);print('RENDERED',filename,flush=True)
 views=[int(v) for v in sys.argv[sys.argv.index('--')+1].split(',')] if '--' in sys.argv else [0,1,8,2,6,3,4,5,7,-1]
 for i in views:shot(i)

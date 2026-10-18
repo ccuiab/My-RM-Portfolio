@@ -1,0 +1,324 @@
+{
+  "schema_version": 2,
+  "asset": "materials/models/derived/web/mission-transmitter.glb",
+  "source": "materials/models/derived/inputs/codex/arm_tagged.glb",
+  "source_sha256": "18b70600e740be304bba5459161d29b57adb29bde5f10260a0eb61c01e17ee3a",
+  "source_node_index": 301,
+  "source_node_name": "RoboMaster裁判系统相机图传模块（发送端）VT03.2025.10.1-1",
+  "source_hierarchy": [
+    "RoboMaster裁判系统相机图传模块（发送端）VT03.2025.10.1-1",
+    "L4.2025.10.1",
+    "Robotic arm_v2.2025.10.1"
+  ],
+  "motion_group": "link_3",
+  "motion_evidence": "arm_source_mapping.json kept entry identifies source node 301 as link_3; it is a rigid part of L4 source assembly",
+  "coordinate_frame": "arm-parts rest frame, metre, right-handed +Y up; source world matrix already baked",
+  "runtime_matrix": "state.body * armMotionMatrices(meta.motion, q).get('link_3')",
+  "rest_matrix": [
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    1.0
+  ],
+  "source_matrix_baked": [
+    [
+      2.9818412422445356e-08,
+      4.014449248128115e-16,
+      0.9999999701815857,
+      -0.04073350969702
+    ],
+    [
+      0.20462868424749797,
+      0.9788396069867813,
+      1.6604731402285207e-09,
+      0.21978268803113732
+    ],
+    [
+      -0.9788395188712521,
+      0.2046286947838452,
+      2.9772143733632775e-08,
+      -0.15435703741519083
+    ],
+    [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "geometry_policy": "Original CAD tessellation/materials; two whole rear lead feature groups hidden by default. Housing, fins, lens, mounting ears and short housing-side ports unchanged. No proxy or decimation.",
+  "sourceTriangles": 195378,
+  "triangles": 117958,
+  "hiddenFeatures": [
+    {
+      "name": "rear_lead_negative_z",
+      "description": "Long cable with remote connector/lettering; short housing-side connector retained.",
+      "sourceComponentCount": 18,
+      "sourceFirstFaces": [
+        16568,
+        194581,
+        8432,
+        187495,
+        187626,
+        187589,
+        187098,
+        18128,
+        187107,
+        187693,
+        188177,
+        187817,
+        187949,
+        188432,
+        188309,
+        188511,
+        17808,
+        76054
+      ],
+      "triangles": 38710,
+      "sourceFaceRangesExclusiveEnd": [
+        [
+          8432,
+          12500
+        ],
+        [
+          16568,
+          19211
+        ],
+        [
+          31564,
+          42272
+        ],
+        [
+          47594,
+          48783
+        ],
+        [
+          50975,
+          51193
+        ],
+        [
+          52480,
+          52550
+        ],
+        [
+          54819,
+          55015
+        ],
+        [
+          61041,
+          61077
+        ],
+        [
+          72613,
+          72662
+        ],
+        [
+          75952,
+          76169
+        ],
+        [
+          175156,
+          187187
+        ],
+        [
+          187495,
+          188636
+        ],
+        [
+          188762,
+          194906
+        ]
+      ],
+      "nativeBoundsM": {
+        "min": [
+          0.02352232113480568,
+          -0.0015687469858676195,
+          -0.010180315934121609
+        ],
+        "max": [
+          0.19161996245384216,
+          0.00842531118541956,
+          -0.00018632804858498275
+        ]
+      },
+      "armRestBoundsM": {
+        "min": [
+          -0.05091381987617924,
+          0.226377645334901,
+          -0.34192145191101675
+        ],
+        "max": [
+          -0.04091983223199421,
+          0.26598855050180614,
+          -0.1763312716625738
+        ]
+      }
+    },
+    {
+      "name": "rear_lead_positive_z",
+      "description": "Long cable with remote connector/lettering; short housing-side connector retained.",
+      "sourceComponentCount": 18,
+      "sourceFirstFaces": [
+        19211,
+        50099,
+        12500,
+        31242,
+        31373,
+        31336,
+        31153,
+        77337,
+        31162,
+        31440,
+        42632,
+        42272,
+        42404,
+        42887,
+        42764,
+        42966,
+        90712,
+        43091
+      ],
+      "triangles": 38710,
+      "sourceFaceRangesExclusiveEnd": [
+        [
+          12500,
+          16568
+        ],
+        [
+          19211,
+          31564
+        ],
+        [
+          42272,
+          47594
+        ],
+        [
+          48783,
+          50975
+        ],
+        [
+          51193,
+          52478
+        ],
+        [
+          77337,
+          90827
+        ]
+      ],
+      "nativeBoundsM": {
+        "min": [
+          0.02352232113480568,
+          -0.0015687469858676195,
+          0.00020398394553922117
+        ],
+        "max": [
+          0.19161996245384216,
+          0.00842531118541956,
+          0.010197971947491169
+        ]
+      },
+      "armRestBoundsM": {
+        "min": [
+          -0.04052952030616177,
+          0.22637764535214389,
+          -0.34192145160185383
+        ],
+        "max": [
+          -0.03053553254556142,
+          0.265988550519049,
+          -0.17633127135341092
+        ]
+      }
+    }
+  ],
+  "featureIdentification": {
+    "method": "Source native-space connected components at0.1micrometre seam weld; exact original source-face exclusion, no plane crop.",
+    "sourceComponents": 79,
+    "longLeadCount": 2,
+    "includeRearLeadsFlag": false
+  },
+  "cameraOpticalAxis": {
+    "nativeAxis": [
+      -1,
+      0,
+      0
+    ],
+    "armRestAxis": [
+      -2.981841686358627e-08,
+      -0.20462871472480204,
+      0.9788396646591692
+    ],
+    "restPitchDegrees": -11.807765230522811,
+    "evidence": "Source301 front15mm lens component firstFace170393. Its447 near-axis front-face triangles, beginning170633, have area-weighted native normal[-.999999949,.000145222,.000000765]. Lens symmetry gives nominal native-X optical axis, opposite rear leads. This differs from tool suction normal.",
+    "nativeLensBoundsM": {
+      "min": [
+        -0.0439436622,
+        0.0046293335,
+        -0.0074996976
+      ],
+      "max": [
+        -0.042017445,
+        0.0196293332,
+        0.0075003025
+      ]
+    }
+  },
+  "primitive_count": 2,
+  "materials": [
+    {
+      "name": "defaultplastic",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.027755280979003923,
+          0.027755280979003923,
+          0.027755280979003923,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.17999999970197678
+      }
+    },
+    {
+      "doubleSided": true,
+      "name": "defaultplastic",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.027755280979003923,
+          0.027755280979003923,
+          0.027755280979003923,
+          1.0
+        ],
+        "metallicFactor": 0.0,
+        "roughnessFactor": 0.17999999970197678
+      }
+    }
+  ],
+  "bounds_m": {
+    "min": [
+      -0.07094569612813789,
+      0.20804566235539806,
+      -0.18756314927250933
+    ],
+    "max": [
+      -0.010521325293379642,
+      0.25395310475059285,
+      -0.10124324759292075
+    ]
+  },
+  "omission_cause": "build-arm-parts.py intentionally excludes sensor/transmitter names including VT03; arm-context excludes the complete arm subtree.",
+  "existing_parts_retained": "UWB支架、图传段碳纤管、图传段碳纤管2、RM_UWB、4mm_L4_图传支架板 already exist in arm-parts. This supplement adds only the VT03 source mesh.",
+  "bytes": 5337384,
+  "sha256": "48147b5b51c07a91d260ad58f50247b613201264aa87b5bfac38ea5b25785c46"
+}

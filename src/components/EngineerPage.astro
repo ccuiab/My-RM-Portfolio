@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import ProjectHeader from './ProjectHeader.astro';
 import Chapter from './Chapter.astro';
-import ArmExchange from './ArmExchange.astro';
+import EngineerMission from './EngineerMission.astro';
 import OfficialFilm from './OfficialFilm.astro';
 import EasterEggs from './EasterEggs.astro';
 import ArmExplode from './ArmExplode.astro';
@@ -49,7 +49,7 @@ const p = engineer;
       layout={c.id === 'layout' || c.id === 'arm' || c.id === 'chassis' ? 'expanded' : 'standard'}
       hasWideMedia={c.scene === 'arm-unfold' || c.id === 'arm'}
     >
-      {c.scene === 'arm-unfold' && <ArmExchange lang={lang} slot="wide" />}
+      {c.scene === 'arm-unfold' && <EngineerMission lang={lang} slot="wide" />}
       {c.id === 'arm' && <ArmExplode lang={lang} slot="wide" />}
     </Chapter>
   ))}

@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+const story=await import(new URL(process.env.ARM_STORY_PATH??'../src/scripts/arm-study-story.ts',import.meta.url));
+const {armStudyPose:pose,ARM_STUDY_INTRO:intro,ARM_STUDY_STARTS:starts,ARM_STUDY_SHOTS:shots,ARM_STUDY_CLIMB_START:finale,ARM_STUDY_DURATION:duration}=story;
+assert.equal(pose(0).context,1);assert.equal(pose(intro).context,0,'Opening must hide the chassis on entering J0.');
+const j0Motion=starts[0]+shots[0].approach+shots[0].opening+shots[0].inspect+shots[0].closing;
+assert.equal(pose(j0Motion).context,0);
+assert.ok(Math.abs(pose(j0Motion+1.3).context-.42)<1e-9,'J0 reassembly restores the previous 42% reference.');
+assert.ok(Math.abs(pose(starts[1]).context-.42)<1e-9);
+assert.ok(pose(starts[1]+shots[1].approach).context<1e-9,'The reference fades out during the J1 approach.');
+for(let t=starts[1]+shots[1].approach;t<finale;t+=1/60)assert.ok(pose(t).context<1e-9);
+assert.equal(pose(finale).context,0);assert.ok(Math.abs(pose(finale+3.84).context-1)<1e-9);assert.equal(pose(duration).context,1);
+for(const t of [intro,...starts,finale,duration])assert.ok(Math.abs(pose(t-1e-5).context-pose(t).context)<1e-5,`Discontinuous fade at ${t}.`);
+console.log('Context fade: original appearance/disappearance phases restored; continuous boundaries passed.');

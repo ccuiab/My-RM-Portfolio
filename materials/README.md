@@ -1,5 +1,17 @@
 # 素材库
 
+## A 章整车行动短片
+
+`videos/derived/web/engineer-mission-{zh,en}.mp4` 为约 87.0 秒、16:9、静音三维成片，封面位于 `images/derived/video-posters/engineer-mission-{zh,en}.jpg`。原始方案与录像参考记录在 `videos/derived/web/engineer-mission.source.json`。影片是功能情境示意，动作和等待经过编排；平移速度最高约 2.4 m/s。
+
+制作入口为 `scripts/extract-mission-field.py`、`scripts/bake-mission-return.py`、`scripts/extract-mission-lights.py`、`scripts/build-engineer-mission.mjs` 和 `scripts/render-engineer-mission.mjs`；运动检查为 `scripts/check-engineer-mission.mjs`。派生时间轴、精确灯面与离线场景位于 `models/derived/inputs/engineer-mission/`，中间录制位于 `videos/derived/inputs/engineer-mission/`，试帧和检查记录位于 `documents/derived/audits/engineer-mission/`。
+
+车体沿用分组 CAD；装甲八条灯带随底盘，上装灯管随云台，均为蓝色表面发光，不向车身投射蓝光。资源岛、两级翻越结构、完整兑换站、矿石和槽口均采用现有官方派生几何与琥珀轮廓；兑换站按实际平行连杆和末端轴运动。`mission-transmitter.glb/json` 补回原 CAD 的 VT03 图传，绑定 `link_3`，仅隐藏后方两根长线，保留外壳、镜头和安装结构。
+
+开局直接行驶。银矿由上方压入背部吸盘；上阶准备依次转云台、转臂底座、翻肘，保留用户确认的反肘方向。前抬升机构先搭上每级台阶，配合后臂水平撑起车体；后腕轮始终支撑原下层平地，直到四个舵轮全部到达二级平台才抬起收臂。金矿仍从侧洞吸取、洞内抬高后退出，之后低位携矿并避开背矿；图传实际镜头保持接近水平向前。返程沿北侧宽坡和开放坡面，镜头视线随行进方向；启动、急停和颠簸分别驱动车身悬挂及四轮接触。
+
+机器人停稳后，初始朝前的蓝方兑换站才转至第一次四级矿接收位姿。两次兑换均先退出机械臂，再后收倾倒至后侧收集箱，矿石按重力落下。接矿范围、全模型干涉与实际渲染分别检查，动作属于基于 CAD 和录像的功能示意。小地图采用规则第 37 页原图，动态显示渐隐尾迹、前导光点、目标脉冲和车头朝向。补齐能量机关、红蓝基地、原场地灯面、增益区丝印和规则第69页减速条；镜头收近突出机器人，移除机械臂末端轨迹线。弹丸在取金矿末期出现，按实际 CAD 表面散布命中与反弹，逃离后逐渐停止小陀螺。
+
 材料按图片、模型、视频、字体和资料存放，各类统一分为 `source/`（原始输入）与 `derived/`（二级材料）。
 
 总量和分类见 [素材总清单](INVENTORY.md)。[完整逐文件清单](inventory.csv) 包含层级、使用情况、分类依据、公开来源、作者、分 P、分辨率和重新计算的 SHA-256，可用 Excel 打开。
@@ -27,6 +39,26 @@ CAD 原件在 `D:\RM2025` 和 OneDrive，只读使用，入口见 [models/source
 
 图片原始输入可以直接被 Astro 引用，构建仅输出页面使用的优化图片。构建另将 `models/derived/web/`、`videos/derived/web/`、`images/derived/video-posters/` 与 `images/derived/web/` 复制到临时静态目录；大型原片和处理输入保存在本地。工程页片尾的上台阶、偷银矿和抢矿静音循环位于 `videos/derived/web/egg-*.mp4`，剪辑输入在 `videos/derived/inputs/`，来源记录随视频保存；复现使用 `scripts/cut-eggs.ps1`，原片仍在 `videos/source/bilibili/`。
 
+### RM2025 官方手册与场地资产
+
+2026-10-16 核对并保存了[官方公告 1768](https://www.robomaster.com/zh-CN/resource/pages/announcement/1768)中全部 19 项标记为“最新”的 PDF，包括各赛区、各站参赛手册、增补及协议文件。原件、公告快照和逐文件 URL、版本、页数、SHA-256 位于 [documents/source/robomaster/2025/](documents/source/robomaster/2025/latest-manifest.json)。该公告属于 RM2025，版本选择不跨赛季。
+
+原始场地 STEP 来自[官方整场图纸](https://bbs.robomaster.com/article/372035?source=4)，保存于 [models/source/robomaster/2025/](models/source/robomaster/2025/)，按只读原始输入使用。图纸基于规则 V2.0.0；最新版规则 V2.1.0 的修订日志只列出小能量机关增益调整。建模同时核对了最新规则中的相关尺寸图。
+
+| 入口 | 内容 |
+| --- | --- |
+| [模型与本地交互预览](models/derived/rm2025-field/preview.html) | 大资源岛、小资源岛、金矿石、银矿石、完整兑换站、独立兑换槽、中央高地翻越局部，共 7 个独立 GLB；包含双语预览及官方尺寸参考图 |
+| [模型参数、来源与处理记录](models/derived/rm2025-field/manifest.json) | 原点、坐标轴、单位、源节点、实际网格包围盒、三角面、大小、SHA-256；保留取矿玻璃、矿石标识及机构层级 |
+| [可编辑 Blender 工程](models/derived/inputs/rm2025-field/rm2025-field-assets.blend) | 保留减面前的 CAD 网格和可关闭的网页减面修改器；共点焊接与近共面清理有记录，原始场地图纸未改动 |
+| [手册参考图](images/derived/inputs/rm2025-field-reference/sources.json) | 规则手册相关页面的完整渲染及页码对应关系 |
+| [几何验证](documents/derived/audits/rm2025-field/geometry-verification.json) | 实际 GLB 槽口尺寸、51 个插入位置的三角面与包围盒检查、4 个示例位姿范围及翻越面高度采样 |
+
+GLB 使用米和 Y 向上坐标。矿石原点在几何中心；本体名义边长 200 mm，官方 CAD 丝印凸起使外包络约为 200.4 mm。独立兑换槽原点在入口前表面中心，+Z 朝外，槽体沿 -Z 延伸。完整槽体包含上部安装结构，因此整体高度与 288 mm 前框高度不同。翻越结构采用官方中央高地靠小资源岛的一侧；邻接结构的裁切边界只用于展示。
+
+预览通过本地 HTTP 服务打开：在仓库根目录运行 `python -m http.server 4336 --bind 127.0.0.1 --directory materials/models/derived/rm2025-field`，再访问 `http://127.0.0.1:4336/preview.html`；也可使用 `scripts/preview-rm2025-field.ps1` 启动。界面支持模型切换、轨道观察、兑换槽位姿及矿石放入/取出；四级示例是可检查的示意姿态，不代表比赛随机序列。
+
+复现入口为 `scripts/download-rm2025-manuals.py`、`scripts/download-rm2025-field.py`、`scripts/extract-rm2025-field-evidence.py`、`scripts/rm2025-field-cad.py`、`scripts/build-rm2025-field-blender.py` 和 `scripts/build-rm2025-field-preview.mjs`；独立验证运行 `node scripts/check-rm2025-field.mjs`。OCP 依赖安装在忽略目录 `tmp/rm2025-field-python/`，未加入网站依赖。当前资产包放在 `models/derived/rm2025-field/`，供后续编排使用。
+
 ### 工程整车前视图
 
 `images/derived/site/cad-cutouts/engineer-front.png` 是 orient 轮生成的车头 3/4 透明 PNG（1600 × 1440）。输入只读来自主仓库 `materials/models/derived/inputs/codex/engineer_tagged.glb`，通过节点 `extras.source_node_index` 核对末端吸盘 779、车尾存矿吸盘 1330/1673、四个轮胎和裁判系统的位置；车头为整车水平单位方向约 `(-0.794, 0, -0.608)`，对应机械臂局部 `+Z`。
@@ -46,6 +78,14 @@ CAD 原件在 `D:\RM2025` 和 OneDrive，只读使用，入口见 [models/source
 入口为 `scripts/render-sw-research.ps1 -Asset launcher -Size 4000 -ViewMatrix <九个矩阵元素>`。使用 `scripts/render-sw-research-components.json` 精确匹配零件，原生组件透明开关及核心单独取景均由 typed interop 实现，不保存 CAD。源目录前后 854 个文件的大小、修改时间与两个顶层装配哈希一致；六个核心组件的装配变换和边界与上一版相同。本轮正常完成：先关闭只读装配，再恢复临时显示、自动保存、搜索和引用只读设置，自建实例已退出。旧 TIFF 纸张尺寸按原有纸型被 SolidWorks 规范化，纸型与其它记录设置一致。
 
 相机矩阵、四张原生 BMP、组件与只读文档清单、差分数值检查、深/白底预览、源快照及设置恢复记录保存在 `documents/derived/audits/swimg-a1-side-20261013/`，上一版 57° 视角记录保留在 `documents/derived/audits/swimg-a1-20261013/`。每文件来源覆盖项见本图目录的 `provenance.json`。先前 Blender 第四版及其 `materials/models/derived/inputs/codex/task3_hero_raw.glb` 输入仍可由 Git 历史和 `scripts/render-launcher-core.ps1` 复现；旧审计保留在本机 `C:\Users\cch20\AppData\Local\Temp\rm-shots\launcher\fourth\`。英雄页配图与 A1 文案没有随此次图片替换更改。
+
+## 舵轮章节的整车循环
+
+`models/derived/web/engineer-swerve-context.glb` 与云台、六轴机械臂章节使用同一 `engineer_tagged.glb` 派生输入。它排除四个完整舵轮子装配和由 `arm-parts.glb` 提供的机械臂，保留其余 **1,678,118** 个来源三角面，不做降面；Draco 位置与法线量化分别为 16/12 位。四个舵轮共用现有 `engineer-swerve.glb` 的高精度几何；两处不同安装壳体及电机保留各自的来源网格，随上述文件一同导出（合计 1,833,930 面）。机械臂直接复用 `arm-parts.glb`。
+
+四轮完整来源根为 `21 / 174 / 287 / 375`。同名模组的内部安装位置也不同，不能只平移或旋转整个模组复制；每个活动件按来源装配变换定位，四轮转向在车体坐标中对齐。来源哈希、逐件映射、安装矩阵及不降面记录位于 `engineer-swerve-context.json`。复现运行 Blender 后台脚本 `scripts/build-swerve-context.py`，原生 CAD 与输入 GLB 均只读。
+
+动画为 27 秒循环：整车停留 0.8 秒、聚焦 1.4 秒、展开 6 秒、爆炸态 3 秒、还原 6 秒、拉回 1.3 秒、四轮联动 8 秒、恢复车体 0.5 秒。近景其余部分完全淡出，联动时车体不透明度为 12%，四轮保持实体。运行 `node scripts/check-swerve-chassis.mjs` 与 `node scripts/verify-swerve-explosion.mjs` 检查来源几何、装配、同向转向、错峰悬挂与循环连续性；本轮实际浏览器检查保存于 `documents/derived/audits/swerve-chassis-20261017/`。
 
 ## 清理与维护
 
@@ -75,3 +115,11 @@ B 章采用原画布尺寸的单一主视图，按 J0、J1、J2、J3、限位/UW
 当前循环 154.4 秒，开场从整车分离总成；J0 归位后保留底盘参照。新增 `models/derived/web/arm-context.glb/json` 由 `scripts/build-arm-context.py` 从只读 tagged GLB 派生，排除 B 已显示的来源件。两套前部双齿条、滑台、齿轮、末端齿条和滚轮分别分组，支撑一级台阶的结构用途演示；不替代 A 章功能视频。详见当前验收报告顶部及 `context-checks.json`。腕部三色线路和小幅稳定运镜由实时页面生成；备用静态图不模拟动态线路。限位边界为明确标识的示意，未补造缺失限位板。
 
 最新 B 章修订：底盘恢复与云台一致的来源材质族；一级台阶与七轴联动合并为 28 秒“整车协同”，全轮 148.2 秒。J0 先朝实际车尾，前部双升降和末端轮连续配合，最后协调收回。详情见验收报告顶部。
+
+### B 章联动限位与螺丝动画（2026-10-17）
+
+`models/derived/web/arm-linked-limit.json` 由 `scripts/build-linked-limit-study.py` 从只读 CAD 导出中的 `arm:370` 拱门碳板和 `arm:311` 限位滚轮生成。机构解释依据开源报告第 2.6 节图 19（本机 `D:\RM2025\【RM2025-轮式六轴机械臂工程机械结构开源】香港科技大学-ENTERPRIZE\RM2025-香港科技大学-ENTERPRIZE战队-工程结构说明文档.pdf` 第 16 页）。
+
+大小连杆以两种琥珀色描线；先展示相似连杆，再展示圆形活动范围被上、前、后三侧碳板限制后的对应关系。实线为腕心的近似相似映射，虚线为计入吸盘工作面外伸的采样边界。其余轴固定；几何扫描不作为整车避碰或实机安全工作空间证明。报告明确说明上场时拆除了联动限位，整车协同段据此隐藏限位板。
+
+螺丝保留原孔位。整圈使用统一的轴向位移，抽出到位后淡出；盖板和轴系复原后，螺丝在退出位置出现并插回。独立紧固件按同样时序处理，七个完整电机保持整体。阵列与来源记录在 `models/derived/inputs/arm-bolt-circles.json`，生成与检查入口为 `scripts/arm-fastener-rings.py`、`scripts/check-arm-rings.py`。

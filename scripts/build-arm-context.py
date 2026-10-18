@@ -17,6 +17,8 @@ groups={
  'right_carriage':[269,274,277,281,275,271,276,284], 'right_gear':[272,273,282], 'right_foot':[267,270,283,286], 'right_roller':[285],
 }
 membership={i:k for k,ids in groups.items() for i in ids}
+wheel_roots=[22,175,337,425]
+wheel_tires=[31,189,348,438]
 palette={}
 for name,color,metal,rough in [('aluminium',(.38,.42,.47,1),.65,.42),('motor',(.075,.085,.10,1),.45,.4),('carbon',(.025,.032,.04,1),.05,.64),('print_black',(.045,.05,.06,1),0,.68),('rubber',(.035,.04,.045,1),0,.82),('misc',(.67,.69,.71,1),.05,.57)]:
  mat=bpy.data.materials.new(name)
@@ -27,6 +29,8 @@ batches={}
 for i,node in enumerate(cad.data['nodes']):
  if 'mesh' not in node or i in excluded or arm_root in cad.ancestry(i):continue
  group=membership.get(i,'gimbal_context' if 468 in cad.ancestry(i) else 'chassis')
+ for w,steer_root in enumerate(wheel_roots):
+  if steer_root in cad.ancestry(i):group=f'main_{w}_'+('tire' if i==wheel_tires[w] else 'steer')
  name=cad.name(i)
  source_materials=[cad.data.get('materials',[])[p['material']].get('name','').lower() for p in cad.data['meshes'][node['mesh']]['primitives'] if 'material' in p]
  ancestry=' '.join(cad.name(k) for k in cad.ancestry(i))
@@ -56,7 +60,7 @@ for (group,kind),ids in batches.items():
  mesh=bpy.data.meshes.new(group+'_'+kind);mesh.from_pydata(vertices,[],faces);mesh.update()
  obj=bpy.data.objects.new(group+'_'+kind,mesh);bpy.context.collection.objects.link(obj)
  bpy.context.view_layer.objects.active=obj;obj.select_set(True)
- budget=300000 if group=='chassis' else 75000 if group=='gimbal_context' else 14000
+ budget=240000 if group=='chassis' else 75000 if group=='gimbal_context' else 14000
  limit=max(1200,int(budget*len(faces)/group_triangles[group]))
  if len(faces)>limit:
   mod=obj.modifiers.new('Context tessellation budget','DECIMATE');mod.ratio=limit/len(faces);bpy.ops.object.modifier_apply(modifier=mod.name)
@@ -68,5 +72,5 @@ for (group,kind),ids in batches.items():
 out=root/'materials/models/derived/web'
 bpy.ops.export_scene.gltf(filepath=str(out/'arm-context.glb'),export_format='GLB',export_yup=True,export_extras=True,export_draco_mesh_compression_enable=True,export_draco_mesh_compression_level=10)
 if (out/'arm-context.glb').stat().st_size>6*1024*1024:raise RuntimeError('Context GLB exceeds 6 MiB budget')
-info={'source':str(source.relative_to(root)),'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'engineer_to_arm':transform.tolist(),'groups':records,'lift_axis':[0,1,0],'gear_axis':[.608163021,0,.793812173],'gear_points':[[-.434342559,-.136701081,-.135801579],[-.096812078,-.136701081,.304764183]],'foot_points':[[-.466491952,-.204968621,-.111170977],[-.128961471,-.204968621,.329394785]],'evidence':'engineer_mates[347,621]: carriage 60.28246 mm, allowed 7..120 mm. Demonstration stroke 0..48 mm down; second rack 2x inferred from opposed rack/pinion geometry, not calibrated. Excludes every B engineer source and the complete arm subtree.'}
+info={'source':str(source.relative_to(root)),'source_sha256':hashlib.sha256(source.read_bytes()).hexdigest(),'engineer_to_arm':transform.tolist(),'groups':records,'lift_axis':[0,1,0],'gear_axis':[.608163021,0,.793812173],'gear_points':[[-.434342559,-.136701081,-.135801579],[-.096812078,-.136701081,.304764183]],'foot_points':[[-.466491952,-.204968621,-.111170977],[-.128961471,-.204968621,.329394785]],'evidence':'engineer_mates[347,621]: carriage 60.28246 mm, allowed 7..120 mm. Demonstration stroke 0..52 mm down; second rack 2x inferred from opposed rack/pinion geometry, not calibrated. Excludes every B engineer source and the complete arm subtree.'}
 (out/'arm-context.json').write_text(json.dumps(info,ensure_ascii=False,indent=2)+'\n',encoding='utf8')

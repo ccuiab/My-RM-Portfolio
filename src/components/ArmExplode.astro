@@ -10,7 +10,7 @@ interface Props { lang: Lang }
 const {lang}=Astro.props;
 const L=sceneCopy.armExplode;
 const hasModel=existsSync(join(process.cwd(),'materials/models/derived/web/arm-parts.glb'));
-const copy={climb:t(L.climbTitle,lang),climbDescription:t(L.climbDescription,lang),climbFeatures:L.climbFeatures.map(x=>t(x,lang)),pathNames:L.pathNames.map(x=>t(x,lang)),limitBoundary:t(L.limitBoundary,lang),finale:t(L.finaleTitle,lang),finaleDescription:t(L.finaleDescription,lang),overview:t(L.overview,lang),caption:t(L.caption,lang),names:L.groupNames.map(n=>t(n,lang)),descriptions:L.descriptions.map(n=>t(n,lang)),features:L.features.map(items=>items.map(n=>t(n,lang))),routes:L.routeSteps.map(items=>items.map(n=>t(n,lang))),phases:Object.fromEntries(Object.entries(L.phase).map(([key,value])=>[key,t(value,lang)]))};
+const copy={climb:t(L.climbTitle,lang),climbDescription:t(L.climbDescription,lang),climbFeatures:L.climbFeatures.map(x=>t(x,lang)),pathNames:L.pathNames.map(x=>t(x,lang)),limitBoundary:t(L.limitBoundary,lang),workspaceBoundary:t(L.workspaceBoundary,lang),finale:t(L.finaleTitle,lang),finaleDescription:t(L.finaleDescription,lang),overview:t(L.overview,lang),caption:t(L.caption,lang),names:L.groupNames.map(n=>t(n,lang)),descriptions:L.descriptions.map(n=>t(n,lang)),features:L.features.map(items=>items.map(n=>t(n,lang))),routes:L.routeSteps.map(items=>items.map(n=>t(n,lang))),phases:Object.fromEntries(Object.entries(L.phase).map(([key,value])=>[key,t(value,lang)]))};
 ---
 <section class="explode" data-arm-explode data-model={hasModel?'1':''} data-copy={JSON.stringify(copy)} data-base={import.meta.env.BASE_URL}>
   <div class="view">
@@ -86,10 +86,11 @@ const copy={climb:t(L.climbTitle,lang),climbDescription:t(L.climbDescription,lan
   .route-labels { opacity:0;transition:opacity .2s; }.explode:has(.route-key[open]) .route-labels { opacity:1; }
   .route-labels span { position:absolute;top:0;left:0;width:19px;height:19px;border:1px solid var(--amber);border-radius:50%;color:var(--amber);background:var(--ground);text-align:center;font:11px/17px var(--f-mono); }
   .status,.fallback-tools { position:absolute;bottom:.8rem;left:1rem;right:1rem;margin:0;color:var(--ink-2);font-size:var(--t-xs); }.fallback-tools { display:flex;align-items:center;justify-content:space-between;gap:.5rem; }.has-3d .fallback-tools { display:none; }
+  .limit-caption { white-space:pre-line; }
   [hidden] { display:none!important; }.sr-only { position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0); }
   @media(max-width:767px) { .view { height:340px; }.controls { flex-wrap:wrap;gap:.6rem; }.timeline { flex-basis:100%; }.chapters { overflow-x:auto; }.chapters button { min-width:64px; }.description { font-size:var(--t-xs); }.feature-labels span { font-size:10px; }.shot-heading { top:.6rem;left:.65rem; } }
 </style>
 
 <style>
-.path-legend{position:absolute;bottom:14px;left:16px;display:flex;flex-wrap:wrap;max-width:calc(100% - 32px);gap:4px 14px;font-size:11px;pointer-events:none}.path-legend[hidden],.limit-caption[hidden]{display:none}.path-legend span{border-left:3px solid currentColor;padding-left:7px;background:#0b1422cc}.path-legend span:nth-child(1){color:var(--amber)}.path-legend span:nth-child(2){color:#57cbbb}.path-legend span:nth-child(3){color:#b19aff}.limit-caption{position:absolute;bottom:16px;left:16px;color:var(--amber);font-size:11px;background:#0b1422dd}
+.path-legend{position:absolute;bottom:14px;left:16px;display:flex;flex-wrap:wrap;max-width:calc(100% - 32px);gap:4px 14px;font-size:11px;pointer-events:none}.path-legend[hidden],.limit-caption[hidden]{display:none}.path-legend span{border-left:3px solid currentColor;padding-left:7px;background:#0b1422cc}.path-legend span:nth-child(1){color:var(--amber)}.path-legend span:nth-child(2){color:#31ffb9}.path-legend span:nth-child(3){color:#c96bff}.path-legend span:nth-child(4){color:#e1f3ff}.limit-caption{max-width:calc(100% - 32px);line-height:1.5;position:absolute;bottom:16px;left:16px;color:var(--amber);font-size:11px;background:#0b1422dd}
 </style>

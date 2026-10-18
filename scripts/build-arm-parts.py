@@ -18,6 +18,11 @@ import itertools
 from collections import Counter
 import numpy as np
 
+fastener_spec=importlib.util.spec_from_file_location('arm_fastener_policy',pathlib.Path(__file__).with_name('arm-fastener-policy.py'))
+fastener_policy=importlib.util.module_from_spec(fastener_spec);fastener_spec.loader.exec_module(fastener_policy)
+ring_spec=importlib.util.spec_from_file_location('arm_fastener_rings',pathlib.Path(__file__).with_name('arm-fastener-rings.py'))
+ring_plan=importlib.util.module_from_spec(ring_spec);ring_spec.loader.exec_module(ring_plan)
+
 args = argparse.ArgumentParser()
 args.add_argument('--source-root', type=pathlib.Path, required=True)
 args.add_argument('--audit-only', action='store_true', help='List missing source nodes without Blender; exit 1 until coverage is complete.')
@@ -252,6 +257,7 @@ coverage = {'arm_source_meshes': len(arm_nodes), 'engineer_arm_meshes': len(engi
             'removed_from_previous_model': [n for n in excluded if (n['asset'], n['index']) in present],
             'selected_source_meshes': len(mapping),
             'j0_source_meshes': sum(m['link'] == 'link_base' for m in mapping)}
+coverage['fastener_policy']='Retain all source fasteners. Separate axial layers withdraw, fade out, then reappear and insert after the bodies reassemble. Complete motors stay intact.'
 (work / 'coverage.json').write_text(json.dumps(coverage, ensure_ascii=False, indent=2) + '\n', encoding='utf8')
 print('COVERAGE', coverage['selected_source_meshes'], 'audited arm/J0/J1 meshes;', coverage['j0_source_meshes'], 'J0 meshes;', len(missing), 'missing', flush=True)
 if options.audit_only:
@@ -323,6 +329,11 @@ for name, color, metal, rough in [
     ('print_black', (.045, .05, .06, 1), 0, .68),
     ('rubber', (.035, .04, .045, 1), 0, .82),
     ('misc', (.67, .69, .71, 1), .05, .57),
+    ('steel', (.45, .48, .52, 1), .9, .25),
+    ('rubber_dark', (.012, .014, .016, 1), 0, .72),
+    ('rubber_grey', (.065, .065, .07, 1), 0, .55),
+    ('polymer_white', (.78, .78, .75, 1), 0, .82),
+    ('polymer_grey', (.30, .32, .34, 1), 0, .5),
 ]:
     mat = bpy.data.materials.new(name)
     # Blender 5.1 creates node materials by default; avoid its deprecated setter.
@@ -367,6 +378,11 @@ for item in mapping:
         remap = {v: i for i, v in enumerate(used)}
         data = bpy.data.meshes.new(f'Wrist frame body {number}')
         data.from_pydata([mesh.vertices[v].co for v in used], [], [[remap[v] for v in mesh.polygons[f].vertices] for f in faces]); data.update()
+        # Connectivity partitioning must retain the source face material assignments.
+        for material in mesh.materials:
+            data.materials.append(material)
+        for polygon, source_face in zip(data.polygons, faces):
+            polygon.material_index = mesh.polygons[source_face].material_index
         obj = bpy.data.objects.new(f'Wrist frame body {number}', data)
         bpy.context.collection.objects.link(obj); obj.matrix_world = original.matrix_world.copy()
         for k in original.keys(): obj[k] = original[k]
@@ -397,6 +413,11 @@ for item in geometry_mapping:
     frame = (np.eye(4) if item['source_asset']=='arm' else engineer_to_arm) @ cad.matrix(item['source_node_index'])
     axis = frame[:3,cylinder_axis]; axis = axis / max(float(np.linalg.norm(axis)),1e-12)
     group.setdefault('fastener_axis', axis.tolist())
+    if not motor:
+        with cad.path.open('rb') as stream:
+            vertices=cad.accessor(primitive['attributes']['POSITION'],stream)
+        head,outward=ring_plan.source_head(vertices,cylinder_axis,frame)
+        group.setdefault('fastener_head_m',head);group.setdefault('fastener_outward',outward)
     group['objects'].append(obj)
     group['members'].append({'asset': item['source_asset'], 'index': item['source_node_index'], 'node_name': name,
                              **({'partition': item['source_partition']} if 'source_partition' in item else {})})
@@ -406,6 +427,30 @@ for item in geometry_mapping:
     obj.matrix_world = Matrix.Identity(4)
     obj.data.transform(world)
     source_materials = [material.name for material in obj.data.materials if material]
+    if item['source_asset']=='arm' and 499<=item['source_node_index']<830 and not motor:
+        # The wrist CAD contains mixed-material nodes (wheel/hub, carbon/metal carrier).
+        # Classify each original material slot, never the whole component name.
+        def surface_kind(material):
+            label=material.name.lower() if material else ''
+            if 'carbonfiber' in label:return 'carbon'
+            if 'polishedsteel' in label:return 'steel'
+            if 'aluminum' in label or 'aluminium' in label:return 'aluminium'
+            if 'polystyrene' in label:return 'polymer_white'
+            if 'darkgreysofttouch' in label:return 'rubber_grey'
+            if 'rubber' in label:return 'rubber_grey' if item['source_node_index']==757 else 'rubber_dark'
+            if 'blacklowglossplastic' in label:return 'rubber_dark' if item['source_node_index'] in (508,682) else 'print_black'
+            if 'plastic' in label:return 'polymer_grey'
+            if material and material.node_tree:
+                shader=material.node_tree.nodes.get('Principled BSDF')
+                if shader and shader.inputs['Metallic'].default_value>=.5:return 'aluminium'
+            return 'aluminium'
+        kinds=[surface_kind(material) for material in obj.data.materials]
+        if not kinds:raise RuntimeError(f'Wrist source material slots lost: {item}')
+        used={kinds[polygon.material_index] for polygon in obj.data.polygons}
+        group['material']=next(iter(used)) if len(used)==1 else 'mixed'
+        group.setdefault('source_materials',set()).update(source_materials)
+        for slot,kind in enumerate(kinds):obj.data.materials[slot]=palette[kind]
+        continue
     if motor:
         kind = 'motor'
     elif belt or any(s in name for s in ['聚氨酯轮', '吸盘', 'Synchronousbelt']):
@@ -464,7 +509,7 @@ for index, (key, group) in enumerate(groups.items()):
     count = triangles(obj)
     protected = group['motor'] or group['material'] == 'carbon' or any(s in group['name'].lower() for s in ['gear', 'teeth', '同步轮'])
     # Preserve all structural and motor tessellation. Only sub-pixel screw thread detail is budgeted.
-    thread = bool(re.search(r'螺|screw|nut|DIN', group['name'], re.I)) and not group['motor']
+    thread = bool(re.search(r'螺钉|螺栓|螺母|screw|nut|DIN', group['name'], re.I)) and not group['motor']
     limit = 600 if thread else count
     if not protected and count > limit:
         modifier = obj.modifiers.new('Web silhouette budget', 'DECIMATE')
@@ -505,9 +550,11 @@ for index, (key, group) in enumerate(groups.items()):
         geometric_center = list(C.transposed() @ Vector(local_center))
     parts.append({'key': obj.name, 'node_name': group['name'], 'link': group['link'], 'motor': group['motor'],
                   'fastener_axis': group['fastener_axis'],
+                  **({k:group[k] for k in ('fastener_head_m','fastener_outward')} if not group['motor'] else {}),
                   'source_frame': ((np.eye(4) if group['members'][0]['asset'] == 'arm' else engineer_to_arm) @ (arm if group['members'][0]['asset'] == 'arm' else engineer).matrix(group['members'][0]['index']))[:3, :3].tolist(),
                   'geometry_volume_m3': geometric_volume, 'geometry_centroid_m': geometric_center,
                   'members': group['members'], 'material': group['material'], 'source_materials': sorted(group['source_materials']), 'source_triangles': count,
+                  'surface_materials': sorted({obj.data.materials[p.material_index].name for p in obj.data.polygons}),
                   'removed_faces': removed, 'triangles': triangles(obj)})
     group['object'] = obj
     print('PART', index, 'triangles', triangles(obj), flush=True)
@@ -522,6 +569,8 @@ spec = importlib.util.spec_from_file_location('arm_layout', pathlib.Path(__file_
 layout = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(layout)
 layout.plan(parts, joints)
+bolt_circles=ring_plan.plan_rings(parts,source_nodes)
+ring_plan.plan_single_fasteners(parts,source_nodes,fastener_policy.is_fastener)
 
 # One draw per material in each mounting bundle; screws/bearings share their body's transform.
 # Do not merge across moving bundles or across complete motors.
@@ -547,6 +596,7 @@ for batch in merge_groups.values():
     host['removed_faces'] = sum(p['removed_faces'] for p in batch)
     host['triangles'] = triangles(obj)
     host['source_materials'] = sorted({m for p in batch for m in p['source_materials']})
+    host['surface_materials'] = sorted({obj.data.materials[p.material_index].name for p in obj.data.polygons})
     host['bounds'] = {'min': [min(p['bounds']['min'][i] for p in batch) for i in range(3)],
                       'max': [max(p['bounds']['max'][i] for p in batch) for i in range(3)]}
     host['geometry_volume_m3'] = volume
@@ -581,7 +631,9 @@ meta = {'schema_version': 6, 'units': 'metres', 'coordinate_frame': joints['coor
         'sources': sources, 'mapping_source': 'Audited arm, final chain linkage and UWB subtree; engineer J0/J1 mounting assemblies and two separately classified external chain loops.',
         'joint_source': 'arm-joints.json', 'motor_policy': 'Complete source motor assemblies; rigid translation with the owning link, no internal separation.',
         'belt_policy': 'CAD tooth segments joined into one belt part per link and belt specification.',
-        'explosion_policy': 'Compact functional overview, intact J4-J6 wrist. Local covers clear first; named assembly-axis stacks open second. Complete motor instances stay at their assembly locations. Bearings remain inspectable; fasteners follow qualified mounting bodies.',
+        'wrist_material_policy': 'Retain source face material slots, including every connectivity-partitioned carbon frame. Map each surface to the site material palette; mixed wheel/hub and carbon/metal carrier nodes keep multiple materials. CAD appearance families are not a manufacturing material certificate.',
+        'explosion_policy': 'Fasteners withdraw along source axes and fade away before covers and shaft stacks open. Source bolt circles stay together. Reassembly reverses the sequence. Complete motors stay intact at assembly locations.',
+        'bolt_circles':bolt_circles,
         'quality_policy': {'position_bits': 11, 'normal_bits': 7, 'protected': 'Structural parts, motors, bearings, chains, gears and pulleys retain cleaned source tessellation. Screw/nut thread detail is limited to 600 triangles per source object.', 'normals': '35 degree smoothing; area-weighted planar normals except motors.', 'merge': 'Same material within rigid mounting bundles only.'},
         'groups': layout.groups(parts), 'details': layout.details(parts, joints), 'motion': layout.motion_contract(joints), 'coverage': coverage, 'source_nodes': source_nodes,
         'parts': parts, 'triangles': sum(p['triangles'] for p in parts),

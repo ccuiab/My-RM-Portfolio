@@ -20,6 +20,21 @@ check('partition_face_conservation',len(faces)==len(set(faces))==partitions[0]['
 motors=[p for p in m['parts'] if p['motor']]
 check('intact_motor_instances',len(motors)==7 and all(p['detail_offset_m']==[0,0,0] for p in motors),{'count':len(motors),'keys':[p['key'] for p in motors]})
 owner=lambda asset,index:next(p for p in m['parts'] if any(n['asset']==asset and n['index']==index for n in p['members']))
+check('j2_excludes_l2_skeleton',owner('arm',18)['key'] not in m['details'][8]['part_keys'],'L2 cross plate is not a shoulder bearing or flange.')
+check('l2_all_eight_plates',all(owner('arm',i)['key'] in m['details'][9]['part_keys'] for i in range(11,19)),'Two vertical and six crosswise plates retained.')
+check('j5_pulley_offsets_coplanar',owner('arm',680)['detail_offset_m']==owner('arm',683)['detail_offset_m']==owner('arm',691)['detail_offset_m'],'Threaded pulley is not a fastener; complete belt plane translates together.')
+check('wheel_hub_screws_rotate',all(owner('arm',i)['motion_group']=='link_wheel' for i in [733,737,743,758]),'Wheel bolt circle follows the wheel rather than the stationary bearing.')
+check('wrist_surface_materials',owner('arm',763)['surface_materials']==['aluminium'] and set(owner('arm',778)['surface_materials'])=={'aluminium','carbon'},'Metal cup guard; mixed metal/carbon carrier retains the source face materials.')
+check('wrist_partition_materials',all(p['surface_materials']==['carbon'] for p in m['parts'] if any(n['asset']=='arm' and n['index']==502 for n in p['members'])),'All six partitioned side-frame bodies retain source carbon material.')
+check('wrist_wheel_material_regions',all({'aluminium','rubber_dark','rubber_grey'}<=set(owner('arm',i)['surface_materials']) for i in [508,682]),'Rubber tread and metal hub remain separate surfaces within each rotating wheel.')
+check('wrist_cup_and_bevel_materials',owner('arm',757)['surface_materials']==['rubber_grey'] and all(owner('arm',i)['surface_materials']==['polymer_white'] for i in [678,679]),'Dark rubber cup and nonmetallic white bevel gears match source material families.')
+check('uwb_mount_retained',owner('arm',370)['stage']==2 and owner('arm',370)['detail_offset_m']==[0,0,0],'The arch-shaped UWB support/linked-stop plate stays assembled for the roller contact study.')
+check('arch_linked_limit_plate',owner('arm',370)['motion_group']=='uwb','Report figure 19: the carbon arch limits the roller from three sides.')
+check('no_chain_or_direct_drive_paths',all(not m['details'][i]['route_edges'] for i in [0,1,2,6,8]),'Only geared and belt paths are drawn.')
+route=m['details'][5];edges={(route['route_keys'][a],route['route_keys'][b]) for a,b in route['route_edges']}
+check('roll_branch_uses_adjacent_wheel_gear',(owner('arm',593)['key'],owner('arm',678)['key']) in edges and (owner('arm',684)['key'],owner('arm',678)['key']) not in edges,'The bevel drive is on the +X wheel branch; no path crosses from the opposite wheel output.')
+
+
 check('separate_wrist_motors',owner('arm',512)['key']!=owner('arm',596)['key'],'The two identically named MG4010 instances remain separate.')
 wrist=[p for p in m['parts'] if p['group']==3]
 check('intact_wrist_overview',len({tuple(p['group_offset_m']) for p in wrist})==1 and all(p['local_offset_m']==[0,0,0] for p in wrist),'Every J4-J6 body receives one identical overview translation.')
@@ -45,12 +60,17 @@ check('uwb_restoration',sum(830<=i<=845 for asset,i in counts if asset=='arm')==
 keys={p['key'] for p in m['parts']}
 for view in m['details']:
     check(f'detail_{view["id"]}_references',set(view['route_keys']+view['feature_keys'])<=set(view['part_keys'])<=keys and all(max(e)<len(view['route_keys']) for e in view['route_edges']),{'parts':len(view['part_keys']),'route_nodes':len(view['route_keys'])})
-check('output_flange_fasteners',all(p['detail_offset_m']==next(h['detail_offset_m'] for h in m['parts'] if h['key']==p['mount_owner']) for p in m['parts'] if p.get('mount_owner')),'Fourteen explicitly mapped output-flange screws follow the mounting flange on both shoulder and elbow.')
+check('output_flange_fasteners',all(owner('arm',i)['stage']==0 and norm(owner('arm',i)['detail_offset_m'])>0 for i in [58,59,64,68,74,76,81,105,110,111,112,115,116,157]),'Both output-flange screw arrays withdraw separately before their flanges open.')
 for source in m['sources']:
     with (root/source['path']).open('rb') as f:digest=hashlib.file_digest(f,'sha256').hexdigest()
     check('source_hash_'+Path(source['path']).name,digest==source['sha256'],digest)
 raw=(root/'materials/models/derived/web/arm-parts.glb').read_bytes();length=struct.unpack_from('<I',raw,12)[0];g=json.loads(raw[20:20+length]);exported={n.get('extras',{}).get('part_key') for n in g['nodes']}
 check('glb_metadata_match',keys<=exported,{'metadata_parts':len(keys),'glb_parts':len(exported-{None}),'bytes':len(raw)})
+for source_index in [502,508,682,757,778,678,679]:
+    for p in [p for p in m['parts'] if any(n['asset']=='arm' and n['index']==source_index for n in p['members'])]:
+        node=next(n for n in g['nodes'] if n.get('extras',{}).get('part_key')==p['key'])
+        names={g['materials'][v['material']]['name'] for v in g['meshes'][node['mesh']]['primitives']}
+        check('exported_materials_'+p['key'],names==set(p['surface_materials']),sorted(names))
 by_key={p['key']:p for p in m['parts']};max_bound_error=0.
 for node in g['nodes']:
     key=node.get('extras',{}).get('part_key')
@@ -62,6 +82,6 @@ for node in g['nodes']:
 check('assembled_export_coordinates',max_bound_error<.0005,{'max_metadata_to_glb_bounds_delta_mm':max_bound_error*1000,'nodes':'Baked CAD coordinates; no per-node rest transformation.'})
 
 check('uwb_bracket_restored',('arm',370) in expected and owner('arm',370)['motion_group']=='uwb','Source bracket 370 follows the UWB compensating branch.')
-report=root/'materials/documents/derived/audits/arm-study-20261014';report.mkdir(parents=True,exist_ok=True)
+report=root/'materials/documents/derived/audits/arm-study-20261016';report.mkdir(parents=True,exist_ok=True)
 (report/'geometry-checks.json').write_text(json.dumps(checks,ensure_ascii=False,indent=2)+'\n','utf8')
 print(json.dumps({'passed':len(checks),'sources':len(counts),'parts':len(keys),'motors':len(motors)},ensure_ascii=False))

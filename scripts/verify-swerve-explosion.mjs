@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import * as THREE from 'three';
-import { createModuleMotion, swervePartProgress, swerveAngles, explosionCycle, cycleAtAmount, CYCLE_DURATION, swervePresentation, SWERVE_PRESENTATION_DURATION } from '../src/scripts/module-motion.ts';
+import { createModuleMotion, swervePartProgress, swerveAngles, explosionCycle, cycleAtAmount, CYCLE_DURATION, ARTICULATION_START, swervePresentation, SWERVE_PRESENTATION_DURATION } from '../src/scripts/module-motion.ts';
 
 const path = 'materials/models/derived/web/engineer-swerve.glb';
 const bytes = readFileSync(path);
@@ -85,7 +85,7 @@ for (let t = 0; t <= SWERVE_PRESENTATION_DURATION; t += .125) {
     assert.equal(object.material.opacity === 1, sample.amount === 0, 'assembly must be solid');
     assert.equal(object.material.depthWrite, true);
   }
-  if (sample.demo) { assert.equal(sample.amount, 0); assert.equal(sample.orbitWeight, 1); }
+  if (sample.demo) { assert.equal(sample.amount, 0); assert.ok(sample.orbitWeight >= 0 && sample.orbitWeight <= 1); }
   if (sample.demo && sample.suspension > .0001 && Math.abs(sample.steering) > .01) assert.equal(sample.phase, 'articulation');
 }
 for (const id of [42, 44]) {
@@ -118,16 +118,16 @@ console.log(JSON.stringify({ samples, wheelAxis: 'pass', suspensionPairs: 'pass'
   steeringPair: 'pass', exactRestore: 'pass', reverseAndResume: 'pass', auditHash: 'pass', pcbComponents: pcb.length, sensorAssembly: 'pass',
   presentationSamples: 185, solidOnAssembly: 'pass', suspensionMounts: 'pass', coverClearance }, null, 2));
 
-assert.equal(CYCLE_DURATION, 23);
-for (const round of [0, 23, 46]) {
-  for (const [time, phase] of [[0, 'articulation'], [7.9, 'articulation'], [8, 'opening'], [14, 'exploded'], [17, 'closing']]) {
+assert.equal(CYCLE_DURATION, 27);
+for (const round of [0, 27, 54]) {
+  for (const [time, phase] of [[0, 'overview'], [2.3, 'opening'], [8.3, 'exploded'], [11.3, 'closing'], [18.6, 'articulation']]) {
     const sample = swervePresentation(round + time);
     assert.equal(sample.phase, phase);
-    assert.equal(sample.orbitWeight, 1);
+    assert.ok(sample.orbitWeight >= 0 && sample.orbitWeight <= 1);
   }
-  let rest = 0, maxSpeed = 0, previous = swervePresentation(round);
+  let rest = 0, maxSpeed = 0, previous = swervePresentation(round + ARTICULATION_START);
   for (let t = .002; t < 8; t += .002) {
-    const sample = swervePresentation(round + t);
+    const sample = swervePresentation(round + ARTICULATION_START + t);
     assert.ok(sample.suspension >= 0 && sample.suspension <= .01001, 'bounded rail travel');
     assert.ok(Math.abs(sample.suspension - previous.suspension) < .0006, 'continuous impact response');
     if (sample.suspension === 0) rest += .002;
@@ -136,12 +136,12 @@ for (const round of [0, 23, 46]) {
   }
   assert.ok(rest > 3, 'visible suspension rest gaps');
   assert.ok(maxSpeed > 3 && maxSpeed < 6, 'responsive but eased steering');
-  assert.equal(swervePresentation(round + 7.9).suspension, 0);
-  assert.ok(Math.abs(swervePresentation(round + 7.9).steering) < 1e-12);
+  assert.equal(swervePresentation(round + ARTICULATION_START + 7.9).suspension, 0);
+  assert.ok(Math.abs(swervePresentation(round + ARTICULATION_START + 7.9).steering) < 1e-12);
 }
-assert.notDeepEqual([.7, .8, .9, 1].map(t => swervePresentation(t).suspension), [.7, .8, .9, 1].map(t => swervePresentation(t + 23).suspension), 'vary road events between rounds');
-assert.ok(swervePresentation(2).roll > 1, 'wheel rolls during assembled driving');
-assert.ok(Math.abs(swervePresentation(7.9).roll - Math.PI * 2) < 1e-9, 'wheel returns to the same orientation before explosion');
+assert.notDeepEqual([.7, .8, .9, 1].map(t => swervePresentation(t + ARTICULATION_START).suspension), [.7, .8, .9, 1].map(t => swervePresentation(t + ARTICULATION_START + CYCLE_DURATION).suspension), 'vary road events between rounds');
+assert.ok(swervePresentation(ARTICULATION_START + 2).roll > 1, 'wheel rolls during assembled driving');
+assert.ok(Math.abs(swervePresentation(ARTICULATION_START + 7.9).roll - Math.PI * 2) < 1e-9, 'wheel returns to the same orientation before explosion');
 const mount = objects.find(o => o.userData.source_node_index === 43);
 assert.deepEqual(mount.userData.web_explode, driveMotor.userData.web_explode, 'motor and mount stay together');
-console.log('23-second irregular suspension and responsive steering checks passed');
+console.log('27-second vehicle and irregular suspension and responsive steering checks passed');

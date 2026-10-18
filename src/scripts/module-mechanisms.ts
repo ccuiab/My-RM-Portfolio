@@ -1,5 +1,6 @@
 import type { MechanismStage } from './lib/mechanism-stage';
 import type { ModuleMotion } from './module-motion';
+import type { SwerveChassis } from './lib/swerve-chassis';
 import { mountViewportScene } from './lib/viewport-scene';
 
 /** Labels live outside the canvas. Pump valves share the right-hand rail;
@@ -76,11 +77,12 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
   const annotations = [...root.querySelectorAll<HTMLElement>('[data-mechanism-annotation]')];
   const phaseLabel = root.querySelector<HTMLElement>('[data-cycle-label]');
   let stage: MechanismStage | undefined, motion: ModuleMotion | undefined;
+  let chassis: SwerveChassis | undefined, autoCamera = true, manualDetail = false;
   let cycle: typeof import('./module-motion') | undefined;
   let visible = false, playing = true, frame = 0, previous = 0, elapsed = 0;
   let explode = 0, target = 0, phaseTime = 0, phase = 'assembled';
   let lastInteraction = -Infinity, holding = false, reconnect = false, blend = 1;
-  const interaction = () => { lastInteraction = performance.now(); reconnect = true; blend = 0; run(); };
+  const interaction = (detailView = false) => { lastInteraction = performance.now(); reconnect = true; blend = 0; autoCamera = false; manualDetail ||= detailView; run(); };
   const sync = () => {
     root.dataset.explode = explode.toFixed(3);
     root.dataset.cyclePhase = phase;
@@ -89,14 +91,22 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
     buttons.forEach(b => b.setAttribute('aria-pressed', String(Math.abs(Number(b.dataset.explodeTo) - explode) < .001)));
     play.textContent = playing ? play.dataset.pause! : play.dataset.play!;
     play.setAttribute('aria-pressed', String(playing));
+    if (!playing) root.dataset.autoState = 'paused';
     if (phaseLabel) phaseLabel.textContent = phaseLabel.dataset[phase] ?? '';
   };
   const draw = () => {
     if (!visible || !stage || !motion) return;
     const presentation = cycle?.swervePresentation(phaseTime);
     const isSwerve = root.dataset.mechanism === 'swerve';
-    motion.update(isSwerve ? presentation!.motionTime : elapsed, explode, isSwerve && explode < .0001 ? presentation : undefined);
+    motion.update(isSwerve ? presentation!.motionTime : elapsed, explode, isSwerve && !manualDetail && explode < .0001 ? presentation : undefined);
     if (isSwerve) {
+      const whole = chassis?.update(phaseTime, autoCamera, manualDetail, blend * blend * (3 - 2 * blend));
+      if (whole) {
+        root.dataset.overview = whole.overview.toFixed(4); root.dataset.bodyOpacity = whole.bodyOpacity.toFixed(4);
+        root.dataset.otherWheelOpacity = whole.otherOpacity.toFixed(4);
+        root.dataset.wheelSuspensions = JSON.stringify(whole.suspensions);
+        root.dataset.wheelSteering = JSON.stringify(whole.steering);
+      }
       root.dataset.suspensionOffset = String(explode < .0001 ? presentation!.suspension : 0);
       root.dataset.steeringDemoAngle = String(explode < .0001 ? presentation!.steering : 0);
       root.dataset.presentationTime = String(phaseTime);
@@ -120,6 +130,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       });
     }
     stage.render();
+    if (isSwerve) { const info = stage.renderInfo(); root.dataset.renderTriangles = String(info.triangles); root.dataset.renderCalls = String(info.calls); }
     detail?.setAttribute('aria-pressed', String(stage.isInspecting('steering-input')));
     sensorDetail?.setAttribute('aria-pressed', String(stage.isInspecting('optical-pcb')));
     root.dataset.inspection = stage.isInspecting('optical-pcb') ? 'optical-pcb' : stage.isInspecting('steering-input') ? 'steering-input' : 'none';
@@ -138,7 +149,12 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
     root.dataset.autoState = automatic ? 'playing' : playing ? 'interaction' : 'paused';
     if (automatic) {
       if (reconnect) {
-        phaseTime = explode < .0001 ? 0 : explode > .9999 ? cycle.EXPLODED_START : cycle.cycleAtAmount(explode, phase === 'closing');
+        if (root.dataset.mechanism === 'swerve') {
+          if (manualDetail || Math.abs(cycle.swervePresentation(phaseTime).amount - explode) > .001) {
+            phaseTime = explode > .9999 ? cycle.EXPLODED_START : cycle.cycleAtAmount(explode, phase === 'closing' && explode > .0001);
+          }
+          stage.beginSwerveResume(); manualDetail = false;
+        }
         reconnect = false; blend = 0;
       }
       blend = Math.min(1, blend + dt);
@@ -158,6 +174,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       else if (explode > .999) phase = 'exploded';
       explode = Math.abs(difference) < .001 ? target : explode + difference * (1 - Math.exp(-dt * 8));
     }
+    autoCamera = automatic;
     sync();
     if (automatic || explode !== previousExplode || dt === 0) { draw(); root.dataset.rendering = 'true'; }
     else root.dataset.rendering = 'false';
@@ -168,15 +185,15 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
     // first animation step when the user next moves the slider or a button.
     if (!frame && visible && stage) { previous = 0; frame = requestAnimationFrame(tick); }
   };
-  buttons.forEach(b => b.addEventListener('click', () => { interaction(); target = Number(b.dataset.explodeTo); sync(); run(); }));
-  detail?.addEventListener('click', () => { interaction(); target = 1; stage?.inspect(['steering-input', 'steering-output']); draw(); run(); });
+  buttons.forEach(b => b.addEventListener('click', () => { interaction(true); stage?.releaseInspection(); target = Number(b.dataset.explodeTo); sync(); run(); }));
+  detail?.addEventListener('click', () => { interaction(true); target = 1; stage?.inspect(['steering-input', 'steering-output']); draw(); run(); });
   sensorDetail?.addEventListener('click', () => {
-    interaction();
+    interaction(true);
     if (stage?.isInspecting('optical-pcb')) stage.resetView();
     else stage?.inspect(['optical-pcb', 'slip-ring', 'optical-target']);
     draw(); run();
   });
-  slider?.addEventListener('input', () => { interaction(); target = Number(slider.value) / 100; sync(); run(); });
+  slider?.addEventListener('input', () => { interaction(true); stage?.releaseInspection(); target = Number(slider.value) / 100; sync(); run(); });
   slider?.addEventListener('pointerdown', () => { holding = true; interaction(); });
   const endInteraction = () => { if (holding) { holding = false; interaction(); } };
   window.addEventListener('pointerup', endInteraction);
@@ -184,7 +201,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
   play.addEventListener('click', () => {
     playing = !playing; target = explode; reconnect = true; blend = 0;
     if (playing) { lastInteraction = -Infinity; run(); }
-    else { stop(); draw(); }
+    else { autoCamera = false; stop(); draw(); }
     sync();
   });
   root.querySelector('[data-mechanism-reset]')!.addEventListener('click', () => { interaction(); stage?.resetView(); draw(); });
@@ -209,13 +226,17 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       try {
         stage = next; motion = module.createModuleMotion(stage, root.dataset.mechanism as 'pump' | 'swerve');
         if (root.dataset.mechanism === 'swerve') stage.reserveSwerveView((time, amount) => motion!.update(time, amount, amount === 0 ? module.swervePresentation(time) : undefined), module.CYCLE_DURATION);
+        if (root.dataset.mechanism === 'swerve') {
+          const { loadSwerveChassis } = await import('./lib/swerve-chassis');
+          chassis = await loadSwerveChassis(stage, import.meta.env.BASE_URL, signal);
+        }
         if (root.dataset.mechanism === 'swerve') stage.onSwerveViewChange(() => layoutSwerveAnnotations(root, next, explode, phase));
         else stage.onPumpViewChange(() => { if (motion) layoutPumpAnnotations(root, motion); });
       }
       catch (error) { next.dispose(); stage = undefined; throw error; }
       return {
         setVisible(value) { visible = value; if (value) { draw(); run(); } else stop(); },
-        dispose() { visible = false; stop(); next.dispose(); stage = undefined; motion = undefined; },
+        dispose() { visible = false; stop(); next.dispose(); stage = undefined; motion = undefined; chassis = undefined; },
       };
     },
     loading() { delete root.dataset.failedState; status.hidden = false; status.textContent = root.dataset.loading!; },

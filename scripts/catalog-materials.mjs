@@ -40,7 +40,7 @@ async function walk(dir, prefix = '') {
 }
 async function digest(path) {
   const hash = createHash('sha256');
-  for await (const chunk of createReadStream(path)) hash.update(chunk);
+  for await (const chunk of createReadStream(path, { highWaterMark: 4 * 1024 * 1024 })) hash.update(chunk);
   return hash.digest('hex');
 }
 function size(bytes) {
@@ -50,7 +50,7 @@ function size(bytes) {
 function type(path) {
   const ext = extname(path).toLowerCase();
   if (/^\.(bmp|jpe?g|png|svg|webp)$/.test(ext)) return '图片';
-  if (/^\.(glb|blend|stl|sldasm|urdf)$/.test(ext)) return '3D/CAD/URDF';
+  if (/^\.(glb|blend|stl|sldasm|urdf|step|stp|xbf)$/.test(ext)) return '3D/CAD/URDF';
   if (ext === '.mp4') return '视频';
   if (/^\.(ttf|woff2)$/.test(ext)) return '字体';
   if (/^\.(json|csv)$/.test(ext)) return '索引、参数与审计数据';
@@ -67,11 +67,14 @@ for (const path of await walk(library)) {
   const sourceReadme = path.endsWith('/README.md') && path.includes('/source/');
   const level = sourceReadme ? '目录索引' : path.includes('/source/') ? '原始输入' : path.includes('/derived/') ? '二级材料' : '目录索引';
   const defaultUsage = path.includes('/derived/audits/') ? '来源与审计支撑' : path.includes('/source/') ? '原始输入' : '说明与索引';
+  const missionStory = /^(videos\/derived\/web\/engineer-mission[^/]*|images\/derived\/video-posters\/engineer-mission[^/]*|models\/derived\/rm2025-field\/models\/mission-[^/]*|models\/derived\/web\/mission-transmitter\.(glb|json))$/.test(path);
+  const missionUsage = missionStory ? (path.startsWith('models/') ? '制作输入：A章统一场地与返程轨迹' : '网页展示：A章整车行动短片') : null;
+  const swerveStory = /^models\/derived\/web\/engineer-swerve-context\.(glb|json)$/.test(path);
   rows.push({ ...metadata, '序号': rows.length + 1, '大类': labels[path.split('/')[0]] ?? '目录说明', '材料层级': level,
-    '存放用途': sourceReadme ? '原件目录说明' : old?.usage ?? defaultUsage, '文件类型': type(path), '文件名': path.split('/').at(-1),
+    '存放用途': sourceReadme ? '原件目录说明' : old?.usage ?? missionUsage ?? (swerveStory ? '网页展示：舵轮整车高精度背景与装配参数' : defaultUsage), '文件类型': type(path), '文件名': path.split('/').at(-1),
     'materials内相对路径': path, '大小字节': info.size, '大小': size(info.size),
     '修改时间（北京时间）': new Date(info.mtimeMs + 8 * 3600000).toISOString().replace('Z', '+08:00'),
-    '整理前路径': old?.source ?? metadata['整理前路径'] ?? '', '分类依据': old?.reason ?? '',
+    '整理前路径': old?.source ?? metadata['整理前路径'] ?? '', '分类依据': old?.reason ?? (missionStory ? metadata['分类依据'] ?? '实际CAD派生成片与官方规则场地' : ''),
     '校验SHA256': await digest(join(library, path)) });
 }
 // Remap links in the previous inventory, preserving its source titles, authors, parts and original paths.
@@ -102,9 +105,9 @@ for (const row of rows.filter(r => /^(models|videos)\/derived\/web\/.*\.(glb|mp4
   lines.push(`| [${row['文件名']}](${row['materials内相对路径']}) | ${row['存放用途']} | ${row['大小']} |`);
 }
 const deleted = cleanup.entries.filter(e => !e.destination);
-lines.push('', '## 本次整理记录', '', `清理 **${deleted.length} 个未使用的二级文件，${size(deleted.reduce((n,e) => n + e.bytes, 0))}**。文件送入 Windows 回收站；逐项旧路径、大小、SHA-256、删除原因和保留材料的新路径见 [cleanup.json](cleanup.json)。`, '',
+lines.push('', '## 历史素材清理记录', '', `既有记录包含 **${deleted.length} 个未使用的二级文件，${size(deleted.reduce((n,e) => n + e.bytes, 0))}**。历史文件已送入 Windows 回收站；逐项旧路径、大小、SHA-256、删除原因和保留材料的新路径见 [cleanup.json](cleanup.json)。本清单生成只刷新索引与校验值。`, '',
   '原片目录 [videos/source/bilibili/](videos/source/bilibili/) 及来源索引 [documents/derived/bilibili-video-catalog.md](documents/derived/bilibili-video-catalog.md) 均保留。', '',
   'CAD 原件在外部只读目录，入口见 [models/source/README.md](models/source/README.md)。模型导出、PNG 截图、URDF 等归二级材料；本地仅保留当前展示、复现和溯源所需的加工文件。', '',
   '刷新本清单：`npm run materials:inventory`。历史网页发布包由 publish/ 单独管理。', '');
 await writeFile(join(library, 'INVENTORY.md'), lines.join('\n'));
-console.log(`Material inventory: ${rows.length} files, ${size(total)}; removed ${deleted.length} unused derived files.`);
+console.log(`Material inventory: ${rows.length} files, ${size(total)}; historical cleanup records: ${deleted.length} items.`);

@@ -4,6 +4,7 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { cleanPartName } from './part-name';
 import { setCadOpacity } from './cad-opacity';
+import { createStudyRenderer } from './arm-study-renderer';
 
 /** Shared part viewer. Its owner decides when rendering is allowed. */
 export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string, file: string, label: HTMLElement, canRender: () => boolean, signal: AbortSignal) {
@@ -99,6 +100,10 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     for (const x of [min.x, max.x]) for (const y of [min.y, max.y]) for (const z of [min.z, max.z]) corners.push({ mesh, point: new THREE.Vector3(x, y, z) });
   });
   let swerveEnvelope: THREE.Vector3[] | undefined;
+  let overviewPoints: THREE.Vector3[] = [], overviewWeight = 0;
+  let vehicleOpacity = 1;
+  let vehicleRenderer: ReturnType<typeof createStudyRenderer> | undefined;
+  let resumeView: { position: THREE.Vector3; target: THREE.Vector3 } | undefined;
   const fit = (reset = false) => {
     if (reset) zoomFactor = 1;
     direction.copy(camera.position).sub(controls.target);
@@ -122,6 +127,11 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
       return distance;
     };
     fitDistance = distanceFor(points, center);
+    if (overviewPoints.length && overviewWeight > 0 && !inspectionBlend) {
+      const wholeCenter = new THREE.Box3().setFromPoints(overviewPoints).getCenter(new THREE.Vector3());
+      fitDistance = THREE.MathUtils.lerp(fitDistance, distanceFor(overviewPoints, wholeCenter), overviewWeight);
+      center.lerp(wholeCenter, overviewWeight);
+    }
     if (inspection && inspectionBlend > .0001) {
       const detailPoints = points.filter((_, index) => inspection!.has(corners[index].mesh));
       const detailCenter = new THREE.Box3().setFromPoints(detailPoints).getCenter(new THREE.Vector3());
@@ -222,7 +232,8 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     updateInspectionMaterials();
     model.updateMatrixWorld(true);
     updateHover();
-    renderer.render(scene, camera);
+    if (vehicleRenderer) vehicleRenderer.render(vehicleOpacity);
+    else renderer.render(scene, camera);
     if (isSwerve) swerveViewChange?.();
     else if (isPump) pumpViewChange?.();
   };
@@ -263,6 +274,29 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   return {
     scene, model, camera, controls, amber, sphere,
     render, fitView: fit,
+    attachSwerveVehicle(context: THREE.Group, points: THREE.Vector3[]) {
+      overviewPoints = points;
+      vehicleRenderer = createStudyRenderer(renderer, scene, camera, context);
+    },
+    setSwerveOverview(amount: number, opacity: number, moveCamera: boolean, resumeWeight = 1) {
+      overviewWeight = amount; vehicleOpacity = opacity;
+      if (moveCamera && !inspectionBlend) {
+        fit();
+        if (resumeView && resumeWeight < 1) {
+          camera.position.lerp(resumeView.position, 1 - resumeWeight);
+          controls.target.lerp(resumeView.target, 1 - resumeWeight);
+          camera.lookAt(controls.target);
+        } else resumeView = undefined;
+      }
+    },
+    beginSwerveResume() {
+      resumeView = { position: camera.position.clone(), target: controls.target.clone() };
+      inspection = undefined; inspectionKey = undefined; inspectionBlend = 0; restoreInspectionMaterials();
+    },
+    releaseInspection() {
+      inspection = undefined; inspectionKey = undefined; inspectionBlend = 0; restoreInspectionMaterials();
+    },
+    renderInfo: () => ({ calls: renderer.info.render.calls, triangles: renderer.info.render.triangles }),
     reserveSwerveView(sample: (time: number, amount: number) => void, period: number) {
       if (!isSwerve) return;
       swerveEnvelope = [];
@@ -379,6 +413,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     },
     resetView() { inspection = undefined; inspectionKey = undefined; inspectionBlend = 0; restoreInspectionMaterials(); camera.position.copy(controls.target).add(initialDirection); fit(true); controls.update(); render(); },
     dispose() {
+      vehicleRenderer?.dispose();
       events.abort(); resizeObserver.disconnect(); controls.dispose(); clearHover();
       const geometries = new Set<THREE.BufferGeometry>();
       const materials = new Set<THREE.Material>();

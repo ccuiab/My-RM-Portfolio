@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {ARM_TOOL_FACE_OFFSET_M,ARM_TOOL_ORE_CENTER_OFFSET_M} from './lib/arm-tool-point';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -216,7 +217,7 @@ export async function createArmExchange(root: HTMLElement, base: string, signal:
     ore.add(new THREE.LineSegments(new THREE.EdgesGeometry(oreGeometry), oreWireMaterial));
     scene.add(ore);
     const tool = joints[5].node;
-    const localOreOffset = joints[5].axis.clone().multiplyScalar(.1705);
+    const localOreOffset = joints[5].axis.clone().multiplyScalar(ARM_TOOL_ORE_CENTER_OFFSET_M);
     const toolBasis = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), joints[5].axis);
     const oreTransform = () => ({
       position: tool.localToWorld(localOreOffset.clone()),
@@ -328,11 +329,11 @@ export async function createArmExchange(root: HTMLElement, base: string, signal:
         for (let i = 0; i < 30; i++) {
           const past = Math.max(0, time - 1 + i / 30);
           applyPose(sampleExchange(past).angles);
-          history.push({ time: past, point: tool.localToWorld(joints[5].axis.clone().multiplyScalar(.0705)) });
+          history.push({ time: past, point: tool.localToWorld(joints[5].axis.clone().multiplyScalar(ARM_TOOL_FACE_OFFSET_M)) });
         }
       }
       applyPose(sample.angles);
-      history.push({ time, point: tool.localToWorld(joints[5].axis.clone().multiplyScalar(.0705)) });
+      history.push({ time, point: tool.localToWorld(joints[5].axis.clone().multiplyScalar(ARM_TOOL_FACE_OFFSET_M)) });
       while (history.length > 31 || history[0].time < time - 1) history.shift();
       history.slice(1).forEach((entry, i) => {
         history[i].point.toArray(trailPositions, i * 6);

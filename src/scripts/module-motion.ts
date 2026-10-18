@@ -3,9 +3,11 @@ import type { MechanismStage } from './lib/mechanism-stage';
 import { setCadOpacity } from './lib/cad-opacity.ts';
 
 const TAU = Math.PI * 2;
-// Assembled hold, slow open, long exploded hold, slow close (seconds).
-const HOLD_ASSEMBLED = 8, OPEN = 6, HOLD_EXPLODED = 3, CLOSE = 6;
-export const CYCLE_DURATION = HOLD_ASSEMBLED + OPEN + HOLD_EXPLODED + CLOSE;
+// Whole vehicle → one module → whole vehicle, with continuous loop endpoints.
+const HOLD_ASSEMBLED = 2.2, OPEN = 6, HOLD_EXPLODED = 3, CLOSE = 6;
+const PULL_BACK = 1.3, ARTICULATE = 8, RESTORE_BODY = .5;
+export const ARTICULATION_START = HOLD_ASSEMBLED + OPEN + HOLD_EXPLODED + CLOSE + PULL_BACK;
+export const CYCLE_DURATION = ARTICULATION_START + ARTICULATE + RESTORE_BODY;
 /** Cycle time at which the exploded hold begins. */
 export const EXPLODED_START = HOLD_ASSEMBLED + OPEN;
 const ease = (x: number) => x * x * x * (x * (x * 6 - 15) + 10);
@@ -56,7 +58,9 @@ export function explosionCycle(time: number) {
   if (t < HOLD_ASSEMBLED) return { amount: 0, phase: 'assembled' };
   if (t < EXPLODED_START) return { amount: ease((t - HOLD_ASSEMBLED) / OPEN), phase: 'opening' };
   if (t < EXPLODED_START + HOLD_EXPLODED) return { amount: 1, phase: 'exploded' };
-  return { amount: 1 - ease((t - EXPLODED_START - HOLD_EXPLODED) / CLOSE), phase: 'closing' };
+  const closeStart = EXPLODED_START + HOLD_EXPLODED;
+  if (t < closeStart + CLOSE) return { amount: 1 - ease((t - closeStart) / CLOSE), phase: 'closing' };
+  return { amount: 0, phase: t < ARTICULATION_START ? 'pullback' : t < ARTICULATION_START + ARTICULATE ? 'articulation' : 'returning' };
 }
 export const SWERVE_PRESENTATION_DURATION = CYCLE_DURATION;
 /** Smooth, compact response: fast compression, smaller rebounds, then exact rest. */
@@ -70,11 +74,22 @@ function sampleKeys(time: number, keys: readonly (readonly [number, number])[]) 
 const impactResponse = [[0, 0], [.085, 1], [.24, .12], [.34, .32], [.49, .035], [.6, .09], [.8, 0]] as const;
 /** Seeded road events vary between rounds, not between frames. This is a bounded
  * visual response, not a calibrated spring/damper or a claimed physical limit. */
-export function swervePresentation(time: number) {
+export function swervePresentation(time: number, wheel = 0) {
   const t = ((time % CYCLE_DURATION) + CYCLE_DURATION) % CYCLE_DURATION;
-  if (t >= HOLD_ASSEMBLED) return { ...explosionCycle(t),
-    motionTime: (t - HOLD_ASSEMBLED) / (CYCLE_DURATION - HOLD_ASSEMBLED) * CYCLE_DURATION,
-    suspension: 0, steering: 0, roll: 0, demo: false, orbitWeight: 1 };
+  const ramp = (x: number) => ease(THREE.MathUtils.clamp(x, 0, 1));
+  const focus = ramp((t - .8) / 1.4), pullback = ramp((t - ARTICULATION_START + PULL_BACK) / PULL_BACK);
+  const overview = t < HOLD_ASSEMBLED ? 1 - focus : pullback;
+  const bodyOpacity = t < HOLD_ASSEMBLED ? 1 - focus : t < ARTICULATION_START ? .12 * pullback
+    : THREE.MathUtils.lerp(.12, 1, ramp((t - ARTICULATION_START - ARTICULATE) / RESTORE_BODY));
+  const detail = t >= HOLD_ASSEMBLED && t < ARTICULATION_START - PULL_BACK;
+  const demoTime = t - ARTICULATION_START;
+  const articulation = demoTime >= 0 && demoTime < ARTICULATE;
+  const orbitWeight = detail ? ramp((t - HOLD_ASSEMBLED) / .4) * ramp((ARTICULATION_START - PULL_BACK - t) / .4)
+    : articulation ? ramp(demoTime / .4) * ramp((ARTICULATE - demoTime) / .4) : 0;
+  const common = { ...explosionCycle(t), overview, bodyOpacity, otherOpacity: overview, orbitWeight,
+    motionTime: THREE.MathUtils.clamp((t - HOLD_ASSEMBLED) / (OPEN + HOLD_EXPLODED + CLOSE), 0, 1) * CYCLE_DURATION };
+  if (!articulation) return { ...common, phase: t < .8 ? 'overview' : t < HOLD_ASSEMBLED ? 'focus' : common.phase,
+    suspension: 0, steering: 0, roll: 0, demo: !detail, alignment: 0 };
   const round = Math.floor(time / CYCLE_DURATION);
   const noise = (index: number) => {
     const x = Math.sin(round * 127.1 + index * 311.7 + 17.3) * 43758.5453;
@@ -84,19 +99,19 @@ export function swervePresentation(time: number) {
   // One pronounced bump, a short rough patch, then a final bump and long rest.
   const events = [[.7, .009], [2.1, .0045], [2.48, .005], [4.85, .01]];
   events.forEach(([start, amplitude], i) => {
-    const age = t - start - (noise(i) - .5) * .18;
+    const age = demoTime - start - wheel * .16 - (noise(i + wheel * 13) - .5) * .18;
     const responseTime = age / (.8 + .3 * noise(i + 10));
     if (responseTime >= 0 && responseTime <= .8) suspension += amplitude * (.8 + .2 * noise(i + 5)) * sampleKeys(responseTime, impactResponse);
   });
   const direction = round % 2 ? -1 : 1;
-  const steering = direction * sampleKeys(t, [[0, 0], [.3, 0], [.95, 1.15], [1.65, 1.15],
+  const steering = direction * sampleKeys(demoTime, [[0, 0], [.3, 0], [.95, 1.15], [1.65, 1.15],
     [2.45, -.95], [3.25, -.95], [3.7, -.65], [4.4, -.65], [5.05, 1.05], [6.3, 1.05], [7.15, 0], [8, 0]]);
   // Rolling gives the direction changes a purpose. End at one full turn so
   // returning to the exploded-view pose is continuous, with no reverse snap.
-  const roll = sampleKeys(t, [[0, 0], [.3, 0], [1.35, 1.25], [1.8, 1.25],
+  const roll = sampleKeys(demoTime, [[0, 0], [.3, 0], [1.35, 1.25], [1.8, 1.25],
     [3, 3.1], [3.9, 3.1], [5.3, 5.4], [6.8, TAU], [8, TAU]]);
-  return { amount: 0, phase: 'articulation', motionTime: 0,
-    suspension, steering, roll, demo: true, orbitWeight: 1 };
+  return { ...common, motionTime: 0, suspension, steering, roll, demo: true,
+    alignment: ramp(demoTime / .3) * (1 - ramp((demoTime - 7.15) / .85)) };
 }
 /** Bounded, periodic demonstration: closing never unwinds accumulated turns. */
 export function swerveAngles(time: number, _explode: number) {

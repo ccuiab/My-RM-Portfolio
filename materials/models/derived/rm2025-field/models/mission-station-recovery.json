@@ -1,0 +1,127 @@
+{
+  "schema": 1,
+  "source": "Actual exchange-station.glb rigid groups and source pivots",
+  "dumpA": {
+    "yaw": 45,
+    "shoulder": -18,
+    "forearm": -10,
+    "wristYaw": 135,
+    "roll": 180,
+    "pitch": -85
+  },
+  "dumpB": {
+    "yaw": -45,
+    "shoulder": -18,
+    "forearm": -10,
+    "wristYaw": -135,
+    "roll": -180,
+    "pitch": -85
+  },
+  "segments": {
+    "toDumpA": [
+      {
+        "yaw": -12,
+        "shoulder": 20,
+        "forearm": 20,
+        "wristYaw": 115,
+        "roll": 20,
+        "pitch": -5
+      },
+      {
+        "yaw": 45,
+        "shoulder": -18,
+        "forearm": -10,
+        "wristYaw": 135,
+        "roll": 0,
+        "pitch": -85
+      },
+      {
+        "yaw": 45,
+        "shoulder": -18,
+        "forearm": -10,
+        "wristYaw": 135,
+        "roll": 180,
+        "pitch": -85
+      }
+    ],
+    "toB": [
+      {
+        "yaw": 45,
+        "shoulder": -18,
+        "forearm": -10,
+        "wristYaw": 135,
+        "roll": 180,
+        "pitch": -85
+      },
+      {
+        "yaw": 45,
+        "shoulder": -18,
+        "forearm": -10,
+        "wristYaw": 135,
+        "roll": 0,
+        "pitch": -85
+      },
+      {
+        "yaw": 18.678253405827874,
+        "shoulder": -25.12352176936267,
+        "forearm": -5.214171997082422,
+        "wristYaw": 132.69312256108958,
+        "roll": 0.5639175253076871,
+        "pitch": -74.69907585884738
+      },
+      {
+        "yaw": 14,
+        "shoulder": 22,
+        "forearm": 20,
+        "wristYaw": -120,
+        "roll": -20,
+        "pitch": -15
+      }
+    ],
+    "toDumpB": [
+      {
+        "yaw": 14,
+        "shoulder": 22,
+        "forearm": 20,
+        "wristYaw": -120,
+        "roll": -20,
+        "pitch": -15
+      },
+      {
+        "yaw": -45,
+        "shoulder": -18,
+        "forearm": -10,
+        "wristYaw": -135,
+        "roll": 0,
+        "pitch": -85
+      },
+      {
+        "yaw": -45,
+        "shoulder": -18,
+        "forearm": -10,
+        "wristYaw": -135,
+        "roll": -180,
+        "pitch": -85
+      }
+    ]
+  },
+  "seed": 20251018,
+  "audit": {
+    "source": "Actual CAD station + actual ore mesh, 0.5 degree substeps; ore shrunk 2 mm to distinguish support contact",
+    "summary": [
+      {
+        "name": "toDumpA",
+        "checks": 522
+      },
+      {
+        "name": "toB",
+        "checks": 922
+      },
+      {
+        "name": "toDumpB",
+        "checks": 502
+      }
+    ],
+    "hits": []
+  }
+}

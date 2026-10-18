@@ -1,0 +1,62 @@
+{
+  "sourcePage": "https://bbs.robomaster.com/article/372035?source=1",
+  "publisher": "RoboMaster 高校赛务",
+  "title": "RMU 2025场地图纸&装甲贴纸开源",
+  "attachmentId": 112413,
+  "name": "RMUC 2025复活赛&全国赛_asm.stp",
+  "url": "https://hz-rm-bbs-web-prod.oss-cn-hangzhou.aliyuncs.com/7ca50e5ad5014c9c8067f559097f66981750837527528/RMUC 2025复活赛&全国赛_asm.stp",
+  "encodedUrl": "https://hz-rm-bbs-web-prod.oss-cn-hangzhou.aliyuncs.com/7ca50e5ad5014c9c8067f559097f66981750837527528/RMUC%202025%E5%A4%8D%E6%B4%BB%E8%B5%9B&%E5%85%A8%E5%9B%BD%E8%B5%9B_asm.stp",
+  "officialMirrorUrls": [
+    "https://hz-rm-bbs-web-prod.oss-cn-hangzhou.aliyuncs.com/7ca50e5ad5014c9c8067f559097f66981750837527528/RMUC 2025复活赛&全国赛_asm.stp"
+  ],
+  "transferUrls": [
+    "https://hz-rm-bbs-web-prod.oss-cn-hangzhou.aliyuncs.com/7ca50e5ad5014c9c8067f559097f66981750837527528/RMUC 2025复活赛&全国赛_asm.stp"
+  ],
+  "ruleVersion": "RMUC 2025 V2.0.0",
+  "publishedDate": "2025-06-25",
+  "downloadedAt": "2026-10-15T17:19:12.294121+00:00",
+  "bytes": 276996994,
+  "sha256": "2655d4c2caad62d35cae989b6240ce7bba0172bcb675a9af3866100ace384e1c",
+  "httpLastModified": "Wed, 25 Jun 2025 07:45:53 GMT",
+  "httpETag": "\"A12452326025AAE96594B049BDA2F23F-265\"",
+  "httpCRC64ECMA": "4772266118193368046",
+  "anonymousDownload": true,
+  "originalBytes": true,
+  "transferMethod": "Validated HTTP byte ranges reassembled in original order",
+  "recoveredInitialInSessionRanges": true,
+  "officialCaveat": "仅做参考使用；若模型与规则手册标注或比赛现场场地有结构出入，以规则手册和现场场地为准。",
+  "integrityVerification": {
+    "verifiedAt": "2026-10-15T17:19:57.904502+00:00",
+    "stepHeader": "ISO-10303-21;",
+    "stepFooter": "END-ISO-10303-21;",
+    "bytes": 276996994,
+    "sha256": "2655d4c2caad62d35cae989b6240ce7bba0172bcb675a9af3866100ace384e1c",
+    "localCRC64Hex": "423A7EBFFC8C4BEE",
+    "serverCRC64Decimal": "4772266118193368046",
+    "serverCRC64Matches": true,
+    "crcTool": "7-Zip 25.01 (x64)",
+    "crcCommand": "7z h -scrcCRC64 <STEP path>"
+  },
+  "stepHeaderMetadata": {
+    "fileName": "RMUC2025_ID_0920_ASM",
+    "fileDate": "2025-06-13T22:13:54",
+    "originator": "CREO PARAMETRIC BY PTC INC, 2019164",
+    "schema": [
+      "CONFIG_CONTROL_DESIGN",
+      "SHAPE_APPEARANCE_LAYERS_GROUPS"
+    ]
+  },
+  "productNameScan": {
+    "productRecords": 1300,
+    "uniqueProductNames": 1248,
+    "nonBrepProductRecords": 863,
+    "potentialTargetAssemblies": [
+      "YINKUANGS_ASM",
+      "ZIYUANDAO_ID_0923_AF2_ASM",
+      "ZIYUANDAO2_ASM",
+      "DHZ-*",
+      "RMUC2025_ID_0920_ASM"
+    ],
+    "note": "Names are navigation hints; identify target geometry against official manual figures and dimensions."
+  }
+}

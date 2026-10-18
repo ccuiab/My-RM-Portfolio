@@ -19,7 +19,7 @@ def scaled(axis,d):
     return [v*d for v in axis]
 
 def fastener(p):
-    return not p['motor'] and bool(re.search(r'螺|screw|nut|washer|DIN|ISO|^STD_|垫片|卡簧',p['node_name'],re.I))
+    return not p['motor'] and bool(re.search(r'螺钉|螺栓|螺母|screw|nut|washer|DIN|ISO|^STD_|垫片|卡簧',p['node_name'],re.I))
 
 def groups(parts):
     result=[]
@@ -37,7 +37,8 @@ def plan(parts,joints):
         a,e=ids(p),ids(p,'engineer'); n=p['node_name']; c=center(p)
         group=0 if p['link']=='link_base' else 4 if p['link']=='link_uwb' or (p['link']=='link_1_left' and a) else 1 if p['link'] in ('link_1','link_1_left') else 2 if p['link']=='link_2' else 3
         if a and min(a)<160 and p['link']=='link_3': group=2
-        if a and max(a)<160 and p['link']=='link_2' and c[2]>.075: group=1
+        if a.intersection(range(105,160)): group=1
+        if a.intersection(range(3,40)): group=2
         axis,d,stage,role=X,0.,2,'structure'
         # Housing clears first; motors stay at their source locations within each total assembly.
         if group==0:
@@ -57,14 +58,14 @@ def plan(parts,joints):
                 elif 'MGN7' in n or '限位' in n: d=-.018
             elif p.get('material')=='carbon' or any(s in n for s in ['底座','固定侧板','铝通30']):
                 d,stage,role=(.060 if c[0]>(.0363 if group==2 else -.020) else -.055),1,'cover'
-            elif '输出轴' in n: d,role=(.032 if c[0]>(.0445 if group==2 else -.020) else -.032),'shaft'
-            elif 'bearing' in n.lower(): d,role=(.052 if c[0]>(.0445 if group==2 else -.020) else -.048),'bearing'
+            elif '输出轴' in n: d,role=(.055 if c[0]>(.0445 if group==2 else -.020) else -.055),'shaft'
+            elif 'bearing' in n.lower(): d,role=(.09 if c[0]>(.0445 if group==2 else -.020) else -.09),'bearing'
         elif group==4:
             # Keep the final 22T chain loop and long UWB boom legible as one route.
             if '04C' in n: d,role=-.02,'transmission'
             elif 'bearing' in n.lower(): d,role=-.044,'bearing'
             elif p['link']=='link_uwb': d=0.
-            elif 370 in a: d,stage,role=-.045,1,'cover'
+            elif 370 in a: d,stage,role=0.,2,'uwb-frame'
             elif 'limitation' in n: d,stage,role=-.065,1,'cover'
         else:
             # J4 lives partly in L3 in the CAD naming. Its output and both wrist axes
@@ -140,7 +141,15 @@ def plan(parts,joints):
             p['detail_offset_m']=[0.,0.,0.];p['mount_evidence']='Unresolved mounting body: retained at assembled position, no inferred flight.'
 
 
-    attach_output_screws(parts)
+    # Source bolt circles belong to wheel hubs, never to stationary bearing races.
+    for p in parts:
+        if ids(p).intersection({733,737,743,758}):
+            host=next(h for h in parts if 682 in ids(h))
+            for k in ('detail_offset_m','assembly_axis','stage','role'):p[k]=host[k]
+            p['assembly_bundle']=host['key'];p['mount_owner']=host['key'];p['link']='link_wheel'
+    # A chain demonstration retains the complete assembled drive.
+    for p in parts:
+        if ids(p,'engineer') and p['group']==1:p['detail_offset_m']=[0.,0.,0.];p['stage']=2
     assign_motion(parts)
 
 def attach_output_screws(parts):
@@ -193,7 +202,7 @@ def motion_contract(joints):
         'wheel_coupling':'q7 = q5 - q6; dependent branch, not an eighth independent axis.',
         'j0_evidence':'engineer_mates [0-2,30-31,299-305,1109-1110]; gimbal_mates [39-45]. Inner ring/slip-ring shells/central sprocket fixed. Outer ring/chassis/motor carrier rotates. Input sprocket and adapter counter-rotate in carrier frame.',
         'uwb_evidence':'sw-probe/arm_mates mates[12,14-16,19-21,271,275-276]. Upper 22T wheel and bracket counter-rotate by q2 about their own offset axis, not the J3 axis.',
-        'limits':'Illustrative finite joint windows, not calibrated hardware limits. Chain circulation, bearing rollers, slip-ring internal rotors and detailed internal motor/gear dynamics are not simulated.'
+        'limits':'Illustrative finite joint windows, not calibrated hardware limits. Source chain links circulate along source stations. Bearing rollers, slip-ring internal rotors and detailed internal motor dynamics are not simulated.'
     }
 
 def details(parts,joints):
@@ -213,21 +222,24 @@ def details(parts,joints):
              lambda p:p['group']==4]
     paths=[route('engineer',[472,1421,1410,117]),route('engineer',[476,1323,1324,471]),route('arm',[103,99,102]),
            route('arm',[186,306,300,299,268,272,348,271]),route('arm',[596,683,691,680,778]),
-           route('arm',[512,507,505,762,696,684,682,678,679,592,757,500,593,508]),route('arm',[368,362,369,370])]
-    feature_sources=[[('engineer',120),('engineer',111),('engineer',110)], [('engineer',476),('engineer',471)], [('arm',103),('arm',99)], [('arm',300),('arm',183),('arm',271)], [('arm',596),('arm',691),('arm',678)], [('arm',512),('arm',678),('arm',592)], [('arm',368),('arm',370),('arm',311)]]
+           route('arm',[512,507,505,762,500,593,508,678,679,592,757,696,684,682]),route('arm',[368,362,369,370])]
+    feature_sources=[[('engineer',120),('engineer',111),('engineer',110)], [('engineer',476),('engineer',471)], [('arm',103),('arm',99)], [('arm',300),('arm',183),('arm',271)], [('arm',596),('arm',691),('arm',680)], [('arm',512),('arm',762),('arm',678)], [('arm',368),('arm',370),('arm',311)]]
+    feature_sources[6]=[('arm',368),('arm',370),('arm',311)]
     # A selected assembly-facing view and a small, one-way observation arc.
-    primary=[[.8,-.55,-1.6],[-.65,.35,1.65],[-2,.4,.45],[1.25,.8,1.5],[-1.15,1.5,1.35],[1.2,.6,1.8],[-1.6,.45,1.4]]
+    primary=[[.8,-.55,-1.6],[-.65,1.1,1.65],[-1.25,.65,1.3],[1.25,.8,1.5],[-1.15,1.65,1.35],[1.2,.6,1.8],[-1.6,.45,1.4]]
     camera_paths=[[v,[v[0]+.10,v[1]+.06,v[2]-.08]] for v in primary]
     views=[]
     for i,select in enumerate(subsets):
         ps=[p for p in parts if select(p)]
-        edges=([[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[2,11],[11,12],[12,13]] if i==5 else [[n,n+1] for n in range(len(paths[i])-1)])
+        edges=([[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[5,7],[7,8],[8,9],[9,10],[3,11],[11,12],[12,13]] if i==5 else [[n,n+1] for n in range(len(paths[i])-1)])
         views.append(dict(feature_keys=[keys(asset,[index])[0] for asset,index in feature_sources[i]],route_edges=edges,id=i,group=[0,1,2,3,3,3,4][i],part_keys=[p['key'] for p in ps],route_keys=paths[i],camera=camera_paths[i][0],camera_path=camera_paths[i]))
     # Three motor routes share one wrist opening and a stable oblique top view.
     wrist=views[4]; wrist['route_variants']=[{'keys':paths[3],'edges':views[3]['route_edges']},{'keys':paths[4],'edges':views[4]['route_edges']},{'keys':paths[5],'edges':views[5]['route_edges']}]
     views.append(dict(id=7,group=3,part_keys=[p['key'] for p in parts if p['group']==3],route_keys=[],route_edges=[],feature_keys=[keys('arm',[i])[0] for i in [271,778,592]],camera=[1.2,.8,1.7],camera_path=[[1.2,.8,1.7]]))
-    shoulder=[p for p in parts if p['group']==1 and ids(p)]
-    shoulder_path=route('arm',[132,134,129,3])
-    views.append(dict(id=8,group=1,part_keys=[p['key'] for p in shoulder],route_keys=shoulder_path,route_edges=[[i,i+1] for i in range(len(shoulder_path)-1)],feature_keys=[keys('arm',[i])[0] for i in [132,134]],camera=[2,.2,.3],camera_path=[[2,.4,.4],[2.08,.46,.3]]))
+    shoulder=[p for p in parts if ids(p).intersection(range(105,160))]
+    shoulder_path=route('arm',[132,134,129])
+    views.append(dict(id=8,group=1,part_keys=[p['key'] for p in shoulder],route_keys=shoulder_path,route_edges=[],feature_keys=[keys('arm',[i])[0] for i in [132,134,129]],camera=[1.3,.6,1.25],camera_path=[[1.3,.6,1.25],[1.38,.66,1.2]]))
     views[6]['part_keys']=[p['key'] for p in parts if (p['group']==4 and not any(i>=830 for i in ids(p))) or 311 in ids(p)]
+    views.append(dict(id=9,group=2,part_keys=keys('arm',range(3,40)),route_keys=[],route_edges=[],feature_keys=[keys('arm',[i])[0] for i in [11,13,20]],camera=[1.3,.55,1.4],camera_path=[[1.3,.55,1.4],[1.4,.6,1.35]]))
+    for i in (0,1,2,6):views[i]['route_edges']=[]
     return views
