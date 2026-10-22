@@ -5,13 +5,16 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { armStudyPose, armDetailStage, armFastenerOpacity, ARM_STUDY_DURATION, ARM_STUDY_INTRO, ARM_STUDY_STARTS, ARM_STUDY_ORDER, ARM_STUDY_FINALE_START, jointDemo, finaleAngles, type StudyPose } from './arm-study-story';
 
-import {contextTransform,CLIMB_FORWARD,FOOT_POINTS} from './lib/arm-context-stage';
+import {contextTransform,CLIMB_FORWARD} from './lib/arm-context-stage';
 import {climbAngles,climbStroke,climbRise,climbAdvance,ARM_STUDY_CLIMB_START,ARM_STUDY_CLIMB_DURATION} from './arm-study-story';
 import { armMotionMatrices, type MotionContract } from './lib/arm-study-motion';
 import {createChains,type ChainData} from './lib/arm-chain-motion';
+import {createArmStudyTransmission,wristPowerTrace,type WristTransmissionData} from './lib/arm-study-transmission';
 import {GROUND_Y,STEP_HEIGHT,smooth,stageDescent} from './arm-study-story';
 import {createStudyRenderer,setStudyOpacity} from './lib/arm-study-renderer';
 import {study as limitStudy,profileClearance} from './lib/arm-linked-limit';
+import {createLimitWorkspace} from './lib/arm-limit-workspace';
+import {finaleEntry,finaleStairReveal,finaleWideView,finaleFade,openingFade} from './lib/arm-study-finale';
 
 type Vec = [number, number, number];
 type Part = { key: string; node_name: string; motor: boolean; group: number; stage: number; role: string; mount_owner?: string; motion_group:string; group_offset_m: Vec; detail_offset_m: Vec; assembly_axis: Vec;members:{asset:string;index:number}[] };
@@ -30,13 +33,14 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   const manager = new THREE.LoadingManager(), abortLoad = () => manager.abort();
   signal.addEventListener('abort', abortLoad, { once:true });
   const draco = new DRACOLoader(manager).setDecoderPath(`${base}models/draco/`).setWorkerLimit(1);
-  let meta: Metadata, model: THREE.Group, contextModel:THREE.Group,chainData:ChainData;
+  let meta: Metadata, model: THREE.Group, contextModel:THREE.Group,chainData:ChainData,wristData:WristTransmissionData;
   try {
-    [meta,model,contextModel,chainData] = await Promise.all([
+    [meta,model,contextModel,chainData,wristData] = await Promise.all([
       fetch(`${base}models/arm-parts.json`, { signal }).then(r => { if(!r.ok) throw new Error('Arm metadata unavailable'); return r.json(); }),
       new GLTFLoader(manager).setDRACOLoader(draco).loadAsync(`${base}models/arm-parts.glb`).then(g => g.scene),
       new GLTFLoader(manager).setDRACOLoader(draco).loadAsync(`${base}models/arm-context.glb`).then(g=>g.scene),
       fetch(`${base}models/arm-chains.json`,{signal}).then(r=>{if(!r.ok)throw new Error('Chain stations unavailable');return r.json();}),
+      fetch(`${base}models/arm-wrist-transmission.json`,{signal}).then(r=>{if(!r.ok)throw new Error('Wrist transmission unavailable');return r.json();}),
     ]);
   } finally { signal.removeEventListener('abort',abortLoad); draco.dispose(); }
   if(meta.schema_version!==6) throw new Error('Arm geometry/storyboard version mismatch');
@@ -78,6 +82,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.2;
   const scene = new THREE.Scene(); scene.add(model,contextModel,new THREE.HemisphereLight(0xe7eef6,0x12213a,2.6));
   const chains=createChains(chainData,scene),chainKeys=new Set(chainData.loops.map(l=>l.part));
+  const transmission=createArmStudyTransmission(wristData,scene,byKey.get(wristData.belt.key)!.surfaces[0]);
   for(const [intensity,position] of [[3.4,[-1.6,2.4,1.8]],[2.8,[1.8,1.2,-1.6]],[1.4,[0,-1,1.5]]] as const) {
     const light=new THREE.DirectionalLight(0xe7eef6,intensity); light.position.set(position[0],position[1],position[2]); scene.add(light);
   }
@@ -86,11 +91,17 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   contextModel.traverse(node=>{if(!node.userData.context_group)return;const surfaces:THREE.MeshStandardMaterial[]=[];node.traverse(o=>{const mesh=o as THREE.Mesh;if(!mesh.isMesh)return;geometries.add(mesh.geometry);const old=Array.isArray(mesh.material)?mesh.material:[mesh.material];const clones=old.map(m=>{materials.add(m);const c=m.clone() as THREE.MeshStandardMaterial;c.transparent=false;c.depthWrite=true;c.opacity=1;c.side=THREE.FrontSide;c.forceSinglePass=true;surfaces.push(c);materials.add(c);return c;});mesh.material=Array.isArray(mesh.material)?clones:clones[0];});node.matrixAutoUpdate=false;contextParts.push({node,group:node.userData.context_group,rest:node.matrix.clone(),surfaces});});
   const contextBounds=new THREE.Box3().setFromObject(contextModel),contextCorners:THREE.Vector3[]=[];
   for(const x of [contextBounds.min.x,contextBounds.max.x])for(const y of [contextBounds.min.y,contextBounds.max.y])for(const z of [contextBounds.min.z,contextBounds.max.z])contextCorners.push(new THREE.Vector3(x,y,z));
-  const stairMaterial=new THREE.MeshStandardMaterial({color:0x60748a,transparent:true,opacity:0,roughness:.9});materials.add(stairMaterial);
+  const stairMaterial=new THREE.MeshStandardMaterial({color:0x101b29,transparent:true,opacity:0,roughness:.9,depthWrite:false});materials.add(stairMaterial);
   const stairGeometry=new THREE.BoxGeometry(.95,STEP_HEIGHT,1.4);geometries.add(stairGeometry);
   const stair=new THREE.Mesh(stairGeometry,stairMaterial);stair.position.copy(new THREE.Vector3(-.04,-.27451,-.088).addScaledVector(CLIMB_FORWARD,.57));stair.rotation.y=Math.atan2(CLIMB_FORWARD.x,CLIMB_FORWARD.z);scene.add(stair);
+  const stairEdgeGeometry=new THREE.EdgesGeometry(stairGeometry,28);geometries.add(stairEdgeGeometry);
+  const stairEdgeMaterial=new THREE.LineBasicMaterial({color:0xf2b53a,transparent:true,opacity:0,depthWrite:false});materials.add(stairEdgeMaterial);
+  const stairEdges=new THREE.LineSegments(stairEdgeGeometry,stairEdgeMaterial);stairEdges.renderOrder=2;stair.add(stairEdges);
   const groundGeometry=new THREE.PlaneGeometry(5,5);geometries.add(groundGeometry);const groundMaterial=stairMaterial.clone();materials.add(groundMaterial);const ground=new THREE.Mesh(groundGeometry,groundMaterial);ground.rotation.x=-Math.PI/2;ground.position.set(-.04,-.315,-.088);scene.add(ground);
   stair.position.copy(new THREE.Vector3(-.04,GROUND_Y+STEP_HEIGHT/2,-.088).addScaledVector(CLIMB_FORWARD,1.03));ground.position.y=GROUND_Y;
+  const floorEdgeGeometry=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-2.5,GROUND_Y+.0002,-2.5),new THREE.Vector3(2.5,GROUND_Y+.0002,-2.5),new THREE.Vector3(2.5,GROUND_Y+.0002,2.5),new THREE.Vector3(-2.5,GROUND_Y+.0002,2.5),new THREE.Vector3(-2.5,GROUND_Y+.0002,-2.5)]);geometries.add(floorEdgeGeometry);
+  const floorEdgeMaterial=stairEdgeMaterial.clone();materials.add(floorEdgeMaterial);
+  const floorEdges=new THREE.Line(floorEdgeGeometry,floorEdgeMaterial);scene.add(floorEdges);
   const camera = new THREE.PerspectiveCamera(32,1,.005,20), controls = new OrbitControls(camera,canvas);
   const presentation=createStudyRenderer(renderer,scene,camera,contextModel);
   controls.enableDamping=false; controls.enablePan=false; controls.enableZoom=true;
@@ -107,46 +118,24 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   const wireGeometry=new THREE.CylinderGeometry(1,1,1,6),dotGeometry=new THREE.SphereGeometry(.003,8,6);geometries.add(wireGeometry);geometries.add(dotGeometry);
   const networks=[amber,new THREE.Color('#31ffb9'),new THREE.Color('#c96bff'),new THREE.Color('#e1f3ff')].map(color=>{const material=new THREE.MeshBasicMaterial({color,transparent:true,depthTest:false});materials.add(material);const wires=new THREE.InstancedMesh(wireGeometry,material,128),dots=new THREE.InstancedMesh(dotGeometry,material,128);wires.renderOrder=4;dots.renderOrder=5;wires.frustumCulled=false;dots.frustumCulled=false;scene.add(wires,dots);return {material,wires,dots};});
   const pathLegend=root.querySelector<HTMLElement>('[data-path-legend]')!,limitCaption=root.querySelector<HTMLElement>('[data-limit-caption]')!;
+  const transition=root.querySelector<HTMLElement>('[data-study-transition]')!,watermark=root.querySelector<HTMLImageElement>('[data-rm-watermark]')!;
   const activePath=(pose:StudyPose)=>pose.phase==='motion'&&(pose.id===3||pose.id===4)?3:pose.id===4?(pose.view<.32?1:pose.view<.7?2:3):pose.id===3?(pose.view<.58?0:3):-1;
   const limitGeometry=new THREE.BufferGeometry();limitGeometry.setAttribute('position',new THREE.BufferAttribute(new Float32Array(2048*3),3));geometries.add(limitGeometry);
-  const limitMaterial=new THREE.LineDashedMaterial({color:amber,transparent:true,opacity:.85,dashSize:.009,gapSize:.003,depthTest:false});materials.add(limitMaterial);
+  const limitMaterial=new THREE.LineDashedMaterial({color:amber,transparent:true,opacity:.85,dashSize:.009,gapSize:.003,depthTest:false,toneMapped:false});materials.add(limitMaterial);
   const limitLine=new THREE.LineSegments(limitGeometry,limitMaterial);limitLine.renderOrder=4;scene.add(limitLine);
-  const contactMaterial=new THREE.MeshBasicMaterial({color:amber,depthTest:false});materials.add(contactMaterial);
+  const contactMaterial=new THREE.MeshBasicMaterial({color:amber,depthTest:false,transparent:true});materials.add(contactMaterial);
   const contactMarker=new THREE.Mesh(dotGeometry,contactMaterial);contactMarker.scale.setScalar(.65);contactMarker.renderOrder=5;contactMarker.visible=false;scene.add(contactMarker);
   const sectionX=limitStudy.tcp.point_m[0];
-  const limitBoundaries=[...limitStudy.regions.baseline,...limitStudy.regions.limited,...limitStudy.cup_regions.limited].flatMap(p=>[p.outer,...p.holes]).map(ring=>ring.map(p=>new THREE.Vector3(sectionX,p[0],p[1])));
+  const limitBoundaries=limitStudy.regions.limited.flatMap(p=>[p.outer,...p.holes]).map(ring=>ring.map(p=>new THREE.Vector3(sectionX,p[0],p[1])));
   const limitFrames=limitStudy.boundary_poses.map(sample=>{
     const m=armMotionMatrices(meta.motion,sample.angles as StudyPose['angles']);
     return [new THREE.Vector3(...meta.motion.joints[1].point_m),new THREE.Vector3(...meta.motion.joints[2].point_m).applyMatrix4(m.get('link_2')!),new THREE.Vector3(...meta.motion.joints[4].point_m).applyMatrix4(m.get('link_4')!),new THREE.Vector3(...sample.tcp)];
   });
-  const limitSection=new THREE.Group();scene.add(limitSection);limitSection.visible=false;
-  const sectionMaterials:THREE.Material[]=[];
-  for(const [regionSet,x,color] of [[limitStudy.regions,sectionX,amber],[limitStudy.small_regions,limitStudy.roller_source.center_m[0],new THREE.Color('#ffdda6')]] as const)for(const [name,polygons] of Object.entries(regionSet)){
-    const sectionFrame=new THREE.Matrix4().set(0,0,1,x,1,0,0,0,0,1,0,0,0,0,0,1);
-    const after=name==='limited',lineMaterial=new THREE.LineBasicMaterial({color:after?color:0x82909e,transparent:true,opacity:after?.95:.35,depthTest:false,depthWrite:false});
-    const fillMaterial=new THREE.MeshBasicMaterial({color,transparent:true,opacity:after?.045:0,side:THREE.DoubleSide,depthTest:false,depthWrite:false});
-    materials.add(lineMaterial);materials.add(fillMaterial);sectionMaterials.push(lineMaterial,fillMaterial);lineMaterial.userData.baseOpacity=lineMaterial.opacity;fillMaterial.userData.baseOpacity=fillMaterial.opacity;
-    for(const polygon of polygons){
-      const shape=new THREE.Shape(polygon.outer.map(p=>new THREE.Vector2(p[0],p[1])));
-      shape.holes=polygon.holes.map(ring=>new THREE.Path(ring.map(p=>new THREE.Vector2(p[0],p[1]))));
-      const fillGeometry=new THREE.ShapeGeometry(shape);fillGeometry.applyMatrix4(sectionFrame);geometries.add(fillGeometry);
-      const fill=new THREE.Mesh(fillGeometry,fillMaterial);fill.renderOrder=after?3:2;limitSection.add(fill);
-      for(const ring of [polygon.outer,...polygon.holes]){const geometry=new THREE.BufferGeometry().setFromPoints(ring.map(p=>new THREE.Vector3(x,p[0],p[1])));geometries.add(geometry);const line=new THREE.Line(geometry,lineMaterial);line.renderOrder=after?5:4;limitSection.add(line);}
-    }
-  }
-  const skeletonGeometry=new THREE.BufferGeometry();skeletonGeometry.setAttribute('position',new THREE.BufferAttribute(new Float32Array(256*3),3));geometries.add(skeletonGeometry);
-  const skeletonMaterial=new THREE.LineBasicMaterial({color:0x86a8c8,transparent:true,opacity:.38,depthTest:false});materials.add(skeletonMaterial);
-  const skeletonLines=new THREE.LineSegments(skeletonGeometry,skeletonMaterial);skeletonLines.renderOrder=3;scene.add(skeletonLines);
-  const boundaryDots=new THREE.InstancedMesh(dotGeometry,contactMaterial,32);boundaryDots.renderOrder=5;boundaryDots.frustumCulled=false;scene.add(boundaryDots);
+  const workspace=createLimitWorkspace(scene,meta.motion,amber);
   const similarLinkages=[amber,new THREE.Color('#ffdda6')].map(color=>{
     const material=new THREE.MeshBasicMaterial({color,depthTest:false,transparent:true});materials.add(material);
     const wires=new THREE.InstancedMesh(wireGeometry,material,3);wires.frustumCulled=false;wires.renderOrder=6;scene.add(wires);return wires;
   });
-  const cupMaterial=new THREE.LineDashedMaterial({color:amber,transparent:true,opacity:.45,dashSize:.012,gapSize:.008,depthTest:false,depthWrite:false});materials.add(cupMaterial);
-  for(const polygon of limitStudy.cup_regions.limited)for(const ring of [polygon.outer,...polygon.holes]){
-    const geometry=new THREE.BufferGeometry().setFromPoints(ring.map(p=>new THREE.Vector3(sectionX,p[0],p[1])));geometries.add(geometry);
-    const line=new THREE.Line(geometry,cupMaterial);line.computeLineDistances();line.renderOrder=4;limitSection.add(line);
-  }
   // Small surface ticks make actual wheel rotation legible on otherwise uniform rubber.
   const wheelTickGeometry=new THREE.BufferGeometry();wheelTickGeometry.setAttribute('position',new THREE.BufferAttribute(new Float32Array(36),3));geometries.add(wheelTickGeometry);
   const wheelTickMaterial=new THREE.LineBasicMaterial({color:amber,transparent:true,opacity:.9});materials.add(wheelTickMaterial);
@@ -212,8 +201,8 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
     }
     if(pose.phase==='climb'){
       const shift=CLIMB_FORWARD.clone().multiplyScalar(climbAdvance(pose.climb));shift.y=climbRise(pose.climb);
-      const follow=blend(keyCamera('climb'),keyCamera('vehicle'),smooth((pose.climb-.82)/.16));follow.position.add(shift);follow.target.add(shift);
-      return blend(keyCamera('motion:4',1),follow,ease(pose.climb/.12));
+      const follow=blend(keyCamera('climb'),keyCamera('vehicle'),finaleWideView(pose.finale));follow.position.add(shift);follow.target.add(shift);
+      return blend(keyCamera('motion:4',1),follow,finaleEntry(pose.finale));
     }
     if(pose.phase==='finale')return keyCamera('finale',pose.finale);
     if(pose.phase==='assembled'&&pose.finale===1)return blend(keyCamera('climb'),keyCamera('vehicle'),pose.focus);
@@ -222,7 +211,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
     if(pose.id===null)return keyCamera(null);
     if(pose.phase==='motion'){
       if(pose.id===1)return keyCamera(1,1);
-      if(pose.id===6){const u=pose.motionU,wide=keyCamera('motion:6',1),local=keyCamera('limit-contact'),m=armMotionMatrices(meta.motion,pose.angles).get('uwb')!;local.position.applyMatrix4(m);local.target.applyMatrix4(m);return u<.28?blend(keyCamera(6,1),wide,smooth(u/.12)):u<.66?blend(wide,local,smooth((u-.28)/.12)):blend(local,keyCamera('limit-space'),smooth((u-.66)/.2));}
+      if(pose.id===6){const u=pose.motionU,wide=keyCamera('motion:6',1),local=keyCamera('limit-contact'),m=armMotionMatrices(meta.motion,pose.angles).get('uwb')!;local.position.applyMatrix4(m);local.target.applyMatrix4(m);return u<.28?blend(keyCamera(6,1),wide,smooth(u/.12)):u<.66?blend(wide,local,smooth((u-.28)/.12)):blend(local,keyCamera('limit-space'),smooth((u-.66)/.1));}
       return blend(keyCamera(pose.id,1),keyCamera(pose.id===0?'vehicle':`motion:${pose.id}`,1),ease(pose.motionU/(pose.id===0?.4:.3)));
     }
     const open=keyCamera(pose.id,pose.view);
@@ -237,12 +226,12 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   const beginRejoin=()=>{rejoin={position:camera.position.clone(),target:controls.target.clone(),elapsed:0};manualCamera=true;idleUntil=0;requestDraw();};
   const updateUI=(pose:StudyPose)=>{
     const id=pose.id;
-    title.textContent=pose.phase==='climb'?copy.climb:pose.phase==='finale'?copy.finale:id===null?copy.overview:copy.names[id]; const hasCovers=id!==null&&parts.some(p=>detailKeys.get(id)!.has(p.spec.key)&&p.spec.stage===1);phaseLabel.textContent=copy.phases[id===6&&pose.phase==='motion'?(pose.motionU<.32?'level':pose.motionU<.68?'contact':'section'):pose.phase==='climb'&&pose.climb>.87?'descent':pose.phase==='climb'&&pose.climb>.61?'landed':seekBlend?'approach':pose.phase==='covers'&&!hasCovers?'mount':pose.phase];
+    title.textContent=pose.phase==='climb'?copy.climb:pose.phase==='finale'?copy.finale:id===null?copy.overview:copy.names[id];phaseLabel.textContent='';
     const routeId=id===4?(activePath(pose)===1?4:activePath(pose)===2?5:10):id===3&&activePath(pose)===3?10:id;const uiKey=`${id}:${routeId}:${pose.phase}`;
     if(lastUiKey!==uiKey) {
-      description.textContent=pose.phase==='climb'?copy.climbDescription:pose.phase==='finale'?copy.finaleDescription:id===null?copy.caption:copy.descriptions[routeId===10?10:id];
+      description.textContent='';
       const items=routeId===null?[]:copy.routes[routeId]??[];routeList.replaceChildren(...items.map(text=>{const li=document.createElement('li');li.textContent=text;return li;}));
-      routeKey.hidden=items.length===0;
+      routeKey.hidden=true;
       featureLabels.forEach((label,i)=>{label.textContent=pose.phase==='climb'?copy.climbFeatures[i]:(id===4||id===3&&routeId===10)?copy.features[routeId!]?.[i]??'':id===null?'':copy.features[id]?.[i]??'';}); lastUiKey=uiKey;
     }
     chapters.forEach((button,i)=>button.setAttribute('aria-pressed',String(i===pose.step)));
@@ -259,30 +248,35 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
     const translation=new THREE.Matrix4();
     const weight=pose.restoreWeight??1;const body=new THREE.Matrix4().makeTranslation(CLIMB_FORWARD.x*climbAdvance(pose.climb)*weight,climbRise(pose.climb)*weight,CLIMB_FORWARD.z*climbAdvance(pose.climb)*weight);
     for(const p of contextParts){p.node.matrix.copy(contextTransform(p.group,climbStroke(pose.climb)*weight,body,climbAdvance(pose.climb)*weight+wheelCycle,smooth((pose.climb/.84-.10)/.10)*(1-smooth((pose.climb-.84)/.14))));if(p.group==='gimbal_context')p.node.matrix.multiply(new THREE.Matrix4().makeTranslation(0,pose.extract,0)).multiply(transforms.get('j0_carrier')!);p.node.matrix.multiply(p.rest);p.node.matrixWorldNeedsUpdate=true;}
-    stair.visible=ground.visible=pose.phase==='climb';stair.position.y=GROUND_Y+STEP_HEIGHT/2-STEP_HEIGHT*stageDescent(pose.climb);stairMaterial.opacity=.25*ease(pose.climb/.12)*(1-stageDescent(pose.climb));groundMaterial.opacity=.055*ease(pose.climb/.12)*(1-stageDescent(pose.climb));groundMaterial.depthWrite=false;
+    stair.visible=ground.visible=floorEdges.visible=pose.phase==='climb';stair.position.y=GROUND_Y+STEP_HEIGHT/2;
+    const reveal=pose.phase==='climb'?finaleStairReveal(pose.finale):0;stairMaterial.opacity=.055*reveal;groundMaterial.opacity=.018*reveal;groundMaterial.depthWrite=false;stairEdgeMaterial.opacity=.64*reveal;floorEdgeMaterial.opacity=.18*reveal;
+    watermark.hidden=pose.phase!=='climb';watermark.style.opacity=String(.32*finaleEntry(pose.finale));
+    transition.style.opacity=String(pose.phase==='climb'?finaleFade(pose.finale):clock<.65?openingFade(clock):0);
     const whole=body.clone().multiply(new THREE.Matrix4().makeTranslation(0,pose.extract,0));
     for(const p of parts) {
       const selected=active?.has(p.spec.key)??false;
       p.offset.fromArray(p.spec.detail_offset_m).multiplyScalar(selected?armDetailStage(pose.progress,p.spec.stage):0);
       if((pose.id===9||pose.id===6)&&p.spec.stage!==0)p.offset.set(0,0,0);
       p.delta.copy(whole).multiply(transforms.get(p.spec.motion_group)!);
+      const rotor=transmission.partMotion(p.spec.key,pose.angles);if(rotor)p.delta.multiply(rotor);
       p.node.matrix.copy(p.delta).multiply(translation.makeTranslation(p.offset.x,p.offset.y,p.offset.z)).multiply(p.rest);p.node.matrixWorldNeedsUpdate=true;
-      const oldOpacity=previous===undefined?1:previous.has(p.spec.key)?1:.018;
+      const oldOpacity=pose.previous===6?(detailKeys.get(6)!.has(p.spec.key)?.14:p.spec.motion_group==='uwb'?.025:.338):previous===undefined?1:previous.has(p.spec.key)?1:.018;
       let newOpacity=active===undefined?1:selected?1:.018;
-      if(pose.phase==='climb'&&!detailKeys.get(4)!.has(p.spec.key))newOpacity=THREE.MathUtils.lerp(.018,1,ease(pose.climb/.12));
+      if(pose.phase==='climb'&&!detailKeys.get(4)!.has(p.spec.key))newOpacity=THREE.MathUtils.lerp(.018,1,finaleEntry(pose.finale));
       if(pose.id===4&&pose.phase==='inspect'&&activePath(pose)===0&&meta.details[3].route_keys.slice(5).includes(p.spec.key))newOpacity=1;
       if(pose.phase==='climb'&&p.spec.motion_group==='uwb')newOpacity=.08+.92*smooth((pose.climb-.82)/.14);
       if(pose.id===6&&p.spec.motion_group==='uwb'&&!normal?.has(p.spec.key))newOpacity=.025;
       if(pose.id===9&&normal?.has(p.spec.key)&&p.spec.stage!==0)newOpacity=p.spec.members.some(m=>m.asset==='arm'&&m.index>=11&&m.index<=18)?1:1-.97*armDetailStage(pose.progress,1);
       if(pose.id===1&&!selected)newOpacity=.006;
-      if(pose.id===6&&pose.phase==='motion'&&!normal?.has(p.spec.key)&&p.spec.motion_group!=='uwb')newOpacity=pose.motionU<.32?.5*(1-smooth((pose.motionU-.26)/.06))+.018:pose.motionU>.68?.45*smooth((pose.motionU-.68)/.18)+.018:.018;
+      if(pose.id===6&&pose.phase==='motion'&&!normal?.has(p.spec.key)&&p.spec.motion_group!=='uwb')newOpacity=.018+.12*smooth(pose.motionU/.14)*(1-smooth((pose.motionU-.23)/.11))+.32*smooth((pose.motionU-.68)/.1);
       if(pose.phase==='motion'&&selected&&!normal?.has(p.spec.key)&&pose.id!==6)newOpacity=THREE.MathUtils.lerp(.018,1,ease(pose.motionU/(pose.id===0?.4:.15)));
       let opacity=transferring?THREE.MathUtils.lerp(oldOpacity,newOpacity,pose.focus):newOpacity;
+      if(pose.id===6&&pose.phase==='motion'&&normal?.has(p.spec.key))opacity*=1-.86*smooth((pose.motionU-.68)/.1);
       if(selected&&p.spec.stage===0)opacity*=armFastenerOpacity(pose.progress);
       if(selected&&p.spec.stage===1&&pose.id!==9)opacity*=1-.95*armDetailStage(pose.progress,1);
       if(p===limitPlate&&pose.phase==='climb')opacity=0;
-      p.node.visible=opacity>.005&&!chainKeys.has(p.spec.key);
-      const background=!selected&&opacity<1;
+      p.node.visible=opacity>.005&&!chainKeys.has(p.spec.key)&&p.spec.key!==transmission.beltKey;
+      const background=opacity<1&&(!selected||pose.id===6&&pose.phase==='motion'&&pose.motionU>.68||pose.previous===6&&transferring);
       if(p.background!==background){p.background=background;p.node.traverse(node=>node.layers.set(background?1:0));}
       for(const material of p.surfaces){setStudyOpacity(material,opacity,background);material.emissive.set(0);material.emissiveIntensity=0;}
       if(selected&&!p.spec.mount_owner&&p.spec.stage===2&&p.offset.length()>.003) {
@@ -290,6 +284,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
       }
     }
     chains.update(pose.angles,key=>{const p=byKey.get(key)!;return {matrix:p.delta.clone().multiply(new THREE.Matrix4().makeTranslation(...p.offset.toArray())),opacity:p.surfaces[0]?.opacity??1,background:p.background};});
+    {const p=byKey.get(transmission.beltKey)!;transmission.update(pose.angles,{matrix:p.delta.clone().multiply(new THREE.Matrix4().makeTranslation(...p.offset.toArray())),opacity:p.surfaces[0]?.opacity??1,background:p.background});}
     const selectedFasteners=parts.filter(p=>p.spec.stage===0&&active?.has(p.spec.key));
     root.dataset.fastenerCount=String(selectedFasteners.length);
     root.dataset.visibleFasteners=String(selectedFasteners.filter(p=>p.node.visible).length);
@@ -304,14 +299,16 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
     const route=detail?(variant?.keys??detail.route_keys).map(k=>byKey.get(k)!).map(p=>p.center.clone().add(p.offset).applyMatrix4(p.delta)):[];
     const segments=detail?(variant?.edges??detail.route_edges).flatMap(([a,b])=>[route[a],route[b]]):[];
     updateLines(pathGeometry,segments);paths.visible=segments.length>0&&pose.phase==='inspect'&&pose.id!==3&&pose.id!==4;
-    const showPower=(pose.id===3||pose.id===4)&&(pose.phase==='inspect'||pose.phase==='motion');pathLegend.hidden=!showPower;
+    const closingPower=pose.phase==='climb'&&pose.finale*ARM_STUDY_CLIMB_DURATION<1.2;
+    const powerIndex=closingPower?3:activePath(pose);
+    const showPower=closingPower||(pose.id===3||pose.id===4)&&(pose.phase==='inspect'||pose.phase==='motion');pathLegend.hidden=true;
     pathLegend.querySelectorAll<HTMLElement>('span').forEach((label,i)=>{label.hidden=pose.id===4&&i===0||pose.id===3&&(i===1||i===2);label.style.opacity=activePath(pose)===i?'1':'.25';});
     const matrix=new THREE.Matrix4(),rotation=new THREE.Quaternion(),unitY=new THREE.Vector3(0,1,0);
     const at=(n:number)=>{const p=sourcePart(n);return p.center.clone().add(p.offset).applyMatrix4(p.delta);};
     networks.forEach((network,index)=>{
-      network.wires.visible=network.dots.visible=showPower&&activePath(pose)===index;
+      network.wires.visible=network.dots.visible=showPower&&powerIndex===index;
       if(!network.wires.visible)return;
-      let edges:THREE.Vector3[][]=[];let highlight:number[]=[];
+      let edges:THREE.Vector3[][]=[];let highlight:number[]=[];let powerFrontier:THREE.Vector3[]|undefined;
       if(index===0){const d=meta.details[3],v=d.route_keys.map(k=>{const p=byKey.get(k)!;return p.center.clone().add(p.offset).applyMatrix4(p.delta);});edges=d.route_edges.map(([a,b])=>[v[a],v[b]]);highlight=[300,299,268,272,348,271];}
       if(index===1){
         // Both 21T pulleys and the belt use the same axial displacement.
@@ -322,24 +319,24 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
         points.push(points[0]);edges=points.slice(1).map((p,i)=>[points[i],p]);highlight=[596,683,691,680];
       }
       if(index===2){
-        const links=[[512,507],[507,505],[505,762],[762,696],[696,684],[684,682],[593,678],[678,679],[679,592],[592,757],[762,500],[500,593],[593,508]];
-        edges=links.map(([a,b])=>[at(a),at(b)]);highlight=[507,505,762,696,684,678,679,500,593];
+        const trace=wristPowerTrace((pose.view-.32)/.38,at);edges=trace.edges;powerFrontier=trace.frontier;highlight=[507,505,762,696,684,678,679,500,593];root.dataset.wristPowerStage=trace.stage.toFixed(3);
       }
       if(index===3){
         if(pose.id===3){const c=at(183),axis=new THREE.Vector3(...sourcePart(183).spec.assembly_axis).transformDirection(sourcePart(183).delta);edges=[[c.clone().addScaledVector(axis,-.075),c],[c,c.clone().addScaledVector(axis,.06)]];highlight=[183];}
         else {const a=at(689),b=at(774),c=at(688),entry=a.clone().add(new THREE.Vector3(0,.018,-.035));edges=[[entry,a],[a,b],[b,c]];highlight=[689,772,774,688];}
       }
       // Wrist power colours belong to the routes; keep carbon, metal and rubber intact.
-      if(pose.id!==4)for(const n of highlight){const p=sourcePart(n);for(const m of p.surfaces){m.emissive.copy(network.material.color);m.emissiveIntensity=.45;}}
-      network.material.opacity=1;
-      edges.forEach(([a,b],i)=>{const v=b.clone().sub(a),length=v.length();rotation.setFromUnitVectors(unitY,v.clone().normalize());matrix.compose(a.clone().lerp(b,.5),rotation,new THREE.Vector3(index===1?.001:index===3?.0015:.0017,length,index===1?.001:index===3?.0015:.0017));network.wires.setMatrixAt(i,matrix);matrix.makeTranslation(...a.clone().lerp(b,(clock*.45+i*.17)%1).toArray());network.dots.setMatrixAt(i,matrix);});
-      network.wires.count=edges.length;network.dots.count=index===1?0:edges.length;network.wires.instanceMatrix.needsUpdate=true;network.dots.instanceMatrix.needsUpdate=true;
+      if((closingPower?4:pose.id)!==4)for(const n of highlight){const p=sourcePart(n);for(const m of p.surfaces){m.emissive.copy(network.material.color);m.emissiveIntensity=.45;}}
+      network.material.opacity=closingPower?1-smooth(pose.finale*ARM_STUDY_CLIMB_DURATION/1.2):1;
+      edges.forEach(([a,b],i)=>{const v=b.clone().sub(a),length=v.length();rotation.setFromUnitVectors(unitY,v.clone().normalize());matrix.compose(a.clone().lerp(b,.5),rotation,new THREE.Vector3(index===1?.001:index===3?.0015:.0017,length,index===1?.001:index===3?.0015:.0017));network.wires.setMatrixAt(i,matrix);if(!powerFrontier){matrix.makeTranslation(...a.clone().lerp(b,(clock*.45+i*.17)%1).toArray());network.dots.setMatrixAt(i,matrix);}});
+      if(powerFrontier)powerFrontier.forEach((p,i)=>{matrix.makeTranslation(...p.toArray());network.dots.setMatrixAt(i,matrix);});
+      network.wires.count=edges.length;network.dots.count=powerFrontier?.length??(index===1?0:edges.length);network.wires.instanceMatrix.needsUpdate=true;network.dots.instanceMatrix.needsUpdate=true;
     });
-    const showLimit=pose.id===6&&pose.phase==='motion';limitLine.visible=showLimit;limitCaption.hidden=!showLimit||pose.motionU<.68;
-    similarLinkages.forEach((w,i)=>w.visible=showLimit&&(i===1||pose.motionU<.32||pose.motionU>.68));
-    skeletonLines.visible=boundaryDots.visible=false;
-    limitSection.visible=showLimit&&pose.motionU>.68;
-    for(const m of sectionMaterials)m.opacity=m.userData.baseOpacity*ease((pose.motionU-.68)/.22);
+    const showLimit=pose.id===6&&pose.phase==='motion';limitLine.visible=showLimit;limitCaption.hidden=true;
+    limitMaterial.opacity=.85*smooth(pose.motionU/.08)*(1-smooth((pose.motionU-.65)/.09));
+    similarLinkages.forEach((w,i)=>{const opacity=.85*smooth(pose.motionU/.08)*(1-smooth((pose.motionU-(i?.64:.28))/(i?.1:.12)));(w.material as THREE.MeshBasicMaterial).opacity=opacity;w.visible=showLimit&&opacity>.001;});
+    const sweep=workspace.update(pose.motionU,showLimit);
+    root.dataset.workspaceProgress=sweep.progress.toFixed(5);root.dataset.workspaceOpacity=sweep.opacity.toFixed(5);root.dataset.workspacePoint=sweep.point.map(x=>x.toFixed(5)).join(',');
     if(showLimit){
       const points:THREE.Vector3[]=[],u=pose.motionU;
       const rollerCenter=new THREE.Vector3(...limitStudy.roller_source.center_m).applyMatrix4(sourcePart(311).delta);
@@ -360,28 +357,18 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
         points.push(rollerCenter,point);
       }
       updateLines(limitGeometry,points);limitLine.computeLineDistances();
-      for(const p of [limitPlate,sourcePart(311)])for(const m of p.surfaces){m.emissive.copy(amber);m.emissiveIntensity=u>.32&&u<.68?.16:0;}
-      contactMarker.visible=u>.32&&u<.68&&Math.abs(contact.clearance)<.0004;
+      for(const p of [limitPlate,sourcePart(311)])for(const m of p.surfaces){m.emissive.copy(amber);m.emissiveIntensity=.16*smooth((u-.3)/.06)*(1-smooth((u-.64)/.07));}
+      contactMaterial.opacity=(1-smooth(Math.abs(contact.clearance)/.002))*smooth((u-.3)/.05)*(1-smooth((u-.65)/.06));
+      contactMarker.visible=contactMaterial.opacity>.01;
       if(contactMarker.visible)contactMarker.position.copy(point);
       root.dataset.limitClearance=contact.clearance.toFixed(6);
     }else contactMarker.visible=false;
 
     return route;
   };
-  const labels=(pose:StudyPose,route:THREE.Vector3[])=>{
-    const project=(point:THREE.Vector3)=>{const p=point.clone().project(camera);return{x:(p.x*.5+.5)*canvas.clientWidth,y:(-.5*p.y+.5)*canvas.clientHeight,z:p.z};};
-    const detail=pose.id===null?undefined:meta.details[pose.id===4?(activePath(pose)===1?4:5):pose.id],occupied:{x:number;y:number}[]=[];
-    featureLabels.forEach((label,i)=>{
-      if(pose.id===6&&pose.phase==='motion'&&(pose.motionU>.68||pose.motionU>.32&&i!==1)){label.hidden=true;return;}
-      const key=activePath(pose)===3?(pose.id===3?(i===0?sourcePart(183).spec.key:undefined):[sourcePart(689),sourcePart(774),sourcePart(688)][i]?.spec.key):detail?.feature_keys[i];if(pose.id===3&&activePath(pose)===3&&i===0)label.textContent=copy.features[3][1];label.hidden=(!key&&pose.phase!=='climb')||!['inspect','motion','climb'].includes(pose.phase)||(pose.phase==='inspect'&&pose.view<i*.08);if(pose.phase==='climb'&&pose.climb>.61)label.hidden=true;if(pose.id===6&&pose.phase==='motion'&&pose.motionU>.32&&i===0)label.hidden=true;if(label.hidden)return;
-      const p=key?byKey.get(key):undefined;let point=project(p?p.center.clone().add(p.offset).applyMatrix4(p.delta):i===0?new THREE.Vector3(...FOOT_POINTS[0]).add(new THREE.Vector3(0,climbRise(pose.climb)-2*climbStroke(pose.climb),0)).addScaledVector(CLIMB_FORWARD,climbAdvance(pose.climb)):byKey.get(meta.details[5].route_keys[6])!.center.clone().applyMatrix4(byKey.get(meta.details[5].route_keys[6])!.delta).add(new THREE.Vector3(0,i===1?.14:0,0)));
-      if(pose.id===6&&pose.phase==='motion'&&pose.motionU>.68&&i===2){label.textContent=copy.workspaceBoundary;point=project(limitBoundaries[0][2]);}
-      if(point.x<0||point.x>canvas.clientWidth||point.y<0||point.y>canvas.clientHeight||point.z>1){label.hidden=true;return;}
-      const x=THREE.MathUtils.clamp(point.x+15,6,canvas.clientWidth-150);let y=THREE.MathUtils.clamp(point.y-25,65,canvas.clientHeight-26);
-      while(occupied.some(p=>Math.abs(p.x-x)<150&&Math.abs(p.y-y)<25)&&y<canvas.clientHeight-50)y+=26;
-      occupied.push({x,y});label.style.transform=`translate(${x}px,${y}px)`;
-    });
-    routeLabels.forEach((label,i)=>{label.hidden=true||i>=route.length||pose.phase==='approach'||pose.phase==='return';if(label.hidden)return;const p=project(route[i]);label.hidden=p.x<0||p.x>canvas.clientWidth||p.y<0||p.y>canvas.clientHeight||p.z>1;label.style.transform=`translate(${p.x-8}px,${p.y+8}px)`;});
+  const labels=(_pose:StudyPose,_route:THREE.Vector3[])=>{
+    featureLabels.forEach(label=>{label.hidden=true;});
+    routeLabels.forEach(label=>{label.hidden=true;});
   };
   const poseContext=(p:StudyPose)=>p.context.toFixed(5);
   const draw=(_timestamp:number)=>{
@@ -443,6 +430,6 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   root.dataset.parts=String(parts.length);root.dataset.storyDuration=String(ARM_STUDY_DURATION);root.dataset.viewports='1';
   return {
     setVisible(value){if(visible===value)return;visible=value;root.dataset.rendering=String(value);if(value){lastFrame=0;requestDraw();}else{cancelAnimationFrame(frame);frame=0;clearTimeout(timer);}},
-    dispose(){disposed=true;root.dataset.rendering='false';root.dataset.viewports='0';cancelAnimationFrame(frame);clearTimeout(timer);abort.abort();observer.disconnect();controls.dispose();chains.dispose();presentation.dispose();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());axisGeometry.dispose();pathGeometry.dispose();axisMaterial.dispose();pathMaterial.dispose();renderer.dispose();renderer.forceContextLoss();},
+    dispose(){disposed=true;root.dataset.rendering='false';root.dataset.viewports='0';cancelAnimationFrame(frame);clearTimeout(timer);abort.abort();observer.disconnect();controls.dispose();chains.dispose();transmission.dispose();workspace.dispose();presentation.dispose();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());axisGeometry.dispose();pathGeometry.dispose();axisMaterial.dispose();pathMaterial.dispose();renderer.dispose();renderer.forceContextLoss();},
   };
 }

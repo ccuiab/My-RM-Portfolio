@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {ATTACK_START,SPIN_START,SPIN_STOP,GUNFIRE_END,GOLD_FRAME,missionState} from './engineer-mission-motion';
+import {ATTACK_START,SPIN_START,GUNFIRE_END,GUNFIRE_HZ,GOLD_FRAME,missionState} from './engineer-mission-motion';
 
 type Contact={point:THREE.Vector3;normal:THREE.Vector3;surfaceVelocity:THREE.Vector3;object:string;distance:number};
 type Collision={update:(t:number)=>void;cast:(a:THREE.Vector3,b:THREE.Vector3)=>Contact|null};
@@ -17,7 +17,8 @@ export function createMissionProjectiles(scene:THREE.Scene,collision:Collision){
  const random=()=>{seed=(1664525*seed+1013904223)>>>0;return(seed+.5)/4294967296;};
  const gaussian=()=>Math.sqrt(-2*Math.log(random()))*Math.cos(2*Math.PI*random());
  const end=GUNFIRE_END,shots:{start:number;flightSeconds:number;aim:THREE.Vector3;scatter:number[];samples:Sample[];impacts:Impact[]}[]=[];
- for(let start=ATTACK_START;start<end;start+=.16){
+ for(let shotIndex=0;ATTACK_START+shotIndex/GUNFIRE_HZ<end;shotIndex++){
+  const start=ATTACK_START+shotIndex/GUNFIRE_HZ;
   let flight=origin.distanceTo(missionState(start).position)/22;
   // A small, deterministic cluster, rather than eight identical converging paths.
   const scatter=[gaussian()*.032,gaussian()*.024,gaussian()*.032];
@@ -71,5 +72,5 @@ export function createMissionProjectiles(scene:THREE.Scene,collision:Collision){
   const recent=impacts.filter(i=>time>=i.t&&time<i.t+.09);
   rings.forEach((ring,i)=>{const hit=recent[i];ring.visible=!!hit;if(!hit)return;ring.position.copy(hit.p).addScaledVector(hit.n,.002);ring.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),hit.n);const u=(time-hit.t)/.09;ring.scale.setScalar(.6+u);(ring.material as THREE.MeshBasicMaterial).opacity=.65*(1-u);});
  }
- return {frame,report:{start:ATTACK_START,spinStart:SPIN_START,end,muzzleSpeed:22,gravity:9.81,radius,seed:20251018,shots:shots.map(s=>({start:s.start,flightSeconds:s.flightSeconds,aim:s.aim.toArray(),scatter:s.scatter,impacts:s.impacts.map(h=>({...h,p:h.p.toArray(),n:h.n.toArray()}))})),note:'Per-shot leading aim, fixed ballistic flight, CAD triangle contact normals, moving-surface relative reflection, restitution0.46 and tangential retention0.75.'}};
+ return {frame,report:{start:ATTACK_START,spinStart:SPIN_START,end,frequencyHz:GUNFIRE_HZ,muzzleSpeed:22,gravity:9.81,radius,seed:20251018,shots:shots.map(s=>({start:s.start,flightSeconds:s.flightSeconds,aim:s.aim.toArray(),scatter:s.scatter,impacts:s.impacts.map(h=>({...h,p:h.p.toArray(),n:h.n.toArray()}))})),note:'Per-shot leading aim at30Hz until the first return-road rib contact. Existing rounds finish ballistic flight. CAD triangle contact normals, moving-surface relative reflection, restitution0.46 and tangential retention0.75.'}};
 }

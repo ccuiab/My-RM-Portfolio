@@ -16,7 +16,9 @@ const copy={climb:t(L.climbTitle,lang),climbDescription:t(L.climbDescription,lan
   <div class="view">
     <div class="still"><Image src={fallback} alt={t(L.alt,lang)} widths={[900,1600]} sizes="100vw" data-static-image /></div>
     <canvas class="three" data-lenis-prevent-wheel tabindex="0" role="img" aria-label={t(L.hint,lang)}></canvas>
-    <div class="shot-heading"><span data-shot-phase></span><strong data-shot-title>{t(L.overview,lang)}</strong></div>
+    <img class="rm-watermark" data-rm-watermark src={`${import.meta.env.BASE_URL}robomaster-wordmark.png`} alt="" aria-hidden="true" width="122" height="14" hidden />
+    <div class="study-transition" data-study-transition aria-hidden="true"></div>
+    <div class="shot-heading"><span data-shot-phase hidden></span><strong data-shot-title>{t(L.overview,lang)}</strong></div>
     <div class="feature-labels" aria-hidden="true">{[0,1,2].map(i=><span data-feature-label={i}></span>)}</div>
     <div class="path-legend" data-path-legend hidden>{L.pathNames.map((name,i)=><span data-path-motor={i}>{t(name,lang)}</span>)}</div>
     <span class="limit-caption" data-limit-caption hidden>{t(L.limitBoundary,lang)}</span>
@@ -35,10 +37,8 @@ const copy={climb:t(L.climbTitle,lang),climbDescription:t(L.climbDescription,lan
     <label class="timeline"><span class="sr-only">{t(L.progress,lang)}</span><input type="range" min="0" max="1000" step="1" value="0" data-story-range /><output data-story-time>0.0 s</output></label>
   </fieldset>
   <nav class="chapters" aria-label={t(L.progress,lang)}>{L.chapters.map((name,i)=><button type="button" data-story-step={i} aria-pressed="false">{t(name,lang)}</button>)}</nav>
-  <p class="description" data-story-description>{t(L.caption,lang)}</p>
+  <p class="description" data-story-description hidden></p>
   <details class="route-key" data-route-key hidden><summary>{t(L.route,lang)}</summary><ol data-route-list></ol></details>
-  <p class="hint">{t(L.hint,lang)}</p>
-  <p class="design-note">{t(L.designNote,lang)}</p>
 </section>
 <script>
   import {mountViewportScene} from '../scripts/lib/viewport-scene';
@@ -66,6 +66,8 @@ const copy={climb:t(L.climbTitle,lang),climbDescription:t(L.climbDescription,lan
   .still :global(img) { width:100%;height:100%;object-fit:contain; }
   .three { visibility:hidden;pointer-events:none;touch-action:none;cursor:grab; }
   .three:active { cursor:grabbing; }.has-3d .three { visibility:visible;pointer-events:auto; }.has-3d .still { visibility:hidden; }
+  .rm-watermark { position:absolute;right:1rem;top:1rem;width:100px;height:auto;filter:invert(1);mix-blend-mode:screen;opacity:.32;pointer-events:none;z-index:4; }
+  .study-transition { position:absolute;inset:0;background:var(--panel);opacity:0;pointer-events:none;z-index:6;display:none; }.has-3d .study-transition { display:block; }
   .shot-heading { position:absolute;top:1rem;left:1.1rem;display:none;gap:.25rem;pointer-events:none; }
   .has-3d .shot-heading { display:grid; }
   .shot-heading span { color:var(--ink-3);font-size:var(--t-xs); }.shot-heading strong { color:var(--amber);font-size:var(--t-sm);font-weight:500;background:rgba(7,13,23,.65);padding:.1rem .35rem; }

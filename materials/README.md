@@ -2,15 +2,31 @@
 
 ## A 章整车行动短片
 
-`videos/derived/web/engineer-mission-{zh,en}.mp4` 为约 87.0 秒、16:9、静音三维成片，封面位于 `images/derived/video-posters/engineer-mission-{zh,en}.jpg`。原始方案与录像参考记录在 `videos/derived/web/engineer-mission.source.json`。影片是功能情境示意，动作和等待经过编排；平移速度最高约 2.4 m/s。
+`videos/derived/web/engineer-mission-{zh,en}.mp4` 为约 110.3 秒、1920 × 1080、30 fps、静音三维成片，每种语言 3,308 帧；封面位于 `images/derived/video-posters/engineer-mission-{zh,en}.jpg`。方案、2026-10-22 修订要求与录像参考记录在 `videos/derived/web/engineer-mission.source.json`。影片是功能情境示意，动作和等待经过编排；长途移动仍采用原场地路线与最高约 2.4 m/s 的示意速度预算，关键作业允许自然延长。
 
-制作入口为 `scripts/extract-mission-field.py`、`scripts/bake-mission-return.py`、`scripts/extract-mission-lights.py`、`scripts/build-engineer-mission.mjs` 和 `scripts/render-engineer-mission.mjs`；运动检查为 `scripts/check-engineer-mission.mjs`。派生时间轴、精确灯面与离线场景位于 `models/derived/inputs/engineer-mission/`，中间录制位于 `videos/derived/inputs/engineer-mission/`，试帧和检查记录位于 `documents/derived/audits/engineer-mission/`。
+制作入口为 `scripts/extract-mission-field.py`、`scripts/bake-mission-return.py`、`scripts/extract-mission-lights.py`、`scripts/build-engineer-mission.mjs` 和 `scripts/render-engineer-mission.mjs`。本轮检查入口为 `scripts/check-engineer-mission-revision.mjs`、`scripts/check-engineer-mission-wheel-roll.mjs`、`scripts/check-engineer-mission-stair-continuity.mjs --dense`、`scripts/check-engineer-mission-travel-cad.mjs --dense` 与 `scripts/audit-mission-exchange.mjs`；实际网页检查使用 `scripts/check-engineer-preview-revision.mjs`。早期 `check-engineer-mission.mjs` 绑定旧版时间窗及历史审计，不作为本轮通过依据。派生时间轴、精确灯面与离线场景位于 `models/derived/inputs/engineer-mission/`，中间录制位于 `videos/derived/inputs/engineer-mission/`，试帧和检查记录位于 `documents/derived/audits/engineer-mission/`；本轮追加修改的源快照与证据在其 `revision-20261022-followup/` 子目录，上一轮 `revision-20261022/` 证据保留。数值、爬阶、行驶、渲染与网页检查通过 `MISSION_AUDIT_DIR` 分离证据目录；兑换脚本另用 `MISSION_EXCHANGE_REPORT=revision-20261022-followup/exchange-cad-checks.json`。源码构建与媒体输出仍使用统一输入。CAD 离散扫掠、运动数值检查和实际编码画面审阅分别记录。
 
 车体沿用分组 CAD；装甲八条灯带随底盘，上装灯管随云台，均为蓝色表面发光，不向车身投射蓝光。资源岛、两级翻越结构、完整兑换站、矿石和槽口均采用现有官方派生几何与琥珀轮廓；兑换站按实际平行连杆和末端轴运动。`mission-transmitter.glb/json` 补回原 CAD 的 VT03 图传，绑定 `link_3`，仅隐藏后方两根长线，保留外壳、镜头和安装结构。
 
-开局直接行驶。银矿由上方压入背部吸盘；上阶准备依次转云台、转臂底座、翻肘，保留用户确认的反肘方向。前抬升机构先搭上每级台阶，配合后臂水平撑起车体；后腕轮始终支撑原下层平地，直到四个舵轮全部到达二级平台才抬起收臂。金矿仍从侧洞吸取、洞内抬高后退出，之后低位携矿并避开背矿；图传实际镜头保持接近水平向前。返程沿北侧宽坡和开放坡面，镜头视线随行进方向；启动、急停和颠簸分别驱动车身悬挂及四轮接触。
+开局空载采用较低的前向杯姿态，按同一模型坐标基准，工具中心降低约 57 mm、肘部降低约 127 mm；这描述几何高度，不是实测质心。收好双银矿后使用保证储矿净空的 27° 肩姿态，保持 J0、J1、车头和图传方向固定，底盘在原路径两端点之间直线短侧移；停稳后才开始爬阶准备。该短侧移为用户明确允许的图传方向例外。
 
-机器人停稳后，初始朝前的蓝方兑换站才转至第一次四级矿接收位姿。两次兑换均先退出机械臂，再后收倾倒至后侧收集箱，矿石按重力落下。接矿范围、全模型干涉与实际渲染分别检查，动作属于基于 CAD 和录像的功能示意。小地图采用规则第 37 页原图，动态显示渐隐尾迹、前导光点、目标脉冲和车头朝向。补齐能量机关、红蓝基地、原场地灯面、增益区丝印和规则第69页减速条；镜头收近突出机器人，移除机械臂末端轨迹线。弹丸在取金矿末期出现，按实际 CAD 表面散布命中与反弹，逃离后逐渐停止小陀螺。
+两次取银矿之间与首次兑换起手均放慢。银矿由上方压入背部吸盘，第二次兑换前先把 J1 后转至约 −156°，肘部保持普通负角分支，从储矿正上方下降 80 mm；吸附后垂直抬高 40 mm，并沿工具局部 X 轴逐渐倾腕 5°，避开前臂和另一矿，再清仓并转回 J1。上阶准备在停车后依次转云台、转臂底座、翻肘，保留用户确认的反肘方向；开始的后支撑距离增加 32.5 mm。前抬升机构先搭上每级台阶，配合后臂水平撑起车体；直径 80 mm 的后腕轮按真实接地点有符号行程滚动，直到四个舵轮全部到达二级平台才卸载。中间推进不再逐关键点重复刹停，末尾额外 0.30 m 拖移并入复位后的正常行驶。越阶后七轴重叠复位，通过抬肩弧避开储矿，允许部分轴提前到位；总预算缩至 4.5 秒，其中约 4.227 秒运动、0.273 秒就绪等待，保持此前已验收的卸载轨迹和去金岛终态。
+
+金矿仍从侧洞吸取、洞内抬高后退出，之后低位携矿并避开背矿。除上述固定上装的直线短侧移外，正常行驶段都先对准实际 VT03 光轴，再开始移动，并持续沿实际速度方向保持接近水平；撑地与兑换站前短距离作业微调允许朝工作目标。返程沿北侧宽坡和开放坡面，狭角对实际位置路径与其解析速度共同平滑；启动、急停和颠簸分别驱动车身悬挂及四轮接触。
+
+机器人停稳后，初始朝前的蓝方兑换站才转至第一次四级矿接收位姿。两次接近槽口时底盘在原路径基础上额外靠站 30 mm；两次兑换均先退出机械臂，再后收倾倒至后侧收集箱，矿石按重力落下。接矿范围、全模型干涉与实际渲染分别检查，动作属于基于 CAD 和录像的功能示意。小地图采用规则第 37 页原图，动态显示渐隐尾迹、前导光点、目标脉冲和车头朝向。补齐能量机关、红蓝基地、原场地灯面、增益区丝印和规则第69页减速条；镜头收近突出机器人，移除机械臂末端轨迹线。弹丸在取金矿末期以 30 Hz 发射，逐发预瞄并沿实际 CAD 表面反弹；进入颠簸路段后停止新发弹，已发弹继续飞完。逃离后逐渐停止小陀螺。
+
+本轮追加修改前的 107.933 秒双语成片、封面和中文字体子集保存在相应 `derived/inputs/.../revision-20261022-followup-before/` 下，输入和来源记录见 `documents/derived/audits/engineer-mission/revision-20261022-followup/before-manifest.json` 及其 `before/`。更早一轮成片、来源记录、封面和字体仍保存在相应 `derived/inputs/.../revision-20261022-before/` 下；备份路径与 SHA-256 见 `documents/derived/audits/engineer-mission/revision-20261022/pre-revision-assets.json`。这些是本地可回溯派生输入，不随网站发布。
+
+## B 章装配与传动展示（2026-10-22）
+
+B 章是约 209.7 秒的实时三维演示，保留章节名、部件名、参数和必要操作，默认不显示解释段落与浮动图例。联动限位依次展示实际滚轮接触、实物背景上的腕心点与逐步形成的单一侧视轮廓；该轮廓固定其余轴，采用源 CAD 正运动学及原限位相似映射，不等同于标定后的整车三维工作空间。
+
+腕部补充传动由 `scripts/build-arm-wrist-transmission.mjs` 从本仓库派生 CAD 提取到 `models/derived/web/arm-wrist-transmission.json`：38T 外啮合、共轴横轴、左右 40T 分支与 21T 同步带保留真实轴线和传动方向。紫线按实际拓扑生长，左右分支并行；电机整体保留。末段 39 秒先拉回整车，以深色填充和琥珀边线显示原 80 mm 一级台阶，爬阶后停留并淡化循环，台阶不下沉。它与 A 章正式两级台阶场景的用途和尺寸不同。
+
+`images/derived/web/robomaster-wordmark.png` 原样提取自本地 RM2025 规则 V2.1.0 物理第 2 页的内嵌 RGBA 图像；来源、原件 SHA256 和提取记录在同名 `.source.json`，未重绘标识。
+
+检查入口为 `scripts/check-linked-limit.mjs`、`scripts/check-arm-story.mjs`、`scripts/check-arm-limit-workspace.mjs`、`scripts/check-arm-wrist-transmission.mjs` 和 `scripts/check-arm-finale.mjs`。实际 WebGL 试帧及连续循环录像分别保存在 `documents/derived/audits/arm-study-20261022/` 和 `documents/derived/audits/arm-wrist-transmission/`；几何检查与实际视觉审阅分别记录。
 
 材料按图片、模型、视频、字体和资料存放，各类统一分为 `source/`（原始输入）与 `derived/`（二级材料）。
 

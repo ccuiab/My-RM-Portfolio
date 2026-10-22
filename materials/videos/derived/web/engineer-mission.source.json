@@ -1,24 +1,28 @@
 {
   "name": "engineer-mission",
   "kind": "Original CAD-rendered functional illustration",
-  "durationSeconds": 86.96666666666667,
+  "durationSeconds": 110.26666666666667,
   "audio": false,
   "output": [
     "engineer-mission-zh.mp4",
     "engineer-mission-en.mp4"
   ],
-  "userConfirmed": "2026-10-18 final requirements: four-scene silent film, continuous follow camera and animated official-rule minimap. Opening translates without spinning. Silver is stored and retrieved from above. Preserve the user-confirmed rendered stair elbow/housing direction and original negative-elbow gold retrieval. Stair preparation is cloud rearward, then arm J0 rearward, then fold arm J2 (source q1/q2/q3 use the user arm-zero-based numbering, independent cloud is source q0); arm J1 movement is modest. Keep rear wrist wheels loaded on the original flat ground until all four swerve wheels reach the second ledge, with the chassis level and all original structure retained. After gold withdrawal use a low carry, clear stored silver and keep the actual VT03 camera horizontal forward; normal driving retains fixed arm J1 and camera follows travel direction. Faster travel and combat spin, gradual spin stop after escape, acceleration/braking compression, rule-position road ribs and gain-zone paint. Blue surface-only vehicle/station strips, bright original field lights, complete bases and energy mechanism. First station target begins only after the robot parks; clear the arm before station recovery and gravity drop to the rear bin. Hide the two long rear VT03 leads, preserving housing, lens and mounting structure. Remove TCP trace and meaningless wrist-roll half-turns.",
-  "story": "Depart without gyro spin. Retrieve both silver ores, lift clear, move above each rear cup and press downward. Prepare stairs sequentially: cloud, arm base, elbow. Front rack reaches each ledge before two level chassis lifts; rear wrist wheels support the original flat lower ground until all four main wheels reach the upper ledge, then rise and recover. Retrieve gold through the original side opening and lift45mm before withdrawing on the original elbow branch. Tuck gold low clear of both rear silver ores and level the actual camera optical axis. Late scattered gunfire, predictive per-shot aim and CAD ricochets; counter-rotate the upper assembly during fast chassis spin. Return via the open northern ramps, up to2.4m/s, brake at corners and targets, with four-wheel road-rib response and camera along velocity. Park before the initially forward blue exchange station moves to its first legal level4 receiving pose. Approach from outside the slot roof, insert, release and withdraw before recovery. Tip each ore over the rear collection bin and let it fall under gravity. Retain one silver and finish with the camera horizontal forward.",
+  "userConfirmed": "2026-10-22 user-confirmed refinement: restore the engineer header wireframe-to-solid drawing cycle used by Hero. Slow the silver-to-silver transfer and first exchange approach; allow natural film-length growth. Roll both 80 mm end-effector wheels from signed real ground travel with correct axis/direction. Keep continuous stair traverse between necessary support events, start with a 32.5 mm farther rear contact, and remove the final separate 0.30 m dragging move. After all four main wheels are on the upper platform, unload and recover seven axes with overlapping timing, avoiding stored ores. Ordinary driving starts only after the actual VT03 optical axis is aligned and keeps it horizontal along velocity; loaded stair work and station-side work micro-adjustments are explicit exceptions. Raise emission to 30 Hz and continue pursuit until the rough-road entrance, then stop new shots while existing projectiles finish. Retrieve the stored silver ore from above before the second exchange and approach the station 30 mm closer within checked clearance. Latest follow-up supersedes the corresponding posture/timing/camera-exception details: Follow-up confirmed on 2026-10-22: lower only the opening empty-cup travel and point its suction face along vehicle forward. After storing both silver ores, use the safe forward-facing27deg shoulder pose and translate the chassis on the endpoint-to-endpoint straight line, with J0/J1 and gimbal fixed; this short strafe is an explicit exception to velocity-facing video transmission. Begin stair preparation only after stopping. Reduce the accepted post-stair overlapping seven-axis recovery from6 to4.5 physical seconds including ready wait, preserving its support/unload path and gold-travel terminal pose. Before the second exchange swing J1(q[1]) rearward to about-156deg using the ordinary negative elbow, descend onto the ore from above, lift40mm with0..5deg local-X tool tilt, clear the other ore, then return J1 before approaching the second slot. No B-chapter change.",
+  "story": "One continuous silent mission. Start with a lower, vehicle-forward empty cup. Take both silver ores from above and store them at the rear. Withdraw to the safe27deg shoulder pose, hold J0/J1 and gimbal fixed, and translate straight to the stair staging point. Stop before preparing the original reverse-elbow support. Roll the end wheels along the lower ground until all four main tyres reach the upper plateau. Stop at step-localZ1.300, unload, and recover the seven axes with overlapping timing and ore-clearance lift within4.5seconds including ready wait. Align the real VT03 before gold-island driving; the removed0.30m tail move belongs to that normal travel. Take gold through the side opening, lift45mm and withdraw. Carry low with VT03 horizontal along actual velocity. Emit30shots/s with predictive ballistic aim and CAD ricochets through chassis spin until the rough-road entrance. Park before each station target, slow the first approach and move30mm closer for insertion. Withdraw before recovery. Turn J1 to about-156deg with the ordinary negative elbow, retrieve the stored silver vertically from above, lift40mm while tilting0..5deg, clear the bank and return J1 before the second exchange. Tip both exchanged ores into the rear collector under gravity. Retain the other silver and finish camera-forward.",
   "production": {
     "scene": "src/scripts/engineer-mission-film.ts",
     "motion": "src/scripts/lib/engineer-mission-motion.ts",
     "copy": "src/data/content.ts: missionFilm",
     "build": "python scripts/extract-mission-field.py; python scripts/extract-mission-field.py --energy; python scripts/extract-mission-field.py --bases; python scripts/extract-mission-field.py --lights; python scripts/extract-mission-field.py --markings; python scripts/extract-mission-field.py --bump-arrows; python scripts/bake-mission-return.py; python scripts/extract-mission-lights.py; python scripts/extract-mission-transmitter.py; node scripts/build-engineer-mission.mjs",
     "render": "node scripts/render-engineer-mission.mjs --record; node scripts/render-engineer-mission.mjs --en --record",
-    "verify": "node scripts/check-engineer-mission.mjs",
+    "verify": "node scripts/check-engineer-mission-revision.mjs; node scripts/check-engineer-mission-wheel-roll.mjs; node scripts/check-engineer-mission-stair-continuity.mjs --dense; node scripts/check-engineer-mission-travel-cad.mjs --dense; node scripts/audit-mission-exchange.mjs; node scripts/check-engineer-preview-revision.mjs",
     "format": "1920x1080, 30 fps, H.264, yuv420p, faststart, no audio stream",
-    "capture": "2609 individually authored WebGL frames per language with canvas HUD and WebCodecs H.264; constant30fps, no audio stream.",
-    "collision": "scripts/mission-geometry.mjs loads the actual original robot, VT03, ore and station CAD triangles. SAH BVH prefilters only degenerate faces below the original1e-10m2 area predicate. Separate stair/carry/exchange sweep reports and rendered frame review; not a calibrated rigid-body simulation."
+    "capture": "3308 individually authored WebGL frames per language, canvas HUD and WebCodecs H.264; constant30fps, no audio stream. Previous107.933s videos, raw recordings, posters, generated Chinese font and source/evidence snapshots are preserved before replacement.",
+    "collision": "scripts/mission-geometry.mjs loads the actual original robot, VT03, ore and station CAD triangles. SAH BVH prefilters only degenerate faces below the original1e-10m2 area predicate. Separate stair/carry/exchange sweep reports and rendered frame review; not a calibrated rigid-body simulation.",
+    "currentEvidence": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/ contains the18-file frozen product/motion/input snapshot,23 numeric gates, fresh30Hz stair/travel/extra-wheel CAD sweeps, fresh361-point exchange CAD and explicit371-frame rear-pickup pose equivalence to the earlier denser self-collision sweep. Encoded-frame and live-page review remain separate gates.",
+    "emptyTravel": "src/scripts/lib/engineer-mission-empty.ts",
+    "auditDirectory": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/",
+    "auditDirectoryNotes": "MISSION_AUDIT_DIR selects output for revision/stair/travel/render/preview checks. The exchange script instead uses MISSION_EXCHANGE_REPORT=revision-20261022-followup/exchange-cad-checks.json relative to its audit root."
   },
   "models": [
     "arm-parts.glb",
@@ -71,7 +75,7 @@
   },
   "field": {
     "style": "One persistent official-CAD field frame W=(-source Z,source Y,source X)/1000. Existing uncut terrain and existing detailed resource/station GLBs; dark fills and complete amber construction edges. Station housing fills are translucent to explain rear collection, retaining all original edges.",
-    "steps": "A-specific two-riser sequence, preserving the user-confirmed shot-24_766667-zh.jpg elbow/housing orientation. Independent cloud turns rearward first; source arm waist q1 then turns rearward; source elbow q3 folds last while shoulder q2 preparation spans about37.7deg. Source q3=-265deg represents the physical+95deg support branch; support unfolding uses opposite elbow/wrist half-turns, no gratuitous wrist roll. Front support reaches beyond the first.64 and second1.105 metre step-local ledges before level chassis lifts. Body advances to step-localZ1.300; the four main contact points are then beyond the upper edge. Until then the rear wrist centre staysY.043 over original lower groundY.003, supported by its40mm wheels. Rear wrist lifts only after all four mains are on the upper plateau, then recovers. Exact kinematic, full-model terrain/self/cargo sweeps and rendered review are separate checks. This is distinct from the B-chapter single-step explanation; loads and timing remain illustrative.",
+    "steps": "A-specific original-CAD two-riser sequence. Prepare only after parking: cloud yaw, arm-base yaw, then elbow unfolding; retain the original reverse-elbow branch q3=-265deg (physical+95deg). Initial rear contact is0.68m behind the base,32.5mm farther than before. Loaded80mm-diameter end wheels remain on original lower groundY.003 with wheel centresY.043 until all four main tyres pass the second ledge. Traverse intermediate positions with one continuous speed curve per required support phase. Finish at step-localZ1.300 and remove the old extra0.30m post-unload dragging move. Unload, then overlap all seven recovery axes within4.5physical seconds including0.2727seconds ready wait; a smooth shoulder clearance arc avoids both stored silver ores. The actual camera is aligned before normal travel begins. Distinct from B single-step teaching; timings, loads and contact response are illustrative.",
     "goldRetrieval": "Approach the middle channel from the blue (-Z) side. Contact the vertical ore face, lift the ore 45 mm inside the glass-covered channel, withdraw horizontally, then retract outside the opening. Reference geometry checks cover the real ore hull and field triangles.",
     "station": "Original complete exchange-station.glb copied to official blue-side position with blue team strips. True base yaw, shoulder/forearm parallelograms, terminal yaw, roll and pitch. Receiving normals point slightly beyond sideways. Release and clear the manipulator before station recovery. The station carries each ore above a rear-side collector, then tips; ore follows gravity after clearing the slot, never slides through the back of a stationary slot.",
     "stationRig": "src/scripts/lib/engineer-station-rig.ts",
@@ -176,9 +180,10 @@
       "method": "Arc-length travel <=2.4m/s, acceleration2.3m/s2, braking5.5m/s2, corner lateral limit1.8m/s2. Four-wheel 11.2mm source-position rib contact, filtered road heave/pitch/roll and separate load transfer at120Hz.",
       "durationSeconds": 17.716666666666665,
       "distanceMetres": 24.900452966635026,
-      "maximumSpeedMetresPerSecond": 2.4
+      "maximumSpeedMetresPerSecond": 2.4,
+      "runtimePostProcess": "The baked samples retain their original terrain/suspension contract. Around the tight return corner, locally smooth actual positions before shared C1 interpolation; derive the optical-axis heading from the same analytic path velocity, including stationary lead-in fallback. Position and camera are not filtered independently."
     },
-    "silverGrasp": "Per-ore original top-pickup grip is solved once and retained through transfer. The main cup faces down and presses vertically onto each rear cup; a small, purposeful roll squares the stored cube. After an overhead approach, a clear side face is regrasped and lifted vertically so its original barcode face remains down when inserted beneath the closed station roof. Source grasps and stored rotations are recorded in grasps.json.",
+    "silverGrasp": "Original top-pickup grips stay attached through transfer. The main cup faces down and presses vertically onto the rear cup. Before the second exchange J1(q[1]) moves rearward to about-156.46deg while q[3] remains on the normal negative-elbow branch. Approach80mm above the true ore top and descend vertically at story67.5..68.8; attach at69.1, lift40mm at69.2..70 while local-X tilt increases0..5deg, clear the other ore and return J1 at70.35..71. Actual grip and stored orientations are in grasps.json; full ore/slot/robot CAD checks are separate from this authored motion.",
     "goldGrasp": "Middle gold ore begins at GOLD_PROP rotation Ry(-135), matching the original assembly. Side suction uses identity grasp offset; barcode-Y points toward slot-Y at placement.",
     "suspension": {
       "method": "Small illustrative sprung-body load transfer:4Hz, damping0.68, pitch/roll response0.0045rad per m/s2, heave0.55mm per m/s2, separated from the terrain-following wheel frame. Chassis remains level on the stair sequence.",
@@ -456,13 +461,13 @@
     }
   ],
   "boundary": "Combined mission and projectile attack are an authored functional scenario. Stair stage order comes from sequential real-robot demonstration frames; exact joints, lift stroke, loads, chassis speed and dump trajectory are illustrative, not calibrated dynamics or one match replay. Rule geometry and receiving constraints are verified independently. Source CAD stays read only.",
-  "frames": 2609,
-  "camera": "Closer continuous follow framing prioritizes the robot, tool contact and ore hand-offs. Complete source props remain in world space and may be partly outside the frame. Filming camera follows the base terrain pose so rib-induced heave/pitch/roll remains visible. The actual robot VT03 optical axis is derived from its original source lens and controlled independently of the suction-cup normal: horizontal and along return velocity, including banked road and chassis spin. Minimap shares the retimed chassis clock.",
+  "frames": 3308,
+  "camera": "Continuous follow filming prioritizes robot, contacts and hand-offs. The follow camera retains terrain heave/pitch/roll. Actual VT03 optical axis comes from the original lens independently of suction normal. Ordinary moving30fps frames align it horizontally along actual velocity and pre-align before departure. Explicit exceptions: loaded stair support, the user-confirmed fixed-upper endpoint-to-endpoint stored-silver strafe(story23..26), and station-side short working adjustments. During that strafe J0/J1 and gimbal hold vehicle-forward while the chassis translates; stair preparation starts after stopping. The minimap uses the same physical clock.",
   "projectiles": {
     "script": "src/scripts/lib/engineer-mission-projectiles.ts",
-    "attackStartSeconds": 45.065,
-    "spinStartSeconds": 45.425,
-    "spinPeakDegreesPerSecond": 417.2085003723371,
+    "attackStartSeconds": 60.14999999999999,
+    "spinStartSeconds": 60.51,
+    "spinPeakDegreesPerSecond": 417.2085003723392,
     "muzzleSpeedMetresPerSecond": 22,
     "diameterMillimetres": 17,
     "scatterStandardDeviationMetres": [
@@ -474,7 +479,177 @@
     "aim": "Recompute a ballistic leading aim for every shot; no in-flight homing.",
     "contacts": "Actual CAD triangle surface points/normals, including moving-surface velocity. Normal restitution0.46, tangential retention0.75. Impact rings and short traces visualize contact.",
     "evidenceBoundary": "Authored illustrative parameters, not measured material coefficients or a replay of a specific firefight.",
-    "spinStopSeconds": 50.64938956395565,
-    "gunfireEndSeconds": 49.24938956395565
+    "spinStopSeconds": 65.73438956395563,
+    "gunfireEndSeconds": 65.86833333333333,
+    "frequencyHz": 30,
+    "shotCount": 172,
+    "roughRoadEntrySeconds": 65.86833333333333,
+    "endPolicy": "Stop spawning at the rough-road entrance; already emitted shots finish their ballistic flight and CAD contacts."
+  },
+  "confirmedRevisions": [
+    {
+      "date": "2026-10-18",
+      "requirements": "2026-10-18 final requirements: four-scene silent film, continuous follow camera and animated official-rule minimap. Opening translates without spinning. Silver is stored and retrieved from above. Preserve the user-confirmed rendered stair elbow/housing direction and original negative-elbow gold retrieval. Stair preparation is cloud rearward, then arm J0 rearward, then fold arm J2 (source q1/q2/q3 use the user arm-zero-based numbering, independent cloud is source q0); arm J1 movement is modest. Keep rear wrist wheels loaded on the original flat ground until all four swerve wheels reach the second ledge, with the chassis level and all original structure retained. After gold withdrawal use a low carry, clear stored silver and keep the actual VT03 camera horizontal forward; normal driving retains fixed arm J1 and camera follows travel direction. Faster travel and combat spin, gradual spin stop after escape, acceleration/braking compression, rule-position road ribs and gain-zone paint. Blue surface-only vehicle/station strips, bright original field lights, complete bases and energy mechanism. First station target begins only after the robot parks; clear the arm before station recovery and gravity drop to the rear bin. Hide the two long rear VT03 leads, preserving housing, lens and mounting structure. Remove TCP trace and meaningless wrist-roll half-turns."
+    },
+    {
+      "date": "2026-10-22",
+      "requirements": "2026-10-22 user-confirmed refinement: restore the engineer header wireframe-to-solid drawing cycle used by Hero. Slow the silver-to-silver transfer and first exchange approach; allow natural film-length growth. Roll both 80 mm end-effector wheels from signed real ground travel with correct axis/direction. Keep continuous stair traverse between necessary support events, start with a 32.5 mm farther rear contact, and remove the final separate 0.30 m dragging move. After all four main wheels are on the upper platform, unload and recover seven axes with overlapping timing, avoiding stored ores. Ordinary driving starts only after the actual VT03 optical axis is aligned and keeps it horizontal along velocity; loaded stair work and station-side work micro-adjustments are explicit exceptions. Raise emission to 30 Hz and continue pursuit until the rough-road entrance, then stop new shots while existing projectiles finish. Retrieve the stored silver ore from above before the second exchange and approach the station 30 mm closer within checked clearance."
+    },
+    {
+      "date": "2026-10-22",
+      "stage": "follow-up",
+      "requirements": "Follow-up confirmed on 2026-10-22: lower only the opening empty-cup travel and point its suction face along vehicle forward. After storing both silver ores, use the safe forward-facing27deg shoulder pose and translate the chassis on the endpoint-to-endpoint straight line, with J0/J1 and gimbal fixed; this short strafe is an explicit exception to velocity-facing video transmission. Begin stair preparation only after stopping. Reduce the accepted post-stair overlapping seven-axis recovery from6 to4.5 physical seconds including ready wait, preserving its support/unload path and gold-travel terminal pose. Before the second exchange swing J1(q[1]) rearward to about-156deg using the ordinary negative elbow, descend onto the ore from above, lift40mm with0..5deg local-X tool tilt, clear the other ore, then return J1 before approaching the second slot. No B-chapter change."
+    }
+  ],
+  "revision20261022": {
+    "status": "Accepted previous107.933s revision, superseded by revision20261022Followup; original evidence and input snapshots retained.",
+    "sourceSnapshot": "materials/documents/derived/audits/engineer-mission/revision-20261022/a-final-freeze/manifest.json",
+    "preRevisionBackups": "materials/documents/derived/audits/engineer-mission/revision-20261022/pre-revision-assets.json",
+    "stationCloserMetres": 0.03,
+    "endWheelDiameterMetres": 0.08,
+    "rearInitialSupportDistanceMetres": 0.68,
+    "climbExitLocalZMetres": 1.3,
+    "removedTailDriveMetres": 0.3,
+    "ordinaryDrivingCameraPolicy": "pre-align before moving, then horizontal along actual velocity",
+    "workingExceptions": [
+      "loaded stair work",
+      "station-side short working micro-adjustments"
+    ],
+    "geometryMethod": "Discrete original-CAD triangle BVH sweeps. Intended suction/support contacts distinguished separately. Numerical, collision, encoded visual and page checks are separate gates.",
+    "evidence": {
+      "motion": "materials/documents/derived/audits/engineer-mission/revision-20261022/motion-revision-checks.json",
+      "stairs": "materials/documents/derived/audits/engineer-mission/revision-20261022/stair-continuity-final.json",
+      "travel": "materials/documents/derived/audits/engineer-mission/revision-20261022/travel-cad-checks.json",
+      "exchangePoseEquivalence": "materials/documents/derived/audits/engineer-mission/revision-20261022/silver-exchange-final-equivalence.json",
+      "encodedIntegrity": "materials/documents/derived/audits/engineer-mission/revision-20261022/encoded-integrity.json",
+      "decodedVisualReview": "materials/documents/derived/audits/engineer-mission/revision-20261022/encoded-review/",
+      "pageReview": "materials/documents/derived/audits/engineer-mission/revision-20261022/preview-page-checks.json"
+    },
+    "encodedOutputs": [
+      {
+        "language": "zh",
+        "file": "materials/videos/derived/inputs/engineer-mission/revision-20261022-followup-before/engineer-mission-zh.mp4",
+        "sha256": "ffda7c3732f36f40f13cb6918839f4278a21087144f01ef30e23c39e4efa2086",
+        "codec": "h264",
+        "width": 1920,
+        "height": 1080,
+        "fps": "30/1",
+        "pixelFormat": "yuv420p",
+        "frames": 3238,
+        "duration": 107.933333,
+        "audioStreams": 0,
+        "bytes": 54259905
+      },
+      {
+        "language": "en",
+        "file": "materials/videos/derived/inputs/engineer-mission/revision-20261022-followup-before/engineer-mission-en.mp4",
+        "sha256": "ae1f963f4bb475403f3d99d6801b08e91973385536b02753ac71d04bcfa4fc35",
+        "codec": "h264",
+        "width": 1920,
+        "height": 1080,
+        "fps": "30/1",
+        "pixelFormat": "yuv420p",
+        "frames": 3238,
+        "duration": 107.933333,
+        "audioStreams": 0,
+        "bytes": 55216047
+      }
+    ]
+  },
+  "encodedOutputs": [
+    {
+      "language": "zh",
+      "file": "materials/videos/derived/web/engineer-mission-zh.mp4",
+      "sha256": "f393ccf047d7bc75ef2e70c100c72a607544c17d068e1bd2f5f8ec43916e1a9c",
+      "codec": "h264",
+      "width": 1920,
+      "height": 1080,
+      "fps": "30/1",
+      "pixelFormat": "yuv420p",
+      "frames": 3308,
+      "duration": 110.266667,
+      "audioStreams": 0,
+      "bytes": 56488689
+    },
+    {
+      "language": "en",
+      "file": "materials/videos/derived/web/engineer-mission-en.mp4",
+      "sha256": "e99fecb6ae59b2063e2cfd18d60ef472863b150b21515fb8cf17bc2aab1a1a74",
+      "codec": "h264",
+      "width": 1920,
+      "height": 1080,
+      "fps": "30/1",
+      "pixelFormat": "yuv420p",
+      "frames": 3308,
+      "duration": 110.266667,
+      "audioStreams": 0,
+      "bytes": 56647522
+    }
+  ],
+  "revision20261022Followup": {
+    "status": "Complete: frozen numeric/CAD checks, both full-decode silent110.266667s videos, direct key-frame review, Astro build and eight live-preview/visual cases passed.",
+    "sourceSnapshot": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/freeze/manifest.json",
+    "beforeManifest": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/before-manifest.json",
+    "opening": {
+      "shoulderDegrees": 0,
+      "cupFace": "vehicle forward",
+      "tcpLoweringMetres": 0.0569924948978651,
+      "elbowLoweringMetres": 0.1266905799155591,
+      "scope": "opening empty travel only; heights describe geometry relative to the same datum, not mass centre"
+    },
+    "storedStrafe": {
+      "shoulderDegrees": 27,
+      "path": "straight between former route endpoints",
+      "upperAssembly": "J0/J1 and gimbal fixed",
+      "lengthMetres": 1.2020815,
+      "explicitCameraException": true,
+      "claimBoundary": "CAD clearance is tested geometrically; no measured centre-of-gravity claim"
+    },
+    "recovery": {
+      "budgetSeconds": 4.5,
+      "activeSeconds": 4.227272727272727,
+      "readyWaitSeconds": 0.2727272727272734,
+      "animationJointPeakDegreesPerSecond": [
+        69.37305317001967,
+        93.36227999996215,
+        31.15644000000152,
+        125.5677600000084,
+        0.23154000000205494,
+        6.378180000001883,
+        0
+      ],
+      "claimBoundary": "Animation rates, not verified hardware capability"
+    },
+    "rearTopPickup": {
+      "j1DegreesApproximately": -156.46,
+      "elbowBranch": "ordinary negative elbow",
+      "descentMetres": 0.08,
+      "liftMetres": 0.04,
+      "localXTiltDegrees": [
+        0,
+        5
+      ],
+      "attachmentStoryTime": 69.1
+    },
+    "evidence": {
+      "motion": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/motion-revision-checks.json",
+      "stairs": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/stair-continuity-checks.json",
+      "travel": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/travel-cad-checks.json",
+      "extraWheelSelf": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/empty-wheel-tyre-cad-checks.json",
+      "emptyInputEquivalence": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/empty-input-equivalence.json",
+      "exchangeFresh": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/exchange-cad-checks.json",
+      "rearPickupDenseReuse": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/j1rear-dense-reuse.json",
+      "encodedIntegrity": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/encoded-integrity.json",
+      "decodedVisualReview": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/encoded-review/",
+      "pageReview": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/preview-page-checks.json"
+    },
+    "siteVerification": {
+      "testedBuild": "20261021-183937011-local-64be720-working",
+      "pages": 8,
+      "report": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/preview-page-checks.json",
+      "currentA": "materials/documents/derived/audits/engineer-mission/revision-20261022-followup/site/engineer-a-current.png",
+      "videoSeconds": 2.5,
+      "method": "Post-review metadata is finalized by a provenance-only rebuild; HTML/scripts/models/images/videos are compared with the tested build."
+    }
   }
 }

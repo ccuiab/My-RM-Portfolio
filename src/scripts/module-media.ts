@@ -20,7 +20,7 @@ document.querySelectorAll<HTMLElement>('[data-module-media]').forEach(root => {
     const phase = elapsed % 18;
     const smooth = (x: number) => x * x * (3 - 2 * x);
     const reveal = phase < 3 ? 0 : phase < 6 ? smooth((phase - 3) / 3) : phase < 14 ? 1 : phase < 17 ? 1 - smooth((phase - 14) / 3) : 0;
-    stage.setScan(engineerHeader ? 1 : reveal);
+    stage.setScan(reveal);
     // Hold the actual front view long enough to read it, including after reset.
     if (!engineerHeader || elapsed > 1.2) stage.turntable.rotation.y += dt * .16;
     if (engineerHeader) root.dataset.turntableAngle = stage.turntable.rotation.y.toFixed(5);
@@ -42,7 +42,7 @@ document.querySelectorAll<HTMLElement>('[data-module-media]').forEach(root => {
         stage = next;
         if (engineerHeader) elapsed = 0;
         if (engineerHeader) root.dataset.turntableAngle = '0';
-        stage.setScan(engineerHeader || !rotating ? 1 : 0);
+        stage.setScan(!rotating ? 1 : 0);
         stage.onResize(() => { if (visible) stage?.render(); });
         canvas.addEventListener('pointerdown', pause); canvas.addEventListener('keydown', pause);
       } catch (error) { next.dispose(); stage = undefined; throw error; }

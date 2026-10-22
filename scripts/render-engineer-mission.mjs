@@ -17,7 +17,7 @@ const server=createServer((req,res)=>{const file=resolve(root,'.'+decodeURICompo
 await new Promise(r=>server.listen(0,'127.0.0.1',r));
 const rangeArg=process.argv.find(x=>x.startsWith('--range=')),range=rangeArg?rangeArg.slice(8).split(':').map(Number):null;
 const port=server.address().port,lang=process.argv.includes('--en')?'en':'zh',width=process.argv.includes('--draft')?1280:1920;
-const audit=resolve('materials/documents/derived/audits/engineer-mission');await mkdir(audit,{recursive:true});
+const audit=resolve(process.env.MISSION_AUDIT_DIR??'materials/documents/derived/audits/engineer-mission');await mkdir(audit,{recursive:true});
 const browser=await chromium.launch({headless:true,executablePath,args:['--enable-webgl','--ignore-gpu-blocklist','--disable-background-timer-throttling','--disable-renderer-backgrounding','--autoplay-policy=no-user-gesture-required']});
 try{
  const page=await browser.newPage({viewport:{width,height:width*9/16},deviceScaleFactor:1,acceptDownloads:true});
@@ -47,7 +47,7 @@ try{
   const downloadPromise=page.waitForEvent('download',{timeout:600000});downloadPromise.catch(()=>{});
   report.record=await page.evaluate(({factor,frames,start})=>window.missionFilm.record(factor,frames,start),{factor,start:range?.[0]??0,frames:process.argv.includes('--smoke')?60:range?Math.round((range[1]-range[0])*30):Math.round(duration*30)});
   const download=await downloadPromise;const inputs=resolve('materials/videos/derived/inputs/engineer-mission');await mkdir(inputs,{recursive:true});
-  const webm=resolve(inputs,`${range?`head-fix-${lang}-${range.join('-')}`:`engineer-mission-${lang}`}.${report.record.codec==='h264'?'h264':'webm'}`);await download.saveAs(webm);console.log('RECORDED',JSON.stringify(report.record));
+  const webm=resolve(inputs,`${range?`head-fix-${lang}-${range.join('-')}`:`engineer-mission-${lang}`}-${Date.now()}.${report.record.codec==='h264'?'h264':'webm'}`);await download.saveAs(webm);report.rawCapture={path:relative(root,webm).replaceAll('\\','/'),sha256:createHash('sha256').update(await readFile(webm)).digest('hex')};console.log('RECORDED',JSON.stringify(report.record));
   const video=range?resolve(inputs,`head-fix-${lang}-${range[0]}-${range[1]}.mp4`):resolve(process.argv.includes('--smoke')?'tmp/mission-encode-smoke.mp4':`materials/videos/derived/web/engineer-mission-${lang}.mp4`);
   const encoded=resolve(inputs,`encoded-${lang}-${Date.now()}.mp4`);
   if(report.record.codec==='h264')await command('ffmpeg',['-v','error','-fflags','+genpts','-r','30','-f','h264','-i',webm,'-an','-c:v','copy','-movflags','+faststart','-y',encoded]);

@@ -1,14 +1,15 @@
 import type {SevenAngles} from './lib/arm-study-motion';
 import limitStudy from '../../materials/models/derived/web/arm-linked-limit.json' with {type:'json'};
+import {STUDY_FINALE_SECONDS,finaleEntry,finaleMotionProgress} from './lib/arm-study-finale.ts';
 /** Presentation distances are not hardware limits. Angles use the source CAD frame. */
 export const ARM_STUDY_ORDER=[0,1,8,9,2,6,3,4] as const;
 export const ARM_STUDY_INTRO=12;
 export const ARM_STUDY_RETURN=3;
-export const ARM_STUDY_FINALE=32;
+export const ARM_STUDY_FINALE=STUDY_FINALE_SECONDS;
 export const ARM_STUDY_SHOTS=[
  {id:0,approach:3,inspect:4.8,motion:5}, {id:1,approach:2.8,inspect:2,motion:7},
  {id:8,approach:3,inspect:4.5,motion:3.5}, {id:9,approach:3,inspect:5,motion:0},
- {id:2,approach:3.4,inspect:4.5,motion:3.5}, {id:6,approach:3.2,inspect:3,motion:19},
+ {id:2,approach:3.4,inspect:4.5,motion:3.5}, {id:6,approach:3.2,inspect:3,motion:28},
  {id:3,approach:3.2,inspect:9,motion:3.5}, {id:4,approach:3,inspect:16,motion:6},
 ].map(s=>({...s,opening:s.id===1||s.id===6?0:2.5,closing:s.id===1||s.id===6?0:2.3,
  duration:s.approach+(s.id===1||s.id===6?0:4.8)+s.inspect+s.motion}));
@@ -40,7 +41,7 @@ export function armStudyPose(time:number):StudyPose{
  const t=Math.max(0,Math.min(ARM_STUDY_DURATION,time));
  const home:StudyPose={id:null,previous:null,step:-1,progress:0,focus:1,view:0,phase:'assembled',angles:zeros(),finale:0,motionU:0,extract:0,context:0,climb:0};
  if(t<ARM_STUDY_INTRO)return {...home,phase:'extract',extract:.28*smooth((t-4)/4),context:1-smooth((t-5)/7),view:smooth((t-6)/6)};
- if(t>=ARM_STUDY_CLIMB_START){const u=Math.min(1,(t-ARM_STUDY_CLIMB_START)/ARM_STUDY_CLIMB_DURATION);return {...home,phase:'climb',step:8,climb:u,context:smooth(u/.12),angles:climbAngles(u)};}
+  if(t>=ARM_STUDY_CLIMB_START){const u=Math.min(1,(t-ARM_STUDY_CLIMB_START)/ARM_STUDY_CLIMB_DURATION),climb=finaleMotionProgress(u);return {...home,phase:'climb',step:8,climb,finale:u,context:finaleEntry(u),angles:climbAngles(climb)};}
  const step=ARM_STUDY_STARTS.findIndex((start,i)=>t>=start&&t<start+ARM_STUDY_SHOTS[i].duration);
  const shot=ARM_STUDY_SHOTS[Math.max(0,step)],local=t-ARM_STUDY_STARTS[Math.max(0,step)];
  const pose:StudyPose={...home,id:shot.id,previous:step?ARM_STUDY_ORDER[step-1]:null,step,phase:'approach',extract:shot.id===0?.28:0};
@@ -58,14 +59,15 @@ export function armFastenerOpacity(progress:number){return 1-smooth((progress-.1
 export const STEP_HEIGHT=.08;
 export const GROUND_Y=-.313409739;
 export const climbAdvance=(u:number)=>.78*smooth((u/.84-.35)/.34);
-export const stageDescent=(u:number)=>smooth((u-.87)/.13);
+/** Retained for consumers of the old display contract; the new step never sinks. */
+export const stageDescent=(_u:number)=>0;
 export const climbStroke=(u:number)=>.052*smooth((u/.84-.26)/.09)*(1-smooth((u/.84-.72)/.09));
 export const climbRise=(u:number)=>{
  const raised=.104-(-.219968621-(GROUND_Y+STEP_HEIGHT));
- return (raised*smooth((u/.84-.26)/.09)+(STEP_HEIGHT-raised)*smooth((u/.84-.72)/.09))*(1-stageDescent(u));
+  return raised*smooth((u/.84-.26)/.09)+(STEP_HEIGHT-raised)*smooth((u/.84-.72)/.09);
 };
 export function climbAngles(u:number):SevenAngles{
- const actualU=u;u=Math.min(1,u/.84);
+  const actualU=u;u=Math.min(1,u/.84);
  const deploy=smooth((u-.13)/.13),recover=1-smooth((u-.72)/.15),weight=deploy*recover;
  const rear=smooth((u-.07)/.10)*(1-smooth((u-.85)/.08));
  const flourish=u<=.07||u>=.23?0:Math.sin(Math.PI*smooth((u-.07)/.16))**2;
