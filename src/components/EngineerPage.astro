@@ -1,14 +1,14 @@
 ---
 import Base from '../layouts/Base.astro';
-import ProjectHeader from './ProjectHeader.astro';
-import Chapter from './Chapter.astro';
+import ModuleMedia from './ModuleMedia.astro';
+import EngineerChapter from './EngineerChapter.astro';
 import EngineerMission from './EngineerMission.astro';
 import OfficialFilm from './OfficialFilm.astro';
 import EasterEggs from './EasterEggs.astro';
 import ArmExplode from './ArmExplode.astro';
 import Lightbox from './Lightbox.astro';
 import NextSheet from './NextSheet.astro';
-import { engineer, hero, sceneCopy } from '../data/content';
+import { engineer, hero, sceneCopy, engineerShowcase as copy } from '../data/content';
 import { t, type Lang } from '../data/i18n';
 
 interface Props { lang: Lang }
@@ -16,16 +16,31 @@ const { lang } = Astro.props;
 const p = engineer;
 ---
 <Base lang={lang} slug={p.slug} title={p.short} description={p.lede}>
-  <ProjectHeader
-    lang={lang}
-    drawing={p.drawing}
-    title={p.title}
-    lede={p.lede}
-    cover={{ ...p.assembly, model: 'engineer.glb' }}
-    titleBlock={p.titleBlock}
-    stats={p.stats}
-    statsSource={p.statsSource}
-  />
+  <div class="engineer-showcase">
+  <header class="wrap showcase-hero" data-engineer-header>
+    <div class="hero-heading">
+      <p class="season">{t(copy.season, lang)}</p>
+      <h1 class="display">{t(copy.title, lang)}</h1>
+      <p class="role">{t(copy.role, lang)}</p>
+      <nav class="chapter-nav" aria-label={t(copy.navigation, lang)}>
+        {p.chapters.map(c => <a href={`#${c.id}`}><span>{c.mark}</span>{t(c.title, lang)}</a>)}
+      </nav>
+    </div>
+    <div class="hero-model"><ModuleMedia pic={{ ...p.assembly, model: 'engineer.glb' }} lang={lang} /></div>
+    <div class="hero-foot">
+      <div class="record">
+        <span class="record-value num">{p.stats[0].value}<small>{p.stats[0].unit}</small></span>
+        <div><span>{t(p.stats[0].label, lang)}</span><p>{t(p.statsSource, lang)}</p></div>
+      </div>
+      <details class="project-details">
+        <summary>{t(copy.projectDetails, lang)}</summary>
+        <div class="project-data">
+          <dl>{p.titleBlock.map(r => <div><dt>{t(r.label, lang)}</dt><dd>{t(r.value, lang)}</dd></div>)}</dl>
+          <dl>{p.stats.slice(1).map(s => <div><dt>{t(s.label, lang)}</dt><dd>{s.value}<small>{s.rank}</small></dd></div>)}</dl>
+        </div>
+      </details>
+    </div>
+  </header>
 
   <section class="wrap video-intro">
     <OfficialFilm
@@ -42,17 +57,15 @@ const p = engineer;
     />
   </section>
 
-  {p.chapters.map((c) => (
-    <Chapter
-      lang={lang}
-      chapter={c.id === 'arm' ? { ...c, lede: undefined, bullets: undefined } : c}
-      layout={c.id === 'layout' || c.id === 'arm' || c.id === 'chassis' ? 'expanded' : 'standard'}
-      hasWideMedia={c.scene === 'arm-unfold' || c.id === 'arm'}
-    >
-      {c.scene === 'arm-unfold' && <EngineerMission lang={lang} slot="wide" />}
-      {c.id === 'arm' && <ArmExplode lang={lang} slot="wide" />}
-    </Chapter>
-  ))}
+  <div class="wrap exhibit-sequence">
+    {p.chapters.slice(0, 3).map(c => <EngineerChapter lang={lang} chapter={c}>
+      {c.id === 'layout' && <EngineerMission lang={lang} concise />}
+      {c.id === 'arm' && <ArmExplode lang={lang} />}
+    </EngineerChapter>)}
+    <div class="supporting-modules">
+      {p.chapters.slice(3).map(c => <EngineerChapter lang={lang} chapter={c} compact />)}
+    </div>
+  </div>
 
   <EasterEggs lang={lang} />
 
@@ -64,12 +77,62 @@ const p = engineer;
 
   <NextSheet lang={lang} slug={hero.slug} drawing={hero.drawing} title={hero.title} />
   <Lightbox lang={lang} />
+  </div>
 </Base>
 
 <style>
-  .video-intro { padding-top: 3rem; }
-  .video-intro :global(.bilibili-video) { margin: 0; }
+  .showcase-hero { display: grid; grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr); align-items: center; padding-top: 7.5rem; }
+  .hero-heading { position: relative; z-index: 1; padding: 2rem 0; }
+  .season { margin: 0 0 1.2rem; color: var(--amber); font: 500 1.15rem var(--f-latin); }
+  h1 { margin: 0; font-size: clamp(3.5rem, 6.2vw, 6.2rem); line-height: 1.08; text-wrap: balance; }
+  .role { margin: 1.5rem 0 0; font-size: var(--t-sm); color: var(--ink-2); }
+  .chapter-nav { display: flex; flex-wrap: wrap; gap: .6rem 1rem; max-width: 24rem; margin-top: 2.5rem; }
+  .chapter-nav a { display: flex; gap: .4rem; align-items: baseline; text-decoration: none; color: var(--ink-3); font-size: var(--t-xs); padding: .35rem 0; }
+  .chapter-nav a:hover { color: var(--ink); }
+  .chapter-nav span { color: var(--amber); font-family: var(--f-latin); }
+  .hero-model { min-width: 0; }
+  .hero-model :global(.module-media), .hero-model :global(.media-view) { background: transparent; }
+  .hero-model :global(.media-view) { height: clamp(420px, 43vw, 600px); }
+  .hero-model :global(figcaption), .hero-model :global(.controls > span) { display: none; }
+  .hero-model :global(.controls) { justify-content: end; padding-right: 0; }
+  .hero-foot { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1.5rem 3rem; padding-top: 1.5rem; margin-top: 1rem; border-top: 1px solid var(--rule); }
+  .record { display: flex; align-items: center; gap: 1.5rem; }
+  .record-value { font-size: 3.5rem; line-height: 1; color: var(--amber); }
+  .record-value small { font-size: 1.3rem; margin-left: .3rem; }
+  .record > div > span { font-size: var(--t-sm); }
+  .record p { font-size: var(--t-xs); color: var(--ink-3); margin: .4rem 0 0; }
+  .project-details { display: contents; }
+  .project-details summary { cursor: pointer; color: var(--ink-2); font-size: var(--t-sm); padding: .7rem 0; }
+  .project-details summary:hover { color: var(--amber); }
+  .project-data { grid-column: 1 / -1; padding: 1rem 0; }
+  .project-data dl { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.5rem; }
+  .project-data dt { font-size: var(--t-xs); color: var(--ink-3); }
+  .project-data dd { margin: .4rem 0 0; font-size: var(--t-sm); }
+  .project-data small { margin-left: .5rem; color: var(--amber); }
+  .video-intro { padding-top: 4rem; }
+  .video-intro :global(.official-film) { margin: 0; }
+  .supporting-modules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem; align-items: start; }
   .links { padding-top: 2rem; }
   .links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; }
-  .links a { color: var(--amber); text-underline-offset: 4px; }
+  .links a { color: var(--amber); text-underline-offset: .25em; }
+  @media(max-width: 1000px) {
+    .supporting-modules { grid-template-columns: 1fr; gap: 0; }
+    .hero-foot { grid-template-columns: 1fr; gap: 1rem; }
+    .project-data dl { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media(max-width: 900px) {
+    .showcase-hero { grid-template-columns: 1fr; padding-top: 6.5rem; }
+    .hero-heading { padding: 0; }
+    h1 { font-size: clamp(3.4rem, 11vw, 5rem); }
+    .season { margin-bottom: .75rem; }
+    .role { margin-top: 1rem; }
+    .chapter-nav { max-width: none; margin-top: 1.25rem; }
+    .hero-model { margin-top: 1.5rem; }
+    .hero-model :global(.media-view) { height: clamp(300px, 65vw, 480px); }
+    .hero-foot { margin-top: 1.5rem; }
+    .record { gap: 1rem; }
+    .record-value { font-size: 3rem; }
+    .project-data dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .video-intro { padding-top: 2.5rem; }
+  }
 </style>

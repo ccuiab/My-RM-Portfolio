@@ -803,3 +803,27 @@ export const rm2025Field = {
     'highland-crossing': { zh: '中央高地翻越结构', en: 'Central-highland crossing' },
   },
 } as const;
+
+
+/** Engineering page presentation; long-form source facts stay in engineer. */
+export const engineerShowcase = {
+  title: { zh: '工程机器人', en: 'Engineer robot' },
+  season: { zh: 'RoboMaster 2025', en: 'RoboMaster 2025' },
+  role: { zh: '崔楮焓 · 整车结构设计', en: 'Chuhan Cui · Whole-robot structural design' },
+  projectDetails: { zh: '项目资料与比赛数据', en: 'Project details & competition results' },
+  designDetails: { zh: '设计细节', en: 'Design details' },
+  clipDetails: { zh: '片段信息', en: 'Clip details' },
+  navigation: { zh: '探索机构', en: 'Explore the mechanisms' },
+  missionNote: { zh: '场地与动作均为示意。', en: 'Illustrative field and motion.' },
+  mechanismNotes: {
+    swerve: { zh: '悬挂幅度为示意；电机侧齿轮装配待确认。', en: 'Suspension travel is illustrative; motor-side gear assembly awaits confirmation.' },
+    pump: { zh: '气流、阀门与转速为示意。', en: 'Airflow, valves and speed are illustrative.' },
+  },
+  chapters: {
+    layout: { zh: '从取矿到兑换，任务决定构型。', en: 'From retrieval to exchange, the task shapes the machine.' },
+    arm: { zh: '从整臂装配，看到关节传动。', en: 'From the complete arm to the drive inside each joint.' },
+    chassis: { zh: '转向、悬挂、轮驱，一体展开。', en: 'Steering, suspension and wheel drive, revealed together.' },
+    pump: { zh: '3508 无刷驱动，电流反馈感知吸附。', en: '3508 brushless drive with current-based suction sensing.' },
+    controller: { zh: '与主臂同构，1:2 动作映射。', en: 'Mirrored arm topology. 1:2 motion mapping.' },
+  },
+};

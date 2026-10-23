@@ -1,8 +1,8 @@
 # 素材总清单
 
-生成时间：2026-10-22T02:46:09.120+08:00（北京时间）。
+生成时间：2026-10-23T15:11:48.600+08:00（北京时间）。
 
-本地 materials/ 共 **2,787 个文件，15.36 GiB**。包含 Git 忽略的本地素材；本清单和 inventory.csv 不计入统计。每个文件均重新计算 SHA-256。
+本地 materials/ 共 **2,788 个文件，15.36 GiB**。包含 Git 忽略的本地素材；本清单和 inventory.csv 不计入统计。每个文件均重新计算 SHA-256。
 
 原始输入与二级材料的定义、使用方式见 [README.md](README.md)。完整文件、层级、分类依据、来源和校验值见 [inventory.csv](inventory.csv)。
 
@@ -18,8 +18,8 @@
 | 二级材料 | 图片 | 107 | 74.35 MiB | [images/derived/](images/derived/) |
 | 二级材料 | 模型 | 143 | 2.03 GiB | [models/derived/](models/derived/) |
 | 二级材料 | 视频 | 76 | 1.67 GiB | [videos/derived/](videos/derived/) |
-| 二级材料 | 字体 | 3 | 305.71 KiB | [fonts/derived/](fonts/derived/) |
-| 二级材料 | 资料与审计 | 2268 | 1.22 GiB | [documents/derived/](documents/derived/) |
+| 二级材料 | 字体 | 3 | 306.72 KiB | [fonts/derived/](fonts/derived/) |
+| 二级材料 | 资料与审计 | 2269 | 1.22 GiB | [documents/derived/](documents/derived/) |
 
 ## 当前展示与处理输入
 
@@ -48,7 +48,7 @@
 | 网页展示：A章整车行动短片 | 5 | 108.60 MiB |
 | 网页展示：舵轮整车高精度背景与装配参数 | 2 | 10.19 MiB |
 | 网页运行依赖 | 5 | 760.81 KiB |
-| 说明与索引 | 194 | 2.06 GiB |
+| 说明与索引 | 195 | 2.06 GiB |
 | 运动学交付 | 9 | 10.83 MiB |
 
 ## 当前模型与视频

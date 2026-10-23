@@ -1,9 +1,9 @@
 ---
-import {missionFilm as copy} from '../data/content';
+import {missionFilm as copy, engineerShowcase} from '../data/content';
 import {t,type Lang} from '../data/i18n';
 import timing from '../../materials/models/derived/rm2025-field/models/mission-timing.json';
-interface Props{lang:Lang}
-const {lang}=Astro.props;
+interface Props{lang:Lang;concise?:boolean}
+const {lang,concise=false}=Astro.props;
 const base=import.meta.env.BASE_URL;
 const times=timing.chapters;
 ---
@@ -18,7 +18,7 @@ const times=timing.chapters;
       return <button type="button" data-mission-time={times[i]}>{t(phase,lang)}</button>;
     })}
   </nav>
-  <figcaption>{t(copy.caption,lang)}</figcaption>
+  <figcaption>{t(concise?engineerShowcase.missionNote:copy.caption,lang)}</figcaption>
 </figure>
 
 <script>

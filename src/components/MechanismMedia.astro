@@ -1,9 +1,9 @@
 ---
 import { Image } from 'astro:assets';
-import { sceneCopy, type Pic } from '../data/content';
+import { sceneCopy, engineerShowcase, type Pic } from '../data/content';
 import { t, ui, type Lang } from '../data/i18n';
-interface Props { pic: Pic; lang: Lang; kind: 'pump' | 'swerve' }
-const { pic, lang, kind } = Astro.props;
+interface Props { pic: Pic; lang: Lang; kind: 'pump' | 'swerve'; concise?: boolean }
+const { pic, lang, kind, concise = false } = Astro.props;
 const L = sceneCopy[kind];
 ---
 <figure class="mechanism" data-mechanism={kind} data-model={pic.model} data-failed={t(sceneCopy.module.failed, lang)} data-loading={t(sceneCopy.module.loading, lang)} data-static={t(L.static, lang)}>
@@ -48,7 +48,7 @@ const L = sceneCopy[kind];
     <button type="button" data-mechanism-reset>{t(sceneCopy.interaction.reset, lang)}</button>
     <span class="hint">{t(L.hint, lang)}</span>
   </div>
-  <figcaption>{t(pic.alt, lang)}<small>{t(L.note, lang)}</small>{kind === 'swerve' && <small>{t(sceneCopy.swerve.sensorNote, lang)}</small>}</figcaption>
+  {concise ? <figcaption class="concise">{t(engineerShowcase.mechanismNotes[kind], lang)}</figcaption> : <figcaption>{t(pic.alt, lang)}<small>{t(L.note, lang)}</small>{kind === 'swerve' && <small>{t(sceneCopy.swerve.sensorNote, lang)}</small>}</figcaption>}
 </figure>
 <script>
   import '../scripts/module-mechanisms';
@@ -92,6 +92,7 @@ const L = sceneCopy[kind];
   .amount > span { white-space: nowrap; }
   .hint { flex-basis: 100%; color: var(--ink-3); font-size: var(--t-xs); }
   figcaption { padding: .8rem 1rem; border-top: 1px solid var(--rule); font-size: var(--t-sm); color: var(--ink); }
+  figcaption.concise { color: var(--ink-3); font-size: var(--t-xs); padding: .6rem 1rem; }
   small { display: block; margin-top: .3rem; font-size: var(--t-xs); color: var(--ink-3); line-height: 1.6; }
   [hidden] { display: none !important; }
   @media (min-width: 901px) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
