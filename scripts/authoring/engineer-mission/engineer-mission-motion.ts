@@ -3,11 +3,11 @@ import returnRoute from '../../../materials/models/derived/rm2025-field/models/m
 import recovery from '../../../materials/models/derived/rm2025-field/models/mission-station-recovery.json';
 import armTransfers from '../../../materials/models/derived/rm2025-field/models/mission-arm-transfers.json';
 import transmitter from '../../../materials/models/derived/web/mission-transmitter.json';
-import {armMotionMatrices,aboutAxis,type MotionContract,type SevenAngles} from './arm-study-motion';
-import {ARM_TOOL_FACE_OFFSET_M} from './arm-tool-point';
+import {armMotionMatrices,aboutAxis,type MotionContract,type SevenAngles} from '../../../src/scripts/lib/arm-study-motion';
+import {ARM_TOOL_FACE_OFFSET_M} from '../../../src/scripts/lib/arm-tool-point';
 import {emptyTravelAngles} from './engineer-mission-empty';
 export {EMPTY_TRAVEL_SHOULDER_DEGREES,STORED_EMPTY_TRAVEL_SHOULDER_DEGREES} from './engineer-mission-empty';
-export {armMotionMatrices as armMatrices} from './arm-study-motion';
+export {armMotionMatrices as armMatrices} from '../../../src/scripts/lib/arm-study-motion';
 import {stationSlotMatrix,stationBlend,STATION_INITIAL,STATION_A,STATION_B,STATION_DUMP,STATION_DUMP_B,type StationParameters} from './engineer-station-rig';
 
 // Working moves get their own time budgets; travel keeps its measured route

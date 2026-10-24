@@ -13,10 +13,13 @@
 
 - `materials/` 是唯一素材总目录，各类 `images/`、`models/`、`videos/`、`fonts/`、`documents/` 下统一用 `source/` 保存收到的原始输入、`derived/` 保存提取、剪辑、编辑和生成的二级材料。CAD 原生文件在外部只读目录，本仓库的 CAD 导出与截图均归二级材料。
 - 整理素材时先核对页面引用、加工依赖和来源证据，再清理未使用的二级材料；路径、来源与删除记录见 `materials/README.md`、`materials/cleanup.json`。运行 `npm run materials:inventory` 刷新清单。
-- `src/` 只放网页源码。全部中英文文案保存在 `src/data/content.ts` 的 `{ zh, en }` 字段中；页面组件从数据文件取文案。
+- `src/` 只放网页源码。全部中英文文案保存在 `src/data/content.ts` 的 `{ zh, en }` 字段中；页面组件从数据文件取文案。离线视频和场地预览源码位于 `scripts/authoring/`，修改其入口或依赖时先读该目录的 `README.md`。
+- 构建、归档和素材清单实现分别位于 `scripts/build/`、`scripts/archive/`、`scripts/materials/`，共享路径与版本索引逻辑在 `scripts/lib/`。根目录同名脚本保留为兼容入口；维护流程见 `scripts/README.md`。
+- `npm run check` 检查网站及离线 TypeScript，并执行归档与动画时间轴回归测试；页面或交互修改仍需构建和浏览器实查。
 - `npm run dev` 启动开发服务器；`npm run build` 准备静态资源、生成中文字体子集并构建网页；`npm run preview` 预览当前构建。
 - 当前网页输出到 `publish/current/`。每次成功构建自动在 `publish/history/` 保存独立版本。历史目录、版本标识和保存方式见 `publish/VERSIONS.md`、`publish/versions.json`。
 - `npm run archive:history` 恢复 GitHub 发布记录对应的历史网站。保留“原始发布包”“从源码重建”“旧版静态快照”的区别，不把重建结果称为原始发布包。
+- `npm run archive:index` 只刷新历史索引；需要保存当前构建时再运行构建归档流程。
 - `.astro-public/` 是由素材生成的临时静态目录，直接编辑 `materials/` 中的原文件。生成目录和大型本地档案由 Git 忽略。
 - `site`、`base: '/My-RM-Portfolio'` 位于 `astro.config.mjs`；站内地址统一经 `href()` 或 `import.meta.env.BASE_URL` 生成。
 - 构建时的文件检查以 `process.cwd()` 为根目录。新中文文案通过重新构建纳入得意黑字体子集。

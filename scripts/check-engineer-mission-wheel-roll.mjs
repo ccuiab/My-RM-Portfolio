@@ -9,7 +9,7 @@ import * as M from '../materials/models/derived/inputs/engineer-mission/motion.m
 
 const temporary=resolve('tmp');await mkdir(temporary,{recursive:true});
 const bundle=resolve(temporary,'mission-wheel-roll-check.mjs');
-await build({entryPoints:['src/scripts/lib/engineer-mission-wheel-roll.ts'],outfile:bundle,bundle:true,packages:'external',format:'esm',platform:'node'});
+await build({entryPoints:['scripts/authoring/engineer-mission/engineer-mission-wheel-roll.ts'],outfile:bundle,bundle:true,packages:'external',format:'esm',platform:'node'});
 const {applyMissionWheelRoll}=await import(pathToFileURL(bundle).href+'?'+Date.now());
 const [meta,tr]=await Promise.all(['materials/models/derived/web/arm-parts.json','materials/models/derived/inputs/engineer-mission/trajectory.json'].map(p=>readFile(p,'utf8').then(JSON.parse)));
 M.configureSilverGrasps(JSON.parse(await readFile('materials/models/derived/inputs/engineer-mission/grasps.json','utf8')));

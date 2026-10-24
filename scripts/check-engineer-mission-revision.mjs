@@ -14,8 +14,8 @@ const audit=(process.env.MISSION_AUDIT_DIR??'materials/documents/derived/audits/
 const temporary=resolve('tmp/engineer-mission-revision');
 await mkdir(temporary,{recursive:true});await mkdir(audit,{recursive:true});
 const sourcePaths=[
- 'src/scripts/lib/engineer-mission-motion.ts','src/scripts/lib/engineer-mission-projectiles.ts',
- 'src/scripts/lib/engineer-mission-wheel-roll.ts','src/scripts/lib/engineer-mission-empty.ts','src/scripts/lib/arm-study-motion.ts','scripts/build-engineer-mission.mjs',
+ 'scripts/authoring/engineer-mission/engineer-mission-motion.ts','scripts/authoring/engineer-mission/engineer-mission-projectiles.ts',
+ 'scripts/authoring/engineer-mission/engineer-mission-wheel-roll.ts','scripts/authoring/engineer-mission/engineer-mission-empty.ts','src/scripts/lib/arm-study-motion.ts','scripts/build-engineer-mission.mjs',
  inputs+'trajectory.json',inputs+'motion.mjs',inputs+'grasps.json',
  'materials/models/derived/web/arm-parts.json','materials/models/derived/web/mission-transmitter.json',
  'materials/models/derived/rm2025-field/models/mission-return-route.json',
@@ -23,7 +23,7 @@ const sourcePaths=[
 ];
 const hash=async path=>createHash('sha256').update(await readFile(path)).digest('hex');
 const sources=Object.fromEntries(await Promise.all(sourcePaths.map(async path=>[path,await hash(path)])));
-for(const [name,entry]of [['motion','src/scripts/lib/engineer-mission-motion.ts'],['projectiles','src/scripts/lib/engineer-mission-projectiles.ts']]){
+for(const [name,entry]of [['motion','scripts/authoring/engineer-mission/engineer-mission-motion.ts'],['projectiles','scripts/authoring/engineer-mission/engineer-mission-projectiles.ts']]){
  await build({entryPoints:[entry],outfile:resolve(temporary,name+'.mjs'),bundle:true,packages:'external',format:'esm',platform:'node'});
 }
 const M=await import(pathToFileURL(resolve(temporary,'motion.mjs')).href+'?'+Date.now());

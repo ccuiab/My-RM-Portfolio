@@ -4,13 +4,13 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {GLTFExporter} from 'three/addons/exporters/GLTFExporter.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {armMotionMatrices,aboutAxis,type SevenAngles} from './lib/arm-study-motion';
-import {contextTransform,MAIN_WHEELS} from './lib/arm-context-stage';
-import {CANONICAL,UPPER_UPRIGHT,STORES,SILVER_CENTERS,GOLD_CENTER,SILVER_PICKUP_GRIPS,SILVER_TOP_GRIP,STORED_ORE_ROTATIONS,configureSilverGrasps,SILVER_PROP,GOLD_PROP,STATION_WORLD,STEP_FRAME,GOLD_FRAME,EXCHANGE_FRAME,missionState,missionJ0,toolPose,ease,MISSION_DURATION,publicTime} from './lib/engineer-mission-motion';
-import {createStationRig} from './lib/engineer-station-rig';
-import {createMissionCollision} from './lib/engineer-mission-collision';
-import {createMissionProjectiles} from './lib/engineer-mission-projectiles';
-import {missionFilm as copy} from '../data/content';
+import {armMotionMatrices,aboutAxis,type SevenAngles} from '../../../src/scripts/lib/arm-study-motion';
+import {contextTransform,MAIN_WHEELS} from '../../../src/scripts/lib/arm-context-stage';
+import {CANONICAL,UPPER_UPRIGHT,STORES,SILVER_CENTERS,GOLD_CENTER,SILVER_PICKUP_GRIPS,SILVER_TOP_GRIP,STORED_ORE_ROTATIONS,configureSilverGrasps,SILVER_PROP,GOLD_PROP,STATION_WORLD,STEP_FRAME,GOLD_FRAME,EXCHANGE_FRAME,missionState,missionJ0,toolPose,ease,MISSION_DURATION,publicTime} from './engineer-mission-motion';
+import {createStationRig} from './engineer-station-rig';
+import {createMissionCollision} from './engineer-mission-collision';
+import {createMissionProjectiles} from './engineer-mission-projectiles';
+import {missionFilm as copy} from '../../../src/data/content';
 
 declare global{interface Window{missionFilm:any}}
 const params=new URLSearchParams(location.search),width=Number(params.get('width')??1920),height=width*9/16,lang=params.get('lang')==='en'?'en':'zh';

@@ -32,8 +32,20 @@ publish/                      发布总目录
   history/                    按版本保存的完整旧网页（本地）
   VERSIONS.md                 版本索引（自动生成）
   versions.json               时间、Git 提交和保存方式（自动生成）
-src/                          Astro 页面、组件、文案与交互代码
-scripts/                      构建、素材处理与版本归档脚本
+src/                          网站源码
+  pages/                      中英文路由，仅选择页面与语言
+  components/                 页面组合、展示组件与交互入口
+  layouts/                    全站布局、导航与元信息
+  data/                       唯一中英文文案来源与语言工具
+  scripts/                    浏览器控制器、模型变换与运行时共享模块
+  scripts/lib/mechanism-timeline.ts  舵轮与气泵的纯数值时间轴
+scripts/                      工具与验证
+  build/                      运行资源暂存、字体子集
+  archive/                    发布快照、历史恢复与索引
+  materials/                  素材清单
+  authoring/                  离线工程视频与场地预览源码
+  lib/                       共享仓库路径与发布元数据逻辑
+  tests/                      无浏览器的归档与动画回归测试
 AGENTS.md                     中文项目指引
 CLAUDE.md                     指向 AGENTS.md 的相对软链接
 ```
@@ -45,11 +57,22 @@ CLAUDE.md                     指向 AGENTS.md 的相对软链接
 ```powershell
 npm ci
 npm run dev
+npm run check
 npm run build
 npm run preview
 ```
 
 `npm run build` 会准备静态资源、生成得意黑字体子集，输出到 `publish/current/`，并自动保存到 `publish/history/<时间与提交>/`。部署工作流只上传 `publish/current/`，历史网页不会混入线上站点。模型与视频的网址仍分别为 `models/`、`video/`，站点 base 为 `/My-RM-Portfolio`。
+
+`npm run check` 覆盖网站和离线工具的 TypeScript 类型，以及版本索引、源码状态和动画时间轴测试。开发与检查使用 Node 24 或更新版本（本地已用 Node 26 验证，部署使用 Node 24）。构建与数值检查通过后，页面交互仍需在桌面、手机和减少动态效果模式下检查。
+
+## 代码边界
+
+路由负责选择语言与页面，页面组件组合展示组件，展示组件通过浏览器控制器连接 Three.js 场景。`viewport-scene.ts` 统一管理可见性、异步取消和两个 WebGL 上下文配额；时间轴只计算状态，`module-motion.ts` 将状态应用到模型，场景模块负责加载与渲染。
+
+离线工程视频和场地预览使用 [scripts/authoring](scripts/authoring/README.md)。这些工具可复用网站的运动学函数，网站运行时不反向导入离线入口。工程页 A 章播放生成的 MP4 与章节数据，修改离线源码需要单独生成和检查成片，普通网站构建不会重新渲染视频。`ArmExchange.astro` 及其场景保留为早期实时兑矿示意，当前 A 章使用 `EngineerMission.astro`。
+
+工具脚本按职责组织，原有根目录命令保留兼容入口，供历史提交重建和已有操作习惯使用。CAD/Python 脚本仍保留原位置，因为部分脚本依赖固定路径和原始装配读取约定。具体入口与前提见 [scripts/README.md](scripts/README.md)。
 
 `materials/models/derived/web/` 保存机械臂、整臂爆炸、舵轮和气泵模型；`materials/videos/derived/web/` 保存首页 5.8 s 成绩片段与工程页片尾的上台阶、偷银矿、抢矿三段静音循环，封面位于 `materials/images/derived/video-posters/`。片尾视频输入位于 `materials/videos/derived/inputs/`，源视频保留在 `materials/videos/source/bilibili/`，运行 `scripts/cut-eggs.ps1` 可重新剪辑。素材修改后重新执行开发或构建命令刷新临时静态目录。全部网站文案位于 `src/data/content.ts`。`npm run materials:inventory` 扫描完整本地素材库、计算 SHA-256，并更新 Markdown 和 CSV 索引。
 
@@ -57,9 +80,12 @@ npm run preview
 
 ```powershell
 npm run archive:history
+npm run archive:index
 ```
 
-此命令使用 `gh` 的现有 GitHub 登录和 Git，恢复仓库的 GitHub Pages 发布记录：能取得的原始包直接解包；已过期或下载不可用的 Astro 包从对应 Git 提交和相同依赖版本重建；旧版手写网站保存为静态源码快照。每个目录的 `version.json` 标明保存方式，重复提交的发布记录合并到同一版本。
+`archive:history` 使用 `gh` 的现有 GitHub 登录和 Git，恢复仓库的 GitHub Pages 发布记录：能取得的原始包直接解包；已过期或下载不可用的 Astro 包从对应 Git 提交和相同依赖版本重建；旧版手写网站保存为静态源码快照。每个目录的 `version.json` 标明保存方式，重复提交的发布记录合并到同一版本。
+
+`archive:index` 可独立刷新索引，不复制当前网页或创建新快照；归档元数据会区分干净提交和包含未提交、未跟踪源码的工作区构建。
 
 预览指定旧版 Astro 网站时执行：
 

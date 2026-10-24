@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { rm2025Field as copy } from '../data/content';
+import { rm2025Field as copy } from '../../../src/data/content';
 
 type AssetId = keyof typeof copy.names;
 type Lang = 'zh' | 'en';

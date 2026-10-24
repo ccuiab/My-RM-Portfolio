@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
 import {MeshBVH,acceleratedRaycast,CENTER} from 'three-mesh-bvh';
-import {armMotionMatrices,type MotionContract,type SevenAngles} from './arm-study-motion';
-import {contextTransform} from './arm-context-stage';
+import {armMotionMatrices,type MotionContract,type SevenAngles} from '../../../src/scripts/lib/arm-study-motion';
+import {contextTransform} from '../../../src/scripts/lib/arm-context-stage';
 import {STORES,STORED_ORE_ROTATIONS,toolPose,type MissionState} from './engineer-mission-motion';
 
 type SourcePart={node:THREE.Object3D;rest:THREE.Matrix4;spec?:{motion_group:string};group?:string};

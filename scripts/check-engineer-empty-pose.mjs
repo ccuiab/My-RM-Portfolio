@@ -13,7 +13,7 @@ const M=await import(pathToFileURL(resolve(input,'motion.mjs')).href+'?'+Date.no
 const tr=JSON.parse(await readFile(join(input,'trajectory.json'),'utf8')),grasps=JSON.parse(await readFile(join(input,'grasps.json'),'utf8'));
 M.configureSilverGrasps(grasps);
 const g=await loadMissionGeometry(),meta=g.meta,up=new T.Vector3(0,1,0);
-const files=['src/scripts/lib/engineer-mission-empty.ts','src/scripts/lib/engineer-mission-motion.ts','src/scripts/lib/arm-study-motion.ts','scripts/build-engineer-mission.mjs','materials/models/derived/web/arm-parts.json','materials/models/derived/inputs/engineer-mission/collision-geometry.glb',join(input,'trajectory.json'),join(input,'motion.mjs'),join(input,'grasps.json')];
+const files=['scripts/authoring/engineer-mission/engineer-mission-empty.ts','scripts/authoring/engineer-mission/engineer-mission-motion.ts','src/scripts/lib/arm-study-motion.ts','scripts/build-engineer-mission.mjs','materials/models/derived/web/arm-parts.json','materials/models/derived/inputs/engineer-mission/collision-geometry.glb',join(input,'trajectory.json'),join(input,'motion.mjs'),join(input,'grasps.json')];
 const hash=async path=>createHash('sha256').update(await readFile(path)).digest('hex'),sources=Object.fromEntries(await Promise.all(files.map(async path=>[path,await hash(path)])));
 function angles(time){const f=T.MathUtils.clamp(time*tr.fps,0,tr.samples.length-1),i=Math.min(Math.floor(f),tr.samples.length-2),q=tr.samples[i].map((v,k)=>T.MathUtils.lerp(v,tr.samples[i+1][k],f-i));q[0]=M.missionJ0(M.missionState(time));return q;}
 const arm=g.actors.filter(a=>a.userData.kind==='arm'&&['link_2','link_3','link_4','link_5','link_6','uwb'].includes(a.userData.group));

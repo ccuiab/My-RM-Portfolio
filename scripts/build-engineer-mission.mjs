@@ -5,9 +5,9 @@ import {pathToFileURL} from 'node:url';
 
 const out=resolve('materials/models/derived/inputs/engineer-mission');
 await mkdir(out,{recursive:true});
-await build({entryPoints:['src/scripts/lib/engineer-mission-motion.ts'],outfile:resolve(out,'motion.mjs'),bundle:true,format:'esm',platform:'node'});
-await build({entryPoints:['src/scripts/lib/engineer-station-rig.ts'],outfile:resolve(out,'station-rig.mjs'),bundle:true,format:'esm',platform:'node'});
-await build({entryPoints:['src/scripts/lib/engineer-mission-wheel-roll.ts'],outfile:resolve(out,'wheel-roll.mjs'),bundle:true,format:'esm',platform:'node'});
+await build({entryPoints:['scripts/authoring/engineer-mission/engineer-mission-motion.ts'],outfile:resolve(out,'motion.mjs'),bundle:true,format:'esm',platform:'node'});
+await build({entryPoints:['scripts/authoring/engineer-mission/engineer-station-rig.ts'],outfile:resolve(out,'station-rig.mjs'),bundle:true,format:'esm',platform:'node'});
+await build({entryPoints:['scripts/authoring/engineer-mission/engineer-mission-wheel-roll.ts'],outfile:resolve(out,'wheel-roll.mjs'),bundle:true,format:'esm',platform:'node'});
 const motion=await import(pathToFileURL(resolve(out,'motion.mjs')).href+'?'+Date.now());
 const {applyMissionWheelRoll}=await import(pathToFileURL(resolve(out,'wheel-roll.mjs')).href+'?'+Date.now());
 const THREE=await import('three');
@@ -79,6 +79,6 @@ await writeFile(resolve(out,'trajectory.json'),JSON.stringify({fps,duration,samp
 await writeFile('materials/models/derived/rm2025-field/models/mission-timing.json',JSON.stringify({duration,chapters:motion.PHASE_TIMES,exchangeStart:motion.EXCHANGE_START,attackStart:motion.ATTACK_START,spinStart:motion.SPIN_START,spinStop:motion.SPIN_STOP,spinPeakDegreesPerSecond:motion.SPIN_PEAK_SPEED*180/Math.PI})+'\n');
 console.log('IK samples',samples.length,'max error',Math.max(...errors.map(x=>x.error)),'>5mm',errors.filter(x=>x.error>.005).length);
 const plugin={name:'unused-images',setup(b){b.onResolve({filter:/\.(png|jpe?g|webp|svg)$/},a=>({path:a.path,namespace:'unused',sideEffects:false}));b.onLoad({filter:/.*/,namespace:'unused'},()=>({contents:'export default "";',loader:'js'}));}};
-await build({entryPoints:['src/scripts/engineer-mission-film.ts'],outfile:resolve(out,'film.js'),bundle:true,format:'esm',sourcemap:true,plugins:[plugin]});
+await build({entryPoints:['scripts/authoring/engineer-mission/engineer-mission-film.ts'],outfile:resolve(out,'film.js'),bundle:true,format:'esm',sourcemap:true,plugins:[plugin]});
 await writeFile(resolve(out,'index.html'),'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>Engineer mission film</title><link rel="icon" href="data:,"><style>html,body{margin:0;background:#070d17}canvas{display:block;width:100vw;height:100vh;object-fit:contain}</style><canvas id="film"></canvas><script type="module" src="film.js"></script></html>');
 console.log('Movie scene ready:',out);

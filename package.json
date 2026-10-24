@@ -9,6 +9,10 @@
     "build": "node scripts/prepare-assets.mjs && node scripts/subset-fonts.mjs && astro build && node scripts/archive-current.mjs",
     "preview": "astro preview",
     "archive:history": "node scripts/archive-history.mjs",
+    "archive:index": "node scripts/archive-index.mjs",
+    "check:types": "tsc --noEmit && tsc --noEmit -p scripts/authoring/tsconfig.json",
+    "test": "node --test scripts/tests/*.test.mjs",
+    "check": "npm run check:types && npm test",
     "materials:inventory": "node scripts/catalog-materials.mjs"
   },
   "dependencies": {

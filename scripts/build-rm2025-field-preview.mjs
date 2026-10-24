@@ -9,7 +9,7 @@ for (const page of [37, 57, 58, 61, 62, 64, 73]) {
   const name = `rules-p${String(page).padStart(3, '0')}.png`;
   await copyFile(resolve('materials/images/derived/inputs/rm2025-field-reference', name), resolve(output, 'references', name));
 }
-await build({ entryPoints: ['src/scripts/rm2025-field-preview.ts'], outfile: resolve(output, 'viewer.js'), bundle: true, format: 'esm', minify: true, treeShaking: true,
+await build({ entryPoints: ['scripts/authoring/field/rm2025-field-preview.ts'], outfile: resolve(output, 'viewer.js'), bundle: true, format: 'esm', minify: true, treeShaking: true,
   plugins: [{ name: 'unused-portfolio-images', setup(builder) {
     builder.onResolve({ filter: /\.(png|jpe?g|webp|svg)$/ }, args => ({ path: args.path, namespace: 'unused-images', sideEffects: false }));
     builder.onLoad({ filter: /.*/, namespace: 'unused-images' }, () => ({ contents: 'export default "";', loader: 'js' }));

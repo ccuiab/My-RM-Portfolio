@@ -3,7 +3,7 @@
  * lower-centre-of-mass claim. Both keep the forearm-mounted VT03 optical axis
  * and point the cup at the vehicle front using downstream wrist axes. */
 import * as THREE from 'three';
-import {armMotionMatrices,type MotionContract,type SevenAngles} from './arm-study-motion';
+import {armMotionMatrices,type MotionContract,type SevenAngles} from '../../../src/scripts/lib/arm-study-motion';
 
 export const EMPTY_TRAVEL_SHOULDER_DEGREES=0;
 export const STORED_EMPTY_TRAVEL_SHOULDER_DEGREES=27;

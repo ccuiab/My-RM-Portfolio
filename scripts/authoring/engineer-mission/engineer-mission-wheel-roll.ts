@@ -3,7 +3,7 @@
  * wrist supports the vehicle, J6 turns the cup around its own normal and drives
  * the two coaxial 80 mm wheels through that differential. */
 import * as THREE from 'three';
-import {armMotionMatrices,type MotionContract,type SevenAngles} from './arm-study-motion';
+import {armMotionMatrices,type MotionContract,type SevenAngles} from '../../../src/scripts/lib/arm-study-motion';
 
 type WheelState={body:THREE.Matrix4;climb:number};
 type WheelSample={time:number;center:THREE.Vector3;axis:THREE.Vector3;rotation:THREE.Quaternion;contact:boolean};

@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import type { MechanismStage } from './mechanism-stage';
-import { createModuleMotion, swervePresentation } from '../module-motion';
+import { createModuleMotion } from '../module-motion';
+import { swervePresentation } from './mechanism-timeline';
 import { setCadOpacity } from './cad-opacity';
 import { placeSwerveModule, type SwervePlacement } from './swerve-placement';
 

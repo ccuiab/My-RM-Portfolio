@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {aboutAxis} from './arm-study-motion';
+import {aboutAxis} from '../../../src/scripts/lib/arm-study-motion';
 
 export const STATION_PLACEMENT=new THREE.Matrix4().makeTranslation(0,0,.70).multiply(new THREE.Matrix4().makeRotationY(Math.PI));
 export type StationParameters={yaw:number;shoulder:number;forearm:number;wristYaw:number;pitch:number;roll:number};

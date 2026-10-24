@@ -10,7 +10,7 @@ import {classifyStationRobotHits} from './mission-contact-classification.mjs';
 
 const audit=(process.env.MISSION_AUDIT_DIR??'materials/documents/derived/audits/engineer-mission/revision-20261022').replace(/[\\\/]?$/,'/');
 const output=audit+'travel-cad-checks.json';
-const files=['src/scripts/lib/engineer-mission-motion.ts','scripts/build-engineer-mission.mjs','materials/models/derived/inputs/engineer-mission/trajectory.json','materials/models/derived/inputs/engineer-mission/motion.mjs','materials/models/derived/inputs/engineer-mission/grasps.json','materials/models/derived/inputs/engineer-mission/collision-geometry.glb','materials/models/derived/web/mission-transmitter.glb','materials/models/derived/rm2025-field/models/ore-gold.glb'];
+const files=['scripts/authoring/engineer-mission/engineer-mission-motion.ts','scripts/build-engineer-mission.mjs','materials/models/derived/inputs/engineer-mission/trajectory.json','materials/models/derived/inputs/engineer-mission/motion.mjs','materials/models/derived/inputs/engineer-mission/grasps.json','materials/models/derived/inputs/engineer-mission/collision-geometry.glb','materials/models/derived/web/mission-transmitter.glb','materials/models/derived/rm2025-field/models/ore-gold.glb'];
 const hash=async path=>createHash('sha256').update(await readFile(path)).digest('hex');
 const sources=Object.fromEntries(await Promise.all(files.map(async path=>[path,await hash(path)])));
 const g=await loadMissionGeometry(),M=g.M,v=(...p)=>new T.Vector3(...p),failures=[],poses=[];
