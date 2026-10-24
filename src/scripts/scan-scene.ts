@@ -22,6 +22,8 @@ export type ScanStage = {
   enableInteraction: (onChange?: () => void) => void;
   /** Restore the most recent frame() direction, retaining the current model pose. */
   resetView: () => void;
+  /** Optional HUD anchor in turntable-local space (engineer header: arm end). */
+  anchor?: THREE.Vector3;
   dispose: () => void;
 };
 

@@ -9,15 +9,16 @@ const base = import.meta.env.BASE_URL;
 ---
 
 <section id="easter-eggs" class="wrap eggs" aria-labelledby="eggs-title">
-  <header class="eggs-head">
-    <span class="head-rule" aria-hidden="true"></span>
+  <header class="eggs-head" data-hud-reveal>
+    <span class="mark num" aria-hidden="true">{String(L.items.length).padStart(2, '0')}</span>
     <h2 id="eggs-title" class="display">{t(L.title, lang)}</h2>
+    <span class="ruler" aria-hidden="true"></span>
   </header>
 
   <div class="egg-grid">
     {L.items.map((egg, i) => (
       <article class:list={['egg', egg.layout]} style={`--reveal-delay: ${i * 90}ms`}>
-        <div class="frame">
+        <div class="frame hud-frame">
           <video
             data-egg-video
             data-src={`${base}video/${egg.file}`}
@@ -28,8 +29,6 @@ const base = import.meta.env.BASE_URL;
             preload="none"
             aria-label={t(egg.alt, lang)}
           ></video>
-          <span class="corner tl" aria-hidden="true"></span>
-          <span class="corner br" aria-hidden="true"></span>
           <span class="pending" data-pending hidden>{t(L.pending, lang)}</span>
         </div>
         <div class="playback">
@@ -149,9 +148,12 @@ const base = import.meta.env.BASE_URL;
 
 <style>
   .eggs { padding-top: calc(var(--section-space) + 1rem); scroll-margin-top: 6rem; }
-  .eggs-head { display: flex; align-items: baseline; gap: 1rem; padding-top: 2rem; margin-bottom: 2rem; border-top: 1px solid var(--rule); }
+  /* Same heading idiom as the chapters: boxed mark (clip count), title, drawn ruler. */
+  .eggs-head { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 0 1.1rem; margin-bottom: 2rem; }
   .eggs-head h2 { font-size: clamp(2rem, 3.2vw, 2.8rem); }
-  .head-rule { width: 2.4rem; height: 3px; flex: none; align-self: center; background: var(--amber); }
+  .mark { display: grid; place-items: center; width: 2.4rem; height: 2.4rem; border: 1px solid var(--amber); color: var(--amber); font-size: 1rem; }
+  .ruler { grid-column: 1 / -1; height: 10px; margin-top: 1rem; background: var(--ruler); transform-origin: left; transition: transform .7s cubic-bezier(.2, .7, .2, 1); }
+  :global(.hud-js) .eggs-head:not(.is-in) .ruler { transform: scaleX(0); }
   .egg-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -170,13 +172,11 @@ const base = import.meta.env.BASE_URL;
     background: var(--panel);
   }
   video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: var(--ground); }
-  .corner { position: absolute; width: 18px; height: 18px; border: 2px solid var(--amber); pointer-events: none; }
-  .corner.tl { top: 9px; left: 9px; border-right: 0; border-bottom: 0; }
-  .corner.br { right: 9px; bottom: 9px; border-left: 0; border-top: 0; }
   .pending { position: absolute; top: .8rem; right: .8rem; padding: .25rem .45rem; border-left: 2px solid var(--amber); color: var(--ink-2); background: rgba(7, 13, 23, .82); font-size: var(--t-xs); }
   .playback { display: flex; align-items: center; gap: .8rem; min-width: 0; padding-top: .7rem; }
-  .playback button { flex: none; min-width: 3.6rem; min-height: 2rem; padding: .2rem .5rem; border: 1px solid var(--rule); color: var(--amber); background: var(--panel); font: inherit; font-size: var(--t-xs); cursor: pointer; }
-  .playback input { width: 0; min-width: 0; flex: 1; accent-color: var(--amber); cursor: pointer; }
+  .playback button { flex: none; min-width: 3.6rem; min-height: 2rem; padding: .2rem .6rem; border: 1px solid var(--rule); color: var(--amber); background: transparent; font: inherit; font-size: var(--t-xs); cursor: pointer; transition: background-color .15s; }
+  .playback button:hover { background: var(--amber-dim); }
+  .playback input { width: 0; min-width: 0; flex: 1; }
   .playback :is(button, input):focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; }
   .hud { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: 1fr auto; gap: 1rem .75rem; padding: 1.25rem 0 0; }
   .index { align-self: start; color: var(--amber); font-size: 1.8rem; line-height: 1; }

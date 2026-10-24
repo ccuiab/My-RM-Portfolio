@@ -15,7 +15,7 @@ const times=timing.chapters;
   <nav class="mission-chapters" aria-label={t(copy.title,lang)}>
     {copy.phases.filter((_,i)=>[0,1,2,4,6].includes(i)).map(phase=>{
       const i=copy.phases.indexOf(phase);
-      return <button type="button" data-mission-time={times[i]}>{t(phase,lang)}</button>;
+      return <button type="button" data-mission-time={times[i]}><span class="idx" aria-hidden="true">{`${Math.floor(times[i]/60)}:${String(Math.floor(times[i]%60)).padStart(2,'0')}`}</span>{t(phase,lang)}</button>;
     })}
   </nav>
   <figcaption>{t(concise?engineerShowcase.missionNote:copy.caption,lang)}</figcaption>
@@ -41,15 +41,18 @@ const times=timing.chapters;
 </script>
 
 <style>
-  .mission-film{margin:.5rem 0 0;border:1px solid var(--rule);background:var(--ground)}
+  .mission-film{margin:.5rem 0 0;background:var(--ground)}
   .mission-frame{position:relative;aspect-ratio:16/9;background:#070d17;overflow:hidden}
   video{display:block;width:100%;height:100%;object-fit:contain}
-  .mission-start{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:.75rem 1.25rem;border:1px solid var(--amber);color:var(--amber);background:var(--ground);font:inherit;cursor:pointer}
+  .mission-start{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:.75rem 1.4rem;border:1px solid var(--amber);color:var(--amber);background:rgba(7,13,23,.85);font:inherit;cursor:pointer}
   .mission-start[hidden]{display:none}
-  .mission-chapters{display:flex;gap:.4rem .7rem;flex-wrap:wrap;padding:.9rem 1.1rem;border-top:1px solid var(--rule)}
-  .mission-chapters button{font:inherit;font-size:var(--t-xs);text-align:left;color:var(--ink-2);background:transparent;border:0;border-bottom:1px solid var(--rule);padding:.3rem .1rem;cursor:pointer}
-  .mission-chapters button:hover{color:var(--amber);border-color:var(--amber)}
+  /* Chapter jumps as a timecoded timeline, same idiom as chapter B. */
+  .mission-chapters{display:flex;border-top:1px solid var(--rule)}
+  .mission-chapters button{flex:1;display:grid;gap:.15rem;justify-items:start;font:inherit;font-size:var(--t-xs);text-align:left;color:var(--ink-2);background:transparent;border:0;border-top:2px solid transparent;margin-top:-1px;padding:.6rem .6rem .5rem 0;cursor:pointer;transition:color .15s,border-color .15s}
+  .mission-chapters .idx{font:10px var(--f-mono);color:var(--ink-3);letter-spacing:.06em}
+  .mission-chapters button:hover{color:var(--ink);border-top-color:var(--amber)}
+  .mission-chapters button:hover .idx{color:var(--amber)}
   button:focus-visible{outline:2px solid var(--amber);outline-offset:4px}
-  figcaption{margin:0;padding:0 1.1rem 1rem;color:var(--ink-3);font-size:var(--t-xs);line-height:1.7;max-width:80ch}
-  @media(max-width:760px){.mission-chapters{padding:.65rem .75rem}.mission-chapters button{font-size:.65rem}figcaption{padding:0 .75rem .75rem}.mission-start{font-size:var(--t-xs)}}
+  figcaption{margin:0;padding:.2rem 0 0;color:var(--ink-3);font-size:var(--t-xs);line-height:1.7;max-width:80ch}
+  @media(max-width:760px){.mission-chapters{overflow-x:auto}.mission-chapters button{min-width:76px;font-size:.65rem}.mission-start{font-size:var(--t-xs)}}
 </style>

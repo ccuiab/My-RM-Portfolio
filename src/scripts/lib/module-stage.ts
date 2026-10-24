@@ -33,6 +33,13 @@ export async function loadModuleStage(canvas: HTMLCanvasElement, base: string, m
         }
       });
       const positions = new Float32Array(vertices);
+      // HUD lock anchor: the arm is raised in the CAD pose, so its end
+      // effector is the highest vertex (checked against a browser probe).
+      let best = -Infinity; const anchor = new Vector3();
+      for (let i = 0; i < positions.length; i += 3) {
+        if (positions[i + 1] > best) { best = positions[i + 1]; anchor.set(positions[i], positions[i + 1], positions[i + 2]); }
+      }
+      stage.anchor = stage.turntable.worldToLocal(anchor);
       const forward = direction.clone().normalize();
       const right = new Vector3().crossVectors(new Vector3(0, 1, 0), forward).normalize();
       const up = new Vector3().crossVectors(forward, right).normalize();
@@ -109,7 +116,8 @@ export async function loadModuleStage(canvas: HTMLCanvasElement, base: string, m
         }
       });
     } else stage.frame(sphere, direction);
-    stage.enableInteraction();
+    // Route drag/zoom redraws through stage.render so overlay hooks (HUD lock) follow.
+    stage.enableInteraction(() => stage.render());
     return stage;
   } catch (error) { stage.dispose(); throw error; }
 }

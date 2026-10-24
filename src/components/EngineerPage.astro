@@ -17,8 +17,10 @@ const p = engineer;
 ---
 <Base lang={lang} slug={p.slug} title={p.short} description={p.lede}>
   <div class="engineer-showcase">
-  <header class="wrap showcase-hero" data-engineer-header>
-    <div class="hero-heading">
+  <header class="showcase-hero" data-engineer-header>
+    <div class="hero-model"><ModuleMedia pic={{ ...p.assembly, model: 'engineer.glb' }} lang={lang} /></div>
+    <div class="wrap hero-heading">
+      <p class="hud-tag"><span><b>{p.drawing}</b> / ROBOT No.{p.robotNo}</span></p>
       <p class="season">{t(copy.season, lang)}</p>
       <h1 class="display">{t(copy.title, lang)}</h1>
       <p class="role">{t(copy.role, lang)}</p>
@@ -26,18 +28,23 @@ const p = engineer;
         {p.chapters.map(c => <a href={`#${c.id}`}><span>{c.mark}</span>{t(c.title, lang)}</a>)}
       </nav>
     </div>
-    <div class="hero-model"><ModuleMedia pic={{ ...p.assembly, model: 'engineer.glb' }} lang={lang} /></div>
-    <div class="hero-foot">
-      <div class="record">
-        <span class="record-value num">{p.stats[0].value}<small>{p.stats[0].unit}</small></span>
-        <div><span>{t(p.stats[0].label, lang)}</span><p>{t(p.statsSource, lang)}</p></div>
+    <!-- The one lock box on the site: the record, tied to the arm end when 3D is live. -->
+    <div class="lock" data-hud-reveal>
+      <svg class="lock-leader" aria-hidden="true"><line x1="0" y1="0" x2="0" y2="0" data-lock-line /></svg>
+      <span class="lock-reticle" aria-hidden="true"></span>
+      <div class="lock-readout hud-frame">
+        <span class="lock-label">{t(p.stats[0].label, lang)}<b>{p.stats[0].rank}</b></span>
+        <span class="lock-value num"><span data-count-up>{p.stats[0].value}</span><small>{p.stats[0].unit}</small></span>
+        <span class="lock-source">{t(p.statsSource, lang)}</span>
       </div>
+    </div>
+    <div class="wrap hero-foot" data-hud-reveal>
+      <dl class="hud-readout">
+        {p.titleBlock.slice(2).map(r => <div><dt>{t(r.label, lang)}</dt><dd class="text">{t(r.value, lang)}</dd></div>)}
+      </dl>
       <details class="project-details">
         <summary>{t(copy.projectDetails, lang)}</summary>
-        <div class="project-data">
-          <dl>{p.titleBlock.map(r => <div><dt>{t(r.label, lang)}</dt><dd>{t(r.value, lang)}</dd></div>)}</dl>
-          <dl>{p.stats.slice(1).map(s => <div><dt>{t(s.label, lang)}</dt><dd>{s.value}<small>{s.rank}</small></dd></div>)}</dl>
-        </div>
+        <dl class="hud-readout stats">{p.stats.slice(1).map(s => <div><dt>{t(s.label, lang)}</dt><dd>{s.value}<span class="unit">{s.rank}</span></dd></div>)}</dl>
       </details>
     </div>
   </header>
@@ -58,12 +65,12 @@ const p = engineer;
   </section>
 
   <div class="wrap exhibit-sequence">
-    {p.chapters.slice(0, 3).map(c => <EngineerChapter lang={lang} chapter={c}>
+    {p.chapters.slice(0, 2).map(c => <EngineerChapter lang={lang} chapter={c}>
       {c.id === 'layout' && <EngineerMission lang={lang} concise />}
       {c.id === 'arm' && <ArmExplode lang={lang} />}
     </EngineerChapter>)}
     <div class="supporting-modules">
-      {p.chapters.slice(3).map(c => <EngineerChapter lang={lang} chapter={c} compact />)}
+      {p.chapters.slice(2).map((c, i) => <EngineerChapter lang={lang} chapter={c} compact flip={i % 2 === 1} />)}
     </div>
   </div>
 
@@ -81,58 +88,74 @@ const p = engineer;
 </Base>
 
 <style>
-  .showcase-hero { display: grid; grid-template-columns: minmax(0, .72fr) minmax(0, 1.28fr); align-items: center; padding-top: 7.5rem; }
-  .hero-heading { position: relative; z-index: 1; padding: 2rem 0; }
-  .season { margin: 0 0 1.2rem; color: var(--amber); font: 500 1.15rem var(--f-latin); }
-  h1 { margin: 0; font-size: clamp(3.5rem, 6.2vw, 6.2rem); line-height: 1.08; text-wrap: balance; }
-  .role { margin: 1.5rem 0 0; font-size: var(--t-sm); color: var(--ink-2); }
-  .chapter-nav { display: flex; flex-wrap: wrap; gap: .6rem 1rem; max-width: 24rem; margin-top: 2.5rem; }
-  .chapter-nav a { display: flex; gap: .4rem; align-items: baseline; text-decoration: none; color: var(--ink-3); font-size: var(--t-xs); padding: .35rem 0; }
-  .chapter-nav a:hover { color: var(--ink); }
-  .chapter-nav span { color: var(--amber); font-family: var(--f-latin); }
-  .hero-model { min-width: 0; }
+  /* First fold: the vehicle fills the stage, the title sits over its left side. */
+  .showcase-hero { position: relative; display: grid; grid-template-rows: auto auto; padding-top: 5.5rem; overflow: hidden; }
+  .hero-model { grid-row: 1; grid-column: 1; min-width: 0; padding-left: clamp(0px, 24vw, 380px); }
   .hero-model :global(.module-media), .hero-model :global(.media-view) { background: transparent; }
-  .hero-model :global(.media-view) { height: clamp(420px, 43vw, 600px); }
+  .hero-model :global(.media-view) { height: clamp(520px, 74vh, 760px); }
   .hero-model :global(figcaption), .hero-model :global(.controls > span) { display: none; }
-  .hero-model :global(.controls) { justify-content: end; padding-right: 0; }
-  .hero-foot { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 1.5rem 3rem; padding-top: 1.5rem; margin-top: 1rem; border-top: 1px solid var(--rule); }
-  .record { display: flex; align-items: center; gap: 1.5rem; }
-  .record-value { font-size: 3.5rem; line-height: 1; color: var(--amber); }
-  .record-value small { font-size: 1.3rem; margin-left: .3rem; }
-  .record > div > span { font-size: var(--t-sm); }
-  .record p { font-size: var(--t-xs); color: var(--ink-3); margin: .4rem 0 0; }
-  .project-details { display: contents; }
-  .project-details summary { cursor: pointer; color: var(--ink-2); font-size: var(--t-sm); padding: .7rem 0; }
+  .hero-model :global(.status) { left: auto; right: max(var(--gutter), calc((100vw - var(--maxw)) / 2 + var(--gutter))); }
+  .hero-model :global(.controls) { justify-content: end; padding: 0 max(var(--gutter), calc((100vw - var(--maxw)) / 2 + var(--gutter))) 0 0; }
+  .hero-heading { grid-row: 1; grid-column: 1; align-self: center; position: relative; z-index: 2; pointer-events: none; }
+  .hero-heading > * { max-width: 30rem; }
+  .hero-heading a { pointer-events: auto; }
+  .hero-heading .hud-tag { justify-content: start; margin: 0 0 1.4rem; }
+  .season { margin: 0 0 1rem; color: var(--amber); font: 500 1.15rem var(--f-latin); }
+  h1 { margin: 0; font-size: clamp(3.6rem, 6.4vw, 6.4rem); line-height: 1.04; text-wrap: balance; text-shadow: 0 2px 24px var(--ground); }
+  .role { margin: 1.4rem 0 0; font-size: var(--t-sm); color: var(--ink-2); }
+  .chapter-nav { display: grid; grid-template-columns: repeat(2, max-content); gap: .1rem 1.6rem; margin-top: 2.2rem; padding-top: 1rem; border-top: 1px solid var(--rule); }
+  .chapter-nav a { display: flex; gap: .55rem; align-items: baseline; text-decoration: none; color: var(--ink-3); font-size: var(--t-xs); padding: .3rem 0; }
+  .chapter-nav a:hover { color: var(--ink); }
+  .chapter-nav span { color: var(--amber); font-family: var(--f-mono); }
+  /* Lock: reticle on the arm end, hairline leader, bracketed record readout. */
+  .lock { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+  .lock-leader { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+  .lock-leader line { stroke: var(--amber); stroke-width: 1; opacity: .6; }
+  .lock-reticle { position: absolute; left: var(--lock-x); top: var(--lock-y); width: 30px; height: 30px; transform: translate(-50%, -50%);
+    --c: linear-gradient(var(--amber), var(--amber));
+    background: var(--c) top left / 8px 1px, var(--c) top left / 1px 8px, var(--c) top right / 8px 1px, var(--c) top right / 1px 8px,
+      var(--c) bottom left / 8px 1px, var(--c) bottom left / 1px 8px, var(--c) bottom right / 8px 1px, var(--c) bottom right / 1px 8px,
+      radial-gradient(circle, var(--amber) 0 1.5px, transparent 2px) center / 100% 100%;
+    background-repeat: no-repeat; }
+  .showcase-hero:not([data-lock='on']) :is(.lock-leader, .lock-reticle) { display: none; }
+  .lock-readout { position: absolute; right: max(var(--gutter), calc((100% - var(--maxw)) / 2 + var(--gutter))); top: 7.5rem; display: grid; gap: .35rem; padding: 1rem 1.2rem 1.05rem; background: rgba(7, 13, 23, .72); backdrop-filter: blur(6px); pointer-events: auto; }
+  .lock-label { display: flex; justify-content: space-between; gap: 1.5rem; color: var(--ink-2); font-size: var(--t-xs); }
+  .lock-label b { color: var(--amber); font: 500 .6875rem var(--f-mono); letter-spacing: .08em; }
+  .lock-value { color: var(--amber); font: 600 3.6rem/1 var(--f-latin); font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .lock-value small { margin-left: .35rem; font-size: 1.2rem; }
+  .lock-source { max-width: 24ch; color: var(--ink-3); font-size: .6875rem; line-height: 1.5; }
+  /* Foot: project facts as one ticked readout strip; results stay one click away. */
+  .hero-foot { grid-row: 2; display: flex; flex-wrap: wrap; align-items: start; justify-content: space-between; gap: 0 2rem; }
+  .hero-foot > .hud-readout { border-top: 0; padding-top: 10px; background: var(--ruler); background-position: left top; }
+  .hero-foot dd.text { font: 500 var(--t-md)/1.4 var(--f-body); }
+  .project-details { padding-top: 10px; }
+  .project-details summary { cursor: pointer; color: var(--ink-2); font-size: var(--t-sm); padding: .85rem 0; }
+  .project-details summary::marker { color: var(--amber); }
   .project-details summary:hover { color: var(--amber); }
-  .project-data { grid-column: 1 / -1; padding: 1rem 0; }
-  .project-data dl { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 1.5rem; }
-  .project-data dt { font-size: var(--t-xs); color: var(--ink-3); }
-  .project-data dd { margin: .4rem 0 0; font-size: var(--t-sm); }
-  .project-data small { margin-left: .5rem; color: var(--amber); }
+  .project-details[open] { flex-basis: 100%; }
+  .stats dd { font-size: 1.3rem; }
   .video-intro { padding-top: 4rem; }
   .video-intro :global(.official-film) { margin: 0; }
-  .supporting-modules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 2.5rem; align-items: start; }
+  .supporting-modules { display: grid; gap: 0; }
   .links { padding-top: 2rem; }
   .links ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; }
   .links a { color: var(--amber); text-underline-offset: .25em; }
   @media(max-width: 1000px) {
-    .supporting-modules { grid-template-columns: 1fr; gap: 0; }
-    .hero-foot { grid-template-columns: 1fr; gap: 1rem; }
-    .project-data dl { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   }
   @media(max-width: 900px) {
-    .showcase-hero { grid-template-columns: 1fr; padding-top: 6.5rem; }
-    .hero-heading { padding: 0; }
+    /* Phone/tablet: stack title, model, record, facts; no leader. */
+    .showcase-hero { display: flex; flex-direction: column; padding-top: 6.5rem; }
+    .hero-heading { order: 1; }
     h1 { font-size: clamp(3.4rem, 11vw, 5rem); }
     .season { margin-bottom: .75rem; }
     .role { margin-top: 1rem; }
-    .chapter-nav { max-width: none; margin-top: 1.25rem; }
-    .hero-model { margin-top: 1.5rem; }
+    .chapter-nav { margin-top: 1.25rem; }
+    .hero-model { order: 2; padding-left: 0; margin-top: 1.5rem; }
     .hero-model :global(.media-view) { height: clamp(300px, 65vw, 480px); }
-    .hero-foot { margin-top: 1.5rem; }
-    .record { gap: 1rem; }
-    .record-value { font-size: 3rem; }
-    .project-data dl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .lock { order: 3; position: static; padding: 0 var(--gutter); }
+    .lock-leader, .lock-reticle { display: none; }
+    .lock-readout { position: relative; inset: auto; margin-top: 1rem; }
+    .hero-foot { order: 4; margin-top: 1rem; }
     .video-intro { padding-top: 2.5rem; }
   }
 </style>
