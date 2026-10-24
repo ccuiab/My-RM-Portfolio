@@ -149,7 +149,8 @@ const p = engineer;
     h1 { font-size: clamp(3.4rem, 11vw, 5rem); }
     .season { margin-bottom: .75rem; }
     .role { margin-top: 1rem; }
-    .chapter-nav { margin-top: 1.25rem; }
+    .chapter-nav { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 1.25rem; }
+    .chapter-nav a { display: grid; grid-template-columns: auto minmax(0, 1fr); }
     .hero-model { order: 2; padding-left: 0; margin-top: 1.5rem; }
     .hero-model :global(.media-view) { height: clamp(300px, 65vw, 480px); }
     .lock { order: 3; position: static; padding: 0 var(--gutter); }

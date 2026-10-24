@@ -62,6 +62,10 @@ npm run build
 npm run preview
 ```
 
+本地开发启动后，打开终端显示的地址，通常为 `http://localhost:4321/My-RM-Portfolio/`，并保持终端运行；按 `Ctrl+C` 停止。若提示已有开发服务运行，先在原终端停止，或执行 `npm run dev -- --force` 替换旧进程。
+
+开发服务不监听 `publish/`、`tmp/` 和 `.venv/`：这些本地历史网页、临时文件和 Python 环境包含大量文件，监听它们会拖慢启动和页面响应。源码与网页使用的素材仍正常监听。
+
 `npm run build` 会准备静态资源、生成得意黑字体子集，输出到 `publish/current/`，并自动保存到 `publish/history/<时间与提交>/`。部署工作流只上传 `publish/current/`，历史网页不会混入线上站点。模型与视频的网址仍分别为 `models/`、`video/`，站点 base 为 `/My-RM-Portfolio`。
 
 `npm run check` 覆盖网站和离线工具的 TypeScript 类型，以及版本索引、源码状态和动画时间轴测试。开发与检查使用 Node 24 或更新版本（本地已用 Node 26 验证，部署使用 Node 24）。构建与数值检查通过后，页面交互仍需在桌面、手机和减少动态效果模式下检查。

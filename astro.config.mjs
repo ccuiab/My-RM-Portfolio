@@ -9,4 +9,12 @@ export default defineConfig({
   srcDir: './src',
   publicDir: './.astro-public',
   outDir: './publish/current',
+  vite: {
+    server: {
+      watch: {
+        // Local archives and tool environments can contain tens of thousands of files.
+        ignored: ['**/publish/**', '**/tmp/**', '**/.venv/**'],
+      },
+    },
+  },
 });
