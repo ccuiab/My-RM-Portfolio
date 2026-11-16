@@ -18,6 +18,11 @@ interface Props {
 const { lang, label, credit, href, file, poster, alt, soundOn, soundOff, play } = Astro.props;
 const assetBase = import.meta.env.BASE_URL;
 const preview = await videoPoster(poster);
+const videoAttributes = {
+  src: `${assetBase}video/${file}`, poster: preview.src,
+  'aria-label': t(alt, lang), title: t(label, lang),
+  muted: true, loop: true, playsinline: true, preload: 'none' as const, controls: true,
+};
 ---
 <figure
   class="official-film"
@@ -30,17 +35,15 @@ const preview = await videoPoster(poster);
     <a href={href} target="_blank" rel="noopener noreferrer">{t(credit, lang)}</a>
   </figcaption>
   <div class="film-frame hud-frame">
-    <video
-      src={`${assetBase}video/${file}`}
-      poster={preview.src}
-      aria-label={t(alt, lang)}
-      title={t(label, lang)}
-      muted
-      loop
-      playsinline
-      preload="none"
-      controls
-    ></video>
+    <video {...videoAttributes} data-lazy-video loading="lazy"></video>
+    <noscript>
+      <style is:inline>
+        [data-official-film] [data-lazy-video],
+        [data-official-film] [data-sound-button],
+        [data-official-film] [data-play-button] { display: none !important; }
+      </style>
+      <video {...videoAttributes} data-noscript-video loading="eager"></video>
+    </noscript>
     <button
       class="film-sound"
       type="button"

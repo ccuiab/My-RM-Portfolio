@@ -22,9 +22,9 @@ export function setStudyOpacity(material:THREE.MeshStandardMaterial,opacity:numb
 }
 
 /** Fade the depth-resolved vehicle image once, rather than every overlapping CAD face. */
-export function createStudyRenderer(renderer:THREE.WebGLRenderer,scene:THREE.Scene,camera:THREE.Camera,context:THREE.Object3D){
-  const options={type:THREE.HalfFloatType,samples:4};
-  const local=new THREE.WebGLRenderTarget(1,1,options),vehicle=new THREE.WebGLRenderTarget(1,1,options);
+export function createStudyRenderer(renderer:THREE.WebGLRenderer,scene:THREE.Scene,camera:THREE.Camera,context:THREE.Object3D,options:{contextOnlyBackground?:boolean}={}){
+  const targetOptions={type:THREE.HalfFloatType,samples:4};
+  const local=new THREE.WebGLRenderTarget(1,1,targetOptions),vehicle=new THREE.WebGLRenderTarget(1,1,targetOptions);
   local.depthTexture=new THREE.DepthTexture(1,1,THREE.UnsignedIntType);
   vehicle.depthTexture=new THREE.DepthTexture(1,1,THREE.UnsignedIntType);
   // The two depth buffers let the compositor retain real front/back relationships
@@ -35,19 +35,23 @@ export function createStudyRenderer(renderer:THREE.WebGLRenderer,scene:THREE.Sce
   scene.traverse(node=>{if((node as THREE.Light).isLight){layers.set(node,node.layers.mask);node.layers.enable(1);}});
   const material=new THREE.ShaderMaterial({
     depthTest:false,depthWrite:false,
-    uniforms:{localImage:{value:local.texture},vehicleImage:{value:vehicle.texture},localDepth:{value:local.depthTexture},vehicleDepth:{value:vehicle.depthTexture}},
+    uniforms:{localImage:{value:local.texture},vehicleImage:{value:vehicle.texture},localDepth:{value:local.depthTexture},vehicleDepth:{value:vehicle.depthTexture},hasVehicle:{value:true}},
     vertexShader:'varying vec2 uvImage; void main(){uvImage=uv;gl_Position=vec4(position.xy,0.,1.);}',
     fragmentShader:`
       uniform sampler2D localImage;
       uniform sampler2D vehicleImage;
       uniform sampler2D localDepth;
       uniform sampler2D vehicleDepth;
+      uniform bool hasVehicle;
       varying vec2 uvImage;
       void main(){
         vec4 arm=texture2D(localImage,uvImage);
-        vec4 vehicle=texture2D(vehicleImage,uvImage);
-        bool vehicleInFront=texture2D(vehicleDepth,uvImage).r<texture2D(localDepth,uvImage).r;
-        gl_FragColor=vehicleInFront?vehicle+arm*(1.-vehicle.a):arm+vehicle*(1.-arm.a);
+        gl_FragColor=arm;
+        if(hasVehicle){
+          vec4 vehicle=texture2D(vehicleImage,uvImage);
+          bool vehicleInFront=texture2D(vehicleDepth,uvImage).r<texture2D(localDepth,uvImage).r;
+          gl_FragColor=vehicleInFront?vehicle+arm*(1.-vehicle.a):arm+vehicle*(1.-arm.a);
+        }
         gl_FragColor.rgb/=max(gl_FragColor.a,0.00001);
         #include <tonemapping_fragment>
         #include <colorspace_fragment>
@@ -57,20 +61,29 @@ export function createStudyRenderer(renderer:THREE.WebGLRenderer,scene:THREE.Sce
   const geometry=new THREE.PlaneGeometry(2,2),output=new THREE.Scene();
   output.add(new THREE.Mesh(geometry,material));
   const outputCamera=new THREE.Camera(),size=new THREE.Vector2(),autoReset=renderer.info.autoReset;
+  let passes=0,vehiclePass=false;
   renderer.info.autoReset=false;
   return {
     render(opacity:number){
       renderer.getDrawingBufferSize(size);
       if(local.width!==size.x||local.height!==size.y){local.setSize(size.x,size.y);vehicle.setSize(size.x,size.y);}
       const target=renderer.getRenderTarget(),cameraLayers=camera.layers.mask;
+      // Only C reserves layer 1 exclusively for context. B also uses that layer
+      // for faded arm parts, so its two geometry passes must always remain.
+      const hasVehicle=!options.contextOnlyBackground||context.visible;
+      material.uniforms.hasVehicle.value=hasVehicle;
+      passes=0;vehiclePass=false;
       renderer.info.reset();
       try{
         contextMaterials.forEach(m=>setStudyOpacity(m,THREE.MathUtils.clamp(opacity,0,1),true));
-        camera.layers.set(0);renderer.setRenderTarget(local);renderer.render(scene,camera);
-        camera.layers.set(1);renderer.setRenderTarget(vehicle);renderer.render(scene,camera);
-        renderer.setRenderTarget(target);renderer.render(output,outputCamera);
+        camera.layers.set(0);renderer.setRenderTarget(local);renderer.render(scene,camera);passes++;
+        if(hasVehicle){camera.layers.set(1);renderer.setRenderTarget(vehicle);renderer.render(scene,camera);passes++;vehiclePass=true;}
+        // Keep the original HDR blending, unpremultiplication and tone mapping.
+        // A disabled background is never sampled, including its stale depth.
+        renderer.setRenderTarget(target);renderer.render(output,outputCamera);passes++;
       }finally{camera.layers.mask=cameraLayers;renderer.setRenderTarget(target);}
     },
+    renderInfo:()=>({passes,vehiclePass}),
     dispose(){local.dispose();vehicle.dispose();geometry.dispose();material.dispose();layers.forEach((mask,node)=>{node.layers.mask=mask;});renderer.info.autoReset=autoReset;},
   };
 }

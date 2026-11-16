@@ -297,7 +297,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     render, fitView: fit,
     attachSwerveVehicle(context: THREE.Group, points: THREE.Vector3[]) {
       overviewPoints = points;
-      vehicleRenderer = createStudyRenderer(renderer, scene, camera, context);
+      vehicleRenderer = createStudyRenderer(renderer, scene, camera, context, { contextOnlyBackground: true });
     },
     setSwerveOverview(amount: number, opacity: number, moveCamera: boolean, resumeWeight = 1) {
       overviewWeight = amount; vehicleOpacity = opacity;
@@ -317,7 +317,8 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     releaseInspection() {
       inspection = undefined; inspectionKey = undefined; inspectionBlend = 0; restoreInspectionMaterials();
     },
-    renderInfo: () => ({ calls: renderer.info.render.calls, triangles: renderer.info.render.triangles }),
+    renderInfo: () => ({ calls: renderer.info.render.calls, triangles: renderer.info.render.triangles,
+      passes: vehicleRenderer?.renderInfo().passes ?? 1, vehiclePass: vehicleRenderer?.renderInfo().vehiclePass ?? false }),
     reserveSwerveView(sample: (time: number, amount: number) => void, period: number) {
       if (!isSwerve) return;
       swerveEnvelope = [];

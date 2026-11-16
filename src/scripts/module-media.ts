@@ -75,6 +75,10 @@ document.querySelectorAll<HTMLElement>('[data-module-media]').forEach(root => {
             }
           };
         }
+        // A retained scene may finish an asynchronous camera fit offscreen.
+        // All redraw paths, including that completion callback, share this gate.
+        const renderVisible = next.render;
+        next.render = () => { if (visible) renderVisible(); };
         stage.onResize(() => { if (visible) stage?.render(); });
         canvas.addEventListener('pointerdown', pause); canvas.addEventListener('keydown', pause);
       } catch (error) { next.dispose(); stage = undefined; throw error; }

@@ -21,18 +21,26 @@ const base = import.meta.env.BASE_URL;
   <div class="wrap grid">
     <div class="media">
     <div class="screen panel">
-      {hasClip ? (
+      {hasClip ? (<>
         <video
           class="clip"
+          data-lazy-video
           src={base + clip}
           poster={poster.src}
           muted
           playsinline
           loop
+          loading="lazy"
           preload="none"
           aria-label={t(record.title, lang)}
         ></video>
-      ) : (
+        <noscript>
+          <style is:inline>
+            [data-record] [data-lazy-video], [data-record] .playback { display: none !important; }
+          </style>
+          <img class="clip" src={poster.src} alt={t(record.title, lang)} loading="eager" />
+        </noscript>
+      </>) : (
         <Image class="clip still" src={record.broadcast.src} alt={t(record.broadcast.alt, lang)} widths={[844]} />
       )}
       <div class="hud" aria-hidden="true">

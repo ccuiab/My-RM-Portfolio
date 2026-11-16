@@ -16,6 +16,11 @@ const posters = await Promise.all(L.items.map(egg => videoPoster(egg.poster)));
     <h2 id="eggs-title" class="display">{t(L.title, lang)}</h2>
     <span class="ruler" aria-hidden="true"></span>
   </header>
+  <noscript>
+    <style is:inline>
+      .eggs [data-lazy-video], .eggs .playback { display: none !important; }
+    </style>
+  </noscript>
 
   <div class="egg-grid">
     {L.items.map((egg, i) => (
@@ -23,14 +28,17 @@ const posters = await Promise.all(L.items.map(egg => videoPoster(egg.poster)));
         <div class="frame hud-frame">
           <video
             data-egg-video
+            data-lazy-video
             data-src={`${base}video/${egg.file}`}
             poster={posters[i].src}
             muted
             loop
             playsinline
+            loading="lazy"
             preload="none"
             aria-label={t(egg.alt, lang)}
           ></video>
+          <noscript><img class="noscript-poster" src={posters[i].src} alt={t(egg.alt, lang)} loading="eager" /></noscript>
           <span class="pending" data-pending hidden>{t(L.pending, lang)}</span>
         </div>
         <div class="playback">
@@ -173,7 +181,7 @@ const posters = await Promise.all(L.items.map(egg => videoPoster(egg.poster)));
     border: 1px solid var(--rule);
     background: var(--panel);
   }
-  video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: var(--ground); }
+  video, .noscript-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: var(--ground); }
   .pending { position: absolute; top: .8rem; right: .8rem; padding: .25rem .45rem; border-left: 2px solid var(--amber); color: var(--ink-2); background: rgba(7, 13, 23, .82); font-size: var(--t-xs); }
   .playback { display: flex; align-items: center; gap: .8rem; min-width: 0; padding-top: .7rem; }
   .playback button { flex: none; min-width: 3.6rem; min-height: 2rem; padding: .2rem .6rem; border: 1px solid var(--rule); color: var(--amber); background: transparent; font: inherit; font-size: var(--t-xs); cursor: pointer; transition: background-color .15s; }

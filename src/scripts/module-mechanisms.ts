@@ -109,6 +109,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       if (whole) {
         root.dataset.overview = whole.overview.toFixed(4); root.dataset.bodyOpacity = whole.bodyOpacity.toFixed(4);
         root.dataset.otherWheelOpacity = whole.otherOpacity.toFixed(4);
+        root.dataset.otherWheelUpdates = String(whole.wheelUpdates);
         root.dataset.wheelSuspensions = JSON.stringify(whole.suspensions);
         root.dataset.wheelSteering = JSON.stringify(whole.steering);
       }
@@ -136,7 +137,10 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       });
     }
     stage.render();
-    if (isSwerve) { const info = stage.renderInfo(); root.dataset.renderTriangles = String(info.triangles); root.dataset.renderCalls = String(info.calls); }
+    if (isSwerve) {
+      const info = stage.renderInfo(); root.dataset.renderTriangles = String(info.triangles); root.dataset.renderCalls = String(info.calls);
+      root.dataset.renderPasses = String(info.passes); root.dataset.vehiclePass = String(info.vehiclePass);
+    }
     detail?.setAttribute('aria-pressed', String(stage.isInspecting('steering-input')));
     sensorDetail?.setAttribute('aria-pressed', String(stage.isInspecting('optical-pcb')));
     root.dataset.inspection = stage.isInspecting('optical-pcb') ? 'optical-pcb' : stage.isInspecting('steering-input') ? 'steering-input' : 'none';

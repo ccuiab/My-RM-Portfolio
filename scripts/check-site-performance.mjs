@@ -29,9 +29,37 @@ const makePage = async options => {
   const requests = [];
   page.on('request', request => requests.push(request.url()));
   page.on('pageerror', error => report.errors.push(String(error)));
+  page.on('console', message => { if (/GL_INVALID|WebGL.*(?:INVALID|error)|Shader Error/i.test(message.text())) report.errors.push(message.text()); });
   page.on('response', response => { if (response.status() >= 400) report.errors.push(`${response.status()} ${response.url()}`); });
   await page.addInitScript(() => {
     window.__perf = { raf: 0, long: [], cls: 0 };
+    window.__gl = { created: 0, live: 0, maximum: 0, draws: 0 };
+    const contexts = new Set(), seen = new WeakSet(), wrapped = new WeakSet();
+    window.__liveGL = contexts;
+    const getContext = HTMLCanvasElement.prototype.getContext;
+    HTMLCanvasElement.prototype.getContext = function (...args) {
+      const gl = getContext.apply(this, args);
+      if (!args[0].startsWith('webgl') || !gl || seen.has(gl)) return gl;
+      seen.add(gl); contexts.add(gl); window.__gl.created++;
+      window.__gl.live = contexts.size; window.__gl.maximum = Math.max(window.__gl.maximum, contexts.size);
+      const lost = () => { contexts.delete(gl); window.__gl.live = contexts.size; };
+      this.addEventListener('webglcontextlost', lost);
+      const extension = gl.getExtension.bind(gl);
+      gl.getExtension = name => {
+        const result = extension(name);
+        if (name === 'WEBGL_lose_context' && result && !wrapped.has(result)) {
+          wrapped.add(result); const lose = result.loseContext.bind(result);
+          result.loseContext = () => { lost(); lose(); };
+        }
+        return result;
+      };
+      return gl;
+    };
+    for (const prototype of [WebGLRenderingContext.prototype, WebGL2RenderingContext.prototype]) {
+      for (const name of ['drawElements', 'drawArrays']) {
+        const draw = prototype[name]; prototype[name] = function (...args) { window.__gl.draws++; return draw.apply(this, args); };
+      }
+    }
     const request = window.requestAnimationFrame;
     window.requestAnimationFrame = callback => request.call(window, time => { window.__perf.raf++; callback(time); });
     new PerformanceObserver(list => list.getEntries().forEach(e => window.__perf.long.push(e.duration))).observe({ type: 'longtask', buffered: true });
@@ -87,6 +115,10 @@ try {
   assert.equal(desktop.requests.some(url => /\.mp4(?:\?|$)/.test(url)), false);
   assert.equal(desktop.requests.some(url => /picking[.-].*\.js/.test(url)), false, 'Picking code must not load before interaction');
   assert.ok(await page.locator('video').evaluateAll(videos => videos.every(v => v.poster.endsWith('.webp'))), 'Video posters must use optimized WebP copies');
+  if (await page.evaluate(() => 'loading' in HTMLVideoElement.prototype)) {
+    const eggPosters = await page.locator('[data-egg-video]').evaluateAll(videos => videos.map(v => v.poster));
+    assert.ok(eggPosters.every(url => !desktop.requests.includes(url)), 'Below-fold ending posters must not be fetched at the top');
+  }
   report.metrics.push(await page.evaluate(() => ({ name: 'engineer-initial', ...window.__perf })));
   await page.locator('[data-module-spin]').click();
   await idle(page);
@@ -99,6 +131,25 @@ try {
   await page.locator('[data-module-reset]').click();
   await page.screenshot({ path: join(out, 'engineer-resized.png') });
   pass('Header loads without a video download; paused canvas persists; camera and HUD survive resize/reset');
+  const createdBefore = await page.evaluate(() => { window.__savedCanvas = document.querySelector('[data-module-view] canvas'); return window.__gl.created; });
+  // Start the asynchronous camera fit while visible, then leave before it ends.
+  await page.setViewportSize({ width: 1360, height: 850 });
+  await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  await scrollTo(page, '.footer');
+  await page.waitForFunction(() => document.querySelector('[data-module-media]').dataset.context === 'warm');
+  const drawsBefore = await page.evaluate(() => window.__gl.draws);
+  await page.waitForTimeout(2500);
+  assert.equal(await page.evaluate(() => window.__gl.draws), drawsBefore, 'Retained scenes must not draw');
+  await scrollTo(page, '[data-engineer-header]');
+  await page.waitForFunction(() => document.querySelector('[data-module-media]').dataset.context === 'active');
+  assert.equal(await page.evaluate(() => document.querySelector('[data-module-view] canvas') === window.__savedCanvas), true);
+  assert.equal(await page.evaluate(() => window.__gl.created), createdBefore);
+  assert.equal(await page.locator('[data-module-spin]').getAttribute('aria-pressed'), 'false');
+  pass('Short offscreen visits reuse the paused canvas without drawing or creating another context');
+  await scrollTo(page, '[data-egg-video]');
+  await page.waitForFunction(() => { const video = document.querySelector('[data-egg-video]'); return video.readyState >= 2 && !video.paused && video.currentTime > .15; });
+  assert.ok(desktop.requests.includes(await page.locator('[data-egg-video]').first().evaluate(video => video.poster)));
+  pass('Deferred ending posters load and their videos actually play after entering the viewport');
   await scrollTo(page, '[data-official-film]');
   await page.waitForFunction(() => { const v = document.querySelector('[data-official-film] video'); return v.currentTime > .1 && !v.paused; });
   await scrollTo(page, '[data-mission-film]');
@@ -122,6 +173,7 @@ try {
   assert.equal(await page.locator('[data-arm-explode]').getAttribute('data-context'), 'active');
   await page.locator('[data-story-step]').last().click();
   await page.waitForFunction(() => Number(document.querySelector('[data-arm-explode]').dataset.contextOpacity) > .9);
+  assert.equal(await page.locator('[data-arm-explode]').getAttribute('data-render-passes'), '3');
   pass('Arm animation, pause, assembly and chapter selection remain available');
 
   await scrollTo(page, '[data-mechanism="swerve"]');
@@ -129,6 +181,8 @@ try {
   await page.locator('[data-mechanism="swerve"] [data-mechanism-play]').click();
   await page.locator('[data-explode-to="1"]').click();
   await page.waitForFunction(() => Number(document.querySelector('[data-mechanism="swerve"]').dataset.explode) > .999);
+  assert.equal(await page.locator('[data-mechanism="swerve"]').getAttribute('data-render-passes'), '2');
+  assert.equal(await page.locator('[data-mechanism="swerve"]').getAttribute('data-other-wheel-updates'), '0');
   await page.locator('[data-mechanism="swerve"] canvas').hover();
   await page.waitForFunction(() => document.querySelector('[data-mechanism="swerve"] canvas').dataset.picking === 'ready');
   assert.ok(await page.locator('[data-mechanism="swerve"]').evaluate(root => [...root.querySelectorAll('[data-mechanism-annotation]:not([hidden])')].every(label => {
@@ -136,8 +190,22 @@ try {
     return r.left >= frame.left - 1 && r.right <= frame.right + 1 && r.top >= frame.top && r.bottom <= frame.bottom;
   })), 'Moved annotations must stay within the viewport');
   await page.locator('[data-mechanism="swerve"]').screenshot({ path: join(out, 'swerve-exploded.png') });
+  await scrollTo(page, '.footer');
+  await page.waitForFunction(() => document.querySelector('[data-mechanism="swerve"]').dataset.context === 'released');
+  await scrollTo(page, '[data-mechanism="swerve"]');
+  await ready(page, '[data-mechanism="swerve"]');
+  assert.equal(await page.locator('[data-mechanism="swerve"]').getAttribute('data-render-passes'), '2');
+  assert.ok(await page.evaluate(() => [...window.__liveGL].every(gl => gl.getError() === gl.NO_ERROR)));
+  await page.locator('[data-mechanism="swerve"]').screenshot({ path: join(out, 'swerve-cold-exploded.png') });
+  pass('A fresh exploded view skips its uninitialized background pass without WebGL errors');
   await page.locator('[data-explode-to="0"]').click();
   await page.waitForFunction(() => Number(document.querySelector('[data-mechanism="swerve"]').dataset.explode) < .001);
+  await page.locator('[data-mechanism="swerve"] [data-mechanism-play]').click();
+  await page.waitForFunction(() => {
+    const root = document.querySelector('[data-mechanism="swerve"]');
+    return root.dataset.vehiclePass === 'true' && root.dataset.otherWheelUpdates === '3' && Number(root.dataset.overview) > .99 && Number(root.dataset.otherWheelOpacity) > .99;
+  });
+  await page.locator('[data-mechanism="swerve"]').screenshot({ path: join(out, 'swerve-restored-vehicle.png') });
   await scrollTo(page, '[data-mechanism="pump"]');
   await ready(page, '[data-mechanism="pump"]');
   const crank = await page.locator('[data-mechanism="pump"]').getAttribute('data-crank-angle');
@@ -146,11 +214,44 @@ try {
   await page.locator('[data-mechanism="pump"]').screenshot({ path: join(out, 'pump-paused.png') });
   pass('Swerve explosion/reassembly and pump motion/pause work');
   await scrollTo(page, '.footer');
+  const retentionStarted = Date.now();
+  await page.evaluate(() => { window.__retentionProbe = setInterval(() => window.dispatchEvent(new Event('scroll')), 100); });
   await page.waitForFunction(() => [...document.querySelectorAll('[data-context]')].every(e => e.dataset.context === 'released'));
+  await page.evaluate(() => clearInterval(window.__retentionProbe));
+  assert.ok(Date.now() - retentionStarted < 11000, 'Repeated scroll events must not extend the retention deadline');
+  assert.ok(await page.evaluate(() => window.__gl.maximum <= 2), 'Active, retained and pending contexts must share the two-context budget');
+  assert.ok(await page.evaluate(() => [...window.__liveGL].every(gl => gl.getError() === gl.NO_ERROR)));
   await scrollTo(page, '[data-engineer-header]');
   await ready(page, '[data-module-media]');
-  pass('Offscreen 3D contexts release and can load again');
+  pass('Retention expires despite repeated scroll events; context budget stays at two and released views reload');
   await desktop.context.close();
+
+  const coldMission = await makePage({ reducedMotion: 'reduce' });
+  await coldMission.page.goto(base + 'engineer/');
+  await scrollTo(coldMission.page, '[data-mission-film]');
+  assert.equal(await coldMission.page.locator('[data-mission-film] video').evaluate(video => video.readyState), 0);
+  const jump = coldMission.page.locator('[data-mission-time]').nth(1), jumpTime = Number(await jump.getAttribute('data-mission-time'));
+  await jump.click();
+  await coldMission.page.waitForFunction(time => {
+    const video = document.querySelector('[data-mission-film] video');
+    return video.readyState >= 2 && !video.paused && video.currentTime > time + .1;
+  }, jumpTime);
+  pass('A chapter click loads and actually plays the requested position of a previously unloaded mission video');
+  await coldMission.context.close();
+
+  const withoutScripts = await makePage({ javaScriptEnabled: false });
+  await withoutScripts.page.goto(base + 'engineer/');
+  for (const selector of ['[data-official-film] video', '[data-mission-film] video']) {
+    const player = withoutScripts.page.locator(`${selector}:visible`);
+    assert.equal(await player.count(), 1, 'No-JS fallback must show only one native player');
+    await player.scrollIntoViewIfNeeded();
+    const native = await player.evaluate(video => ({ src: video.src, poster: video.poster, controls: video.controls, height: video.clientHeight }));
+    assert.ok(native.src && native.poster && native.controls && native.height > 0);
+    await withoutScripts.page.waitForFunction(url => performance.getEntriesByName(url).length > 0, native.poster, { timeout: 15000 });
+  }
+  await withoutScripts.page.screenshot({ path: join(out, 'without-javascript.png') });
+  pass('Official and mission videos keep native sources, posters and controls with JavaScript disabled');
+  await withoutScripts.context.close();
 
   const aborting = await makePage();
   await aborting.page.addInitScript(() => {
@@ -178,14 +279,17 @@ try {
   await aborting.page.locator('[data-mechanism="pump"] canvas').hover();
   await aborting.page.waitForFunction(() => [...window.__liveWorkers].some(w => w.url.includes('picking.worker')));
   await scrollTo(aborting.page, '.footer');
+  await aborting.page.emulateMedia({ reducedMotion: 'reduce' });
   await aborting.page.waitForFunction(() => window.__liveWorkers.size === 0);
+  await aborting.page.waitForFunction(() => window.__gl.live === 0);
   await aborting.page.unroute('**/picking.worker-*.js');
+  await aborting.page.emulateMedia({ reducedMotion: 'no-preference' });
   await scrollTo(aborting.page, '[data-mechanism="pump"]');
   await ready(aborting.page, '[data-mechanism="pump"]');
   await aborting.page.locator('[data-mechanism="pump"] canvas').hover();
   await aborting.page.waitForFunction(() => document.querySelector('[data-mechanism="pump"] canvas').dataset.picking === 'ready');
   assert.equal(await aborting.page.evaluate(() => window.__liveWorkers.size), 0);
-  pass('Picking loads on demand, cancels when leaving, and works after returning');
+  pass('Picking loads on demand, aborts when reduced motion releases retained scenes, and works after returning');
   await aborting.context.close();
 
   for (const [name, options] of [

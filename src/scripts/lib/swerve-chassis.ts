@@ -88,15 +88,22 @@ export async function loadSwerveChassis(stage: MechanismStage, base: string, sig
       if (automatic) { overview = pose.overview; bodyOpacity = pose.bodyOpacity; otherOpacity = pose.otherOpacity; }
       else if (manualDetail) { overview = 0; bodyOpacity = 0; otherOpacity = 0; }
       context.visible = bodyOpacity > .00001;
+      let wheelUpdates = 0;
       otherWheels.forEach(w => {
+        w.frame.visible = otherOpacity > .00001;
+        if (!w.frame.visible) return;
+        // The pose is a pure sample of absolute time, so hidden wheels need no
+        // intermediate integration. Their first visible frame catches up here.
         const sample = swervePresentation(time, w.index);
         const steering = sample.steering + THREE.MathUtils.lerp(w.spec.rest_steer, w.spec.common_steer, sample.alignment);
         w.motion.update(0, 0, { ...sample, demo: true, steering });
-        w.frame.visible = otherOpacity > .00001;
+        wheelUpdates++;
+        // motion.update resets some cover opacities; reapply the whole-wheel
+        // fade even when otherOpacity happens to match the previous frame.
         w.materials.forEach(material => setCadOpacity(material, otherOpacity));
       });
       stage.setSwerveOverview(overview, bodyOpacity, automatic || manualDetail, resumeWeight);
-      return { overview, bodyOpacity, otherOpacity,
+      return { overview, bodyOpacity, otherOpacity, wheelUpdates,
         suspensions: [0, 1, 2, 3].map(i => swervePresentation(time, i).suspension),
         steering: metadata.wheels.map((w, i) => { const p = swervePresentation(time, i); return p.steering + THREE.MathUtils.lerp(w.rest_steer, w.common_steer, p.alignment); }) };
     },
