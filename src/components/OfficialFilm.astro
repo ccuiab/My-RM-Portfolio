@@ -1,5 +1,6 @@
 ---
 import { t, type Lang, type T } from '../data/i18n';
+import { videoPoster } from '../data/video-posters';
 
 interface Props {
   lang: Lang;
@@ -16,6 +17,7 @@ interface Props {
 
 const { lang, label, credit, href, file, poster, alt, soundOn, soundOff, play } = Astro.props;
 const assetBase = import.meta.env.BASE_URL;
+const preview = await videoPoster(poster);
 ---
 <figure
   class="official-film"
@@ -30,7 +32,7 @@ const assetBase = import.meta.env.BASE_URL;
   <div class="film-frame hud-frame">
     <video
       src={`${assetBase}video/${file}`}
-      poster={`${assetBase}video/${poster}`}
+      poster={preview.src}
       aria-label={t(alt, lang)}
       title={t(label, lang)}
       muted

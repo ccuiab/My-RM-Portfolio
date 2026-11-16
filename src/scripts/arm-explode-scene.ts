@@ -11,6 +11,7 @@ import { armMotionMatrices, type MotionContract } from './lib/arm-study-motion';
 import {createChains,type ChainData} from './lib/arm-chain-motion';
 import {createArmStudyTransmission,wristPowerTrace,type WristTransmissionData} from './lib/arm-study-transmission';
 import {GROUND_Y,STEP_HEIGHT,smooth,stageDescent} from './arm-study-story';
+import {FrameClock} from './lib/frame-clock';
 import {createStudyRenderer,setStudyOpacity} from './lib/arm-study-renderer';
 import {study as limitStudy,profileClearance} from './lib/arm-linked-limit';
 import {createLimitWorkspace} from './lib/arm-limit-workspace';
@@ -151,7 +152,8 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   const routeKey=root.querySelector<HTMLDetailsElement>('[data-route-key]')!,routeList=root.querySelector<HTMLOListElement>('[data-route-list]')!;
   const featureLabels=[...root.querySelectorAll<HTMLElement>('[data-feature-label]')],routeLabels=[...root.querySelectorAll<HTMLElement>('[data-route-label]')];
   const chapters=[...root.querySelectorAll<HTMLButtonElement>('[data-story-step]')];
-  let visible=false,disposed=false,frame=0,lastFrame=0,frames=0,clock=Number(root.dataset.storyTime||0),auto=root.dataset.playing!=='false',internal=false,dragging=false,manualCamera=root.dataset.manualCamera==='true',idleUntil=0,timer=0;
+  let visible=false,disposed=false,frame=0,frames=0,clock=Number(root.dataset.storyTime||0),auto=root.dataset.playing!=='false',internal=false,dragging=false,manualCamera=root.dataset.manualCamera==='true',idleUntil=0,timer=0;
+  const frameClock=new FrameClock(30);
   let current=armStudyPose(clock),lastUiKey='';
   let wheelCycle=Number(root.dataset.wheelCycle||0);
   let rejoin:{position:THREE.Vector3;target:THREE.Vector3;elapsed:number}|undefined;
@@ -221,7 +223,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   const requestDraw=()=>{if(visible&&!disposed&&!frame)frame=requestAnimationFrame(draw);};
   const armTimer=()=>{
     clearTimeout(timer);
-    if(auto&&visible&&!dragging&&Number.isFinite(idleUntil))timer=window.setTimeout(()=>{lastFrame=0;requestDraw();},Math.max(16,idleUntil-performance.now()+16));
+    if(auto&&visible&&!dragging&&Number.isFinite(idleUntil))timer=window.setTimeout(()=>{frameClock.reset();requestDraw();},Math.max(16,idleUntil-performance.now()+16));
   };
   const activity=()=>{idleUntil=performance.now()+5000;clearTimeout(timer);armTimer();requestDraw();};
   const beginRejoin=()=>{rejoin={position:camera.position.clone(),target:controls.target.clone(),elapsed:0};manualCamera=true;idleUntil=0;requestDraw();};
@@ -236,8 +238,11 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
       featureLabels.forEach((label,i)=>{label.textContent=pose.phase==='climb'?copy.climbFeatures[i]:(id===4||id===3&&routeId===10)?copy.features[routeId!]?.[i]??'':id===null?'':copy.features[id]?.[i]??'';}); lastUiKey=uiKey;
     }
     chapters.forEach((button,i)=>button.setAttribute('aria-pressed',String(i===pose.step)));
-    play.textContent=auto?play.dataset.stop!:play.dataset.start!;play.setAttribute('aria-pressed',String(auto));
-    slider.value=String(Math.round(clock/ARM_STUDY_DURATION*1000));timeLabel.value=`${clock.toFixed(1)} s`;
+    const playText=auto?play.dataset.stop!:play.dataset.start!;
+    if(play.textContent!==playText)play.textContent=playText;
+    play.setAttribute('aria-pressed',String(auto));
+    slider.value=String(Math.round(clock/ARM_STUDY_DURATION*1000));
+    const timeText=`${clock.toFixed(1)} s`;if(timeLabel.value!==timeText)timeLabel.value=timeText;
   };
   const applyPose=(pose:StudyPose)=>{
     const moving=pose.phase==='motion'||pose.angles.some(a=>Math.abs(a)>1e-8);
@@ -248,7 +253,10 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
     const transforms=armMotionMatrices(meta.motion,pose.angles);
     const translation=new THREE.Matrix4();
     const weight=pose.restoreWeight??1;const body=new THREE.Matrix4().makeTranslation(CLIMB_FORWARD.x*climbAdvance(pose.climb)*weight,climbRise(pose.climb)*weight,CLIMB_FORWARD.z*climbAdvance(pose.climb)*weight);
-    for(const p of contextParts){p.node.matrix.copy(contextTransform(p.group,climbStroke(pose.climb)*weight,body,climbAdvance(pose.climb)*weight+wheelCycle,smooth((pose.climb/.84-.10)/.10)*(1-smooth((pose.climb-.84)/.14))));if(p.group==='gimbal_context')p.node.matrix.multiply(new THREE.Matrix4().makeTranslation(0,pose.extract,0)).multiply(transforms.get('j0_carrier')!);p.node.matrix.multiply(p.rest);p.node.matrixWorldNeedsUpdate=true;}
+    // Fully faded vehicle meshes used to keep issuing draw calls only to be
+    // discarded by the fragment shader. Recompute their pose when they reappear.
+    contextModel.visible=pose.context>0;
+    if(contextModel.visible)for(const p of contextParts){p.node.matrix.copy(contextTransform(p.group,climbStroke(pose.climb)*weight,body,climbAdvance(pose.climb)*weight+wheelCycle,smooth((pose.climb/.84-.10)/.10)*(1-smooth((pose.climb-.84)/.14))));if(p.group==='gimbal_context')p.node.matrix.multiply(new THREE.Matrix4().makeTranslation(0,pose.extract,0)).multiply(transforms.get('j0_carrier')!);p.node.matrix.multiply(p.rest);p.node.matrixWorldNeedsUpdate=true;}
     stair.visible=ground.visible=floorEdges.visible=pose.phase==='climb';stair.position.y=GROUND_Y+STEP_HEIGHT/2;
     const reveal=pose.phase==='climb'?finaleStairReveal(pose.finale):0;stairMaterial.opacity=.055*reveal;groundMaterial.opacity=.018*reveal;groundMaterial.depthWrite=false;stairEdgeMaterial.opacity=.64*reveal;floorEdgeMaterial.opacity=.18*reveal;
     watermark.hidden=pose.phase!=='climb';watermark.style.opacity=String(.32*finaleEntry(pose.finale));
@@ -377,8 +385,8 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   const draw=(_timestamp:number)=>{
     const now=performance.now();
     frame=0;if(!visible||disposed)return;
-    if(lastFrame&&now-lastFrame<1000/30){requestDraw();return;}
-    const dt=Math.min(.1,lastFrame?(now-lastFrame)/1000:1/30);lastFrame=now;
+    const dt=frameClock.sample(_timestamp);
+    if(dt===undefined){requestDraw();return;}
     if(manualCamera&&auto&&!dragging&&now>=idleUntil&&!rejoin&&!restore&&!seekBlend)beginRejoin();
     if(auto&&!manualCamera&&!restore&&!seekBlend&&now>=idleUntil){if(clock+dt>=ARM_STUDY_DURATION){wheelCycle+=.78;root.dataset.wheelCycle=String(wheelCycle);}clock=(clock+dt)%ARM_STUDY_DURATION;}
     current=armStudyPose(clock);
@@ -432,7 +440,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
   }
   root.dataset.parts=String(parts.length);root.dataset.storyDuration=String(ARM_STUDY_DURATION);root.dataset.viewports='1';
   return {
-    setVisible(value){if(visible===value)return;visible=value;root.dataset.rendering=String(value);if(value){lastFrame=0;requestDraw();}else{cancelAnimationFrame(frame);frame=0;clearTimeout(timer);}},
+    setVisible(value){if(visible===value)return;visible=value;root.dataset.rendering=String(value);if(value){frameClock.reset();requestDraw();}else{cancelAnimationFrame(frame);frame=0;clearTimeout(timer);}},
     dispose(){disposed=true;root.dataset.rendering='false';root.dataset.viewports='0';cancelAnimationFrame(frame);clearTimeout(timer);abort.abort();observer.disconnect();controls.dispose();chains.dispose();transmission.dispose();workspace.dispose();presentation.dispose();geometries.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());axisGeometry.dispose();pathGeometry.dispose();axisMaterial.dispose();pathMaterial.dispose();renderer.dispose();renderer.forceContextLoss();},
   };
 }

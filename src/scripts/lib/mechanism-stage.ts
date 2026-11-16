@@ -193,7 +193,21 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     return current?.userData.source_node_name as string | undefined;
   };
   const raycaster = new THREE.Raycaster();
+  raycaster.firstHitOnly = true;
   const pointer = new THREE.Vector2(2, 2);
+  const pickingAbort = new AbortController();
+  let pickingRequested = false;
+  const preparePicking = () => {
+    if (pickingRequested) return;
+    pickingRequested = true; canvas.dataset.picking = 'loading';
+    void import('./picking').then(async ({ acceleratePicking }) => {
+      if (pickingAbort.signal.aborted) return;
+      await acceleratePicking(meshes, pickingAbort.signal);
+      if (!pickingAbort.signal.aborted) { canvas.dataset.picking = 'ready'; render(); }
+    }).catch(error => {
+      if (!pickingAbort.signal.aborted) { canvas.dataset.picking = 'fallback'; console.warn('Picking acceleration unavailable', error); }
+    });
+  };
   let hovered: THREE.Mesh | undefined;
   let saved: { material: THREE.MeshStandardMaterial; color: THREE.Color; intensity: number }[] = [];
   let dragging = false;
@@ -202,6 +216,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     saved = []; hovered = undefined; label.hidden = true; label.textContent = '';
   };
   const updateHover = () => {
+    if (Math.abs(pointer.x) > 1 || Math.abs(pointer.y) > 1) { if (hovered) clearHover(); return; }
     if (isSwerve && !inspection && Number(canvas.closest<HTMLElement>('[data-mechanism]')?.dataset.explode ?? 0) <= .02) { clearHover(); return; }
     if (dragging) return;
     raycaster.setFromCamera(pointer, camera);
@@ -226,7 +241,12 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     label.textContent = caption || cleanPartName(source?.split('/').pop() ?? hit.name);
     label.hidden = false;
   };
+  let renderFrame = 0;
+  const requestRender = () => {
+    if (canRender() && !renderFrame) renderFrame = requestAnimationFrame(() => render());
+  };
   const render = (fitView = true) => {
+    cancelAnimationFrame(renderFrame); renderFrame = 0;
     if (!canRender()) return;
     if (fitView && (!isSwerve || inspectionBlend > 0)) fit();
     updateInspectionMaterials();
@@ -247,18 +267,19 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
   resizeObserver.observe(canvas); resize();
   controls.addEventListener('change', () => {
     if (fitDistance) zoomFactor = THREE.MathUtils.clamp(camera.position.distanceTo(controls.target) / fitDistance, isSwerve ? .82 : .65, 1.65);
-    render();
+    requestRender();
   });
   const events = new AbortController();
   const options = { signal: events.signal };
   canvas.addEventListener('pointermove', event => {
+    preparePicking();
     const bounds = canvas.getBoundingClientRect();
     pointer.set((event.clientX - bounds.left) / bounds.width * 2 - 1, 1 - (event.clientY - bounds.top) / bounds.height * 2);
-    render();
+    requestRender();
   }, options);
-  canvas.addEventListener('pointerleave', () => { pointer.set(2, 2); clearHover(); render(); }, options);
+  canvas.addEventListener('pointerleave', () => { pointer.set(2, 2); clearHover(); requestRender(); }, options);
   canvas.addEventListener('pointerdown', () => { dragging = true; clearHover(); }, options);
-  const endDrag = () => { dragging = false; render(); };
+  const endDrag = () => { dragging = false; requestRender(); };
   canvas.addEventListener('pointerup', endDrag, options);
   canvas.addEventListener('pointercancel', endDrag, options);
   canvas.addEventListener('lostpointercapture', endDrag, options);
@@ -413,6 +434,8 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
     },
     resetView() { inspection = undefined; inspectionKey = undefined; inspectionBlend = 0; restoreInspectionMaterials(); camera.position.copy(controls.target).add(initialDirection); fit(true); controls.update(); render(); },
     dispose() {
+      cancelAnimationFrame(renderFrame); renderFrame = 0;
+      pickingAbort.abort();
       vehicleRenderer?.dispose();
       events.abort(); resizeObserver.disconnect(); controls.dispose(); clearHover();
       const geometries = new Set<THREE.BufferGeometry>();
@@ -426,7 +449,7 @@ export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string
           for (const value of Object.values(m)) if (value instanceof THREE.Texture) textures.add(value);
         }
       });
-      geometries.forEach(g => g.dispose()); materials.forEach(m => m.dispose()); textures.forEach(t => t.dispose());
+      geometries.forEach(g => { delete g.boundsTree; g.dispose(); }); materials.forEach(m => m.dispose()); textures.forEach(t => t.dispose());
       renderer.dispose(); renderer.forceContextLoss();
     },
   };

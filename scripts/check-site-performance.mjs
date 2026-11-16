@@ -85,6 +85,8 @@ try {
   await page.goto(base + 'engineer/');
   await ready(page, '[data-module-media]');
   assert.equal(desktop.requests.some(url => /\.mp4(?:\?|$)/.test(url)), false);
+  assert.equal(desktop.requests.some(url => /picking[.-].*\.js/.test(url)), false, 'Picking code must not load before interaction');
+  assert.ok(await page.locator('video').evaluateAll(videos => videos.every(v => v.poster.endsWith('.webp'))), 'Video posters must use optimized WebP copies');
   report.metrics.push(await page.evaluate(() => ({ name: 'engineer-initial', ...window.__perf })));
   await page.locator('[data-module-spin]').click();
   await idle(page);
@@ -118,6 +120,8 @@ try {
   await page.locator('[data-story-step]').nth(2).click();
   await page.waitForTimeout(700);
   assert.equal(await page.locator('[data-arm-explode]').getAttribute('data-context'), 'active');
+  await page.locator('[data-story-step]').last().click();
+  await page.waitForFunction(() => Number(document.querySelector('[data-arm-explode]').dataset.contextOpacity) > .9);
   pass('Arm animation, pause, assembly and chapter selection remain available');
 
   await scrollTo(page, '[data-mechanism="swerve"]');
@@ -125,6 +129,12 @@ try {
   await page.locator('[data-mechanism="swerve"] [data-mechanism-play]').click();
   await page.locator('[data-explode-to="1"]').click();
   await page.waitForFunction(() => Number(document.querySelector('[data-mechanism="swerve"]').dataset.explode) > .999);
+  await page.locator('[data-mechanism="swerve"] canvas').hover();
+  await page.waitForFunction(() => document.querySelector('[data-mechanism="swerve"] canvas').dataset.picking === 'ready');
+  assert.ok(await page.locator('[data-mechanism="swerve"]').evaluate(root => [...root.querySelectorAll('[data-mechanism-annotation]:not([hidden])')].every(label => {
+    const r = label.getBoundingClientRect(), frame = root.querySelector('[data-mechanism-view]').getBoundingClientRect();
+    return r.left >= frame.left - 1 && r.right <= frame.right + 1 && r.top >= frame.top && r.bottom <= frame.bottom;
+  })), 'Moved annotations must stay within the viewport');
   await page.locator('[data-mechanism="swerve"]').screenshot({ path: join(out, 'swerve-exploded.png') });
   await page.locator('[data-explode-to="0"]').click();
   await page.waitForFunction(() => Number(document.querySelector('[data-mechanism="swerve"]').dataset.explode) < .001);
@@ -159,6 +169,23 @@ try {
   await ready(aborting.page, '[data-module-media]');
   assert.equal(await aborting.page.evaluate(() => window.__liveWorkers.size), 0);
   pass('Leaving during edge computation terminates workers; returning still loads the header');
+  await scrollTo(aborting.page, '[data-mechanism="pump"]');
+  await ready(aborting.page, '[data-mechanism="pump"]');
+  await aborting.page.route('**/picking.worker-*.js', async route => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    await route.continue().catch(() => {});
+  });
+  await aborting.page.locator('[data-mechanism="pump"] canvas').hover();
+  await aborting.page.waitForFunction(() => [...window.__liveWorkers].some(w => w.url.includes('picking.worker')));
+  await scrollTo(aborting.page, '.footer');
+  await aborting.page.waitForFunction(() => window.__liveWorkers.size === 0);
+  await aborting.page.unroute('**/picking.worker-*.js');
+  await scrollTo(aborting.page, '[data-mechanism="pump"]');
+  await ready(aborting.page, '[data-mechanism="pump"]');
+  await aborting.page.locator('[data-mechanism="pump"] canvas').hover();
+  await aborting.page.waitForFunction(() => document.querySelector('[data-mechanism="pump"] canvas').dataset.picking === 'ready');
+  assert.equal(await aborting.page.evaluate(() => window.__liveWorkers.size), 0);
+  pass('Picking loads on demand, cancels when leaving, and works after returning');
   await aborting.context.close();
 
   for (const [name, options] of [

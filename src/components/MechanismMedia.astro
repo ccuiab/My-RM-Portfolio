@@ -71,7 +71,7 @@ const L = sceneCopy[kind];
   /* Separate screen space for labels and rendering, including during a drag. */
   [data-mechanism="swerve"], [data-mechanism="pump"] { --annotation-rail: 116px; --annotation-inset: 136px; }
   :is([data-mechanism="swerve"], [data-mechanism="pump"]) .model { inset-inline: var(--annotation-inset); width: auto; }
-  :is([data-mechanism="swerve"], [data-mechanism="pump"]) .annotation { width: var(--annotation-rail); transform: none; padding: 5px 6px; font-size: 10px; line-height: 1.45; white-space: normal; background: color-mix(in srgb, var(--ground) 76%, transparent); }
+  :is([data-mechanism="swerve"], [data-mechanism="pump"]) .annotation { left: 0; top: 0; width: var(--annotation-rail); transform: none; padding: 5px 6px; font-size: 10px; line-height: 1.45; white-space: normal; background: color-mix(in srgb, var(--ground) 76%, transparent); }
   :is([data-mechanism="swerve"], [data-mechanism="pump"]) .annotation[data-side="right"] { border-left: 0; border-right: 1px solid var(--amber); text-align: right; }
   .annotation-leaders { position: absolute; inset: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; }
   .annotation-leaders path { fill: none; stroke: var(--amber); stroke-width: .7px; opacity: .5; }

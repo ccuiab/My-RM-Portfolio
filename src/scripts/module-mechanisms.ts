@@ -26,20 +26,23 @@ function layoutMechanismAnnotations(root: HTMLElement, points: { x: number; y: n
   const middle = Math.ceil(rows.length / 2);
   const columns = root.dataset.mechanism === 'pump' ? [['right', rows]] as const
     : [['left', rows.slice(0, middle)], ['right', rows.slice(middle)]] as const;
+  // Finish all measurements before positioning any label. Moving one label
+  // before measuring the next used to force a fresh layout for every row.
+  const dimensions = new Map(rows.map(row => [row.item, row.item.getBoundingClientRect()]));
   for (const [side, group] of columns) {
     group.sort((a, b) => a.y - b.y || a.index - b.index);
     // A shared inner lane preserves endpoint order before the final horizontal
     // legs. Different anchor depths can otherwise make diagonal leaders cross.
     const innerLane = side === 'left' ? Math.min(...group.map(row => row.x)) - 4 : Math.max(...group.map(row => row.x)) + 4;
-    const heights = group.map(row => row.item.getBoundingClientRect().height);
+    const heights = group.map(row => dimensions.get(row.item)!.height);
     const gap = 8, top = 48, bottom = frame.height - 42;
     let next = top;
     group.forEach((row, index) => {
       const remaining = heights.slice(index).reduce((sum, height) => sum + height, 0) + (group.length - index - 1) * gap;
       const y = Math.max(next, Math.min(bottom - remaining, row.y - heights[index] / 2));
-      const width = row.item.getBoundingClientRect().width;
+      const width = dimensions.get(row.item)!.width;
       const x = side === 'left' ? 12 : frame.width - 12 - width;
-      row.item.dataset.side = side; row.item.style.left = `${x}px`; row.item.style.top = `${y}px`;
+      row.item.dataset.side = side; row.item.style.transform = `translate3d(${x}px, ${y}px, 0)`;
       const edge = side === 'left' ? x + width : x;
       const elbow = side === 'left' ? canvas.left - frame.left - 4 : canvas.right - frame.left + 4;
       const center = y + heights[index] / 2;
@@ -87,12 +90,14 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
     root.dataset.explode = explode.toFixed(3);
     root.dataset.cyclePhase = phase;
     if (slider && document.activeElement !== slider) slider.value = String(Math.round(explode * 100));
-    if (output) output.value = `${Math.round(explode * 100)}%`;
+    const amountText = `${Math.round(explode * 100)}%`;
+    if (output && output.value !== amountText) output.value = amountText;
     buttons.forEach(b => b.setAttribute('aria-pressed', String(Math.abs(Number(b.dataset.explodeTo) - explode) < .001)));
-    play.textContent = playing ? play.dataset.pause! : play.dataset.play!;
+    const playText = playing ? play.dataset.pause! : play.dataset.play!;
+    if (play.textContent !== playText) play.textContent = playText;
     play.setAttribute('aria-pressed', String(playing));
     if (!playing) root.dataset.autoState = 'paused';
-    if (phaseLabel) phaseLabel.textContent = phaseLabel.dataset[phase] ?? '';
+    if (phaseLabel && phaseLabel.textContent !== (phaseLabel.dataset[phase] ?? '')) phaseLabel.textContent = phaseLabel.dataset[phase] ?? '';
   };
   const draw = () => {
     if (!visible || !stage || !motion) return;
@@ -126,7 +131,8 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       annotations.forEach((item, index) => {
         const open = index === 0 ? info.inletOpen : info.outletOpen;
         item.dataset.open = String(open);
-        item.textContent = open ? item.dataset.openText! : item.dataset.closedText!;
+        const text = open ? item.dataset.openText! : item.dataset.closedText!;
+        if (item.textContent !== text) item.textContent = text;
       });
     }
     stage.render();

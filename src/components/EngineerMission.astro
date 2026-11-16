@@ -2,14 +2,16 @@
 import {missionFilm as copy, engineerShowcase} from '../data/content';
 import {t,type Lang} from '../data/i18n';
 import timing from '../../materials/models/derived/rm2025-field/models/mission-timing.json';
+import {videoPoster} from '../data/video-posters';
 interface Props{lang:Lang;concise?:boolean}
 const {lang,concise=false}=Astro.props;
 const base=import.meta.env.BASE_URL;
 const times=timing.chapters;
+const poster=await videoPoster(`engineer-mission-${lang}.jpg`);
 ---
 <figure class="mission-film" data-mission-film>
   <div class="mission-frame">
-    <video src={`${base}video/engineer-mission-${lang}.mp4`} poster={`${base}video/engineer-mission-${lang}.jpg`} aria-label={t(copy.alt,lang)} muted loop playsinline preload="none" controls></video>
+    <video src={`${base}video/engineer-mission-${lang}.mp4`} poster={poster.src} aria-label={t(copy.alt,lang)} muted loop playsinline preload="none" controls></video>
     <button class="mission-start" type="button" data-mission-start>{t(copy.play,lang)}</button>
   </div>
   <nav class="mission-chapters" aria-label={t(copy.title,lang)}>

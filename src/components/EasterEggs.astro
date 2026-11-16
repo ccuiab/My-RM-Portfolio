@@ -1,11 +1,13 @@
 ---
 import { engineer, engineerShowcase } from '../data/content';
 import { t, type Lang } from '../data/i18n';
+import { videoPoster } from '../data/video-posters';
 
 interface Props { lang: Lang }
 const { lang } = Astro.props;
 const L = engineer.eggs;
 const base = import.meta.env.BASE_URL;
+const posters = await Promise.all(L.items.map(egg => videoPoster(egg.poster)));
 ---
 
 <section id="easter-eggs" class="wrap eggs" aria-labelledby="eggs-title">
@@ -22,7 +24,7 @@ const base = import.meta.env.BASE_URL;
           <video
             data-egg-video
             data-src={`${base}video/${egg.file}`}
-            poster={`${base}video/${egg.poster}`}
+            poster={posters[i].src}
             muted
             loop
             playsinline
