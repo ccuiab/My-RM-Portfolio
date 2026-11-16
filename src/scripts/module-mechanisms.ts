@@ -235,7 +235,7 @@ document.querySelectorAll<HTMLElement>('[data-mechanism]').forEach(root => {
       }
       catch (error) { next.dispose(); stage = undefined; throw error; }
       return {
-        setVisible(value) { visible = value; if (value) { draw(); run(); } else stop(); },
+        setVisible(value) { if (visible === value) return; visible = value; if (value) { draw(); run(); } else stop(); },
         dispose() { visible = false; stop(); next.dispose(); stage = undefined; motion = undefined; chassis = undefined; },
       };
     },

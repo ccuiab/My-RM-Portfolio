@@ -9,7 +9,7 @@ const times=timing.chapters;
 ---
 <figure class="mission-film" data-mission-film>
   <div class="mission-frame">
-    <video src={`${base}video/engineer-mission-${lang}.mp4`} poster={`${base}video/engineer-mission-${lang}.jpg`} aria-label={t(copy.alt,lang)} muted loop playsinline preload="metadata" controls></video>
+    <video src={`${base}video/engineer-mission-${lang}.mp4`} poster={`${base}video/engineer-mission-${lang}.jpg`} aria-label={t(copy.alt,lang)} muted loop playsinline preload="none" controls></video>
     <button class="mission-start" type="button" data-mission-start>{t(copy.play,lang)}</button>
   </div>
   <nav class="mission-chapters" aria-label={t(copy.title,lang)}>
@@ -33,7 +33,7 @@ const times=timing.chapters;
     video.addEventListener('play',()=>{start.hidden=true;userPaused=false;});
     video.addEventListener('pause',()=>{if(!observerPause&&visible)userPaused=true;observerPause=false;});
     const pause=()=>{if(!video.paused){observerPause=true;video.pause();}};
-    new IntersectionObserver(([entry])=>{visible=entry.isIntersecting;if(!visible)pause();else if(!userPaused&&(!reduced.matches||manual)&&!document.hidden)void play();},{threshold:.2}).observe(root);
+    new IntersectionObserver(([entry])=>{visible=entry.isIntersecting&&entry.intersectionRatio>=.2;if(!visible)pause();else if(!userPaused&&(!reduced.matches||manual)&&!document.hidden)void play();},{threshold:.2}).observe(root);
     document.addEventListener('visibilitychange',()=>{if(document.hidden)pause();else if(visible&&!userPaused&&(!reduced.matches||manual))void play();});
     reduced.addEventListener('change',()=>{if(reduced.matches){manual=false;pause();start.hidden=false;}else if(visible&&!userPaused)void play();});
     if(!reduced.matches)start.hidden=true;

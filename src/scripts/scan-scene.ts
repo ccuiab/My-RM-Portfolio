@@ -3,6 +3,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+import { buildScanEdges } from './lib/scan-edges';
 
 export type ScanStage = {
   renderer: THREE.WebGLRenderer;
@@ -34,8 +35,7 @@ export async function loadScanStage(
   scan: { axis: THREE.Vector3; range: [number, number]; solidOnly?: boolean },
   signal: AbortSignal,
 ): Promise<ScanStage> {
-  // preserveDrawingBuffer keeps the last frame visible between scroll-driven redraws
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true, powerPreference: 'high-performance' });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -92,9 +92,37 @@ export async function loadScanStage(
   model.traverse((o) => { if ((o as THREE.Mesh).isMesh) meshes.push(o as THREE.Mesh); });
   model.updateMatrixWorld(true);
   const overallSize = new THREE.Box3().setFromObject(model).getSize(new THREE.Vector3()).length();
-  const edgeCache = new Map<THREE.BufferGeometry, THREE.EdgesGeometry>();
+  const edgeCache = new Map<THREE.BufferGeometry, THREE.BufferGeometry>();
   // A depth-only surface hides edges on the far side, keeping CAD linework readable.
   const depthMat = new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: true, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+  let resizeObserver: ResizeObserver | undefined;
+  const dispose = () => {
+    resizeObserver?.disconnect();
+    const geometries = new Set<THREE.BufferGeometry>(edgeCache.values());
+    const materials = new Set<THREE.Material>([wireMat, depthMat]);
+    const textures = new Set<THREE.Texture>();
+    model.traverse(object => {
+      const mesh = object as THREE.Mesh;
+      if (mesh.geometry) geometries.add(mesh.geometry);
+      if (mesh.material) for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+        materials.add(material);
+        for (const value of Object.values(material)) if (value instanceof THREE.Texture) textures.add(value);
+      }
+    });
+    geometries.forEach(geometry => geometry.dispose());
+    materials.forEach(material => material.dispose());
+    textures.forEach(texture => texture.dispose());
+    disposeRenderer();
+  };
+  const outlined = scan.solidOnly ? [] : meshes.filter(mesh =>
+    new THREE.Box3().setFromObject(mesh).getSize(new THREE.Vector3()).length() >= overallSize * .008);
+  try {
+    const sources = [...new Set(outlined.map(mesh => mesh.geometry))];
+    const edges = await buildScanEdges(sources, signal);
+    signal.throwIfAborted();
+    sources.forEach((geometry, i) => edgeCache.set(geometry,
+      new THREE.BufferGeometry().setAttribute('position', new THREE.BufferAttribute(edges[i], 3))));
+  } catch (error) { dispose(); throw error; }
   const hsl = { h: 0, s: 0, l: 0 };
   const seen = new Set<THREE.Material>();
   for (const m of meshes) {
@@ -111,10 +139,8 @@ export async function loadScanStage(
       depth.renderOrder = -1;
       m.add(depth);
       // Omit sub-pixel fastener linework rather than accumulating visual noise.
-      const size = new THREE.Box3().setFromObject(m).getSize(new THREE.Vector3()).length();
-      if (size >= overallSize * 0.008) {
-        let edges = edgeCache.get(m.geometry);
-        if (!edges) { edges = new THREE.EdgesGeometry(m.geometry, 35); edgeCache.set(m.geometry, edges); }
+      const edges = edgeCache.get(m.geometry);
+      if (edges && outlined.includes(m)) {
         const line = new THREE.LineSegments(edges, wireMat);
         line.renderOrder = 1;
         m.add(line);
@@ -168,7 +194,7 @@ export async function loadScanStage(
     applyFrame();
     onResize?.();
   };
-  const resizeObserver = new ResizeObserver(resize);
+  resizeObserver = new ResizeObserver(resize);
   resizeObserver.observe(canvas);
   resize();
 
@@ -258,24 +284,6 @@ export async function loadScanStage(
       zoom = 1;
       redrawInteraction();
     },
-    dispose() {
-      resizeObserver.disconnect();
-      const geometries = new Set<THREE.BufferGeometry>();
-      const materials = new Set<THREE.Material>([wireMat, depthMat]);
-      const textures = new Set<THREE.Texture>();
-      model.traverse(object => {
-        const mesh = object as THREE.Mesh;
-        if (mesh.geometry) geometries.add(mesh.geometry);
-        if (mesh.material) for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-          materials.add(material);
-          for (const value of Object.values(material)) if (value instanceof THREE.Texture) textures.add(value);
-        }
-      });
-      geometries.forEach(geometry => geometry.dispose());
-      materials.forEach(material => material.dispose());
-      textures.forEach(texture => texture.dispose());
-      renderer.dispose();
-      renderer.forceContextLoss();
-    },
+    dispose,
   };
 }

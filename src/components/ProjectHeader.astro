@@ -26,7 +26,7 @@ const { lang, drawing, title, lede, cover, titleBlock = [], stats = [], statsSou
     </div>
 
     {cover && <div class="ph-visual">
-      {cover.model ? <ModuleMedia pic={cover} lang={lang} /> : (
+      {cover.model ? <ModuleMedia pic={cover} lang={lang} priority /> : (
         <figure class:list={['ph-pic', { light: cover.light, cutout: cover.cutout }]}>
           <Image src={cover.src} alt={t(cover.alt, lang)} widths={[720, 1200, 1620, 2400]} sizes="(max-width: 900px) 100vw, 58vw" loading="eager" />
         </figure>

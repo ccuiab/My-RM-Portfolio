@@ -77,7 +77,7 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
     const transforms=armMotionMatrices(meta.motion,jointDemo(id,id===0?.65:.4));
     motionKeys.set(id,new Set(parts.filter(p=>detailKeys.get(id)!.has(p.spec.key)||transforms.get(p.spec.motion_group)!.elements.some((v,i)=>Math.abs(v-identity.elements[i])>1e-8)).map(p=>p.spec.key)));
   }
-  const renderer = new THREE.WebGLRenderer({ canvas,alpha:true,antialias:true,preserveDrawingBuffer:true,powerPreference:'high-performance' });
+  const renderer = new THREE.WebGLRenderer({ canvas,alpha:true,antialias:true,powerPreference:'high-performance' });
   renderer.setPixelRatio(Math.min(devicePixelRatio,1.5)); renderer.outputColorSpace=THREE.SRGBColorSpace;
   renderer.toneMapping=THREE.ACESFilmicToneMapping; renderer.toneMappingExposure=1.2;
   const scene = new THREE.Scene(); scene.add(model,contextModel,new THREE.HemisphereLight(0xe7eef6,0x12213a,2.6));
@@ -252,7 +252,9 @@ export async function loadArmExplodeScene(root: HTMLElement, base: string, signa
     stair.visible=ground.visible=floorEdges.visible=pose.phase==='climb';stair.position.y=GROUND_Y+STEP_HEIGHT/2;
     const reveal=pose.phase==='climb'?finaleStairReveal(pose.finale):0;stairMaterial.opacity=.055*reveal;groundMaterial.opacity=.018*reveal;groundMaterial.depthWrite=false;stairEdgeMaterial.opacity=.64*reveal;floorEdgeMaterial.opacity=.18*reveal;
     watermark.hidden=pose.phase!=='climb';watermark.style.opacity=String(.32*finaleEntry(pose.finale));
-    transition.style.opacity=String(pose.phase==='climb'?finaleFade(pose.finale):clock<.65?openingFade(clock):0);
+    // A paused/restored view must stay inspectable, including at clock zero.
+    const cinematic=auto&&!restore&&!seekBlend&&!manualCamera;
+    transition.style.opacity=String(cinematic?(pose.phase==='climb'?finaleFade(pose.finale):clock<.65?openingFade(clock):0):0);
     const whole=body.clone().multiply(new THREE.Matrix4().makeTranslation(0,pose.extract,0));
     for(const p of parts) {
       const selected=active?.has(p.spec.key)??false;

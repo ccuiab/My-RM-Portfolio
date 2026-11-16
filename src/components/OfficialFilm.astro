@@ -33,11 +33,10 @@ const assetBase = import.meta.env.BASE_URL;
       poster={`${assetBase}video/${poster}`}
       aria-label={t(alt, lang)}
       title={t(label, lang)}
-      autoplay
       muted
       loop
       playsinline
-      preload="metadata"
+      preload="none"
       controls
     ></video>
     <button
@@ -56,14 +55,6 @@ const assetBase = import.meta.env.BASE_URL;
     >{t(play, lang)}</button>
   </div>
 </figure>
-
-<script is:inline>
-  const officialFilmGateVideo = document.querySelector('[data-official-film] video');
-  if (officialFilmGateVideo instanceof HTMLVideoElement) {
-    officialFilmGateVideo.autoplay = false;
-    officialFilmGateVideo.removeAttribute('autoplay');
-  }
-</script>
 
 <script>
   const figure = document.querySelector<HTMLElement>('[data-official-film]');
@@ -138,7 +129,7 @@ const assetBase = import.meta.env.BASE_URL;
     });
 
     const observer = new IntersectionObserver(([entry]) => {
-      inView = entry.isIntersecting;
+      inView = entry.isIntersecting && entry.intersectionRatio >= .15;
       if (!inView) {
         video.pause();
         return;

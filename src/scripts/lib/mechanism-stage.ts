@@ -8,7 +8,7 @@ import { createStudyRenderer } from './arm-study-renderer';
 
 /** Shared part viewer. Its owner decides when rendering is allowed. */
 export async function loadMechanismStage(canvas: HTMLCanvasElement, base: string, file: string, label: HTMLElement, canRender: () => boolean, signal: AbortSignal) {
-  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, preserveDrawingBuffer: true });
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;

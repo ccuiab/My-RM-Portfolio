@@ -25,6 +25,7 @@ scripts/
 | 素材清单 | `npm run materials:inventory` | 扫描含本地忽略文件的整个 `materials/`；更新 CSV、Markdown 与 SHA-256 |
 | 类型与逻辑检查 | `npm run check` | 运行 TypeScript 与 Node 测试；不构建网站或处理素材 |
 | 逻辑测试 | `npm test` | 运行 `tests/*.test.mjs`；工具链用临时目录验证来源状态和版本索引 |
+| 浏览器性能回归 | `node scripts/check-site-performance.mjs` | 构建后先启动 `npm run preview`；需要 Playwright/Chromium，支持 `--url=...`、`--out=...` 与 `PLAYWRIGHT_CHROMIUM_EXECUTABLE`；默认结果和截图写入 `tmp/performance/checks/` |
 
 `archive-current.mjs` 只在成功构建后调用。单纯刷新列表使用 `archive-index.mjs`。版本索引按版本 id 合并旧索引、恢复记录和各历史目录的 `version.json`；不会按 Git 提交合并不同的本地构建，也不会把源码重建标为原始发布包。
 

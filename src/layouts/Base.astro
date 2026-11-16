@@ -4,6 +4,7 @@ import '@fontsource/chakra-petch/700.css';
 import '@fontsource/jetbrains-mono/400.css';
 import '@fontsource/jetbrains-mono/500.css';
 import '../styles/global.css';
+import titleFont from '../../materials/fonts/derived/subsets/smiley-sans.woff2?url';
 import { ui, href, altHref, t, type Lang, type T } from '../data/i18n';
 import { person, pageCopy } from '../data/content';
 
@@ -32,6 +33,7 @@ const navItems = [
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" href={titleFont} as="font" type="font/woff2" crossorigin="anonymous" />
     <title>{pageTitle}</title>
     <meta name="description" content={t(description, lang)} />
     <link rel="canonical" href={canonical} />

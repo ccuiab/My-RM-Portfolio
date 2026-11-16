@@ -45,12 +45,12 @@ const copy={climb:t(L.climbTitle,lang),climbDescription:t(L.climbDescription,lan
   document.querySelectorAll<HTMLElement>('[data-arm-explode]').forEach(root=>{
     const status=root.querySelector<HTMLElement>('[data-status]')!;
     const controls=root.querySelector<HTMLFieldSetElement>('.controls')!;
-    const image=root.querySelector<HTMLImageElement>('[data-static-image]')!,overview=image.src;
+    const image=root.querySelector<HTMLImageElement>('[data-static-image]')!,overview=image.src,overviewSrcset=image.srcset;
     const staticSelect=root.querySelector<HTMLSelectElement>('[data-static-select]')!,uiCopy=JSON.parse(root.dataset.copy!);
-    const syncStatic=()=>{image.removeAttribute('srcset');image.src=staticSelect.value==='overview'?overview:`${root.dataset.base}arm-study/detail-${staticSelect.value}.png`;image.alt=staticSelect.selectedOptions[0].textContent!;root.querySelector<HTMLElement>('[data-story-description]')!.textContent=staticSelect.value==='overview'?uiCopy.caption:uiCopy.descriptions[Number(staticSelect.value)];root.querySelector<HTMLDetailsElement>('[data-route-key]')!.hidden=true;};
+    const syncStatic=()=>{image.srcset=staticSelect.value==='overview'?overviewSrcset:'';image.src=staticSelect.value==='overview'?overview:`${root.dataset.base}arm-study/detail-${staticSelect.value}.png`;image.alt=staticSelect.selectedOptions[0].textContent!;root.querySelector<HTMLElement>('[data-story-description]')!.textContent=staticSelect.value==='overview'?uiCopy.caption:uiCopy.descriptions[Number(staticSelect.value)];root.querySelector<HTMLDetailsElement>('[data-route-key]')!.hidden=true;};
     staticSelect.addEventListener('change',syncStatic);
     if(root.dataset.model!=='1')return;
-    mountViewportScene({root,view:root.querySelector<HTMLElement>('.view')!,media:'(prefers-reduced-motion: no-preference)',
+    mountViewportScene({root,view:root.querySelector<HTMLElement>('.view')!,media:'(min-width: 901px) and (pointer: fine) and (prefers-reduced-motion: no-preference)',
       async load(signal){const {loadArmExplodeScene}=await import('../scripts/arm-explode-scene');if(!signal.aborted)return loadArmExplodeScene(root,import.meta.env.BASE_URL,signal);},
       loading(){root.classList.add('is-loading');status.hidden=false;status.textContent=status.dataset.loading!;},
       ready(){root.classList.remove('is-loading');root.classList.add('has-3d');root.dataset.ready='true';controls.disabled=false;status.hidden=true;},

@@ -47,20 +47,31 @@ document.querySelectorAll<HTMLElement>('[data-module-media]').forEach(root => {
           // Publish the arm-end screen position for the header HUD lock (--lock-x/y in px).
           const header = root.closest<HTMLElement>('[data-engineer-header]')!, render = next.render, local = next.anchor.clone();
           const world = local.clone();
+          const line = header.querySelector<SVGLineElement>('[data-lock-line]'), readout = header.querySelector<HTMLElement>('.lock-readout');
+          let layoutDirty = true, offsetX = 0, offsetY = 0, width = 0, height = 0, left = 0, right = 0, labelY = 0;
+          const layout = new ResizeObserver(() => { layoutDirty = true; });
+          [header, canvas, readout].forEach(element => { if (element) layout.observe(element); });
+          const dispose = next.dispose;
+          next.dispose = () => { layout.disconnect(); dispose(); };
           next.render = () => {
             render();
             world.copy(local); next.turntable.localToWorld(world); world.project(next.camera);
-            const box = canvas.getBoundingClientRect(), host = header.getBoundingClientRect();
-            header.style.setProperty('--lock-x', `${(box.left - host.left + (world.x + 1) / 2 * box.width).toFixed(1)}px`);
-            header.style.setProperty('--lock-y', `${(box.top - host.top + (1 - world.y) / 2 * box.height).toFixed(1)}px`);
+            if (layoutDirty) {
+              // Read layout together, before writing any HUD positions.
+              const box = canvas.getBoundingClientRect(), host = header.getBoundingClientRect(), r = readout?.getBoundingClientRect();
+              offsetX = box.left - host.left; offsetY = box.top - host.top; width = box.width; height = box.height;
+              if (r) { left = r.left - host.left; right = r.right - host.left; labelY = r.top - host.top + 14; }
+              layoutDirty = false;
+            }
+            const x = offsetX + (world.x + 1) / 2 * width, y = offsetY + (1 - world.y) / 2 * height;
+            header.style.setProperty('--lock-x', `${x.toFixed(1)}px`);
+            header.style.setProperty('--lock-y', `${y.toFixed(1)}px`);
             header.dataset.lock = 'on';
             // Leader: from the reticle to the readout's nearer vertical edge, at its label line.
-            const line = header.querySelector<SVGLineElement>('[data-lock-line]'), readout = header.querySelector<HTMLElement>('.lock-readout');
             if (line && readout) {
-              const r = readout.getBoundingClientRect(), x = box.left - host.left + (world.x + 1) / 2 * box.width, y = box.top - host.top + (1 - world.y) / 2 * box.height;
-              const left = r.left - host.left, right = r.right - host.left, ex = Math.abs(x - left) < Math.abs(x - right) ? left : right;
+              const ex = Math.abs(x - left) < Math.abs(x - right) ? left : right;
               line.setAttribute('x1', x.toFixed(1)); line.setAttribute('y1', y.toFixed(1));
-              line.setAttribute('x2', ex.toFixed(1)); line.setAttribute('y2', (r.top - host.top + 14).toFixed(1));
+              line.setAttribute('x2', ex.toFixed(1)); line.setAttribute('y2', labelY.toFixed(1));
             }
           };
         }
@@ -68,7 +79,7 @@ document.querySelectorAll<HTMLElement>('[data-module-media]').forEach(root => {
         canvas.addEventListener('pointerdown', pause); canvas.addEventListener('keydown', pause);
       } catch (error) { next.dispose(); stage = undefined; throw error; }
       return {
-        setVisible(value) { visible = value; if (value) { next.render(); run(); } else stop(); },
+        setVisible(value) { if (visible === value) return; visible = value; if (value) { next.render(); run(); } else stop(); },
         dispose() { visible = false; stop(); next.dispose(); stage = undefined; },
       };
     },

@@ -28,7 +28,7 @@ const base = import.meta.env.BASE_URL;
           muted
           playsinline
           loop
-          preload="metadata"
+          preload="none"
           aria-label={t(record.title, lang)}
         ></video>
       ) : (
@@ -72,7 +72,6 @@ const base = import.meta.env.BASE_URL;
 </section>
 
 <script>
-  import { reducedMotion } from '../scripts/smooth';
   import { exchangeAt } from '../scripts/exchange-timing';
 
   document.querySelectorAll<HTMLElement>('[data-record]').forEach((root) => {
@@ -83,7 +82,8 @@ const base = import.meta.env.BASE_URL;
     const duration = root.querySelector<HTMLElement>('[data-duration]');
     const exchangeTime = root.querySelector<HTMLElement>('[data-exchange-time]');
     if (!video || !toggle || !view) return;
-    let manuallyPaused = false;
+    const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+    let manuallyPaused = false, inView = false;
     const sync = () => {
       if (elapsed) elapsed.textContent = video.currentTime.toFixed(1);
       if (duration && Number.isFinite(video.duration)) duration.textContent = video.duration.toFixed(1);
@@ -111,11 +111,14 @@ const base = import.meta.env.BASE_URL;
       video.currentTime = 0;
       video.play().catch(() => {});
     });
-    if (reducedMotion) video.removeAttribute('loop');
+    const resume = () => { if (inView && !document.hidden && !reducedMotion.matches && !manuallyPaused) video.play().catch(() => {}); };
     new IntersectionObserver(([e]) => {
-      if (!e.isIntersecting) video.pause();
-      else if (!reducedMotion && !manuallyPaused) video.play().catch(() => {});
+      inView = e.isIntersecting && e.intersectionRatio >= .35;
+      if (!inView) video.pause();
+      else resume();
     }, { threshold: 0.35 }).observe(video);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) video.pause(); else resume(); });
+    reducedMotion.addEventListener('change', () => { if (reducedMotion.matches) video.pause(); else resume(); });
   });
 </script>
 

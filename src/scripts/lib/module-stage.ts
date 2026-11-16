@@ -44,8 +44,11 @@ export async function loadModuleStage(canvas: HTMLCanvasElement, base: string, m
       const right = new Vector3().crossVectors(new Vector3(0, 1, 0), forward).normalize();
       const up = new Vector3().crossVectors(forward, right).normalize();
       const vertical = Math.tan(stage.camera.fov * Math.PI / 360);
-      let fitAspect = 0, yaw = NaN, frames: Sphere[] = [];
-      const frameAt = (angle: number) => {
+      let fitAspect = 0, requestedAspect = 0, yaw = NaN, frames: Sphere[] = [];
+      let disposed = false, fitVersion = 0;
+      const dispose = stage.dispose;
+      stage.dispose = () => { disposed = true; ++fitVersion; dispose(); };
+      const frameAt = (angle: number, aspect: number) => {
         const c = Math.cos(angle), s = Math.sin(angle);
         const projected = new Float32Array(positions.length);
         let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
@@ -57,7 +60,7 @@ export async function loadModuleStage(canvas: HTMLCanvasElement, base: string, m
           minX = Math.min(minX, px); maxX = Math.max(maxX, px); minY = Math.min(minY, py); maxY = Math.max(maxY, py);
         }
         let tx = (minX + maxX) / 2, ty = (minY + maxY) / 2, distance = 0;
-        const horizontal = vertical * fitAspect;
+        const horizontal = vertical * aspect;
         for (let pass = 0; pass < 3; pass++) {
           distance = 0;
           for (let i = 0; i < projected.length; i += 3) distance = Math.max(distance,
@@ -75,11 +78,28 @@ export async function loadModuleStage(canvas: HTMLCanvasElement, base: string, m
         return new Sphere(right.clone().multiplyScalar(tx).addScaledVector(up, ty),
           distance * Math.sin(Math.atan(Math.min(vertical, horizontal))));
       };
+      const prepareFrames = async () => {
+        const version = ++fitVersion, aspect = stage.camera.aspect, next: Sphere[] = [];
+        requestedAspect = aspect;
+        // Exact vertex fitting is retained, but input and painting get a turn
+        // between yaw samples instead of one long blocking 37-frame calculation.
+        for (let i = 0; i < 37; i++) {
+          await new Promise<void>(resolve => setTimeout(resolve, 0));
+          if (disposed || version !== fitVersion) return false;
+          signal.throwIfAborted();
+          next.push(frameAt(i * Math.PI / 18, aspect));
+        }
+        frames = next; fitAspect = aspect; yaw = NaN;
+        return true;
+      };
       const fitTurntable = () => {
         if (fitAspect !== stage.camera.aspect) {
-          fitAspect = stage.camera.aspect;
-          frames = Array.from({ length: 37 }, (_, i) => frameAt(i * Math.PI / 18));
-          yaw = NaN;
+          // Keep the whole robot in frame while a resized view is being fitted.
+          stage.frame(sphere, direction);
+          if (requestedAspect !== stage.camera.aspect) void prepareFrames().then(ready => {
+            if (ready && !disposed) stage.render();
+          }).catch(error => { if (!disposed && !signal.aborted) console.warn('Header framing unavailable', error); });
+          return;
         }
         const nextYaw = stage.turntable.rotation.y;
         if (nextYaw === yaw) return; // Preserve a paused user's orbit/zoom.
@@ -94,6 +114,7 @@ export async function loadModuleStage(canvas: HTMLCanvasElement, base: string, m
       const render = stage.render, resetView = stage.resetView;
       stage.render = () => { fitTurntable(); render(); };
       stage.resetView = () => { stage.turntable.rotation.y = 0; yaw = NaN; fitTurntable(); resetView(); };
+      await prepareFrames();
       fitTurntable();
       stage.renderer.toneMappingExposure = 1.45;
       stage.scene.traverse(object => {
